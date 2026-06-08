@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>編曲架構示意圖 v3.4</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Space+Mono:wght@400;700&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#0d0d0d; --bg2:#151515; --bg3:#1c1c1c; --bg4:#242424;
+  --border:rgba(255,255,255,0.07); --border2:rgba(255,255,255,0.13);
+  --text:#e6e4dd; --text2:#928f88; --text3:#4e4d4a;
+  --accent:#d4a843;
+  --c-black-stroke:#888; --c-black-fill:rgba(136,136,136,0.1);
+  --c-blue-stroke:#5b9bd5;  --c-blue-fill:rgba(91,155,213,0.1);
+  --c-red-stroke:#d4564a;   --c-red-fill:rgba(212,86,74,0.1);
+  --c-purple-stroke:#9b72cf;--c-purple-fill:rgba(155,114,207,0.1);
+}
+html{font-size:13px;}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-serif;min-height:100vh;}
+
+/* ── TOP BAR ── */
+.topbar{
+  position:sticky;top:0;z-index:50;
+  background:var(--bg2);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:0.75em;padding:0 1.5em;height:4em;
+}
+.logo{font-family:'Space Mono',monospace;font-size:0.85em;color:var(--accent);letter-spacing:1.5px;white-space:nowrap;}
+.pills{display:flex;gap:0.4em;flex:1;flex-wrap:wrap;}
+.pill{background:var(--bg3);border:1px solid var(--border);border-radius:99px;padding:0.22em 0.75em;font-size:0.85em;display:flex;align-items:center;gap:0.3em;}
+.pill label{color:var(--text3);font-size:0.8em;}
+.pill input{background:none;border:none;outline:none;color:var(--text);font-size:1em;font-family:inherit;}
+.tbar-r{display:flex;gap:0.4em;flex-shrink:0;flex-wrap:wrap;}
+.btn{padding:0.35em 0.9em;border-radius:0.45em;font-size:0.85em;cursor:pointer;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-family:inherit;transition:background .13s;white-space:nowrap;}
+.btn:hover{background:var(--bg4);}
+.btna{background:var(--accent);border-color:var(--accent);color:#0d0d0d;font-weight:700;}
+.btna:hover{opacity:.88;}
+.mob-only{display:none;}
+.fbtn{width:1.7em;height:1.7em;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--border2);background:var(--bg3);color:var(--text);border-radius:0.35em;cursor:pointer;font-size:0.95em;line-height:1;font-family:inherit;padding:0;}
+.fbtn:hover{background:var(--bg4);border-color:var(--accent);color:var(--accent);}
+#font-size-label{font-family:'Space Mono',monospace;color:var(--text);min-width:22px;text-align:center;}
+
+/* ── PAGE LAYOUT ── */
+.page{display:grid;grid-template-columns:18em 1fr;gap:0;min-height:calc(100vh - 4em);}
+
+/* ── LEFT PANEL (edit) ── */
+.left{background:var(--bg2);border-right:1px solid var(--border);padding:1em 0.75em;overflow-y:auto;position:sticky;top:4em;height:calc(100vh - 4em);}
+.lhd{font-size:0.68em;font-weight:700;letter-spacing:1.5px;color:var(--text3);padding:0.3em 0.45em 0.6em;text-transform:uppercase;}
+.ecard{border:1px solid var(--border);border-radius:0.6em;overflow:hidden;margin-bottom:0.38em;}
+.etop{display:flex;align-items:center;gap:0.5em;padding:0.54em 0.7em;background:var(--bg3);cursor:pointer;user-select:none;}
+.edot{width:0.6em;height:0.6em;border-radius:50%;border:1.5px solid;flex-shrink:0;}
+.ename{background:none;border:none;outline:none;color:var(--text);font-size:0.85em;font-weight:500;font-family:inherit;flex:1;min-width:0;cursor:text;}
+.ebars{font-size:0.77em;color:var(--text3);font-family:'Space Mono',monospace;}
+.eord{display:flex;flex-direction:column;gap:1px;flex-shrink:0;}
+.eordbtn{font-size:0.6em;line-height:1;padding:1px 3px;border:1px solid var(--border);border-radius:3px;background:var(--bg2);color:var(--text3);cursor:pointer;}
+.eordbtn:hover{border-color:var(--accent);color:var(--accent);}
+.earr{font-size:0.92em;color:var(--text3);transition:transform .18s;}
+.earr.o{transform:rotate(90deg);}
+.ebody{display:none;padding:0.6em;background:var(--bg2);border-top:1px solid var(--border);}
+.ebody.o{display:block;}
+.erow{display:flex;align-items:center;gap:0.45em;margin-bottom:0.5em;flex-wrap:wrap;}
+.erow label{font-size:0.69em;color:var(--text3);}
+.mi{background:var(--bg3);border:1px solid var(--border);border-radius:0.38em;padding:0.22em 0.45em;font-size:0.77em;color:var(--text);font-family:inherit;outline:none;}
+.mi:focus{border-color:var(--accent);}
+.ms{background:var(--bg3);border:1px solid var(--border);border-radius:0.38em;padding:0.22em 0.45em;font-size:0.77em;color:var(--text);font-family:inherit;outline:none;cursor:pointer;}
+.igrid2{display:grid;grid-template-columns:1fr 1fr;gap:0.23em;margin-top:0.38em;}
+.iitem{display:flex;flex-direction:column;gap:0.08em;}
+.ilbl{font-size:0.62em;color:var(--text3);font-weight:700;letter-spacing:.5px;text-transform:uppercase;}
+.iinp{background:var(--bg3);border:1px solid var(--border);border-radius:0.3em;padding:0.15em 0.38em;font-size:0.77em;color:var(--text);font-family:inherit;outline:none;width:100%;}
+.iinp:focus{border-color:var(--accent);}
+.iinp::placeholder{color:var(--text3);}
+.lyhd{font-size:0.62em;color:var(--text3);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin:0.46em 0 0.23em;display:flex;align-items:center;justify-content:space-between;}
+.lyblk{background:var(--bg3);border:1px solid var(--border);border-radius:0.46em;padding:0.38em;margin-bottom:0.3em;}
+.ladd{font-size:0.69em;padding:0.08em 0.46em;border:1px solid var(--border);border-radius:99px;background:none;color:var(--text3);cursor:pointer;}
+.ladd:hover{border-color:var(--accent);color:var(--accent);}
+.dbtn{font-size:0.69em;padding:0.08em 0.38em;border:1px solid transparent;border-radius:99px;background:none;color:var(--text3);cursor:pointer;}
+.dbtn:hover{border-color:#d4564a;color:#d4564a;}
+.dupbtn{font-size:0.69em;padding:0.08em 0.46em;border:1px solid var(--border);border-radius:99px;background:none;color:var(--text3);cursor:pointer;}
+.dupbtn:hover{border-color:var(--accent);color:var(--accent);}
+.ntxt{width:100%;margin-top:0.38em;background:var(--bg3);border:1px solid var(--border);border-radius:0.38em;padding:0.23em 0.46em;font-size:0.77em;color:var(--text);font-family:inherit;outline:none;resize:none;}
+.ntxt:focus{border-color:var(--accent);}
+.asect{width:100%;padding:0.54em;font-size:0.77em;border:1px dashed var(--border2);border-radius:0.46em;background:none;color:var(--text3);cursor:pointer;margin-top:0.54em;font-family:inherit;}
+.asect:hover{border-color:var(--accent);color:var(--accent);}
+.ltag{display:inline-flex;align-items:center;gap:0.23em;font-size:0.69em;padding:0.08em 0.46em;border-radius:99px;border:1px solid;font-weight:500;}
+
+/* ── RIGHT PANEL (view) ── */
+.right{padding:1.5em;overflow-y:auto;}
+
+/* VIEW TABS */
+.vtabs{display:flex;gap:0.15em;margin-bottom:1.3em;border-bottom:1px solid var(--border);padding-bottom:0;overflow-x:auto;}
+.vtab{padding:0.6em 1em;font-size:0.85em;cursor:pointer;color:var(--text3);border-bottom:2px solid transparent;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit;transition:all .13s;white-space:nowrap;}
+.vtab.a{color:var(--accent);border-bottom-color:var(--accent);font-weight:500;}
+
+/* meta summary strip */
+.summary{display:flex;gap:1.2em;flex-wrap:wrap;font-size:0.8em;color:var(--text2);margin:-0.6em 0 1.1em;font-family:'Space Mono',monospace;}
+.summary b{color:var(--accent);font-weight:700;}
+
+/* ── FLOW VIEW ── */
+.flow{display:flex;flex-direction:column;gap:0;}
+.srow{display:flex;align-items:stretch;gap:0;position:relative;}
+.srow:not(:last-child)::after{
+  content:'';position:absolute;left:4.6em;top:100%;
+  width:2px;height:1.5em;background:rgba(255,255,255,0.08);z-index:1;
+}
+.srow-gap{height:1.5em;display:flex;align-items:center;padding-left:4em;flex-shrink:0;}
+.arrow-down{width:1.4em;height:1.4em;display:flex;flex-direction:column;align-items:center;gap:0;opacity:.3;}
+.arrow-down::before{content:'';flex:1;width:1.5px;background:var(--text3);}
+.arrow-down::after{content:'▼';font-size:0.6em;color:var(--text3);line-height:1;}
+
+.seg-badge{
+  flex-shrink:0;width:9.2em;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:1.2em 0.6em;gap:0.38em;
+}
+.seg-circle{
+  position:relative;
+  width:6.15em;height:6.15em;border-radius:50%;
+  border:2.5px solid;
+  display:flex;align-items:center;justify-content:center;flex-direction:column;
+  background:rgba(0,0,0,0.3);
+}
+.seg-circle-inner{position:absolute;border-radius:50%;border:1.5px solid;pointer-events:none;}
+.seg-name{font-size:0.92em;font-weight:700;text-align:center;line-height:1.2;}
+.seg-bar{font-size:0.77em;font-family:'Space Mono',monospace;opacity:.6;}
+.seg-db-badge{
+  font-size:0.62em;font-family:'Space Mono',monospace;
+  background:rgba(40,40,40,0.9);border:1px solid #555;
+  border-radius:0.23em;padding:0.08em 0.38em;color:#888;margin-top:0.15em;
+}
+
+.seg-instrs{
+  flex:1;border:1px solid;border-radius:0.92em;
+  padding:1.08em 1.23em;margin:0.77em 0;
+  display:flex;flex-direction:column;gap:0.6em;
+}
+.instr-layer{display:flex;flex-direction:column;gap:0.38em;}
+.layer-hd{font-size:0.69em;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:0.15em;display:flex;align-items:center;gap:0.46em;opacity:.6;}
+.layer-hd::after{content:'';flex:1;height:1px;background:currentColor;opacity:.2;}
+.instr-row-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(10em,1fr));gap:0.38em;}
+.irow{
+  display:flex;align-items:baseline;gap:0.46em;
+  background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);
+  border-radius:0.46em;padding:0.38em 0.69em;
+}
+.irow.rhythm{border-radius:0.3em;background:rgba(255,255,255,0.02);}
+.iname{font-size:0.69em;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);white-space:nowrap;min-width:2.3em;}
+.ival{font-size:0.85em;color:var(--text);line-height:1.3;}
+.empty{color:var(--text3);}
+.seg-note{
+  font-size:0.77em;color:#9b72cf;
+  display:flex;align-items:center;gap:0.38em;
+  padding:0.3em 0 0;border-top:1px solid rgba(155,114,207,0.15);margin-top:0.15em;
+}
+
+/* ── BLOCK VIEW ── */
+.block-scroll{overflow-x:auto;padding-bottom:0.6em;}
+.block-track{display:flex;align-items:stretch;gap:0;min-width:max-content;padding:0.6em 0 0.3em;}
+.bseg{display:flex;flex-direction:column;border:1.5px solid;border-radius:0.6em;overflow:hidden;flex-shrink:0;min-width:7.7em;}
+.bseg-head{padding:0.54em 0.77em;font-size:0.85em;font-weight:700;text-align:center;border-bottom:1px solid rgba(255,255,255,0.08);}
+.bseg-bar{font-size:0.69em;font-family:'Space Mono',monospace;opacity:.6;display:block;}
+.bseg-body{padding:0.54em 0.6em;flex:1;display:flex;flex-direction:column;gap:0.23em;}
+.b-irow{display:flex;gap:0.3em;font-size:0.77em;align-items:baseline;}
+.b-iname{font-size:0.85em;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);min-width:2.2em;}
+.b-ival{color:var(--text);line-height:1.3;}
+.b-dbrow{padding:0.3em 0.6em;text-align:center;font-size:0.69em;font-family:'Space Mono',monospace;color:#666;border-top:1px solid rgba(255,255,255,0.06);}
+.bconn{width:1.54em;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.bconn-line{width:100%;height:1.5px;background:rgba(255,255,255,0.1);}
+.blayer-tag{font-size:0.62em;padding:0.08em 0.38em;border-radius:0.23em;border:1px solid;margin:0.15em 0;display:inline-block;font-weight:600;}
+
+/* ── ICON SHEET VIEW (圖示譜) ── */
+.icon-toolbar{display:flex;align-items:center;gap:0.6em;flex-wrap:wrap;margin-bottom:1em;}
+.ic-pageind{font-family:'Space Mono',monospace;font-size:0.9em;color:var(--text);min-width:3em;text-align:center;}
+.ic-navbtn{width:2.2em;height:2.2em;display:flex;align-items:center;justify-content:center;border-radius:0.45em;border:1px solid var(--border2);background:var(--bg3);color:var(--text);cursor:pointer;font-size:1em;}
+.ic-navbtn:hover{background:var(--bg4);}
+.ic-navbtn:disabled{opacity:.3;cursor:default;}
+.ic-spacer{flex:1;}
+.ic-hint{font-size:0.72em;color:var(--text3);}
+
+.icpages{}
+.icpage{display:none;}
+.icpage.show{display:block;}
+.icpage-grid{display:grid;grid-template-columns:repeat(var(--ic-cols,3),1fr);align-items:start;gap:0.7em;}
+.ic-legend{display:flex;flex-wrap:wrap;gap:0.3em;margin-bottom:0.85em;}
+.ic-legitem{font-size:0.66em;font-family:'Space Mono',monospace;border:1.5px solid;border-radius:99px;padding:0.12em 0.55em;display:inline-flex;align-items:center;gap:0.25em;}
+.ic-sel{background:var(--bg3);border:1px solid var(--border2);border-radius:0.4em;color:var(--text);font-family:inherit;font-size:0.85em;padding:0.2em 0.4em;outline:none;cursor:pointer;}
+.iccard{border:2.5px solid;border-radius:0.7em;overflow:hidden;display:flex;flex-direction:column;background:var(--bg2);}
+.iccard-head{display:flex;align-items:center;justify-content:space-between;gap:0.5em;padding:0.45em 0.7em;font-weight:700;}
+.ic-name{font-size:1.02em;line-height:1.15;}
+.ic-bars{font-family:'Space Mono',monospace;font-size:0.76em;opacity:.85;background:rgba(0,0,0,0.25);border-radius:99px;padding:0.1em 0.55em;white-space:nowrap;}
+.iccard-body{padding:0.45em;display:flex;flex-direction:column;gap:0.3em;}
+.icchip-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.3em;}
+.icchip{display:flex;align-items:center;gap:0.4em;border:1px solid;border-left-width:5px;border-radius:0.42em;padding:0.24em 0.45em;background:rgba(255,255,255,0.02);min-width:0;}
+.ic-emoji{font-size:1.05em;line-height:1;width:1.2em;text-align:center;flex-shrink:0;}
+.ic-code{font-family:'Space Mono',monospace;font-size:0.62em;font-weight:700;letter-spacing:.3px;flex-shrink:0;}
+.ic-val{font-size:0.8em;color:var(--text);line-height:1.2;min-width:0;word-break:break-word;}
+.ic-rhythm-div{font-size:0.58em;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;margin-top:0.2em;padding-top:0.28em;border-top:1px dashed var(--border2);}
+.iccard-note{font-size:0.74em;color:#b08fde;padding:0.35em 0.65em;border-top:1px solid rgba(155,114,207,0.2);background:rgba(155,114,207,0.05);}
+.ic-empty{color:var(--text3);text-align:center;padding:0.5em;font-size:0.85em;}
+.icpage-foot{display:none;}
+
+/* ── TEXT LIST ── */
+.tl{font-family:'Space Mono',monospace;font-size:0.85em;line-height:2;white-space:pre-wrap;background:var(--bg2);border:1px solid var(--border);border-radius:0.77em;padding:1.23em 1.38em;color:var(--text2);}
+
+/* ── EXPORT ── */
+.egrid{display:grid;grid-template-columns:1fr 1fr;gap:0.77em;margin-bottom:1.23em;}
+.ecard2{background:var(--bg2);border:1px solid var(--border);border-radius:0.77em;padding:1.08em;display:flex;flex-direction:column;gap:0.54em;}
+.ecard2 h3{font-size:0.92em;font-weight:500;}
+.ecard2 p{font-size:0.85em;color:var(--text3);line-height:1.6;}
+.tips2{display:flex;flex-direction:column;gap:0.54em;}
+.tip2{display:flex;gap:0.77em;background:var(--bg2);border:1px solid var(--border);border-radius:0.77em;padding:0.85em;}
+.tipn{width:1.54em;height:1.54em;border-radius:50%;background:var(--accent);color:#0d0d0d;font-size:0.85em;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.tip2 p{font-size:0.85em;color:var(--text2);line-height:1.7;}
+
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:2px;}
+
+/* ── DEVICE MODE (電腦 / 平板 / 手機 三段切換) ── */
+.seg{display:inline-flex;border:1px solid var(--border2);border-radius:0.45em;overflow:hidden;flex-shrink:0;}
+.segbtn{padding:0.35em 0.7em;font-size:0.85em;cursor:pointer;border:none;border-right:1px solid var(--border2);background:var(--bg3);color:var(--text2);font-family:inherit;white-space:nowrap;transition:background .13s;}
+.segbtn:last-child{border-right:none;}
+.segbtn:hover{background:var(--bg4);color:var(--text);}
+.segbtn.btna{background:var(--accent);color:#0d0d0d;font-weight:700;}
+/* 平板：編輯區移到上方、檢視全寬、圖示譜3欄 */
+body.mode-tablet .page{grid-template-columns:1fr;}
+body.mode-tablet .left{position:static;height:auto;max-height:55vh;border-right:none;border-bottom:1px solid var(--border);}
+body.mode-tablet .icpage-grid{grid-template-columns:repeat(3,1fr);}
+/* 手機：隱藏編輯區、圖示譜2欄 */
+body.mode-phone .page{grid-template-columns:1fr;}
+body.mode-phone .left{display:none;}
+body.mode-phone .icpage-grid{grid-template-columns:repeat(2,1fr);}
+
+/* ── RESPONSIVE (phone / tablet) ── */
+@media(max-width:1000px){
+  .icpage-grid{grid-template-columns:repeat(2,1fr);}
+}
+@media(max-width:820px){
+  html{font-size:14px;}
+  .topbar{height:auto;flex-wrap:wrap;padding:0.5em 0.9em;gap:0.5em;position:static;}
+  .pills{order:3;width:100%;}
+  .tbar-r{order:2;}
+  .page{grid-template-columns:1fr;min-height:auto;}
+  .left{position:static;height:auto;max-height:60vh;border-right:none;border-bottom:1px solid var(--border);}
+  .left.left-hidden{display:none;}
+  .right{padding:1em;}
+  .seg-badge{width:7em;}
+  .seg-circle{width:5em;height:5em;}
+  .instr-row-list{grid-template-columns:1fr;}
+  .icpage-grid{grid-template-columns:repeat(2,1fr);}
+  .egrid{grid-template-columns:1fr;}
+}
+@media(max-width:480px){
+  .seg-instrs{padding:0.7em 0.8em;}
+  .ic-val{font-size:0.85em;}
+}
+
+/* ── PRINT (A4, icon sheet: 4 segments / page) ── */
+@media print{
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  @page{size:A4 portrait;margin:11mm;}
+  body{background:#fff;color:#111;}
+  .topbar,.vtabs,.icon-toolbar,.summary{display:none!important;}
+  .left{display:none!important;}
+  .page{display:block;}
+  .right{padding:0;overflow:visible;}
+  body.printing-icon #vp-flow,body.printing-icon #vp-block,body.printing-icon #vp-text,body.printing-icon #vp-export{display:none!important;}
+  body.printing-icon #vp-icon{display:block!important;}
+  body.printing-icon .icpage{display:block!important;page-break-after:always;}
+  body.printing-icon .icpage:last-child{page-break-after:auto;}
+  body.printing-icon .icpage-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+  body.printing-icon .iccard{background:#fff!important;page-break-inside:avoid;min-height:0;}
+  body.printing-icon .iccard-body{background:#fff!important;}
+  body.printing-icon .icchip{background:#fafafa!important;}
+  body.printing-icon .ic-val{color:#111!important;}
+  body.printing-icon .ic-bars{background:rgba(0,0,0,0.08)!important;color:#333!important;}
+  body.printing-icon .iccard-note{color:#6a4ca0!important;background:#f6f2fb!important;}
+  body.printing-icon .icpage-foot{display:block;text-align:center;font-size:9px;color:#777;margin-top:9px;letter-spacing:.5px;}
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<header class="topbar">
+  <div class="logo">ARRANGER</div>
+  <div class="pills">
+    <div class="pill"><label>曲目</label><input id="s-title" value="King Of Kings" oninput="renderAll()" style="width:100px"></div>
+    <div class="pill"><label>Key</label><input id="s-key" value="D" oninput="renderAll()" style="width:28px"></div>
+    <div class="pill"><label>拍號</label><input id="s-time" value="4/4" oninput="renderAll()" style="width:34px"></div>
+    <div class="pill"><label>BPM</label><input id="s-bpm" value="71" oninput="renderAll()" style="width:38px"></div>
+    <div class="pill" style="gap:5px">
+      <label>字級</label>
+      <button class="fbtn" onclick="bumpFont(-2)" title="縮小檢視字級">−</button>
+      <span id="font-size-label">13</span>
+      <button class="fbtn" onclick="bumpFont(2)" title="放大檢視字級">＋</button>
+    </div>
+  </div>
+  <div class="tbar-r">
+    <span class="seg" title="切換版面：電腦 / 平板 / 手機">
+      <button class="segbtn" id="mode-desktop-btn" onclick="setMode('desktop')" title="電腦：側欄編輯 ＋ 寬版檢視">🖥 電腦</button>
+      <button class="segbtn" id="mode-tablet-btn" onclick="setMode('tablet')" title="平板：編輯區移到上方、檢視全寬、圖示譜3欄">▦ 平板</button>
+      <button class="segbtn" id="mode-phone-btn" onclick="setMode('phone')" title="手機：隱藏編輯區、圖示譜2欄">📱 手機</button>
+    </span>
+    <button class="btn" onclick="saveProject()" title="儲存到本機（localStorage）">💾 存檔</button>
+    <button class="btn" onclick="loadProject()" title="載入上次存檔">📂 載入</button>
+    <button class="btn" onclick="expJSON()" title="匯出 JSON 備份">↓ JSON</button>
+    <input id="json-import" type="file" accept=".json" style="display:none" onchange="impJSON(this)">
+    <button class="btn" onclick="document.getElementById('json-import').click()" title="從 JSON 匯入">↑ JSON</button>
+    <button class="btn" onclick="expCSV()">↓ CSV</button>
+    <button class="btn" id="png-flow-btn" onclick="expPNG('flow')">↓ PNG 示意圖</button>
+    <button class="btn" id="png-block-btn" onclick="expPNG('block')">↓ PNG 方塊圖</button>
+    <button class="btn" onclick="printIcon()" title="列印圖示譜（每頁4段，A4）">🖨 圖示譜PDF</button>
+    <button class="btn btna" onclick="addSect()">＋ 新增段落</button>
+  </div>
+</header>
+
+<div class="page">
+  <!-- LEFT: editor -->
+  <aside class="left" id="left-panel">
+    <div class="lhd">段落編輯</div>
+    <div id="slist"></div>
+    <button class="asect" onclick="addSect()">＋ 新增段落</button>
+  </aside>
+
+  <!-- RIGHT: views -->
+  <section class="right">
+    <div class="vtabs">
+      <button class="vtab a" onclick="sw('flow',this)">展開示意圖</button>
+      <button class="vtab" onclick="sw('block',this)">方塊流程圖</button>
+      <button class="vtab" onclick="sw('icon',this)">圖示譜</button>
+      <button class="vtab" onclick="sw('text',this)">文字清單</button>
+      <button class="vtab" onclick="sw('export',this)">匯出</button>
+    </div>
+
+    <div class="summary" id="summary"></div>
+
+    <!-- FLOW VIEW -->
+    <div id="vp-flow">
+      <div class="flow" id="flow-content"></div>
+    </div>
+
+    <!-- BLOCK VIEW -->
+    <div id="vp-block" style="display:none">
+      <div class="block-scroll">
+        <div class="block-track" id="block-content"></div>
+      </div>
+    </div>
+
+    <!-- ICON SHEET VIEW -->
+    <div id="vp-icon" style="display:none">
+      <div class="icon-toolbar">
+        <button class="ic-navbtn" id="ic-prev" onclick="icNav(-1)" title="上一頁">‹</button>
+        <span class="ic-pageind" id="ic-pageind">1 / 1</span>
+        <button class="ic-navbtn" id="ic-next" onclick="icNav(1)" title="下一頁">›</button>
+        <label class="ic-hint">每頁
+          <select class="ic-sel" id="ic-perpage" onchange="setPerPage(this.value)">
+            <option value="4">4</option>
+            <option value="6" selected>6</option>
+            <option value="8">8</option>
+          </select>
+        段 · 手機可左右滑動翻頁</label>
+        <span class="ic-spacer"></span>
+        <button class="btn btna" onclick="printIcon()">🖨 列印 / 存 PDF</button>
+      </div>
+      <div class="ic-legend" id="ic-legend"></div>
+      <div class="icpages" id="icon-pages"></div>
+    </div>
+
+    <!-- TEXT VIEW -->
+    <div id="vp-text" style="display:none">
+      <div style="display:flex;justify-content:flex-end;margin-bottom:8px">
+        <button class="btn" onclick="copyTL(this)">複製全部</button>
+      </div>
+      <div class="tl" id="tlc"></div>
+    </div>
+
+    <!-- EXPORT VIEW -->
+    <div id="vp-export" style="display:none">
+      <div class="egrid">
+        <div class="ecard2"><h3>🎼 圖示譜 PDF（每頁6段）</h3><p>純圖示／色塊呈現，每段圖示一排兩個，A4 直式每頁 6 個段落，適合列印發給團員或現場看譜</p><button class="btn btna" onclick="printIcon()">🖨 列印 / 存 PDF</button></div>
+        <div class="ecard2"><h3>🖼 PNG 展開示意圖</h3><p>將「展開示意圖」整頁輸出為高解析 PNG，包含所有段落與樂器標註</p><button class="btn btna" onclick="expPNG('flow')">↓ PNG 展開示意圖</button></div>
+        <div class="ecard2"><h3>📦 PNG 方塊流程圖</h3><p>將「方塊流程圖」橫向輸出為高解析 PNG</p><button class="btn btna" onclick="expPNG('block')">↓ PNG 方塊流程圖</button></div>
+        <div class="ecard2"><h3>📊 CSV 樂器備註表</h3><p>包含所有段落、Bar 數、顏色、樂器備註</p><button class="btn" onclick="expCSV()">↓ Download CSV</button></div>
+        <div class="ecard2"><h3>📋 文字清單</h3><p>純文字格式，可貼入 Notion / 筆記 App</p><button class="btn" onclick="sw('text',null);copyTL(this)">複製文字清單</button></div>
+        <div class="ecard2"><h3>↓ JSON 備份</h3><p>完整存檔，可日後匯入繼續編輯</p><button class="btn" onclick="expJSON()">↓ Download JSON</button></div>
+      </div>
+      <div style="font-size:11px;font-weight:500;color:var(--text2);margin-bottom:8px">在 Canva / Miro 快速還原（3 步驟）</div>
+      <div class="tips2">
+        <div class="tip2"><div class="tipn">1</div><p>新增黑色畫布 → 每個段落用一個<strong>圓形</strong>（邊框顏色=段落色），內部疊加更小的彩色圓代表各樂器層次。節奏組 Drum+Bass 改用小方形置於圓底。</p></div>
+        <div class="tip2"><div class="tipn">2</div><p>段落圓由<strong>左至右排列</strong>，圓徑依 Bar 數等比縮放。段落間用虛線箭頭連接，標注轉場（Beat Switch、漸弱）。</p></div>
+        <div class="tip2"><div class="tipn">3</div><p>本工具展開示意圖的<strong>截圖</strong>可直接貼入 Canva 作參考底圖，再疊加說明卡片。</p></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+const COL={
+  black: {stroke:'#888',   fill:'rgba(136,136,136,0.1)',  text:'#ccc',    label:'黑（主要）'},
+  blue:  {stroke:'#5b9bd5',fill:'rgba(91,155,213,0.1)',   text:'#5b9bd5', label:'藍（第二層）'},
+  red:   {stroke:'#d4564a',fill:'rgba(212,86,74,0.1)',    text:'#d4564a', label:'紅（高潮）'},
+  purple:{stroke:'#9b72cf',fill:'rgba(155,114,207,0.1)',  text:'#9b72cf', label:'紫（特效）'},
+};
+const INS=['Vocal','KB','Pad','AG','EG1','EG2','Bass','Drum'];
+const RHYTHM=['Bass','Drum'];
+const ICON={Vocal:'🎤',KB:'🎹',Pad:'🌫️',AG:'🎸',EG1:'⚡',EG2:'⚡',Bass:'⬇️',Drum:'🥁'};
+/* 每個樂器一種固定外框顏色（圖示譜用） */
+const INSCOL={
+  Vocal:{stroke:'#e0883c',fill:'rgba(224,136,60,0.13)'},   /* 橘 */
+  KB:   {stroke:'#e3c13a',fill:'rgba(227,193,58,0.13)'},   /* 黃 */
+  Pad:  {stroke:'#9b72cf',fill:'rgba(155,114,207,0.13)'},  /* 紫 */
+  AG:   {stroke:'#5fb37a',fill:'rgba(95,179,122,0.13)'},   /* 綠 */
+  EG1:  {stroke:'#5b9bd5',fill:'rgba(91,155,213,0.13)'},   /* 藍 */
+  EG2:  {stroke:'#4bb6c2',fill:'rgba(75,182,194,0.13)'},   /* 青 */
+  Bass: {stroke:'#d4564a',fill:'rgba(212,86,74,0.13)'},    /* 紅 */
+  Drum: {stroke:'#cf7fa8',fill:'rgba(207,127,168,0.13)'},  /* 粉 */
+};
+
+let sects=[
+  {id:1, name:'Sign In',     bars:1,  color:'black',  layers:[{color:'black',ins:{Pad:'opening',Drum:'Hihat fill'}}], notes:'1 Bar 進場'},
+  {id:2, name:'Intro',       bars:8,  color:'black',  layers:[{color:'black',ins:{KB:'melody',Pad:'長音',Bass:'2 bar',Drum:'2,4 hit'}},{color:'blue',ins:{EG1:'space system',Bass:'Low 16beat'}}], notes:'4+4Bar'},
+  {id:3, name:'Verse 1',     bars:8,  color:'black',  layers:[{color:'black',ins:{Pad:'長音'}},{color:'blue',ins:{AG:'刷奏',Bass:'全音符'}}], notes:'4+4 Bar'},
+  {id:4, name:'Interlude 1', bars:2,  color:'blue',   layers:[{color:'black',ins:{KB:'Melody',Pad:'長音',EG1:'Melody',Bass:'4 beat',Drum:'4Beat'}}], notes:'4Beat → drum fill in'},
+  {id:5, name:'Chorus 1',    bars:8,  color:'blue',   layers:[{color:'black',ins:{EG1:'Arpeggio'}},{color:'red',ins:{KB:'Melody'}}], notes:'4+4bar，Beat Switch'},
+  {id:6, name:'Interlude 2', bars:2,  color:'blue',   layers:[{color:'black',ins:{KB:'Melody',Pad:'長音',Bass:'4 beat',Drum:'4Beat+Tom'}}], notes:'drum fill in to Verse 2'},
+  {id:7, name:'Verse 2',     bars:8,  color:'black',  layers:[{color:'black',ins:{KB:'',Pad:'',AG:'chord',Bass:'4 beat',Drum:'tom'}},{color:'blue',ins:{EG1:'附點8beat'}}], notes:'4+4 bar'},
+  {id:8, name:'Interlude 2b',bars:2,  color:'blue',   layers:[{color:'black',ins:{KB:'Melody',Pad:'',EG1:'Melody',Bass:'4beat',Drum:'4beat+tom'}}], notes:''},
+  {id:9, name:'Chorus 2',    bars:4,  color:'blue',   layers:[{color:'black',ins:{Vocal:'',KB:'',Pad:'',AG:'',EG1:'drive Arpeggio',Bass:'',Drum:''}},{color:'red',ins:{KB:'chorus Melody',EG1:'Sound wall'}}], notes:''},
+  {id:10,name:'Interlude 3', bars:4,  color:'black',  layers:[{color:'black',ins:{KB:'Melody',Bass:'1 beat',Drum:'147'}}], notes:''},
+  {id:11,name:'Verse 3',     bars:8,  color:'black',  layers:[{color:'black',ins:{Vocal:'',KB:'',Pad:'',AG:'',EG1:'',Bass:'',Drum:'2,4 hit'}},{color:'blue',ins:{EG1:'drive Arpeggio',Bass:'follow drum',Drum:'tom build up'}}], notes:'4+4 bar, fill in直接大副歌'},
+  {id:12,name:'Chorus 3',    bars:16, color:'red',    layers:[{color:'black',ins:{Vocal:'',KB:'chorus Melody',Pad:'',AG:'',EG1:'Sound wall',Bass:'',Drum:''}},{color:'purple',ins:{KB:'chorus Melody',EG1:'chorus Melody'}}], notes:'8+8'},
+];
+let nid=13;
+
+/* ── FONT SIZE （只縮放右側檢視區，避免放大破版） ── */
+let curFont=13;
+const FONT_MIN=10, FONT_MAX=30;
+function setFontSize(v){
+  v=Math.max(FONT_MIN,Math.min(FONT_MAX,parseInt(v)||13));
+  curFont=v;
+  document.getElementById('font-size-label').textContent=v;
+  const r=document.querySelector('.right');
+  if(r)r.style.fontSize=v+'px';
+}
+function bumpFont(d){setFontSize(curFont+d);}
+
+/* ── SAVE / LOAD ── */
+function getProjectData(){
+  return {
+    meta:{title:gv('s-title'),key:gv('s-key'),time:gv('s-time'),bpm:gv('s-bpm'),fontSize:curFont},
+    sects:JSON.parse(JSON.stringify(sects)),
+    nid
+  };
+}
+function applyProjectData(data){
+  if(!data||!data.sects)return false;
+  document.getElementById('s-title').value=data.meta?.title||'';
+  document.getElementById('s-key').value=data.meta?.key||'';
+  document.getElementById('s-time').value=data.meta?.time||'';
+  document.getElementById('s-bpm').value=data.meta?.bpm||'';
+  if(data.meta?.fontSize) setFontSize(data.meta.fontSize);
+  sects=data.sects;
+  nid=data.nid||sects.length+1;
+  iconPage=0;
+  return true;
+}
+function saveProject(){
+  try{
+    localStorage.setItem('arranger_project',JSON.stringify(getProjectData()));
+    const btn=event.target;btn.textContent='✓ 已存檔';setTimeout(()=>btn.textContent='💾 存檔',1500);
+  }catch(e){alert('存檔失敗：'+e.message);}
+}
+function loadProject(){
+  try{
+    const raw=localStorage.getItem('arranger_project');
+    if(!raw){alert('找不到存檔，請先儲存一次。');return;}
+    if(applyProjectData(JSON.parse(raw))){
+      renderSB();renderAll();
+      const btn=event.target;btn.textContent='✓ 已載入';setTimeout(()=>btn.textContent='📂 載入',1500);
+    }
+  }catch(e){alert('載入失敗：'+e.message);}
+}
+/* auto-save: silently keep a backup on every change */
+function autoSave(){
+  try{localStorage.setItem('arranger_project',JSON.stringify(getProjectData()));}catch(e){}
+}
+function expJSON(){
+  const a=document.createElement('a');
+  const title=(gv('s-title')||'arrangement').replace(/\s+/g,'_');
+  a.download=title+'.json';
+  a.href='data:application/json;charset=utf-8,'+encodeURIComponent(JSON.stringify(getProjectData(),null,2));
+  a.click();
+}
+function impJSON(input){
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      if(applyProjectData(JSON.parse(e.target.result))){
+        renderSB();renderAll();
+        alert('✓ 匯入成功！');
+      }
+    }catch(err){alert('匯入失敗：'+err.message);}
+    input.value='';
+  };
+  reader.readAsText(file);
+}
+
+function esc(v){return String(v).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');}
+function gv(id){return document.getElementById(id).value;}
+
+/* ── SUMMARY (total bars + estimated length) ── */
+function renderSummary(){
+  const totalBars=sects.reduce((a,s)=>a+(parseInt(s.bars)||0),0);
+  const beatsPerBar=parseInt((gv('s-time')||'4/4').split('/')[0])||4;
+  const bpm=parseInt(gv('s-bpm'))||0;
+  let dur='—';
+  if(bpm>0){
+    const sec=Math.round(totalBars*beatsPerBar/bpm*60);
+    dur=Math.floor(sec/60)+':'+String(sec%60).padStart(2,'0');
+  }
+  document.getElementById('summary').innerHTML=
+    `段落 <b>${sects.length}</b>　總小節 <b>${totalBars}</b> Bar　預估長度 <b>${dur}</b>　頁數(圖示譜) <b>${pageCount()}</b>`;
+}
+
+/* ── RENDER FLOW VIEW ── */
+function renderFlow(){
+  const root=document.getElementById('flow-content');
+
+  root.innerHTML=sects.map((s,i)=>{
+    const col=COL[s.color];
+    const hasDB=INS.some(k=>RHYTHM.includes(k)&&s.layers[0]?.ins[k]);
+
+    const innerRings=s.layers.slice(1).map((l,li)=>{
+      const lc=COL[l.color];
+      const pct=72-li*16;
+      return `<div class="seg-circle-inner" style="width:${pct}%;height:${pct}%;border-color:${lc.stroke};background:${lc.fill};top:${(100-pct)/2}%;left:${(100-pct)/2}%"></div>`;
+    }).join('');
+
+    const badge=`
+      <div class="seg-badge">
+        <div class="seg-circle" style="border-color:${col.stroke};background:${col.fill}">
+          ${innerRings}
+          <span class="seg-name" style="color:${col.text};position:relative;z-index:1;font-size:${s.name.length>7?'9px':'11px'}">${esc(s.name)}</span>
+          <span class="seg-bar" style="position:relative;z-index:1">${s.bars}B</span>
+        </div>
+        ${hasDB?'<div class="seg-db-badge">D + B</div>':''}
+      </div>`;
+
+    const layerHtml=s.layers.map((l,li)=>{
+      const lc=COL[l.color];
+      const activeIns=INS.filter(k=>l.ins[k]);
+      if(activeIns.length===0&&li>0)return '';
+
+      const melodyIns=activeIns.filter(k=>!RHYTHM.includes(k));
+      const rhythmIns=activeIns.filter(k=>RHYTHM.includes(k));
+
+      const renderRows=(keys)=>keys.map(k=>`
+        <div class="irow${RHYTHM.includes(k)?' rhythm':''}">
+          <span class="iname" style="color:${li===0?'var(--text3)':lc.stroke}">${k}</span>
+          <span class="ival">${esc(l.ins[k])||'<span class="empty">—</span>'}</span>
+        </div>`).join('');
+
+      const layerLabel=li===0?'':`
+        <div class="layer-hd" style="color:${lc.stroke}">
+          ${lc.label}
+        </div>`;
+
+      if(melodyIns.length===0&&rhythmIns.length===0&&li===0){
+        return '';
+      }
+      return `<div class="instr-layer">
+        ${layerLabel}
+        <div class="instr-row-list">${renderRows([...melodyIns,...rhythmIns])}</div>
+      </div>`;
+    }).join('');
+
+    const noteHtml=s.notes?`<div class="seg-note">⚑ ${esc(s.notes)}</div>`:'';
+
+    const panel=`
+      <div class="seg-instrs" style="border-color:${col.stroke}20;background:${col.fill}">
+        ${layerHtml}
+        ${noteHtml}
+      </div>`;
+
+    const connector=i<sects.length-1?`<div class="srow-gap"><div class="arrow-down"></div></div>`:'';
+
+    return `<div class="srow">${badge}${panel}</div>${connector}`;
+  }).join('');
+}
+
+/* ── RENDER BLOCK VIEW ── */
+function renderBlock(){
+  const root=document.getElementById('block-content');
+  root.innerHTML=sects.map((s,i)=>{
+    const col=COL[s.color];
+    const w=Math.max(110,s.bars*22);
+    const allIns=s.layers.flatMap(l=>INS.filter(k=>l.ins[k]).map(k=>({k,v:l.ins[k],li:s.layers.indexOf(l),lc:COL[l.color]})));
+    const melIns=allIns.filter(x=>!RHYTHM.includes(x.k));
+    const rIns=allIns.filter(x=>RHYTHM.includes(x.k));
+    const rowsHtml=melIns.map(x=>`<div class="b-irow"><span class="b-iname" style="color:${x.li===0?'var(--text3)':x.lc.stroke}">${x.k}</span><span class="b-ival">${esc(x.v)}</span></div>`).join('');
+    const conn=i<sects.length-1?`<div class="bconn"><div class="bconn-line"></div></div>`:'';
+    return `<div class="bseg" style="border-color:${col.stroke};background:${col.fill};width:${w}px">
+      <div class="bseg-head" style="color:${col.text};background:${col.fill}">
+        ${esc(s.name)}<span class="bseg-bar">${s.bars} Bar</span>
+      </div>
+      <div class="bseg-body">${rowsHtml}</div>
+      ${rIns.length?`<div class="b-dbrow">D+B: ${rIns.map(x=>esc(x.v)).filter(Boolean).join(' / ')}</div>`:''}
+    </div>${conn}`;
+  }).join('');
+}
+
+/* ── RENDER ICON SHEET VIEW (圖示譜，每頁4段) ── */
+let iconPage=0;
+let SEG_PER_PAGE=6;
+function chunk(arr,n){const o=[];for(let i=0;i<arr.length;i+=n)o.push(arr.slice(i,i+n));return o;}
+function pageCount(){return Math.max(1,Math.ceil(sects.length/SEG_PER_PAGE));}
+function icCols(){return SEG_PER_PAGE===4?2:SEG_PER_PAGE===8?4:3;}
+function setPerPage(v){
+  SEG_PER_PAGE=parseInt(v)||6;
+  iconPage=0;
+  try{localStorage.setItem('arranger_perpage',SEG_PER_PAGE);}catch(e){}
+  renderIcon();renderSummary();
+}
+function renderLegend(){
+  const el=document.getElementById('ic-legend');
+  if(!el)return;
+  el.innerHTML=INS.map(k=>`<span class="ic-legitem" style="border-color:${INSCOL[k].stroke};color:${INSCOL[k].stroke}">${ICON[k]} ${k}</span>`).join('');
+}
+
+function renderIcon(){
+  const root=document.getElementById('icon-pages');
+  const pages=chunk(sects,SEG_PER_PAGE);
+  const total=Math.max(1,pages.length);
+  if(iconPage>=total)iconPage=total-1;
+  if(iconPage<0)iconPage=0;
+
+  const chipHtml=(c)=>{
+    const ic=INSCOL[c.k]||{stroke:c.lc.stroke,fill:'rgba(255,255,255,0.02)'};
+    return `<div class="icchip" style="border-color:${ic.stroke};border-left-color:${c.lc.stroke};background:${ic.fill}">
+      <span class="ic-emoji">${ICON[c.k]||'🎵'}</span>
+      <span class="ic-code" style="color:${ic.stroke}">${c.k}</span>
+      <span class="ic-val">${esc(c.v)}</span>
+    </div>`;
+  };
+
+  root.innerHTML=(pages.length?pages:[[]]).map((pg,pi)=>{
+    const cards=pg.map(s=>{
+      const col=COL[s.color];
+      const chips=[];
+      s.layers.forEach(l=>{
+        INS.forEach(k=>{ if(l.ins[k]&&String(l.ins[k]).trim()) chips.push({k,v:l.ins[k],lc:COL[l.color]}); });
+      });
+      const mel=chips.filter(c=>!RHYTHM.includes(c.k));
+      const rhy=chips.filter(c=>RHYTHM.includes(c.k));
+      const body=(mel.length?`<div class="icchip-grid">${mel.map(chipHtml).join('')}</div>`:'<div class="ic-empty">—</div>')
+        + (rhy.length?`<div class="ic-rhythm-div">節奏組 ◈</div><div class="icchip-grid">${rhy.map(chipHtml).join('')}</div>`:'');
+      return `<div class="iccard" style="border-color:${col.stroke}">
+        <div class="iccard-head" style="background:${col.fill};color:${col.stroke}">
+          <span class="ic-name">${esc(s.name)}</span>
+          <span class="ic-bars">${s.bars} Bar</span>
+        </div>
+        <div class="iccard-body">${body}</div>
+        ${s.notes?`<div class="iccard-note">⚑ ${esc(s.notes)}</div>`:''}
+      </div>`;
+    }).join('');
+    const foot=`${esc(gv('s-title'))} · Key ${esc(gv('s-key'))} · ${esc(gv('s-time'))} · ${esc(gv('s-bpm'))} BPM　—　第 ${pi+1} / ${total} 頁`;
+    return `<div class="icpage${pi===iconPage?' show':''}" data-page="${pi}">
+       <div class="icpage-grid">${cards}</div>
+       <div class="icpage-foot">${foot}</div>
+    </div>`;
+  }).join('');
+
+  root.style.setProperty('--ic-cols',icCols());
+  document.getElementById('ic-pageind').textContent=`${pages.length?iconPage+1:1} / ${total}`;
+  document.getElementById('ic-prev').disabled=iconPage<=0;
+  document.getElementById('ic-next').disabled=iconPage>=total-1;
+  renderLegend();
+}
+function icNav(d){
+  iconPage=Math.max(0,Math.min(pageCount()-1,iconPage+d));
+  renderIcon();
+}
+/* touch swipe to flip pages on phone/tablet */
+let _tx=0;
+function bindSwipe(){
+  const el=document.getElementById('icon-pages');
+  el.addEventListener('touchstart',e=>{_tx=e.changedTouches[0].clientX;},{passive:true});
+  el.addEventListener('touchend',e=>{
+    const dx=e.changedTouches[0].clientX-_tx;
+    if(Math.abs(dx)>50)icNav(dx<0?1:-1);
+  },{passive:true});
+}
+
+/* ── PRINT ICON SHEET (A4, 4 segments / page) ── */
+function printIcon(){
+  renderIcon();
+  document.body.classList.add('printing-icon');
+  setTimeout(()=>window.print(),60);
+}
+window.addEventListener('afterprint',()=>document.body.classList.remove('printing-icon'));
+
+/* ── RENDER SIDEBAR ── */
+function renderSB(){
+  document.getElementById('slist').innerHTML=sects.map((s,idx)=>{
+    const col=COL[s.color];
+    const ihtml=INS.map(k=>`<div class="iitem"><div class="ilbl">${k}</div><input class="iinp" value="${esc(s.layers[0]?.ins[k]||'')}" placeholder="—" onchange="setI(${s.id},0,'${k}',this.value)"></div>`).join('');
+    const lhtml=s.layers.slice(1).map((l,li)=>{
+      const lc=COL[l.color];
+      return `<div class="lyblk">
+        <div style="display:flex;align-items:center;gap:4px;margin-bottom:4px">
+          <span class="ltag" style="color:${lc.text};border-color:${lc.stroke};background:${lc.fill}">${lc.label}</span>
+          <select class="ms" onchange="setLC(${s.id},${li+1},this.value)">${Object.keys(COL).map(k=>`<option value="${k}"${l.color===k?' selected':''}>${COL[k].label}</option>`).join('')}</select>
+          <button class="dbtn" onclick="delL(${s.id},${li+1})">刪</button>
+        </div>
+        <div class="igrid2">${INS.map(k=>`<div class="iitem"><div class="ilbl">${k}</div><input class="iinp" value="${esc(l.ins[k]||'')}" placeholder="—" onchange="setI(${s.id},${li+1},'${k}',this.value)"></div>`).join('')}</div>
+      </div>`;
+    }).join('');
+    return `<div class="ecard" id="ec-${s.id}">
+      <div class="etop" onclick="togE(${s.id})">
+        <div class="edot" style="background:${col.fill};border-color:${col.stroke}"></div>
+        <input class="ename" value="${esc(s.name)}" onclick="event.stopPropagation()" oninput="setSN(${s.id},this.value)">
+        <span class="ebars" id="eb-${s.id}">${s.bars}B</span>
+        <span class="eord">
+          <button class="eordbtn" title="上移" onclick="event.stopPropagation();moveS(${s.id},-1)"${idx===0?' disabled':''}>▲</button>
+          <button class="eordbtn" title="下移" onclick="event.stopPropagation();moveS(${s.id},1)"${idx===sects.length-1?' disabled':''}>▼</button>
+        </span>
+        <span class="earr" id="ea-${s.id}">›</span>
+      </div>
+      <div class="ebody" id="ebo-${s.id}">
+        <div class="erow">
+          <label>Bar</label><input class="mi" type="number" min="1" value="${s.bars}" style="width:46px" onchange="setBars(${s.id},this.value)">
+          <label>色</label><select class="ms" onchange="setC(${s.id},this.value)">${Object.keys(COL).map(k=>`<option value="${k}"${s.color===k?' selected':''}>${COL[k].label}</option>`).join('')}</select>
+          <button class="dupbtn" onclick="dupS(${s.id})">⎘ 複製</button>
+          <button class="dbtn" onclick="delS(${s.id})">刪</button>
+        </div>
+        <div class="igrid2">${ihtml}</div>
+        <div class="lyhd">內層<button class="ladd" onclick="addL(${s.id})">+ 新增</button></div>
+        ${lhtml}
+        <textarea class="ntxt" rows="2" placeholder="段落備註…" onchange="setN(${s.id},this.value)">${esc(s.notes)}</textarea>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function togE(id){const b=document.getElementById('ebo-'+id),a=document.getElementById('ea-'+id),o=b.classList.toggle('o');a.classList.toggle('o',o);}
+function setSN(id,v){sects.find(s=>s.id===id).name=v;schedRender();}
+function setBars(id,v){const s=sects.find(s=>s.id===id);s.bars=Math.max(1,parseInt(v)||1);document.getElementById('eb-'+id).textContent=s.bars+'B';schedRender();}
+function setC(id,v){sects.find(s=>s.id===id).color=v;renderSB();schedRender();}
+function setI(id,li,k,v){const s=sects.find(s=>s.id===id);if(!s.layers[li])s.layers[li]={color:'black',ins:{}};s.layers[li].ins[k]=v;schedRender();}
+function setLC(id,li,v){sects.find(s=>s.id===id).layers[li].color=v;renderSB();schedRender();}
+function setN(id,v){sects.find(s=>s.id===id).notes=v;schedRender();}
+function delS(id){if(!confirm('確定刪除這個段落？'))return;sects=sects.filter(s=>s.id!==id);renderSB();schedRender();}
+function dupS(id){
+  const i=sects.findIndex(s=>s.id===id);if(i<0)return;
+  const copy=JSON.parse(JSON.stringify(sects[i]));
+  copy.id=nid++;copy.name=copy.name+' ✦';
+  sects.splice(i+1,0,copy);
+  renderSB();schedRender();
+}
+function moveS(id,dir){
+  const i=sects.findIndex(s=>s.id===id);const j=i+dir;
+  if(i<0||j<0||j>=sects.length)return;
+  [sects[i],sects[j]]=[sects[j],sects[i]];
+  renderSB();schedRender();
+}
+function addSect(){sects.push({id:nid++,name:'新段落',bars:4,color:'black',layers:[{color:'black',ins:{}}],notes:''});renderSB();schedRender();}
+function addL(id){sects.find(s=>s.id===id).layers.push({color:'blue',ins:{}});renderSB();}
+function delL(id,li){sects.find(s=>s.id===id).layers.splice(li,1);renderSB();schedRender();}
+
+/* device-mode switch (電腦 / 平板 / 手機) — 永遠只有一個啟用 */
+const MODES=['desktop','tablet','phone'];
+function setMode(m){
+  if(!MODES.includes(m))m='desktop';
+  document.body.classList.remove('mode-tablet','mode-phone');
+  if(m==='tablet'||m==='phone')document.body.classList.add('mode-'+m); // desktop = 無 class
+  MODES.forEach(x=>{
+    const b=document.getElementById('mode-'+x+'-btn');
+    if(b)b.classList.toggle('btna',x===m);
+  });
+  try{localStorage.setItem('arranger_mode',m);}catch(e){}
+}
+function initMode(){
+  let m='';
+  try{m=localStorage.getItem('arranger_mode')||'';}catch(e){}
+  if(!MODES.includes(m)){
+    const small = (window.matchMedia ? window.matchMedia('(max-width:820px)').matches : (window.innerWidth||9999)<=820);
+    m = small ? 'phone' : 'desktop';
+  }
+  setMode(m);
+}
+
+let dt;
+function schedRender(){clearTimeout(dt);dt=setTimeout(renderAll,80);}
+
+function renderAll(){renderFlow();renderBlock();renderIcon();renderSummary();buildTL();autoSave();}
+
+/* ── TEXT LIST ── */
+function buildTL(){
+  let t=`=== 編曲架構 ===\n曲目：${gv('s-title')}  Key：${gv('s-key')}  拍號：${gv('s-time')}  BPM：${gv('s-bpm')}\n${'─'.repeat(38)}\n\n`;
+  sects.forEach((s,i)=>{
+    t+=`[${i+1}] ${s.name}  ${s.bars} Bar  ${COL[s.color].label}\n`;
+    if(s.layers[0])INS.forEach(k=>{if(s.layers[0].ins[k])t+=`    ${k.padEnd(6)}: ${s.layers[0].ins[k]}\n`;});
+    s.layers.slice(1).forEach((l,li)=>{t+=`  ↳ 內層${li+1}（${COL[l.color].label}）\n`;INS.forEach(k=>{if(l.ins[k])t+=`      ${k.padEnd(6)}: ${l.ins[k]}\n`;});});
+    if(s.notes)t+=`  ⚑ ${s.notes}\n`;
+    t+='\n';
+  });
+  document.getElementById('tlc').textContent=t;
+}
+function copyTL(btn){
+  buildTL();
+  navigator.clipboard.writeText(document.getElementById('tlc').textContent).then(()=>{
+    if(btn){const o=btn.textContent;btn.textContent='✓ 已複製';setTimeout(()=>btn.textContent=o,1500);}
+  });
+}
+
+/* ── EXPORT ── */
+function expCSV(){
+  let csv='﻿段落,Bar,顏色,層次,Vocal,KB,Pad,AG,EG1,EG2,Bass,Drum,備註\n';
+  sects.forEach(s=>s.layers.forEach((l,li)=>{const ins=l.ins;csv+=`"${s.name}",${s.bars},"${COL[s.color].label}","${li===0?'基底':COL[l.color].label}","${ins.Vocal||''}","${ins.KB||''}","${ins.Pad||''}","${ins.AG||''}","${ins.EG1||''}","${ins.EG2||''}","${ins.Bass||''}","${ins.Drum||''}","${s.notes||''}"\n`;}));
+  const a=document.createElement('a');a.download='arrangement.csv';a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.click();
+}
+
+async function expPNG(view){
+  const panel = view==='block' ? 'block' : 'flow';
+  sw(panel, null);
+  document.querySelectorAll('.vtab').forEach(t=>{
+    t.classList.toggle('a', t.textContent.includes(view==='block'?'方塊':'展開'));
+  });
+
+  const btnId = view==='block' ? 'png-block-btn' : 'png-flow-btn';
+  const btn = document.getElementById(btnId);
+  const origText = btn.textContent;
+  btn.textContent = '產生中…'; btn.disabled = true;
+
+  await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+
+  const targetEl = document.getElementById(view==='block' ? 'block-content' : 'flow-content');
+  const title = gv('s-title')||'arrangement';
+
+  try {
+    const canvas = await html2canvas(targetEl, {
+      backgroundColor: '#0d0d0d',
+      scale: 2,
+      useCORS: true,
+      allowTaint: true,
+      logging: false,
+      scrollX: 0,
+      scrollY: 0,
+    });
+
+    const final = document.createElement('canvas');
+    final.width = canvas.width;
+    final.height = canvas.height + 56;
+    const ctx = final.getContext('2d');
+    ctx.fillStyle = '#151515';
+    ctx.fillRect(0,0,final.width,56);
+    ctx.fillStyle = '#d4a843';
+    ctx.font = `bold 18px 'Space Mono', monospace`;
+    ctx.textBaseline = 'middle';
+    ctx.fillText('ARRANGER', 24, 20);
+    ctx.fillStyle = '#928f88';
+    ctx.font = `13px sans-serif`;
+    ctx.fillText(`${title}  Key:${gv('s-key')}  ${gv('s-time')}  BPM:${gv('s-bpm')}`, 24, 40);
+    ctx.fillStyle = 'rgba(255,255,255,0.07)';
+    ctx.fillRect(0,55,final.width,1);
+    ctx.drawImage(canvas, 0, 56);
+
+    const link = document.createElement('a');
+    link.download = `${title.replace(/\s+/g,'_')}_${view==='block'?'block':'flow'}.png`;
+    link.href = final.toDataURL('image/png');
+    link.click();
+  } catch(err) {
+    alert('PNG 輸出失敗，請嘗試用瀏覽器截圖。\n'+err.message);
+  }
+
+  btn.textContent = origText; btn.disabled = false;
+}
+
+/* ── TABS ── */
+const PANELS=['flow','block','icon','text','export'];
+function sw(name,btn){
+  document.querySelectorAll('.vtab').forEach(t=>t.classList.remove('a'));
+  PANELS.forEach(p=>document.getElementById('vp-'+p).style.display='none');
+  if(btn)btn.classList.add('a');
+  document.getElementById('vp-'+name).style.display='';
+  if(name==='text')buildTL();
+  if(name==='icon')renderIcon();
+}
+
+/* ── INIT ── */
+try{const pp=parseInt(localStorage.getItem('arranger_perpage'));if([4,6,8].includes(pp)){SEG_PER_PAGE=pp;document.getElementById('ic-perpage').value=pp;}}catch(e){}
+renderSB();
+renderAll();
+bindSwipe();
+initMode();
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</body>
+</html>

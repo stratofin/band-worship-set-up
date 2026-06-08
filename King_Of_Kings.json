@@ -1,0 +1,299 @@
+{
+  "meta": {
+    "title": "King Of Kings",
+    "key": "D",
+    "time": "4/4",
+    "bpm": "71",
+    "fontSize": "18"
+  },
+  "sects": [
+    {
+      "id": 1,
+      "name": "Sign In",
+      "bars": 1,
+      "color": "black",
+      "layers": [
+        {
+          "color": "black",
+          "ins": {
+            "Pad": "opening",
+            "Drum": "Hihat fill"
+          }
+        }
+      ],
+      "notes": "1 Bar 進場"
+    },
+    {
+      "id": 2,
+      "name": "Intro",
+      "bars": 8,
+      "color": "black",
+      "layers": [
+        {
+          "color": "black",
+          "ins": {
+            "KB": "melody",
+            "Pad": "長音",
+            "Bass": "2 bar",
+            "Drum": "2,4 hit"
+          }
+        },
+        {
+          "color": "blue",
+          "ins": {
+            "EG1": "space system",
+            "Bass": "Low 16beat"
+          }
+        }
+      ],
+      "notes": "4+4Bar"
+    },
+    {
+      "id": 3,
+      "name": "Verse 1",
+      "bars": 8,
+      "color": "black",
+      "layers": [
+        {
+          "color": "black",
+          "ins": {
+            "Pad": "長音",
+            "KB": " "
+          }
+        },
+        {
+          "color": "blue",
+          "ins": {
+            "AG": "chord",
+            "Bass": "全音符",
+            "Drum": "2,4 hit",
+            "Pad": " "
+          }
+        }
+      ],
+      "notes": "4+4 Bar"
+    },
+    {
+      "id": 4,
+      "name": "Interlude 1",
+      "bars": 2,
+      "color": "blue",
+      "layers": [
+        {
+          "color": "black",
+          "ins": {
+            "KB": "Melody",
+            "Pad": "長音",
+            "EG1": "Melody",
+            "Bass": "4 beat",
+            "Drum": "4Beat",
+            "AG": " "
+          }
+        }
+      ],
+      "notes": "4Beat → drum fill in"
+    },
+    {
+      "id": 5,
+      "name": "Chorus 1",
+      "bars": 8,
+      "color": "blue",
+      "layers": [
+        {
+          "color": "black",
+          "ins": {
+            "EG1": "Arpeggio",
+            "Bass": " ",
+            "Drum": " ",
+            "AG": " ",
+            "KB": " ",
+            "Pad": " ",
+            "Vocal": " "
+          }
+        },
+        {
+          "color": "red",
+          "ins": {
+            "KB": "Melody"
+          }
+        }
+      ],
+      "notes": "4+4bar，Beat Switch"
+    },
+    {
+      "id": 6,
+      "name": "Interlude 2",
+      "bars": 2,
+      "color": "blue",
+      "layers": [
+        {
+          "color": "black",
+          "ins": {
+            "KB": "Melody",
+            "Pad": "長音",
+            "Bass": "4 beat",
+            "Drum": "4Beat+Tom",
+            "EG1": " "
+          }
+        }
+      ],
+      "notes": "drum fill in to Verse 2"
+    },
+    {
+      "id": 7,
+      "name": "Verse 2",
+      "bars": 8,
+      "color": "black",
+      "layers": [
+        {
+          "color": "black",
+          "ins": {
+            "KB": "",
+            "Pad": "",
+            "AG": "chord",
+            "Bass": "4 beat",
+            "Drum": "tom"
+          }
+        },
+        {
+          "color": "blue",
+          "ins": {
+            "EG1": "附點8beat"
+          }
+        }
+      ],
+      "notes": "4+4 bar"
+    },
+    {
+      "id": 8,
+      "name": "Interlude 2",
+      "bars": 2,
+      "color": "blue",
+      "layers": [
+        {
+          "color": "black",
+          "ins": {
+            "KB": "Melody",
+            "Pad": "",
+            "EG1": "Melody",
+            "Bass": "4beat",
+            "Drum": "4beat+tom"
+          }
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": 9,
+      "name": "Chorus 2",
+      "bars": 4,
+      "color": "blue",
+      "layers": [
+        {
+          "color": "black",
+          "ins": {
+            "Vocal": "",
+            "KB": " ",
+            "Pad": " ",
+            "AG": " ",
+            "EG1": "drive Arpeggio",
+            "Bass": " ",
+            "Drum": " "
+          }
+        },
+        {
+          "color": "red",
+          "ins": {
+            "KB": "chorus Melody",
+            "EG1": "Sound wall"
+          }
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": 10,
+      "name": "Interlude 3",
+      "bars": 4,
+      "color": "black",
+      "layers": [
+        {
+          "color": "black",
+          "ins": {
+            "KB": "Melody",
+            "Bass": "1 beat",
+            "Drum": "147",
+            "Pad": " ",
+            "EG1": " ",
+            "AG": " "
+          }
+        }
+      ],
+      "notes": ""
+    },
+    {
+      "id": 11,
+      "name": "Verse 3 + 4",
+      "bars": 8,
+      "color": "black",
+      "layers": [
+        {
+          "color": "black",
+          "ins": {
+            "Vocal": " ",
+            "KB": "",
+            "Pad": " ",
+            "AG": " ",
+            "EG1": " ",
+            "Bass": "  ",
+            "Drum": "2,4 hit"
+          }
+        },
+        {
+          "color": "blue",
+          "ins": {
+            "EG1": "drive Arpeggio",
+            "Bass": "follow drum",
+            "Drum": "tom build up"
+          }
+        }
+      ],
+      "notes": "4+4 bar, fill in直接大副歌"
+    },
+    {
+      "id": 12,
+      "name": "Chorus 3",
+      "bars": 16,
+      "color": "red",
+      "layers": [
+        {
+          "color": "black",
+          "ins": {
+            "Vocal": " ",
+            "KB": "chorus Melody",
+            "Pad": " ",
+            "AG": " ",
+            "EG1": "Sound wall",
+            "Bass": " ",
+            "Drum": " "
+          }
+        },
+        {
+          "color": "purple",
+          "ins": {
+            "KB": "chorus Melody",
+            "EG1": "chorus Melody",
+            "EG2": "",
+            "Drum": " ",
+            "Bass": " ",
+            "Pad": " ",
+            "AG": " ",
+            "Vocal": " "
+          }
+        }
+      ],
+      "notes": "8+8"
+    }
+  ],
+  "nid": 13
+}
