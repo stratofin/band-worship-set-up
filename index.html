@@ -227,6 +227,14 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
 .segbtn:last-child{border-right:none;}
 .segbtn:hover{background:var(--bg4);color:var(--text);}
 .segbtn.btna{background:var(--accent);color:#0d0d0d;font-weight:700;}
+/* 工具列「更多」收合：電腦全展開；手機/平板收起，展開時另起一排 */
+.more-toggle{display:none;}
+.more-actions{display:contents;}
+body.mode-tablet .more-toggle,body.mode-phone .more-toggle{display:inline-block;}
+body.mode-tablet .more-actions,body.mode-phone .more-actions{display:none;}
+body.mode-tablet .more-actions.open,body.mode-phone .more-actions.open{display:flex;flex-wrap:wrap;gap:0.4em;flex-basis:100%;width:100%;margin-top:0.35em;}
+body.mode-tablet .tbar-r,body.mode-phone .tbar-r{width:100%;flex-wrap:wrap;}
+body.mode-tablet .tbar-r .btn,body.mode-phone .tbar-r .btn{font-size:0.8em;padding:0.3em 0.55em;}
 /* 平板：編輯區移到上方、檢視全寬、圖示譜3欄 */
 body.mode-tablet .page{grid-template-columns:1fr;}
 body.mode-tablet .left{position:static;height:auto;max-height:55vh;border-right:none;border-bottom:1px solid var(--border);}
@@ -322,11 +330,14 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
       <button class="btn" onclick="expJSON()" title="匯出 JSON 備份">↓ JSON</button>
       <input id="json-import" type="file" accept=".json" style="display:none" onchange="impJSON(this)">
       <button class="btn" onclick="document.getElementById('json-import').click()" title="從 JSON 匯入">↑ JSON</button>
-      <button class="btn" onclick="expCSV()">↓ CSV</button>
-      <button class="btn" id="png-flow-btn" onclick="expPNG('flow')">↓ PNG 示意圖</button>
-      <button class="btn" id="png-block-btn" onclick="expPNG('block')">↓ PNG 方塊圖</button>
-      <button class="btn" onclick="printIcon()" title="列印圖示譜（每頁4段，A4）">🖨 圖示譜PDF</button>
-      <button class="btn btna" onclick="addSect()">＋ 新增段落</button>
+      <button class="btn more-toggle" id="more-toggle" onclick="toggleMore()" title="展開更多功能">⋯ 更多</button>
+      <div class="more-actions" id="more-actions">
+        <button class="btn" onclick="expCSV()">↓ CSV</button>
+        <button class="btn" id="png-flow-btn" onclick="expPNG('flow')">↓ PNG 示意圖</button>
+        <button class="btn" id="png-block-btn" onclick="expPNG('block')">↓ PNG 方塊圖</button>
+        <button class="btn" onclick="printIcon()" title="列印圖示譜（每頁4段，A4）">🖨 圖示譜PDF</button>
+        <button class="btn btna" onclick="addSect()">＋ 新增段落</button>
+      </div>
     </div>
   </div>
 </header>
@@ -797,6 +808,14 @@ function moveS(id,dir){
 function addSect(){sects.push({id:nid++,name:'新段落',bars:4,color:'black',layers:[{color:'black',ins:{}}],notes:''});renderSB();schedRender();}
 function addL(id){sects.find(s=>s.id===id).layers.push({color:'blue',ins:{}});renderSB();}
 function delL(id,li){sects.find(s=>s.id===id).layers.splice(li,1);renderSB();schedRender();}
+
+/* 工具列「更多」展開 / 收起（手機 / 平板） */
+function toggleMore(){
+  const m=document.getElementById('more-actions');
+  const t=document.getElementById('more-toggle');
+  const open=m.classList.toggle('open');
+  t.textContent=open?'▴ 收起':'⋯ 更多';
+}
 
 /* device-mode switch (電腦 / 平板 / 手機) — 永遠只有一個啟用 */
 const MODES=['desktop','tablet','phone'];
