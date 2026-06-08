@@ -182,9 +182,9 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
 .ic-spacer{flex:1;}
 .ic-hint{font-size:0.72em;color:var(--text3);}
 
-.icpages{}
-.icpage{display:none;}
-.icpage.show{display:block;}
+.icpages{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;align-items:flex-start;scrollbar-width:thin;}
+.icpages::-webkit-scrollbar{height:5px;}
+.icpage{flex:0 0 100%;min-width:100%;scroll-snap-align:start;}
 .icpage-grid{display:grid;grid-template-columns:repeat(var(--ic-cols,3),1fr);align-items:start;gap:0.7em;}
 .ic-legend{display:flex;flex-wrap:wrap;gap:0.3em;margin-bottom:0.85em;}
 .ic-legitem{font-size:0.66em;font-family:'Space Mono',monospace;border:1.5px solid;border-radius:99px;padding:0.12em 0.55em;display:inline-flex;align-items:center;gap:0.25em;}
@@ -277,7 +277,8 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   .right{padding:0;overflow:visible;}
   body.printing-icon #vp-flow,body.printing-icon #vp-block,body.printing-icon #vp-text,body.printing-icon #vp-export{display:none!important;}
   body.printing-icon #vp-icon{display:block!important;}
-  body.printing-icon .icpage{display:block!important;page-break-after:always;}
+  body.printing-icon .icpages{display:block!important;overflow:visible!important;}
+  body.printing-icon .icpage{display:block!important;min-width:0!important;page-break-after:always;}
   body.printing-icon .icpage:last-child{page-break-after:auto;}
   body.printing-icon .icpage-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
   body.printing-icon .iccard{background:#fff!important;page-break-inside:avoid;min-height:0;}
@@ -296,13 +297,13 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
 <header class="topbar">
   <div class="topbar-row topbar-row-1">
     <div class="logo">ARRANGER <span class="byline">by Alex.Syu &amp; Stratofin.Lai</span></div>
+  </div>
+  <div class="topbar-row topbar-row-2">
     <span class="seg" title="切換版面：電腦 / 平板 / 手機">
       <button class="segbtn" id="mode-desktop-btn" onclick="setMode('desktop')" title="電腦：側欄編輯 ＋ 寬版檢視">🖥 電腦</button>
       <button class="segbtn" id="mode-tablet-btn" onclick="setMode('tablet')" title="平板：編輯區移到上方、檢視全寬、圖示譜3欄">▦ 平板</button>
       <button class="segbtn" id="mode-phone-btn" onclick="setMode('phone')" title="手機：隱藏編輯區、圖示譜2欄">📱 手機</button>
     </span>
-  </div>
-  <div class="topbar-row topbar-row-2">
     <div class="pills">
       <div class="pill"><label>曲目</label><input id="s-title" value="King Of Kings" oninput="renderAll()" style="width:100px"></div>
       <div class="pill"><label>Key</label><input id="s-key" value="D" oninput="renderAll()" style="width:28px"></div>
@@ -681,31 +682,44 @@ function renderIcon(){
       </div>`;
     }).join('');
     const foot=`${esc(gv('s-title'))} · Key ${esc(gv('s-key'))} · ${esc(gv('s-time'))} · ${esc(gv('s-bpm'))} BPM　—　第 ${pi+1} / ${total} 頁`;
-    return `<div class="icpage${pi===iconPage?' show':''}" data-page="${pi}">
+    return `<div class="icpage" data-page="${pi}">
        <div class="icpage-grid">${cards}</div>
        <div class="icpage-foot">${foot}</div>
     </div>`;
   }).join('');
 
   root.style.setProperty('--ic-cols',icCols());
-  document.getElementById('ic-pageind').textContent=`${pages.length?iconPage+1:1} / ${total}`;
-  document.getElementById('ic-prev').disabled=iconPage<=0;
-  document.getElementById('ic-next').disabled=iconPage>=total-1;
+  if(iconPage>=total)iconPage=total-1;
+  root.scrollLeft=iconPage*root.clientWidth;   // 重建後維持目前頁
+  icUpdateInd();
   renderLegend();
 }
-function icNav(d){
-  iconPage=Math.max(0,Math.min(pageCount()-1,iconPage+d));
-  renderIcon();
+function icUpdateInd(){
+  const total=pageCount();
+  const pi=document.getElementById('ic-pageind'); if(!pi)return;
+  pi.textContent=`${total?iconPage+1:1} / ${total}`;
+  document.getElementById('ic-prev').disabled=iconPage<=0;
+  document.getElementById('ic-next').disabled=iconPage>=total-1;
 }
-/* touch swipe to flip pages on phone/tablet */
-let _tx=0;
+function icNav(d){
+  const root=document.getElementById('icon-pages');
+  iconPage=Math.max(0,Math.min(pageCount()-1,iconPage+d));
+  if(root&&root.clientWidth)root.scrollTo({left:iconPage*root.clientWidth,behavior:'smooth'});
+  icUpdateInd();
+}
+/* 橫向滑動分頁（scroll-snap）：依捲動位置更新頁碼 */
 function bindSwipe(){
   const el=document.getElementById('icon-pages');
-  el.addEventListener('touchstart',e=>{_tx=e.changedTouches[0].clientX;},{passive:true});
-  el.addEventListener('touchend',e=>{
-    const dx=e.changedTouches[0].clientX-_tx;
-    if(Math.abs(dx)>50)icNav(dx<0?1:-1);
+  if(!el)return;
+  el.addEventListener('scroll',()=>{
+    clearTimeout(el._st);
+    el._st=setTimeout(()=>{
+      if(!el.clientWidth)return;
+      iconPage=Math.max(0,Math.min(pageCount()-1,Math.round(el.scrollLeft/el.clientWidth)));
+      icUpdateInd();
+    },60);
   },{passive:true});
+  window.addEventListener('resize',()=>{ if(el.clientWidth)el.scrollLeft=iconPage*el.clientWidth; });
 }
 
 /* ── PRINT ICON SHEET (A4, 4 segments / page) ── */
