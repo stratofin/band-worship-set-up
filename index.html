@@ -12,6 +12,7 @@
   --border:rgba(255,255,255,0.07); --border2:rgba(255,255,255,0.13);
   --text:#e6e4dd; --text2:#928f88; --text3:#4e4d4a;
   --accent:#d4a843;
+  --topbar-h:5.4em;
   --c-black-stroke:#888; --c-black-fill:rgba(136,136,136,0.1);
   --c-blue-stroke:#5b9bd5;  --c-blue-fill:rgba(91,155,213,0.1);
   --c-red-stroke:#d4564a;   --c-red-fill:rgba(212,86,74,0.1);
@@ -24,8 +25,11 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
 .topbar{
   position:sticky;top:0;z-index:50;
   background:var(--bg2);border-bottom:1px solid var(--border);
-  display:flex;align-items:center;gap:0.75em;padding:0 1.5em;height:4em;
+  display:flex;flex-direction:column;gap:0.45em;padding:0.5em 1.5em;
 }
+.topbar-row{display:flex;align-items:center;gap:0.75em;}
+.topbar-row-1{justify-content:space-between;}
+.topbar-row-2{flex-wrap:wrap;}
 .logo{font-family:'Space Mono',monospace;font-size:0.85em;color:var(--accent);letter-spacing:1.5px;white-space:nowrap;}
 .byline{color:#c8ccd2;font-size:0.82em;font-weight:700;letter-spacing:0.5px;margin-left:0.3em;text-shadow:0 1px 1px rgba(0,0,0,0.5);}
 .pills{display:flex;gap:0.4em;flex:1;flex-wrap:wrap;}
@@ -43,10 +47,10 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
 #font-size-label{font-family:'Space Mono',monospace;color:var(--text);min-width:22px;text-align:center;}
 
 /* ── PAGE LAYOUT ── */
-.page{display:grid;grid-template-columns:18em 1fr;gap:0;min-height:calc(100vh - 4em);}
+.page{display:grid;grid-template-columns:18em 1fr;gap:0;min-height:calc(100vh - var(--topbar-h));}
 
 /* ── LEFT PANEL (edit) ── */
-.left{background:var(--bg2);border-right:1px solid var(--border);padding:1em 0.75em;overflow-y:auto;position:sticky;top:4em;height:calc(100vh - 4em);}
+.left{background:var(--bg2);border-right:1px solid var(--border);padding:1em 0.75em;overflow-y:auto;position:sticky;top:var(--topbar-h);height:calc(100vh - var(--topbar-h));}
 .lhd{font-size:0.68em;font-weight:700;letter-spacing:1.5px;color:var(--text3);padding:0.3em 0.45em 0.6em;text-transform:uppercase;}
 .ecard{border:1px solid var(--border);border-radius:0.6em;overflow:hidden;margin-bottom:0.38em;}
 .etop{display:flex;align-items:center;gap:0.5em;padding:0.54em 0.7em;background:var(--bg3);cursor:pointer;user-select:none;}
@@ -244,9 +248,9 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
 }
 @media(max-width:820px){
   html{font-size:14px;}
-  .topbar{height:auto;flex-wrap:wrap;padding:0.5em 0.9em;gap:0.5em;position:static;}
-  .pills{order:3;width:100%;}
-  .tbar-r{order:2;}
+  .topbar{padding:0.5em 0.9em;position:static;}
+  .topbar-row-1{flex-wrap:wrap;}
+  .pills{width:100%;}
   .page{grid-template-columns:1fr;min-height:auto;}
   .left{position:static;height:auto;max-height:60vh;border-right:none;border-bottom:1px solid var(--border);}
   .left.left-hidden{display:none;}
@@ -290,35 +294,39 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
 
 <!-- TOP BAR -->
 <header class="topbar">
-  <div class="logo">ARRANGER <span class="byline">by Alex.Syu &amp; Stratofin.Lai</span></div>
-  <div class="pills">
-    <div class="pill"><label>曲目</label><input id="s-title" value="King Of Kings" oninput="renderAll()" style="width:100px"></div>
-    <div class="pill"><label>Key</label><input id="s-key" value="D" oninput="renderAll()" style="width:28px"></div>
-    <div class="pill"><label>拍號</label><input id="s-time" value="4/4" oninput="renderAll()" style="width:34px"></div>
-    <div class="pill"><label>BPM</label><input id="s-bpm" value="71" oninput="renderAll()" style="width:38px"></div>
-    <div class="pill" style="gap:5px">
-      <label>字級</label>
-      <button class="fbtn" onclick="bumpFont(-2)" title="縮小檢視字級">−</button>
-      <span id="font-size-label">13</span>
-      <button class="fbtn" onclick="bumpFont(2)" title="放大檢視字級">＋</button>
-    </div>
-  </div>
-  <div class="tbar-r">
+  <div class="topbar-row topbar-row-1">
+    <div class="logo">ARRANGER <span class="byline">by Alex.Syu &amp; Stratofin.Lai</span></div>
     <span class="seg" title="切換版面：電腦 / 平板 / 手機">
       <button class="segbtn" id="mode-desktop-btn" onclick="setMode('desktop')" title="電腦：側欄編輯 ＋ 寬版檢視">🖥 電腦</button>
       <button class="segbtn" id="mode-tablet-btn" onclick="setMode('tablet')" title="平板：編輯區移到上方、檢視全寬、圖示譜3欄">▦ 平板</button>
       <button class="segbtn" id="mode-phone-btn" onclick="setMode('phone')" title="手機：隱藏編輯區、圖示譜2欄">📱 手機</button>
     </span>
-    <button class="btn" onclick="saveProject()" title="儲存到本機（localStorage）">💾 存檔</button>
-    <button class="btn" onclick="loadProject()" title="載入上次存檔">📂 載入</button>
-    <button class="btn" onclick="expJSON()" title="匯出 JSON 備份">↓ JSON</button>
-    <input id="json-import" type="file" accept=".json" style="display:none" onchange="impJSON(this)">
-    <button class="btn" onclick="document.getElementById('json-import').click()" title="從 JSON 匯入">↑ JSON</button>
-    <button class="btn" onclick="expCSV()">↓ CSV</button>
-    <button class="btn" id="png-flow-btn" onclick="expPNG('flow')">↓ PNG 示意圖</button>
-    <button class="btn" id="png-block-btn" onclick="expPNG('block')">↓ PNG 方塊圖</button>
-    <button class="btn" onclick="printIcon()" title="列印圖示譜（每頁4段，A4）">🖨 圖示譜PDF</button>
-    <button class="btn btna" onclick="addSect()">＋ 新增段落</button>
+  </div>
+  <div class="topbar-row topbar-row-2">
+    <div class="pills">
+      <div class="pill"><label>曲目</label><input id="s-title" value="King Of Kings" oninput="renderAll()" style="width:100px"></div>
+      <div class="pill"><label>Key</label><input id="s-key" value="D" oninput="renderAll()" style="width:28px"></div>
+      <div class="pill"><label>拍號</label><input id="s-time" value="4/4" oninput="renderAll()" style="width:34px"></div>
+      <div class="pill"><label>BPM</label><input id="s-bpm" value="71" oninput="renderAll()" style="width:38px"></div>
+      <div class="pill" style="gap:5px">
+        <label>字級</label>
+        <button class="fbtn" onclick="bumpFont(-2)" title="縮小檢視字級">−</button>
+        <span id="font-size-label">13</span>
+        <button class="fbtn" onclick="bumpFont(2)" title="放大檢視字級">＋</button>
+      </div>
+    </div>
+    <div class="tbar-r">
+      <button class="btn" onclick="saveProject()" title="儲存到本機（localStorage）">💾 存檔</button>
+      <button class="btn" onclick="loadProject()" title="載入上次存檔">📂 載入</button>
+      <button class="btn" onclick="expJSON()" title="匯出 JSON 備份">↓ JSON</button>
+      <input id="json-import" type="file" accept=".json" style="display:none" onchange="impJSON(this)">
+      <button class="btn" onclick="document.getElementById('json-import').click()" title="從 JSON 匯入">↑ JSON</button>
+      <button class="btn" onclick="expCSV()">↓ CSV</button>
+      <button class="btn" id="png-flow-btn" onclick="expPNG('flow')">↓ PNG 示意圖</button>
+      <button class="btn" id="png-block-btn" onclick="expPNG('block')">↓ PNG 方塊圖</button>
+      <button class="btn" onclick="printIcon()" title="列印圖示譜（每頁4段，A4）">🖨 圖示譜PDF</button>
+      <button class="btn btna" onclick="addSect()">＋ 新增段落</button>
+    </div>
   </div>
 </header>
 
@@ -897,11 +905,19 @@ function sw(name,btn){
 }
 
 /* ── INIT ── */
+function syncTopbarH(){
+  const tb=document.querySelector('.topbar');
+  if(tb&&tb.offsetHeight)document.documentElement.style.setProperty('--topbar-h',tb.offsetHeight+'px');
+}
+window.addEventListener('resize',syncTopbarH);
+
 try{const pp=parseInt(localStorage.getItem('arranger_perpage'));if([4,6,8].includes(pp)){SEG_PER_PAGE=pp;document.getElementById('ic-perpage').value=pp;}}catch(e){}
 renderSB();
 renderAll();
 bindSwipe();
 initMode();
+syncTopbarH();
+window.addEventListener('load',syncTopbarH);
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </body>
