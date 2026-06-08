@@ -186,8 +186,13 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
 .icpages::-webkit-scrollbar{height:5px;}
 .icpage{flex:0 0 100%;min-width:100%;scroll-snap-align:start;}
 .icpage-grid{display:grid;grid-template-columns:repeat(var(--ic-cols,3),1fr);align-items:start;gap:0.7em;}
-.ic-legend{display:flex;flex-wrap:wrap;gap:0.3em;margin-bottom:0.85em;}
-.ic-legitem{font-size:0.66em;font-family:'Space Mono',monospace;border:1.5px solid;border-radius:99px;padding:0.12em 0.55em;display:inline-flex;align-items:center;gap:0.25em;}
+.ic-legend{display:flex;flex-wrap:wrap;gap:0.3em;margin-bottom:0.85em;align-items:center;}
+.ic-legitem{font-size:0.66em;font-family:'Space Mono',monospace;border:1.5px solid var(--border2);border-radius:99px;padding:0.16em 0.62em;display:inline-flex;align-items:center;gap:0.25em;cursor:pointer;background:var(--bg3);color:var(--text3);font-weight:600;transition:all .12s;}
+.ic-legitem:hover{filter:brightness(1.25);}
+.ic-legitem:not(.on){opacity:0.45;}
+.ic-legall{border-color:#ffffff;color:#ffffff;background:none;}
+.ic-legall.on{background:#ffffff;color:#0d0d0d;opacity:1;}
+.ic-leghint{font-size:0.6em;color:var(--text3);margin-left:0.2em;}
 .ic-sel{background:var(--bg3);border:1px solid var(--border2);border-radius:0.4em;color:var(--text);font-family:inherit;font-size:0.85em;padding:0.2em 0.4em;outline:none;cursor:pointer;}
 .iccard{border:2.5px solid;border-radius:0.7em;overflow:hidden;display:flex;flex-direction:column;background:var(--bg2);}
 .iccard-head{display:flex;align-items:center;justify-content:space-between;gap:0.5em;padding:0.45em 0.7em;font-weight:700;}
@@ -641,19 +646,56 @@ function renderBlock(){
 /* ── RENDER ICON SHEET VIEW (圖示譜，每頁4段) ── */
 let iconPage=0;
 let SEG_PER_PAGE=6;
+let insFilter=new Set(INS);                 // 圖示譜要顯示哪些樂器（預設全部）
+const PERPAGE_OPTS={desktop:[3,6,9,12,15],tablet:[3,6,9,12,15],phone:[4,6,8,10]};
+function currentMode(){
+  if(document.body.classList.contains('mode-phone'))return 'phone';
+  if(document.body.classList.contains('mode-tablet'))return 'tablet';
+  return 'desktop';
+}
 function chunk(arr,n){const o=[];for(let i=0;i<arr.length;i+=n)o.push(arr.slice(i,i+n));return o;}
 function pageCount(){return Math.max(1,Math.ceil(sects.length/SEG_PER_PAGE));}
-function icCols(){return SEG_PER_PAGE===4?2:SEG_PER_PAGE===8?4:3;}
+function icCols(){
+  const m=currentMode();
+  if(m==='phone')return 2;
+  return 3;   // 電腦 / 平板：每排 3 格（3/6/9/12/15 段剛好整排）
+}
+function refreshPerPageOptions(){
+  const sel=document.getElementById('ic-perpage'); if(!sel)return;
+  const opts=PERPAGE_OPTS[currentMode()];
+  if(!opts.includes(SEG_PER_PAGE)){
+    SEG_PER_PAGE=opts.reduce((a,b)=>Math.abs(b-SEG_PER_PAGE)<Math.abs(a-SEG_PER_PAGE)?b:a,opts[0]);
+  }
+  sel.innerHTML=opts.map(n=>`<option value="${n}"${n===SEG_PER_PAGE?' selected':''}>${n}</option>`).join('');
+}
 function setPerPage(v){
   SEG_PER_PAGE=parseInt(v)||6;
   iconPage=0;
+  const sel=document.getElementById('ic-perpage'); if(sel)sel.value=String(SEG_PER_PAGE);
   try{localStorage.setItem('arranger_perpage',SEG_PER_PAGE);}catch(e){}
   renderIcon();renderSummary();
+}
+function toggleAllIns(){
+  if(insFilter.size===INS.length)insFilter.clear();      // 全部按掉
+  else INS.forEach(k=>insFilter.add(k));                  // 顯示全部
+  renderIcon();
+}
+function toggleIns(k){
+  if(insFilter.has(k))insFilter.delete(k); else insFilter.add(k);
+  renderIcon();
 }
 function renderLegend(){
   const el=document.getElementById('ic-legend');
   if(!el)return;
-  el.innerHTML=INS.map(k=>`<span class="ic-legitem" style="border-color:${INSCOL[k].stroke};color:${INSCOL[k].stroke}">${ICON[k]} ${k}</span>`).join('');
+  const allOn=insFilter.size===INS.length;
+  let html=`<button class="ic-legitem ic-legall${allOn?' on':''}" onclick="toggleAllIns()" title="一鍵全部顯示 / 全部關閉">● ALL</button>`;
+  html+=INS.map(k=>{
+    const on=insFilter.has(k),c=INSCOL[k];
+    const style=on?`border-color:${c.stroke};color:${c.stroke};background:${c.fill}`:'';
+    return `<button class="ic-legitem${on?' on':''}" style="${style}" onclick="toggleIns('${k}')" title="切換 ${k}">${ICON[k]} ${k}</button>`;
+  }).join('');
+  html+=`<span class="ic-leghint">點樂器挑要看的部位</span>`;
+  el.innerHTML=html;
 }
 
 function renderIcon(){
@@ -677,7 +719,7 @@ function renderIcon(){
       const col=COL[s.color];
       const chips=[];
       s.layers.forEach(l=>{
-        INS.forEach(k=>{ if(l.ins[k]&&String(l.ins[k]).trim()) chips.push({k,v:l.ins[k],lc:COL[l.color]}); });
+        INS.forEach(k=>{ if(!insFilter.has(k))return; if(l.ins[k]&&String(l.ins[k]).trim()) chips.push({k,v:l.ins[k],lc:COL[l.color]}); });
       });
       const mel=chips.filter(c=>!RHYTHM.includes(c.k));
       const rhy=chips.filter(c=>RHYTHM.includes(c.k));
@@ -734,8 +776,9 @@ function bindSwipe(){
 }
 
 /* ── PRINT ICON SHEET (A4, 4 segments / page) ── */
-function printIcon(){
+async function printIcon(){
   renderIcon();
+  if(document.fonts&&document.fonts.ready){ try{ await document.fonts.ready; }catch(e){} }
   document.body.classList.add('printing-icon');
   setTimeout(()=>window.print(),60);
 }
@@ -828,6 +871,9 @@ function setMode(m){
     if(b)b.classList.toggle('btna',x===m);
   });
   try{localStorage.setItem('arranger_mode',m);}catch(e){}
+  refreshPerPageOptions();                       // 不同模式給不同段數選項
+  if(document.getElementById('icon-pages'))renderIcon();
+  if(document.getElementById('summary'))renderSummary();
 }
 function initMode(){
   let m='';
@@ -887,6 +933,12 @@ async function expPNG(view){
   const targetEl = document.getElementById(view==='block' ? 'block-content' : 'flow-content');
   const title = gv('s-title')||'arrangement';
 
+  // 等網頁字型載入完成，輸出字體才會跟畫面一致（否則 html2canvas 會用系統預設字體）
+  if(document.fonts&&document.fonts.ready){ try{ await document.fonts.ready; }catch(e){} }
+  // 明確把目前字級套到截圖元素，讓 PNG 字體大小接近畫面設定
+  const prevFS=targetEl.style.fontSize;
+  targetEl.style.fontSize=curFont+'px';
+
   try {
     const canvas = await html2canvas(targetEl, {
       backgroundColor: '#0d0d0d',
@@ -896,24 +948,32 @@ async function expPNG(view){
       logging: false,
       scrollX: 0,
       scrollY: 0,
+      onclone: (doc)=>{
+        const el=doc.getElementById(targetEl.id);
+        if(el){ el.style.fontSize=curFont+'px'; el.style.fontFamily="'Noto Sans TC',sans-serif"; }
+      },
     });
 
+    // 標題列高度與字體隨字級等比微調
+    const headH=Math.round(curFont*3.2)+18;
+    const fLogo=Math.round(curFont*1.15);
+    const fMeta=Math.round(curFont*0.95);
     const final = document.createElement('canvas');
     final.width = canvas.width;
-    final.height = canvas.height + 56;
+    final.height = canvas.height + headH;
     const ctx = final.getContext('2d');
     ctx.fillStyle = '#151515';
-    ctx.fillRect(0,0,final.width,56);
+    ctx.fillRect(0,0,final.width,headH);
     ctx.fillStyle = '#d4a843';
-    ctx.font = `bold 18px 'Space Mono', monospace`;
+    ctx.font = `bold ${fLogo}px 'Space Mono', monospace`;
     ctx.textBaseline = 'middle';
-    ctx.fillText('ARRANGER', 24, 20);
+    ctx.fillText('ARRANGER  by Alex.Syu & Stratofin.Lai', 24, headH*0.36);
     ctx.fillStyle = '#928f88';
-    ctx.font = `13px sans-serif`;
-    ctx.fillText(`${title}  Key:${gv('s-key')}  ${gv('s-time')}  BPM:${gv('s-bpm')}`, 24, 40);
+    ctx.font = `${fMeta}px 'Noto Sans TC', sans-serif`;
+    ctx.fillText(`${title}  Key:${gv('s-key')}  ${gv('s-time')}  BPM:${gv('s-bpm')}`, 24, headH*0.72);
     ctx.fillStyle = 'rgba(255,255,255,0.07)';
-    ctx.fillRect(0,55,final.width,1);
-    ctx.drawImage(canvas, 0, 56);
+    ctx.fillRect(0,headH-1,final.width,1);
+    ctx.drawImage(canvas, 0, headH);
 
     const link = document.createElement('a');
     link.download = `${title.replace(/\s+/g,'_')}_${view==='block'?'block':'flow'}.png`;
@@ -921,6 +981,8 @@ async function expPNG(view){
     link.click();
   } catch(err) {
     alert('PNG 輸出失敗，請嘗試用瀏覽器截圖。\n'+err.message);
+  } finally {
+    targetEl.style.fontSize=prevFS;   // 還原，畫面不受影響
   }
 
   btn.textContent = origText; btn.disabled = false;
@@ -944,7 +1006,7 @@ function syncTopbarH(){
 }
 window.addEventListener('resize',syncTopbarH);
 
-try{const pp=parseInt(localStorage.getItem('arranger_perpage'));if([4,6,8].includes(pp)){SEG_PER_PAGE=pp;document.getElementById('ic-perpage').value=pp;}}catch(e){}
+try{const pp=parseInt(localStorage.getItem('arranger_perpage'));if(pp>=4&&pp<=16)SEG_PER_PAGE=pp;}catch(e){}
 renderSB();
 renderAll();
 bindSwipe();
