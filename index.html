@@ -209,6 +209,25 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
 .ic-empty{color:var(--text3);text-align:center;padding:0.5em;font-size:0.85em;}
 .icpage-foot{display:none;}
 
+/* ── CHORD CHART VIEW (和弦譜) ── */
+.chord-hint{font-size:0.72em;color:var(--text3);margin-bottom:0.9em;}
+.chord-content{display:flex;flex-direction:column;gap:0.7em;}
+.ccard{border:2.5px solid;border-radius:0.7em;overflow:hidden;background:var(--bg2);}
+.ccard-head{display:flex;align-items:center;justify-content:space-between;gap:0.5em;padding:0.45em 0.7em;font-weight:700;}
+.cname{font-size:1.02em;line-height:1.15;}
+.cmeta{font-family:'Space Mono',monospace;font-size:0.76em;opacity:.85;white-space:nowrap;}
+.cbar-grid{display:grid;grid-template-columns:repeat(4,1fr);padding:0.35em;}
+.cbar{position:relative;border:1px solid var(--border2);border-radius:0.35em;margin:0.15em;padding:0.55em 0.3em 0.25em;display:flex;flex-direction:column;align-items:center;gap:0.18em;min-height:3.4em;background:rgba(255,255,255,0.015);}
+.cbarno{position:absolute;top:2px;left:5px;font-size:0.55em;color:var(--text3);font-family:'Space Mono',monospace;}
+.cchord{width:100%;text-align:center;background:none;border:none;outline:none;color:var(--text);font-family:inherit;font-size:1.05em;font-weight:700;border-bottom:1px solid transparent;padding:0.1em 0;}
+.cchord:focus{border-bottom-color:var(--accent);}
+.cchord::placeholder{color:var(--text3);font-weight:400;}
+.cbeats{display:flex;gap:0.45em;color:var(--text3);font-size:0.72em;opacity:.55;line-height:1;}
+.ccard-note{font-size:0.76em;color:#b08fde;padding:0.35em 0.65em;border-top:1px solid rgba(155,114,207,0.2);background:rgba(155,114,207,0.05);}
+@media(max-width:700px){.cbar-grid{grid-template-columns:repeat(2,1fr);}}
+body.mode-phone .cbar-grid{grid-template-columns:repeat(2,1fr);}
+.mix-ins{padding:0.4em 0.55em 0.55em;border-top:1px dashed var(--border2);display:flex;flex-direction:column;gap:0.3em;}
+
 /* ── TEXT LIST ── */
 .tl{font-family:'Space Mono',monospace;font-size:0.85em;line-height:2;white-space:pre-wrap;background:var(--bg2);border:1px solid var(--border);border-radius:0.77em;padding:1.23em 1.38em;color:var(--text2);}
 
@@ -361,6 +380,8 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
       <button class="vtab a" onclick="sw('flow',this)">展開示意圖</button>
       <button class="vtab" onclick="sw('block',this)">方塊流程圖</button>
       <button class="vtab" onclick="sw('icon',this)">圖示譜</button>
+      <button class="vtab" onclick="sw('chord',this)">和弦譜</button>
+      <button class="vtab" onclick="sw('mix',this)">混合</button>
       <button class="vtab" onclick="sw('text',this)">文字清單</button>
       <button class="vtab" onclick="sw('export',this)">匯出</button>
     </div>
@@ -397,6 +418,18 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
       </div>
       <div class="ic-legend" id="ic-legend"></div>
       <div class="icpages" id="icon-pages"></div>
+    </div>
+
+    <!-- CHORD CHART VIEW -->
+    <div id="vp-chord" style="display:none">
+      <div class="chord-hint">每格 = 一小節，上方填和弦，下方斜線＝拍點（依拍號）。和弦會隨存檔 / JSON 一起儲存。</div>
+      <div class="chord-content" id="chord-content"></div>
+    </div>
+
+    <!-- MIX VIEW (和弦 + 樂器) -->
+    <div id="vp-mix" style="display:none">
+      <div class="chord-hint">混合檢視：上方填和弦（每格一小節，可用空白／｜分隔填兩個和弦），下方顯示各樂器部位。樂器可用上方圖示譜的篩選器控制。</div>
+      <div class="chord-content" id="mix-content"></div>
     </div>
 
     <!-- TEXT VIEW -->
@@ -784,6 +817,76 @@ async function printIcon(){
 }
 window.addEventListener('afterprint',()=>document.body.classList.remove('printing-icon'));
 
+/* ── RENDER CHORD CHART (和弦譜) ── */
+function beatsPerBar(){
+  const n=parseInt((gv('s-time')||'4/4').split('/')[0]);
+  return Math.max(1,Math.min(12,n||4));
+}
+function setChord(id,i,v){
+  const s=sects.find(x=>x.id===id); if(!s)return;
+  if(!Array.isArray(s.chords))s.chords=[];
+  s.chords[i]=v; autoSave();
+}
+function renderChord(){
+  const root=document.getElementById('chord-content'); if(!root)return;
+  const beats=beatsPerBar();
+  const slashRow=Array.from({length:beats}).map(()=>'<span>／</span>').join('');
+  root.innerHTML=sects.map(s=>{
+    const col=COL[s.color];
+    const bars=Math.max(1,parseInt(s.bars)||1);
+    const chords=Array.isArray(s.chords)?s.chords:[];
+    let cells='';
+    for(let i=0;i<bars;i++){
+      cells+=`<div class="cbar">
+        <span class="cbarno">${i+1}</span>
+        <input class="cchord" value="${esc(chords[i]||'')}" placeholder="–" onchange="setChord(${s.id},${i},this.value)">
+        <div class="cbeats">${slashRow}</div>
+      </div>`;
+    }
+    return `<div class="ccard" style="border-color:${col.stroke}">
+      <div class="ccard-head" style="background:${col.fill};color:${col.stroke}">
+        <span class="cname">${esc(s.name)}</span>
+        <span class="cmeta">${bars} Bar · ${esc(gv('s-time'))}</span>
+      </div>
+      <div class="cbar-grid">${cells}</div>
+      ${s.notes?`<div class="ccard-note">⚑ ${esc(s.notes)}</div>`:''}
+    </div>`;
+  }).join('');
+}
+
+/* ── RENDER MIX (和弦 + 樂器) ── */
+function renderMix(){
+  const root=document.getElementById('mix-content'); if(!root)return;
+  const beats=beatsPerBar();
+  const slashRow=Array.from({length:beats}).map(()=>'<span>／</span>').join('');
+  const chipHtml=(c)=>{
+    const ic=INSCOL[c.k]||{stroke:c.lc.stroke,fill:'rgba(255,255,255,0.02)'};
+    return `<div class="icchip" style="border-color:${ic.stroke};border-left-color:${c.lc.stroke};background:${ic.fill}"><span class="ic-emoji">${ICON[c.k]||'🎵'}</span><span class="ic-code" style="color:${ic.stroke}">${c.k}</span><span class="ic-val">${esc(c.v)}</span></div>`;
+  };
+  root.innerHTML=sects.map(s=>{
+    const col=COL[s.color];
+    const bars=Math.max(1,parseInt(s.bars)||1);
+    const chords=Array.isArray(s.chords)?s.chords:[];
+    let cells='';
+    for(let i=0;i<bars;i++){
+      cells+=`<div class="cbar"><span class="cbarno">${i+1}</span><input class="cchord" value="${esc(chords[i]||'')}" placeholder="–" onchange="setChord(${s.id},${i},this.value)"><div class="cbeats">${slashRow}</div></div>`;
+    }
+    const chips=[];
+    s.layers.forEach(l=>{ INS.forEach(k=>{ if(!insFilter.has(k))return; if(l.ins[k]&&String(l.ins[k]).trim())chips.push({k,v:l.ins[k],lc:COL[l.color]}); }); });
+    const mel=chips.filter(c=>!RHYTHM.includes(c.k)), rhy=chips.filter(c=>RHYTHM.includes(c.k));
+    const insBody=(mel.length?`<div class="icchip-grid">${mel.map(chipHtml).join('')}</div>`:'')
+      + (rhy.length?`<div class="ic-rhythm-div">節奏組 ◈</div><div class="icchip-grid">${rhy.map(chipHtml).join('')}</div>`:'');
+    return `<div class="ccard" style="border-color:${col.stroke}">
+      <div class="ccard-head" style="background:${col.fill};color:${col.stroke}">
+        <span class="cname">${esc(s.name)}</span><span class="cmeta">${bars} Bar · ${esc(gv('s-time'))}</span>
+      </div>
+      <div class="cbar-grid">${cells}</div>
+      ${insBody?`<div class="mix-ins">${insBody}</div>`:''}
+      ${s.notes?`<div class="ccard-note">⚑ ${esc(s.notes)}</div>`:''}
+    </div>`;
+  }).join('');
+}
+
 /* ── RENDER SIDEBAR ── */
 function renderSB(){
   document.getElementById('slist').innerHTML=sects.map((s,idx)=>{
@@ -888,7 +991,7 @@ function initMode(){
 let dt;
 function schedRender(){clearTimeout(dt);dt=setTimeout(renderAll,80);}
 
-function renderAll(){renderFlow();renderBlock();renderIcon();renderSummary();buildTL();autoSave();}
+function renderAll(){renderFlow();renderBlock();renderIcon();renderChord();renderMix();renderSummary();buildTL();autoSave();}
 
 /* ── TEXT LIST ── */
 function buildTL(){
@@ -989,7 +1092,7 @@ async function expPNG(view){
 }
 
 /* ── TABS ── */
-const PANELS=['flow','block','icon','text','export'];
+const PANELS=['flow','block','icon','chord','mix','text','export'];
 function sw(name,btn){
   document.querySelectorAll('.vtab').forEach(t=>t.classList.remove('a'));
   PANELS.forEach(p=>document.getElementById('vp-'+p).style.display='none');
@@ -997,6 +1100,8 @@ function sw(name,btn){
   document.getElementById('vp-'+name).style.display='';
   if(name==='text')buildTL();
   if(name==='icon')renderIcon();
+  if(name==='chord')renderChord();
+  if(name==='mix')renderMix();
 }
 
 /* ── INIT ── */
