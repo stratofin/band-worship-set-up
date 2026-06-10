@@ -227,6 +227,8 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
 @media(max-width:700px){.cbar-grid{grid-template-columns:repeat(2,1fr);}}
 body.mode-phone .cbar-grid{grid-template-columns:repeat(2,1fr);}
 .mix-ins{padding:0.4em 0.55em 0.55em;border-top:1px dashed var(--border2);display:flex;flex-direction:column;gap:0.3em;}
+.view-print{display:flex;justify-content:flex-end;margin-bottom:0.7em;}
+.mixpage-stack{display:flex;flex-direction:column;gap:0.7em;}
 
 /* ── TEXT LIST ── */
 .tl{font-family:'Space Mono',monospace;font-size:0.85em;line-height:2;white-space:pre-wrap;background:var(--bg2);border:1px solid var(--border);border-radius:0.77em;padding:1.23em 1.38em;color:var(--text2);}
@@ -298,28 +300,51 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   .ic-val{font-size:0.85em;}
 }
 
-/* ── PRINT (A4, icon sheet: 4 segments / page) ── */
+/* ── PRINT (A4) — 依目前要列印的檢視 print-icon / print-chord / print-mix ── */
 @media print{
   *{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
   @page{size:A4 portrait;margin:11mm;}
   body{background:#fff;color:#111;}
-  .topbar,.vtabs,.icon-toolbar,.summary{display:none!important;}
+  .topbar,.vtabs,.icon-toolbar,.summary,.chord-hint,.view-print,.ic-legend{display:none!important;}
   .left{display:none!important;}
   .page{display:block;}
   .right{padding:0;overflow:visible;}
-  body.printing-icon #vp-flow,body.printing-icon #vp-block,body.printing-icon #vp-text,body.printing-icon #vp-export{display:none!important;}
-  body.printing-icon #vp-icon{display:block!important;}
-  body.printing-icon .icpages{display:block!important;overflow:visible!important;}
-  body.printing-icon .icpage{display:block!important;min-width:0!important;page-break-after:always;}
-  body.printing-icon .icpage:last-child{page-break-after:auto;}
-  body.printing-icon .icpage-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
-  body.printing-icon .iccard{background:#fff!important;page-break-inside:avoid;min-height:0;}
-  body.printing-icon .iccard-body{background:#fff!important;}
-  body.printing-icon .icchip{background:#fafafa!important;}
-  body.printing-icon .ic-val{color:#111!important;}
-  body.printing-icon .ic-bars{background:rgba(0,0,0,0.08)!important;color:#333!important;}
-  body.printing-icon .iccard-note{color:#6a4ca0!important;background:#f6f2fb!important;}
-  body.printing-icon .icpage-foot{display:block;text-align:center;font-size:9px;color:#777;margin-top:9px;letter-spacing:.5px;}
+  /* 只顯示正在列印的檢視 */
+  body[class*="print-"] #vp-flow,
+  body[class*="print-"] #vp-block,
+  body[class*="print-"] #vp-icon,
+  body[class*="print-"] #vp-chord,
+  body[class*="print-"] #vp-mix,
+  body[class*="print-"] #vp-text,
+  body[class*="print-"] #vp-export{display:none!important;}
+  body.print-icon #vp-icon{display:block!important;}
+  body.print-chord #vp-chord{display:block!important;}
+  body.print-mix #vp-mix{display:block!important;}
+  /* 圖示譜：輪播 → 直向分頁 */
+  body.print-icon .icpages{display:block!important;overflow:visible!important;}
+  body.print-icon .icpage{display:block!important;min-width:0!important;page-break-after:always;}
+  body.print-icon .icpage:last-child{page-break-after:auto;}
+  body.print-icon .icpage-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+  body.print-icon .iccard{background:#fff!important;page-break-inside:avoid;min-height:0;}
+  body.print-icon .iccard-body{background:#fff!important;}
+  body.print-icon .icchip{background:#fafafa!important;}
+  body.print-icon .ic-val{color:#111!important;}
+  body.print-icon .ic-bars{background:rgba(0,0,0,0.08)!important;color:#333!important;}
+  body.print-icon .iccard-note{color:#6a4ca0!important;background:#f6f2fb!important;}
+  body.print-icon .icpage-foot{display:block;text-align:center;font-size:9px;color:#777;margin-top:9px;letter-spacing:.5px;}
+  /* 和弦譜 / 混合：每段卡片避免跨頁切斷 */
+  body.print-mix .icpages{display:block!important;overflow:visible!important;}
+  body.print-mix .icpage{display:block!important;min-width:0!important;}
+  body.print-mix .mixpage-stack{display:block!important;}
+  body.print-mix .mixpage-stack>.ccard{margin-bottom:6px;}
+  body.print-chord .ccard,body.print-mix .ccard{background:#fff!important;page-break-inside:avoid;border-width:2px;margin-bottom:6px;}
+  body.print-chord .cbar,body.print-mix .cbar{background:#fff!important;}
+  body.print-chord .cchord,body.print-mix .cchord{color:#111!important;}
+  body.print-chord .cbeats,body.print-mix .cbeats{color:#555!important;opacity:.85;}
+  body.print-mix .mix-ins{background:#fff!important;}
+  body.print-mix .icchip{background:#fafafa!important;}
+  body.print-mix .ic-val{color:#111!important;}
+  body.print-chord .ccard-note,body.print-mix .ccard-note{color:#6a4ca0!important;background:#f6f2fb!important;}
 }
 </style>
 </head>
@@ -422,14 +447,25 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
 
     <!-- CHORD CHART VIEW -->
     <div id="vp-chord" style="display:none">
+      <div class="view-print"><button class="btn btna" onclick="printView('chord')">🖨 列印 / 存 PDF</button></div>
       <div class="chord-hint">每格 = 一小節，上方填和弦，下方斜線＝拍點（依拍號）。和弦會隨存檔 / JSON 一起儲存。</div>
       <div class="chord-content" id="chord-content"></div>
     </div>
 
     <!-- MIX VIEW (和弦 + 樂器) -->
     <div id="vp-mix" style="display:none">
-      <div class="chord-hint">混合檢視：上方填和弦（每格一小節，可用空白／｜分隔填兩個和弦），下方顯示各樂器部位。樂器可用上方圖示譜的篩選器控制。</div>
-      <div class="chord-content" id="mix-content"></div>
+      <div class="view-print"><button class="btn btna" onclick="printView('mix')">🖨 列印 / 存 PDF</button></div>
+      <div class="ic-legend" id="mix-legend"></div>
+      <div class="icon-toolbar">
+        <button class="ic-navbtn" id="mix-prev" onclick="mixNav(-1)" title="上一頁">‹</button>
+        <span class="ic-pageind" id="mix-pageind">1 / 1</span>
+        <button class="ic-navbtn" id="mix-next" onclick="mixNav(1)" title="下一頁">›</button>
+        <label class="ic-hint">每頁
+          <select class="ic-sel" id="mix-perpage" onchange="setMixPerPage(this.value)"></select>
+        段 · 可左右滑動翻頁</label>
+      </div>
+      <div class="chord-hint">混合檢視：上方填和弦（每格一小節，可用空白／｜分隔填兩個和弦），下方顯示各樂器部位。樂器可用上方圖例篩選。</div>
+      <div class="icpages" id="mix-content"></div>
     </div>
 
     <!-- TEXT VIEW -->
@@ -443,7 +479,9 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
     <!-- EXPORT VIEW -->
     <div id="vp-export" style="display:none">
       <div class="egrid">
-        <div class="ecard2"><h3>🎼 圖示譜 PDF（每頁6段）</h3><p>純圖示／色塊呈現，每段圖示一排兩個，A4 直式每頁 6 個段落，適合列印發給團員或現場看譜</p><button class="btn btna" onclick="printIcon()">🖨 列印 / 存 PDF</button></div>
+        <div class="ecard2"><h3>🎼 圖示譜 PDF</h3><p>純圖示／色塊呈現，A4 直式、每頁段數依目前設定（電腦/平板 3–15、手機 4–14），適合發給團員或現場看譜</p><button class="btn btna" onclick="printView('icon')">🖨 列印 / 存 PDF</button></div>
+        <div class="ecard2"><h3>🎵 和弦譜 PDF</h3><p>每段小節攤開、依拍號顯示拍點，A4 直式列印，適合主領 / 樂手看和弦進行</p><button class="btn btna" onclick="printView('chord')">🖨 列印 / 存 PDF</button></div>
+        <div class="ecard2"><h3>🎼 混合 PDF（和弦＋樂器）</h3><p>同一頁同時呈現和弦小節與各樂器部位，最完整的樂團總表</p><button class="btn btna" onclick="printView('mix')">🖨 列印 / 存 PDF</button></div>
         <div class="ecard2"><h3>🖼 PNG 展開示意圖</h3><p>將「展開示意圖」整頁輸出為高解析 PNG，包含所有段落與樂器標註</p><button class="btn btna" onclick="expPNG('flow')">↓ PNG 展開示意圖</button></div>
         <div class="ecard2"><h3>📦 PNG 方塊流程圖</h3><p>將「方塊流程圖」橫向輸出為高解析 PNG</p><button class="btn btna" onclick="expPNG('block')">↓ PNG 方塊流程圖</button></div>
         <div class="ecard2"><h3>📊 CSV 樂器備註表</h3><p>包含所有段落、Bar 數、顏色、樂器備註</p><button class="btn" onclick="expCSV()">↓ Download CSV</button></div>
@@ -711,15 +749,13 @@ function setPerPage(v){
 function toggleAllIns(){
   if(insFilter.size===INS.length)insFilter.clear();      // 全部按掉
   else INS.forEach(k=>insFilter.add(k));                  // 顯示全部
-  renderIcon();
+  renderIcon();renderMix();
 }
 function toggleIns(k){
   if(insFilter.has(k))insFilter.delete(k); else insFilter.add(k);
-  renderIcon();
+  renderIcon();renderMix();
 }
 function renderLegend(){
-  const el=document.getElementById('ic-legend');
-  if(!el)return;
   const allOn=insFilter.size===INS.length;
   let html=`<button class="ic-legitem ic-legall${allOn?' on':''}" onclick="toggleAllIns()" title="一鍵全部顯示 / 全部關閉">● ALL</button>`;
   html+=INS.map(k=>{
@@ -728,7 +764,7 @@ function renderLegend(){
     return `<button class="ic-legitem${on?' on':''}" style="${style}" onclick="toggleIns('${k}')" title="切換 ${k}">${ICON[k]} ${k}</button>`;
   }).join('');
   html+=`<span class="ic-leghint">點樂器挑要看的部位</span>`;
-  el.innerHTML=html;
+  ['ic-legend','mix-legend'].forEach(id=>{const el=document.getElementById(id); if(el)el.innerHTML=html;});
 }
 
 function renderIcon(){
@@ -793,29 +829,31 @@ function icNav(d){
   if(root&&root.clientWidth)root.scrollTo({left:iconPage*root.clientWidth,behavior:'smooth'});
   icUpdateInd();
 }
-/* 橫向滑動分頁（scroll-snap）：依捲動位置更新頁碼 */
-function bindSwipe(){
-  const el=document.getElementById('icon-pages');
-  if(!el)return;
+/* 橫向滑動分頁（scroll-snap）：依捲動位置更新頁碼（圖示譜 + 混合共用） */
+function bindCarousel(id,getCount,setPage,updateInd,getPage){
+  const el=document.getElementById(id); if(!el)return;
   el.addEventListener('scroll',()=>{
     clearTimeout(el._st);
-    el._st=setTimeout(()=>{
-      if(!el.clientWidth)return;
-      iconPage=Math.max(0,Math.min(pageCount()-1,Math.round(el.scrollLeft/el.clientWidth)));
-      icUpdateInd();
-    },60);
+    el._st=setTimeout(()=>{ if(!el.clientWidth)return; setPage(Math.max(0,Math.min(getCount()-1,Math.round(el.scrollLeft/el.clientWidth)))); updateInd(); },60);
   },{passive:true});
-  window.addEventListener('resize',()=>{ if(el.clientWidth)el.scrollLeft=iconPage*el.clientWidth; });
+  window.addEventListener('resize',()=>{ if(el.clientWidth)el.scrollLeft=getPage()*el.clientWidth; });
+}
+function bindSwipe(){
+  bindCarousel('icon-pages',pageCount,(p)=>{iconPage=p;},icUpdateInd,()=>iconPage);
+  bindCarousel('mix-content',mixPageCount,(p)=>{mixPage=p;},mixUpdateInd,()=>mixPage);
 }
 
 /* ── PRINT ICON SHEET (A4, 4 segments / page) ── */
-async function printIcon(){
-  renderIcon();
+async function printView(name){
+  if(name==='icon')renderIcon(); else if(name==='chord')renderChord(); else if(name==='mix')renderMix();
   if(document.fonts&&document.fonts.ready){ try{ await document.fonts.ready; }catch(e){} }
-  document.body.classList.add('printing-icon');
+  const cls='print-'+name;
+  document.body.classList.add(cls);
+  window._printCls=cls;
   setTimeout(()=>window.print(),60);
 }
-window.addEventListener('afterprint',()=>document.body.classList.remove('printing-icon'));
+function printIcon(){ return printView('icon'); }   // 相容舊呼叫
+window.addEventListener('afterprint',()=>{ if(window._printCls){ document.body.classList.remove(window._printCls); window._printCls=null; } });
 
 /* ── RENDER CHORD CHART (和弦譜) ── */
 function beatsPerBar(){
@@ -854,7 +892,35 @@ function renderChord(){
   }).join('');
 }
 
-/* ── RENDER MIX (和弦 + 樂器) ── */
+/* ── RENDER MIX (和弦 + 樂器，含分頁) ── */
+let mixPage=0;
+let MIX_PER_PAGE=4;
+const MIX_PERPAGE_OPTS={desktop:[2,4,6,8],tablet:[2,4,6,8],phone:[1,2,3,4]};
+function mixPageCount(){return Math.max(1,Math.ceil(sects.length/MIX_PER_PAGE));}
+function refreshMixPerPageOptions(){
+  const sel=document.getElementById('mix-perpage'); if(!sel)return;
+  const opts=MIX_PERPAGE_OPTS[currentMode()];
+  if(!opts.includes(MIX_PER_PAGE))MIX_PER_PAGE=opts.reduce((a,b)=>Math.abs(b-MIX_PER_PAGE)<Math.abs(a-MIX_PER_PAGE)?b:a,opts[0]);
+  sel.innerHTML=opts.map(n=>`<option value="${n}"${n===MIX_PER_PAGE?' selected':''}>${n}</option>`).join('');
+}
+function setMixPerPage(v){
+  MIX_PER_PAGE=parseInt(v)||4; mixPage=0;
+  const sel=document.getElementById('mix-perpage'); if(sel)sel.value=String(MIX_PER_PAGE);
+  try{localStorage.setItem('arranger_mixperpage',MIX_PER_PAGE);}catch(e){}
+  renderMix();
+}
+function mixUpdateInd(){
+  const total=mixPageCount(); const pi=document.getElementById('mix-pageind'); if(!pi)return;
+  pi.textContent=`${total?mixPage+1:1} / ${total}`;
+  document.getElementById('mix-prev').disabled=mixPage<=0;
+  document.getElementById('mix-next').disabled=mixPage>=total-1;
+}
+function mixNav(d){
+  const root=document.getElementById('mix-content');
+  mixPage=Math.max(0,Math.min(mixPageCount()-1,mixPage+d));
+  if(root&&root.clientWidth)root.scrollTo({left:mixPage*root.clientWidth,behavior:'smooth'});
+  mixUpdateInd();
+}
 function renderMix(){
   const root=document.getElementById('mix-content'); if(!root)return;
   const beats=beatsPerBar();
@@ -863,7 +929,7 @@ function renderMix(){
     const ic=INSCOL[c.k]||{stroke:c.lc.stroke,fill:'rgba(255,255,255,0.02)'};
     return `<div class="icchip" style="border-color:${ic.stroke};border-left-color:${c.lc.stroke};background:${ic.fill}"><span class="ic-emoji">${ICON[c.k]||'🎵'}</span><span class="ic-code" style="color:${ic.stroke}">${c.k}</span><span class="ic-val">${esc(c.v)}</span></div>`;
   };
-  root.innerHTML=sects.map(s=>{
+  const cardHtml=(s)=>{
     const col=COL[s.color];
     const bars=Math.max(1,parseInt(s.bars)||1);
     const chords=Array.isArray(s.chords)?s.chords:[];
@@ -884,7 +950,14 @@ function renderMix(){
       ${insBody?`<div class="mix-ins">${insBody}</div>`:''}
       ${s.notes?`<div class="ccard-note">⚑ ${esc(s.notes)}</div>`:''}
     </div>`;
-  }).join('');
+  };
+  const pages=chunk(sects,MIX_PER_PAGE);
+  const total=Math.max(1,pages.length);
+  if(mixPage>=total)mixPage=total-1; if(mixPage<0)mixPage=0;
+  root.innerHTML=(pages.length?pages:[[]]).map((pg,pi)=>`<div class="icpage" data-page="${pi}"><div class="mixpage-stack">${pg.map(cardHtml).join('')}</div></div>`).join('');
+  root.scrollLeft=mixPage*root.clientWidth;
+  mixUpdateInd();
+  renderLegend();
 }
 
 /* ── RENDER SIDEBAR ── */
@@ -975,7 +1048,9 @@ function setMode(m){
   });
   try{localStorage.setItem('arranger_mode',m);}catch(e){}
   refreshPerPageOptions();                       // 不同模式給不同段數選項
+  refreshMixPerPageOptions();
   if(document.getElementById('icon-pages'))renderIcon();
+  if(document.getElementById('mix-content'))renderMix();
   if(document.getElementById('summary'))renderSummary();
 }
 function initMode(){
@@ -1111,7 +1186,8 @@ function syncTopbarH(){
 }
 window.addEventListener('resize',syncTopbarH);
 
-try{const pp=parseInt(localStorage.getItem('arranger_perpage'));if(pp>=4&&pp<=16)SEG_PER_PAGE=pp;}catch(e){}
+try{const pp=parseInt(localStorage.getItem('arranger_perpage'));if(pp>=3&&pp<=16)SEG_PER_PAGE=pp;}catch(e){}
+try{const mp=parseInt(localStorage.getItem('arranger_mixperpage'));if(mp>=1&&mp<=8)MIX_PER_PAGE=mp;}catch(e){}
 renderSB();
 renderAll();
 bindSwipe();
