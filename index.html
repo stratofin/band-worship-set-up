@@ -448,6 +448,10 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
     <!-- CHORD CHART VIEW -->
     <div id="vp-chord" style="display:none">
       <div class="view-print"><button class="btn btna" onclick="printView('chord')">🖨 列印 / 存 PDF</button></div>
+      <div class="icon-toolbar">
+        <label class="ic-hint">拍號 <select class="ic-sel" id="chord-timesig" onchange="setTimeSig(this.value)"></select></label>
+        <span class="ic-leghint">改拍號會同步更新所有檢視與輸出</span>
+      </div>
       <div class="chord-hint">每格 = 一小節，上方填和弦，下方斜線＝拍點（依拍號）。和弦會隨存檔 / JSON 一起儲存。</div>
       <div class="chord-content" id="chord-content"></div>
     </div>
@@ -462,9 +466,10 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
         <button class="ic-navbtn" id="mix-next" onclick="mixNav(1)" title="下一頁">›</button>
         <label class="ic-hint">每頁
           <select class="ic-sel" id="mix-perpage" onchange="setMixPerPage(this.value)"></select>
-        段 · 可左右滑動翻頁</label>
+        段</label>
+        <label class="ic-hint">拍號 <select class="ic-sel" id="mix-timesig" onchange="setTimeSig(this.value)"></select></label>
       </div>
-      <div class="chord-hint">混合檢視：上方填和弦（每格一小節，可用空白／｜分隔填兩個和弦），下方顯示各樂器部位。樂器可用上方圖例篩選。</div>
+      <div class="chord-hint">混合檢視：上方填和弦（每格一小節，可用空白／｜分隔填兩個和弦），下方顯示各樂器部位。改拍號會同步更新所有檢視與輸出。</div>
       <div class="icpages" id="mix-content"></div>
     </div>
 
@@ -860,6 +865,18 @@ function beatsPerBar(){
   const n=parseInt((gv('s-time')||'4/4').split('/')[0]);
   return Math.max(1,Math.min(12,n||4));
 }
+/* 拍號選單（和弦譜 / 混合）— 改動同步全域拍號，所有檢視與輸出一起更新 */
+function setTimeSig(v){
+  const el=document.getElementById('s-time'); if(el)el.value=v;
+  renderAll();
+}
+function renderTimeSelects(){
+  const cur=gv('s-time')||'4/4';
+  const base=['4/4','3/4','6/8'];
+  const opts=base.includes(cur)?base:[cur,...base];
+  const html=opts.map(o=>`<option value="${o}"${o===cur?' selected':''}>${o}</option>`).join('');
+  ['chord-timesig','mix-timesig'].forEach(id=>{const s=document.getElementById(id); if(s)s.innerHTML=html;});
+}
 function setChord(id,i,v){
   const s=sects.find(x=>x.id===id); if(!s)return;
   if(!Array.isArray(s.chords))s.chords=[];
@@ -1066,7 +1083,7 @@ function initMode(){
 let dt;
 function schedRender(){clearTimeout(dt);dt=setTimeout(renderAll,80);}
 
-function renderAll(){renderFlow();renderBlock();renderIcon();renderChord();renderMix();renderSummary();buildTL();autoSave();}
+function renderAll(){renderFlow();renderBlock();renderIcon();renderChord();renderMix();renderTimeSelects();renderSummary();buildTL();autoSave();}
 
 /* ── TEXT LIST ── */
 function buildTL(){
