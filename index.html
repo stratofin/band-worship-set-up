@@ -872,7 +872,7 @@ function setTimeSig(v){
 }
 function renderTimeSelects(){
   const cur=gv('s-time')||'4/4';
-  const base=['4/4','3/4','6/8'];
+  const base=['4/4','3/4','6/8','12/8'];
   const opts=base.includes(cur)?base:[cur,...base];
   const html=opts.map(o=>`<option value="${o}"${o===cur?' selected':''}>${o}</option>`).join('');
   ['chord-timesig','mix-timesig'].forEach(id=>{const s=document.getElementById(id); if(s)s.innerHTML=html;});
