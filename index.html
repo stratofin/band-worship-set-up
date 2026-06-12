@@ -219,14 +219,22 @@ body.tb-collapsed .topbar-row-2{display:none;}
 .ccard-head{display:flex;align-items:center;justify-content:space-between;gap:0.5em;padding:0.45em 0.7em;font-weight:700;}
 .cname{font-size:1.02em;line-height:1.15;}
 .cmeta{font-family:'Space Mono',monospace;font-size:0.76em;opacity:.85;white-space:nowrap;}
-.cbar-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(10.5em,1fr));padding:0.35em;}
-.cbar{position:relative;border:1px solid var(--border2);border-radius:0.35em;margin:0.15em;padding:0.7em 0.25em 0.35em;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:2.9em;background:rgba(255,255,255,0.015);overflow:hidden;}
-.cbarno{position:absolute;top:2px;left:5px;font-size:0.55em;color:var(--text3);font-family:'Space Mono',monospace;}
-.cbeats-row{display:flex;align-items:center;justify-content:center;flex-wrap:nowrap;gap:0.05em;width:100%;}
-.cslash{flex:0 0 auto;color:var(--text3);opacity:.5;font-size:0.9em;user-select:none;}
-.cbchord{flex:1 1 0;min-width:0;width:auto;text-align:center;background:none;border:none;outline:none;color:var(--text);font-family:inherit;font-size:0.95em;font-weight:700;border-bottom:1px solid transparent;padding:0;}
-.cbchord:focus{border-bottom-color:var(--accent);}
-.cchord{width:100%;text-align:center;background:none;border:none;outline:none;color:var(--text);font-family:inherit;font-size:1.05em;font-weight:700;}
+.cbar-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(11em,1fr));padding:0.4em;gap:0.35em;}
+.cbar2{position:relative;border:1.5px solid var(--border2);border-radius:0.4em;background:rgba(255,255,255,0.015);overflow:hidden;min-height:3.6em;}
+.cbadges{position:absolute;top:0;right:0;display:flex;gap:2px;z-index:3;}
+.cmeter{font-size:0.5em;font-family:'Space Mono',monospace;border:none;border-radius:0 0 0 4px;padding:0.18em 0.4em;cursor:pointer;line-height:1.2;}
+.cmeter.on{background:#d4a843;color:#1a1a1a;font-weight:700;}
+.cmeter.off{background:rgba(255,255,255,0.05);color:var(--text3);}
+.cmeter.off:hover{color:var(--accent);background:rgba(212,168,67,0.18);}
+.cgoto-badge{font-size:0.5em;font-family:inherit;border:none;border-radius:0 0 0 4px;padding:0.16em 0.3em;cursor:pointer;background:rgba(255,255,255,0.06);color:var(--text3);max-width:8em;outline:none;}
+.cgoto-badge.on{background:#d4564a;color:#fff;font-weight:700;}
+.cbeatcols{display:flex;align-items:stretch;width:100%;padding:0.95em 0.1em 0.45em;}
+.cbeatcol{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;gap:0.12em;border-left:1px solid var(--border);padding:0 0.05em;}
+.cbeatcol:first-child{border-left:none;}
+.cbnum{font-size:0.5em;color:var(--text3);font-family:'Space Mono',monospace;line-height:1;opacity:.7;}
+.cbchord{width:100%;min-width:0;text-align:center;background:none;border:none;outline:none;color:var(--text);font-family:inherit;font-size:1em;font-weight:700;padding:0;}
+.cbchord::placeholder{color:var(--text3);opacity:.45;font-weight:400;}
+.cbeatcol:focus-within{background:rgba(212,168,67,0.08);}
 .ccard-note{font-size:0.76em;color:#b08fde;padding:0.35em 0.65em;border-top:1px solid rgba(155,114,207,0.2);background:rgba(155,114,207,0.05);}
 .mix-ins{padding:0.4em 0.55em 0.55em;border-top:1px dashed var(--border2);display:flex;flex-direction:column;gap:0.3em;}
 .view-print{display:flex;justify-content:flex-end;margin-bottom:0.7em;}
@@ -341,8 +349,14 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   body.print-mix .mixpage-stack>.ccard{margin-bottom:6px;}
   body.print-chord .ccard,body.print-mix .ccard{background:#fff!important;page-break-inside:avoid;border-width:2px;margin-bottom:6px;}
   body.print-chord .cbar,body.print-mix .cbar{background:#fff!important;}
-  body.print-chord .cchord,body.print-mix .cchord,body.print-chord .cbchord,body.print-mix .cbchord{color:#111!important;}
-  body.print-chord .cslash,body.print-mix .cslash{color:#555!important;opacity:.9;}
+  body.print-chord .cbchord,body.print-mix .cbchord{color:#111!important;}
+  body.print-chord .cbar2,body.print-mix .cbar2{background:#fff!important;border-color:#999!important;}
+  body.print-chord .cbeatcol,body.print-mix .cbeatcol{border-color:#bbb!important;}
+  body.print-chord .cbnum,body.print-mix .cbnum{color:#888!important;}
+  body.print-chord .cmeter.on,body.print-mix .cmeter.on{background:#e0b84a!important;color:#000!important;}
+  body.print-chord .cmeter.off,body.print-mix .cmeter.off{display:none!important;}
+  body.print-chord .cgoto-badge.on,body.print-mix .cgoto-badge.on{background:#d4564a!important;color:#fff!important;}
+  body.print-chord .cgoto-badge:not(.on),body.print-mix .cgoto-badge:not(.on){display:none!important;}
   body.print-mix .mix-ins{background:#fff!important;}
   body.print-mix .icchip{background:#fafafa!important;}
   body.print-mix .ic-val{color:#111!important;}
@@ -455,7 +469,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
         <label class="ic-hint">拍號 <select class="ic-sel" id="chord-timesig" onchange="setTimeSig(this.value)"></select></label>
         <span class="ic-leghint">改拍號會同步更新所有檢視與輸出</span>
       </div>
-      <div class="chord-hint">每格 = 一小節，上方填和弦，下方斜線＝拍點（依拍號）。和弦會隨存檔 / JSON 一起儲存。</div>
+      <div class="chord-hint">每小節為方框、上方標拍號數字；空拍顯示圓點「·」＝延續前一個和弦。右上角<b>橘色徽章</b>點擊設定<b>本小節拍號</b>；每段<b>最後一小節</b>右上角可選<b>「→ 接續到」</b>哪一段。</div>
       <div class="chord-content" id="chord-content"></div>
     </div>
 
@@ -472,7 +486,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
         段</label>
         <label class="ic-hint">拍號 <select class="ic-sel" id="mix-timesig" onchange="setTimeSig(this.value)"></select></label>
       </div>
-      <div class="chord-hint">混合檢視：上方填和弦（每格一小節，可用空白／｜分隔填兩個和弦），下方顯示各樂器部位。改拍號會同步更新所有檢視與輸出。</div>
+      <div class="chord-hint">混合檢視：上方和弦小節（方框＋拍號數字，空拍圓點＝延續；右上橘徽章設本小節拍號、末小節可選接續段），下方顯示各樂器部位。</div>
       <div class="icpages" id="mix-content"></div>
     </div>
 
@@ -880,36 +894,58 @@ function renderTimeSelects(){
   const html=opts.map(o=>`<option value="${o}"${o===cur?' selected':''}>${o}</option>`).join('');
   ['chord-timesig','mix-timesig'].forEach(id=>{const s=document.getElementById(id); if(s)s.innerHTML=html;});
 }
-/* 取得某段某小節的「各拍和弦」陣列（相容舊的「一格一字串」資料） */
-function getBarChords(s,bar){
-  let bc=Array.isArray(s.chords)?s.chords[bar]:undefined;
-  if(typeof bc==='string')bc=[bc];
-  return Array.isArray(bc)?bc:[];
+/* 每拍一個和弦欄位（空欄＝該拍延續前一個和弦，顯示圓點）。相容舊的 spans 與字串資料。 */
+function getBeatData(s,bar,beats){
+  let raw=Array.isArray(s.chords)?s.chords[bar]:undefined;
+  let pb=[];
+  if(Array.isArray(raw)&&raw.length&&typeof raw[0]==='object'){
+    raw.forEach(sp=>{const n=Math.max(1,parseInt(sp.n)||1); for(let k=0;k<n;k++)pb.push(k===0?String(sp.c||''):'');});
+  } else if(Array.isArray(raw)){ pb=raw.map(v=>String(v||'')); }
+  else if(typeof raw==='string'&&raw){ pb=[raw]; }
+  while(pb.length<beats)pb.push('');
+  return pb.slice(0,beats);
 }
-function setBeatChord(id,bar,beat,v){
+function setBeat(id,bar,beat,v){
   const s=sects.find(x=>x.id===id); if(!s)return;
   if(!Array.isArray(s.chords))s.chords=[];
-  let bc=s.chords[bar];
-  if(typeof bc==='string')bc=[bc];
-  if(!Array.isArray(bc))bc=[];
-  bc[beat]=v;
-  s.chords[bar]=bc;
-  autoSave();
+  const pb=getBeatData(s,bar,barBeats(s,bar));
+  pb[beat]=v; s.chords[bar]=pb; autoSave();
 }
-/* 一個段落的小節格 HTML：每拍一個可填位置，和弦寫在斜線之間 ／ G ／ A ／ */
+/* 單小節拍號 override */
+function barMeter(s,bar){ return (Array.isArray(s.meters)&&s.meters[bar])||''; }
+function barBeats(s,bar){ const m=barMeter(s,bar); if(m){const n=parseInt(m.split('/')[0]); if(n>0)return Math.min(16,n);} return beatsPerBar(); }
+function cycleMeter(id,bar){
+  const s=sects.find(x=>x.id===id); if(!s)return;
+  const list=['','2/4','3/4','6/8','5/8','7/8','12/8'];
+  const cur=barMeter(s,bar); let i=(list.indexOf(cur)+1)%list.length;
+  if(!Array.isArray(s.meters))s.meters=[];
+  s.meters[bar]=list[i];
+  autoSave(); renderChord(); renderMix();
+}
+function setGoto(id,v){
+  const s=sects.find(x=>x.id===id); if(!s)return;
+  s.goto = v? parseInt(v) : '';
+  autoSave(); renderChord(); renderMix();
+}
+/* 小節格 HTML：方框 + 拍號數字 + 圓點；橘色拍號徽章、最後一小節紅色接續徽章 */
 function barCellsHtml(s,beats){
   const bars=Math.max(1,parseInt(s.bars)||1);
-  // 拍數越多，字級越小，整排不換行也塞得下
-  const fs = beats<=4?1 : beats<=6?0.85 : beats<=8?0.72 : beats<=10?0.62 : 0.55;
   let cells='';
   for(let i=0;i<bars;i++){
-    const bc=getBarChords(s,i);
+    const bb=barBeats(s,i);
+    const pb=getBeatData(s,i,bb);
+    const fs = bb<=4?1 : bb<=6?0.84 : bb<=8?0.7 : bb<=10?0.6 : 0.52;
     let cols='';
-    for(let b=0;b<beats;b++){
-      cols+=`<span class="cslash">／</span><input class="cbchord" value="${esc(bc[b]||'')}" onchange="setBeatChord(${s.id},${i},${b},this.value)">`;
+    for(let b=0;b<bb;b++){
+      cols+=`<div class="cbeatcol"><span class="cbnum">${b+1}</span><input class="cbchord" value="${esc(pb[b]||'')}" placeholder="·" onchange="setBeat(${s.id},${i},${b},this.value)"></div>`;
     }
-    cols+=`<span class="cslash">／</span>`;
-    cells+=`<div class="cbar"><span class="cbarno">${i+1}</span><div class="cbeats-row" style="font-size:${fs}em">${cols}</div></div>`;
+    const m=barMeter(s,i);
+    let badges=`<button class="cmeter ${m?'on':'off'}" onclick="cycleMeter(${s.id},${i})" title="本小節拍號（點擊切換）">${m||'♩'}</button>`;
+    if(i===bars-1){
+      const opts=`<option value="">→ ?</option>`+sects.map(t=>`<option value="${t.id}"${String(s.goto||'')===String(t.id)?' selected':''}>→ ${esc(t.name)}</option>`).join('');
+      badges+=`<select class="cgoto-badge ${s.goto?'on':''}" onchange="setGoto(${s.id},this.value)" title="接續到哪一段">${opts}</select>`;
+    }
+    cells+=`<div class="cbar2"><div class="cbadges">${badges}</div><div class="cbeatcols" style="font-size:${fs}em">${cols}</div></div>`;
   }
   return cells;
 }
@@ -919,9 +955,10 @@ function chordSummary(s){
   const bars=Math.max(1,parseInt(s.bars)||1);
   let any=false; const parts=[];
   for(let i=0;i<bars;i++){
-    const bc=getBarChords(s,i); const arr=[];
-    for(let b=0;b<beats;b++){ const v=String(bc[b]||'').trim(); if(v)any=true; arr.push(v||'·'); }
-    parts.push(arr.join(' '));
+    const bb=barBeats(s,i); const pb=getBeatData(s,i,bb); const arr=[];
+    for(let b=0;b<bb;b++){ const v=String(pb[b]||'').trim(); if(v)any=true; arr.push(v||'·'); }
+    const m=barMeter(s,i);
+    parts.push((m?`(${m}) `:'')+arr.join(' '));
   }
   return any?('| '+parts.join(' | ')+' |'):'';
 }
@@ -1123,6 +1160,7 @@ function buildTL(){
     if(s.layers[0])INS.forEach(k=>{if(s.layers[0].ins[k])t+=`    ${k.padEnd(6)}: ${s.layers[0].ins[k]}\n`;});
     s.layers.slice(1).forEach((l,li)=>{t+=`  ↳ 內層${li+1}（${COL[l.color].label}）\n`;INS.forEach(k=>{if(l.ins[k])t+=`      ${k.padEnd(6)}: ${l.ins[k]}\n`;});});
     if(s.notes)t+=`  ⚑ ${s.notes}\n`;
+    if(s.goto){const g=sects.find(x=>x.id===s.goto); if(g)t+=`  ▶ 接續到：${g.name}\n`;}
     t+='\n';
   });
   document.getElementById('tlc').textContent=t;
