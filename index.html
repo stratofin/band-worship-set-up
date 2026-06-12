@@ -30,6 +30,9 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
 .topbar-row{display:flex;align-items:center;gap:0.75em;}
 .topbar-row-1{justify-content:space-between;}
 .topbar-row-2{flex-wrap:wrap;}
+.tb-toggle{background:var(--bg3);border:1px solid var(--border2);color:var(--text2);border-radius:0.4em;padding:0.25em 0.7em;cursor:pointer;font-size:0.82em;font-family:inherit;line-height:1;white-space:nowrap;flex-shrink:0;}
+.tb-toggle:hover{background:var(--bg4);color:var(--text);border-color:var(--accent);}
+body.tb-collapsed .topbar-row-2{display:none;}
 .logo{font-family:'Space Mono',monospace;font-size:0.85em;color:var(--accent);letter-spacing:1.5px;white-space:nowrap;}
 .byline{color:#c8ccd2;font-size:0.82em;font-weight:700;letter-spacing:0.5px;margin-left:0.3em;text-shadow:0 1px 1px rgba(0,0,0,0.5);}
 .pills{display:flex;gap:0.4em;flex:1;flex-wrap:wrap;}
@@ -353,6 +356,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
 <header class="topbar">
   <div class="topbar-row topbar-row-1">
     <div class="logo">ARRANGER <span class="byline">by Alex.Syu &amp; Stratofin.Lai</span></div>
+    <button class="tb-toggle" id="tb-toggle" onclick="toggleTopbar()" title="收合 / 展開工具列">▲ 工具列</button>
   </div>
   <div class="topbar-row topbar-row-2">
     <span class="seg" title="切換版面：電腦 / 平板 / 手機">
@@ -1214,12 +1218,26 @@ function syncTopbarH(){
 }
 window.addEventListener('resize',syncTopbarH);
 
+/* 收合 / 展開整排工具列（▲ 收起 / ▼ 展開） */
+function toggleTopbar(){
+  const collapsed=document.body.classList.toggle('tb-collapsed');
+  const b=document.getElementById('tb-toggle'); if(b)b.textContent=collapsed?'▼ 工具列':'▲ 工具列';
+  try{localStorage.setItem('arranger_tbcollapsed',collapsed?'1':'');}catch(e){}
+  syncTopbarH();
+}
+function initTopbar(){
+  let c=''; try{c=localStorage.getItem('arranger_tbcollapsed')||'';}catch(e){}
+  if(c){ document.body.classList.add('tb-collapsed'); const b=document.getElementById('tb-toggle'); if(b)b.textContent='▼ 工具列'; }
+  syncTopbarH();
+}
+
 try{const pp=parseInt(localStorage.getItem('arranger_perpage'));if(pp>=3&&pp<=16)SEG_PER_PAGE=pp;}catch(e){}
 try{const mp=parseInt(localStorage.getItem('arranger_mixperpage'));if(mp>=1&&mp<=8)MIX_PER_PAGE=mp;}catch(e){}
 renderSB();
 renderAll();
 bindSwipe();
 initMode();
+initTopbar();
 syncTopbarH();
 window.addEventListener('load',syncTopbarH);
 </script>
