@@ -216,16 +216,15 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
 .ccard-head{display:flex;align-items:center;justify-content:space-between;gap:0.5em;padding:0.45em 0.7em;font-weight:700;}
 .cname{font-size:1.02em;line-height:1.15;}
 .cmeta{font-family:'Space Mono',monospace;font-size:0.76em;opacity:.85;white-space:nowrap;}
-.cbar-grid{display:grid;grid-template-columns:repeat(4,1fr);padding:0.35em;}
-.cbar{position:relative;border:1px solid var(--border2);border-radius:0.35em;margin:0.15em;padding:0.55em 0.3em 0.25em;display:flex;flex-direction:column;align-items:center;gap:0.18em;min-height:3.4em;background:rgba(255,255,255,0.015);}
+.cbar-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(9.5em,1fr));padding:0.35em;}
+.cbar{position:relative;border:1px solid var(--border2);border-radius:0.35em;margin:0.15em;padding:0.7em 0.3em 0.35em;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:2.9em;background:rgba(255,255,255,0.015);}
 .cbarno{position:absolute;top:2px;left:5px;font-size:0.55em;color:var(--text3);font-family:'Space Mono',monospace;}
-.cchord{width:100%;text-align:center;background:none;border:none;outline:none;color:var(--text);font-family:inherit;font-size:1.05em;font-weight:700;border-bottom:1px solid transparent;padding:0.1em 0;}
-.cchord:focus{border-bottom-color:var(--accent);}
-.cchord::placeholder{color:var(--text3);font-weight:400;}
-.cbeats{display:flex;gap:0.45em;color:var(--text3);font-size:0.72em;opacity:.55;line-height:1;}
+.cbeats-row{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:0.1em;width:100%;}
+.cslash{color:var(--text3);opacity:.5;font-size:0.95em;user-select:none;}
+.cbchord{width:2.3em;min-width:1.5em;max-width:4em;text-align:center;background:none;border:none;outline:none;color:var(--text);font-family:inherit;font-size:0.95em;font-weight:700;border-bottom:1px solid transparent;padding:0;}
+.cbchord:focus{border-bottom-color:var(--accent);}
+.cchord{width:100%;text-align:center;background:none;border:none;outline:none;color:var(--text);font-family:inherit;font-size:1.05em;font-weight:700;}
 .ccard-note{font-size:0.76em;color:#b08fde;padding:0.35em 0.65em;border-top:1px solid rgba(155,114,207,0.2);background:rgba(155,114,207,0.05);}
-@media(max-width:700px){.cbar-grid{grid-template-columns:repeat(2,1fr);}}
-body.mode-phone .cbar-grid{grid-template-columns:repeat(2,1fr);}
 .mix-ins{padding:0.4em 0.55em 0.55em;border-top:1px dashed var(--border2);display:flex;flex-direction:column;gap:0.3em;}
 .view-print{display:flex;justify-content:flex-end;margin-bottom:0.7em;}
 .mixpage-stack{display:flex;flex-direction:column;gap:0.7em;}
@@ -339,8 +338,8 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   body.print-mix .mixpage-stack>.ccard{margin-bottom:6px;}
   body.print-chord .ccard,body.print-mix .ccard{background:#fff!important;page-break-inside:avoid;border-width:2px;margin-bottom:6px;}
   body.print-chord .cbar,body.print-mix .cbar{background:#fff!important;}
-  body.print-chord .cchord,body.print-mix .cchord{color:#111!important;}
-  body.print-chord .cbeats,body.print-mix .cbeats{color:#555!important;opacity:.85;}
+  body.print-chord .cchord,body.print-mix .cchord,body.print-chord .cbchord,body.print-mix .cbchord{color:#111!important;}
+  body.print-chord .cslash,body.print-mix .cslash{color:#555!important;opacity:.9;}
   body.print-mix .mix-ins{background:#fff!important;}
   body.print-mix .icchip{background:#fafafa!important;}
   body.print-mix .ic-val{color:#111!important;}
@@ -877,33 +876,49 @@ function renderTimeSelects(){
   const html=opts.map(o=>`<option value="${o}"${o===cur?' selected':''}>${o}</option>`).join('');
   ['chord-timesig','mix-timesig'].forEach(id=>{const s=document.getElementById(id); if(s)s.innerHTML=html;});
 }
-function setChord(id,i,v){
+/* 取得某段某小節的「各拍和弦」陣列（相容舊的「一格一字串」資料） */
+function getBarChords(s,bar){
+  let bc=Array.isArray(s.chords)?s.chords[bar]:undefined;
+  if(typeof bc==='string')bc=[bc];
+  return Array.isArray(bc)?bc:[];
+}
+function setBeatChord(id,bar,beat,v){
   const s=sects.find(x=>x.id===id); if(!s)return;
   if(!Array.isArray(s.chords))s.chords=[];
-  s.chords[i]=v; autoSave();
+  let bc=s.chords[bar];
+  if(typeof bc==='string')bc=[bc];
+  if(!Array.isArray(bc))bc=[];
+  bc[beat]=v;
+  s.chords[bar]=bc;
+  autoSave();
+}
+/* 一個段落的小節格 HTML：每拍一個可填位置，和弦寫在斜線之間 ／ G ／ A ／ */
+function barCellsHtml(s,beats){
+  const bars=Math.max(1,parseInt(s.bars)||1);
+  let cells='';
+  for(let i=0;i<bars;i++){
+    const bc=getBarChords(s,i);
+    let cols='';
+    for(let b=0;b<beats;b++){
+      cols+=`<span class="cslash">／</span><input class="cbchord" value="${esc(bc[b]||'')}" onchange="setBeatChord(${s.id},${i},${b},this.value)">`;
+    }
+    cols+=`<span class="cslash">／</span>`;
+    cells+=`<div class="cbar"><span class="cbarno">${i+1}</span><div class="cbeats-row">${cols}</div></div>`;
+  }
+  return cells;
 }
 function renderChord(){
   const root=document.getElementById('chord-content'); if(!root)return;
   const beats=beatsPerBar();
-  const slashRow=Array.from({length:beats}).map(()=>'<span>／</span>').join('');
   root.innerHTML=sects.map(s=>{
     const col=COL[s.color];
     const bars=Math.max(1,parseInt(s.bars)||1);
-    const chords=Array.isArray(s.chords)?s.chords:[];
-    let cells='';
-    for(let i=0;i<bars;i++){
-      cells+=`<div class="cbar">
-        <span class="cbarno">${i+1}</span>
-        <input class="cchord" value="${esc(chords[i]||'')}" placeholder="–" onchange="setChord(${s.id},${i},this.value)">
-        <div class="cbeats">${slashRow}</div>
-      </div>`;
-    }
     return `<div class="ccard" style="border-color:${col.stroke}">
       <div class="ccard-head" style="background:${col.fill};color:${col.stroke}">
         <span class="cname">${esc(s.name)}</span>
         <span class="cmeta">${bars} Bar · ${esc(gv('s-time'))}</span>
       </div>
-      <div class="cbar-grid">${cells}</div>
+      <div class="cbar-grid">${barCellsHtml(s,beats)}</div>
       ${s.notes?`<div class="ccard-note">⚑ ${esc(s.notes)}</div>`:''}
     </div>`;
   }).join('');
@@ -949,11 +964,7 @@ function renderMix(){
   const cardHtml=(s)=>{
     const col=COL[s.color];
     const bars=Math.max(1,parseInt(s.bars)||1);
-    const chords=Array.isArray(s.chords)?s.chords:[];
-    let cells='';
-    for(let i=0;i<bars;i++){
-      cells+=`<div class="cbar"><span class="cbarno">${i+1}</span><input class="cchord" value="${esc(chords[i]||'')}" placeholder="–" onchange="setChord(${s.id},${i},this.value)"><div class="cbeats">${slashRow}</div></div>`;
-    }
+    const cells=barCellsHtml(s,beats);
     const chips=[];
     s.layers.forEach(l=>{ INS.forEach(k=>{ if(!insFilter.has(k))return; if(l.ins[k]&&String(l.ins[k]).trim())chips.push({k,v:l.ins[k],lc:COL[l.color]}); }); });
     const mel=chips.filter(c=>!RHYTHM.includes(c.k)), rhy=chips.filter(c=>RHYTHM.includes(c.k));
