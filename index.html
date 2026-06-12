@@ -219,12 +219,12 @@ body.tb-collapsed .topbar-row-2{display:none;}
 .ccard-head{display:flex;align-items:center;justify-content:space-between;gap:0.5em;padding:0.45em 0.7em;font-weight:700;}
 .cname{font-size:1.02em;line-height:1.15;}
 .cmeta{font-family:'Space Mono',monospace;font-size:0.76em;opacity:.85;white-space:nowrap;}
-.cbar-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(9.5em,1fr));padding:0.35em;}
-.cbar{position:relative;border:1px solid var(--border2);border-radius:0.35em;margin:0.15em;padding:0.7em 0.3em 0.35em;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:2.9em;background:rgba(255,255,255,0.015);}
+.cbar-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(10.5em,1fr));padding:0.35em;}
+.cbar{position:relative;border:1px solid var(--border2);border-radius:0.35em;margin:0.15em;padding:0.7em 0.25em 0.35em;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:2.9em;background:rgba(255,255,255,0.015);overflow:hidden;}
 .cbarno{position:absolute;top:2px;left:5px;font-size:0.55em;color:var(--text3);font-family:'Space Mono',monospace;}
-.cbeats-row{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:0.1em;width:100%;}
-.cslash{color:var(--text3);opacity:.5;font-size:0.95em;user-select:none;}
-.cbchord{width:2.3em;min-width:1.5em;max-width:4em;text-align:center;background:none;border:none;outline:none;color:var(--text);font-family:inherit;font-size:0.95em;font-weight:700;border-bottom:1px solid transparent;padding:0;}
+.cbeats-row{display:flex;align-items:center;justify-content:center;flex-wrap:nowrap;gap:0.05em;width:100%;}
+.cslash{flex:0 0 auto;color:var(--text3);opacity:.5;font-size:0.9em;user-select:none;}
+.cbchord{flex:1 1 0;min-width:0;width:auto;text-align:center;background:none;border:none;outline:none;color:var(--text);font-family:inherit;font-size:0.95em;font-weight:700;border-bottom:1px solid transparent;padding:0;}
 .cbchord:focus{border-bottom-color:var(--accent);}
 .cchord{width:100%;text-align:center;background:none;border:none;outline:none;color:var(--text);font-family:inherit;font-size:1.05em;font-weight:700;}
 .ccard-note{font-size:0.76em;color:#b08fde;padding:0.35em 0.65em;border-top:1px solid rgba(155,114,207,0.2);background:rgba(155,114,207,0.05);}
@@ -899,6 +899,8 @@ function setBeatChord(id,bar,beat,v){
 /* 一個段落的小節格 HTML：每拍一個可填位置，和弦寫在斜線之間 ／ G ／ A ／ */
 function barCellsHtml(s,beats){
   const bars=Math.max(1,parseInt(s.bars)||1);
+  // 拍數越多，字級越小，整排不換行也塞得下
+  const fs = beats<=4?1 : beats<=6?0.85 : beats<=8?0.72 : beats<=10?0.62 : 0.55;
   let cells='';
   for(let i=0;i<bars;i++){
     const bc=getBarChords(s,i);
@@ -907,9 +909,21 @@ function barCellsHtml(s,beats){
       cols+=`<span class="cslash">／</span><input class="cbchord" value="${esc(bc[b]||'')}" onchange="setBeatChord(${s.id},${i},${b},this.value)">`;
     }
     cols+=`<span class="cslash">／</span>`;
-    cells+=`<div class="cbar"><span class="cbarno">${i+1}</span><div class="cbeats-row">${cols}</div></div>`;
+    cells+=`<div class="cbar"><span class="cbarno">${i+1}</span><div class="cbeats-row" style="font-size:${fs}em">${cols}</div></div>`;
   }
   return cells;
+}
+/* 段落和弦摘要（文字 / CSV 用）：| G A · · | D · · · | */
+function chordSummary(s){
+  const beats=beatsPerBar();
+  const bars=Math.max(1,parseInt(s.bars)||1);
+  let any=false; const parts=[];
+  for(let i=0;i<bars;i++){
+    const bc=getBarChords(s,i); const arr=[];
+    for(let b=0;b<beats;b++){ const v=String(bc[b]||'').trim(); if(v)any=true; arr.push(v||'·'); }
+    parts.push(arr.join(' '));
+  }
+  return any?('| '+parts.join(' | ')+' |'):'';
 }
 function renderChord(){
   const root=document.getElementById('chord-content'); if(!root)return;
@@ -1105,6 +1119,7 @@ function buildTL(){
   let t=`=== 編曲架構 ===\n曲目：${gv('s-title')}  Key：${gv('s-key')}  拍號：${gv('s-time')}  BPM：${gv('s-bpm')}\n${'─'.repeat(38)}\n\n`;
   sects.forEach((s,i)=>{
     t+=`[${i+1}] ${s.name}  ${s.bars} Bar  ${COL[s.color].label}\n`;
+    const ch=chordSummary(s); if(ch)t+=`    ${'和弦'.padEnd(5)}: ${ch}\n`;
     if(s.layers[0])INS.forEach(k=>{if(s.layers[0].ins[k])t+=`    ${k.padEnd(6)}: ${s.layers[0].ins[k]}\n`;});
     s.layers.slice(1).forEach((l,li)=>{t+=`  ↳ 內層${li+1}（${COL[l.color].label}）\n`;INS.forEach(k=>{if(l.ins[k])t+=`      ${k.padEnd(6)}: ${l.ins[k]}\n`;});});
     if(s.notes)t+=`  ⚑ ${s.notes}\n`;
@@ -1121,8 +1136,8 @@ function copyTL(btn){
 
 /* ── EXPORT ── */
 function expCSV(){
-  let csv='﻿段落,Bar,顏色,層次,Vocal,KB,Pad,AG,EG1,EG2,Bass,Drum,備註\n';
-  sects.forEach(s=>s.layers.forEach((l,li)=>{const ins=l.ins;csv+=`"${s.name}",${s.bars},"${COL[s.color].label}","${li===0?'基底':COL[l.color].label}","${ins.Vocal||''}","${ins.KB||''}","${ins.Pad||''}","${ins.AG||''}","${ins.EG1||''}","${ins.EG2||''}","${ins.Bass||''}","${ins.Drum||''}","${s.notes||''}"\n`;}));
+  let csv='﻿段落,Bar,顏色,層次,Vocal,KB,Pad,AG,EG1,EG2,Bass,Drum,和弦,備註\n';
+  sects.forEach(s=>s.layers.forEach((l,li)=>{const ins=l.ins;csv+=`"${s.name}",${s.bars},"${COL[s.color].label}","${li===0?'基底':COL[l.color].label}","${ins.Vocal||''}","${ins.KB||''}","${ins.Pad||''}","${ins.AG||''}","${ins.EG1||''}","${ins.EG2||''}","${ins.Bass||''}","${ins.Drum||''}","${li===0?chordSummary(s).replace(/"/g,'""'):''}","${(s.notes||'').replace(/"/g,'""')}"\n`;}));
   const a=document.createElement('a');a.download='arrangement.csv';a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.click();
 }
 
