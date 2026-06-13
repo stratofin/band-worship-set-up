@@ -228,6 +228,9 @@ body.tb-collapsed .topbar-row-2{display:none;}
 .cmeter.off:hover{color:var(--accent);background:rgba(212,168,67,0.18);}
 .cgoto-badge{font-size:0.5em;font-family:inherit;border:none;border-radius:0 0 0 4px;padding:0.16em 0.3em;cursor:pointer;background:rgba(255,255,255,0.06);color:var(--text3);max-width:8em;outline:none;}
 .cgoto-badge.on{background:#d4564a;color:#fff;font-weight:700;}
+.cjump{font-size:0.46em;font-family:inherit;border:none;border-radius:0 0 0 3px;padding:0.14em 0.18em;cursor:pointer;background:rgba(255,255,255,0.05);color:var(--text3);outline:none;max-width:5em;}
+.cjump:hover{color:var(--accent);background:rgba(212,168,67,0.18);}
+.cjump.on{background:rgba(212,86,74,0.5);color:#fff;}
 .cbeatcols{display:flex;align-items:stretch;width:100%;padding:0.95em 0.1em 0.45em;}
 .cbeatcol{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;gap:0.12em;border-left:1px solid var(--border);padding:0 0.05em;}
 .cbeatcol:first-child{border-left:none;}
@@ -357,6 +360,8 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   body.print-chord .cmeter.off,body.print-mix .cmeter.off{display:none!important;}
   body.print-chord .cgoto-badge.on,body.print-mix .cgoto-badge.on{background:#d4564a!important;color:#fff!important;}
   body.print-chord .cgoto-badge:not(.on),body.print-mix .cgoto-badge:not(.on){display:none!important;}
+  body.print-chord .cjump.on,body.print-mix .cjump.on{background:#d4564a!important;color:#fff!important;}
+  body.print-chord .cjump:not(.on),body.print-mix .cjump:not(.on){display:none!important;}
   body.print-mix .mix-ins{background:#fff!important;}
   body.print-mix .icchip{background:#fafafa!important;}
   body.print-mix .ic-val{color:#111!important;}
@@ -922,9 +927,18 @@ function cycleMeter(id,bar){
   s.meters[bar]=list[i];
   autoSave(); renderChord(); renderMix();
 }
-function setGoto(id,v){
+/* 每小節接續（bargoto）；相容舊的段落級 s.goto（視為最後一小節的接續） */
+function getBarGoto(s,bar,bars){
+  if(Array.isArray(s.bargoto)&&s.bargoto[bar]!=null&&s.bargoto[bar]!=='') return s.bargoto[bar];
+  if(bar===bars-1 && s.goto) return s.goto;
+  return '';
+}
+function setBarGoto(id,bar,v){
   const s=sects.find(x=>x.id===id); if(!s)return;
-  s.goto = v? parseInt(v) : '';
+  if(!Array.isArray(s.bargoto))s.bargoto=[];
+  s.bargoto[bar] = v? parseInt(v) : '';
+  const last=Math.max(1,parseInt(s.bars)||1)-1;
+  if(s.goto && bar===last) s.goto='';   // 清掉舊欄位，避免重複
   autoSave(); renderChord(); renderMix();
 }
 /* 小節格 HTML：方框 + 拍號數字 + 圓點；橘色拍號徽章、最後一小節紅色接續徽章 */
@@ -940,11 +954,13 @@ function barCellsHtml(s,beats){
       cols+=`<div class="cbeatcol"><span class="cbnum">${b+1}</span><input class="cbchord" value="${esc(pb[b]||'')}" placeholder="·" onchange="setBeat(${s.id},${i},${b},this.value)"></div>`;
     }
     const m=barMeter(s,i);
+    const isLast=(i===bars-1);
+    const g=getBarGoto(s,i,bars);
+    const gopts=`<option value="">${isLast?'→ ?':'⌄'}</option>`+sects.map(t=>`<option value="${t.id}"${String(g)===String(t.id)?' selected':''}>→ ${esc(t.name)}</option>`).join('');
     let badges=`<button class="cmeter ${m?'on':'off'}" onclick="cycleMeter(${s.id},${i})" title="本小節拍號（點擊切換）">${m||'♩'}</button>`;
-    if(i===bars-1){
-      const opts=`<option value="">→ ?</option>`+sects.map(t=>`<option value="${t.id}"${String(s.goto||'')===String(t.id)?' selected':''}>→ ${esc(t.name)}</option>`).join('');
-      badges+=`<select class="cgoto-badge ${s.goto?'on':''}" onchange="setGoto(${s.id},this.value)" title="接續到哪一段">${opts}</select>`;
-    }
+    badges+= isLast
+      ? `<select class="cgoto-badge ${g?'on':''}" onchange="setBarGoto(${s.id},${i},this.value)" title="接續到哪一段">${gopts}</select>`
+      : `<select class="cjump ${g?'on':''}" onchange="setBarGoto(${s.id},${i},this.value)" title="此小節接續到哪一段">${gopts}</select>`;
     cells+=`<div class="cbar2"><div class="cbadges">${badges}</div><div class="cbeatcols" style="font-size:${fs}em">${cols}</div></div>`;
   }
   return cells;
@@ -1160,7 +1176,7 @@ function buildTL(){
     if(s.layers[0])INS.forEach(k=>{if(s.layers[0].ins[k])t+=`    ${k.padEnd(6)}: ${s.layers[0].ins[k]}\n`;});
     s.layers.slice(1).forEach((l,li)=>{t+=`  ↳ 內層${li+1}（${COL[l.color].label}）\n`;INS.forEach(k=>{if(l.ins[k])t+=`      ${k.padEnd(6)}: ${l.ins[k]}\n`;});});
     if(s.notes)t+=`  ⚑ ${s.notes}\n`;
-    if(s.goto){const g=sects.find(x=>x.id===s.goto); if(g)t+=`  ▶ 接續到：${g.name}\n`;}
+    {const bars=Math.max(1,parseInt(s.bars)||1); for(let b=0;b<bars;b++){const gid=getBarGoto(s,b,bars); if(gid){const gt=sects.find(x=>x.id===gid); if(gt)t+=`  ▶ 小節${b+1} 接續到：${gt.name}\n`;}}}
     t+='\n';
   });
   document.getElementById('tlc').textContent=t;
