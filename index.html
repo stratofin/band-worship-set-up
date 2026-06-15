@@ -248,12 +248,13 @@ body.tb-collapsed .topbar-row-2{display:none;}
 .beat-r{display:inline-flex;align-items:center;justify-content:center;min-height:1.25em;color:var(--text);font-weight:700;}
 .beat-i{width:100%;min-width:0;text-align:center;background:rgba(212,168,67,0.12);border:none;outline:none;color:var(--text);font-family:inherit;font-size:0.95em;font-weight:700;padding:0;border-radius:2px;}
 .bt-note{font-weight:700;}
+.bt-suf{font-size:0.55em;vertical-align:0.35em;font-weight:600;letter-spacing:-0.02em;}
 .bt-rest{color:var(--text3);}
 .bt-sus{color:var(--text3);opacity:.5;}
-.beat-sub{display:inline-flex;gap:0.14em;align-items:flex-end;position:relative;padding-bottom:2px;line-height:1;font-size:0.8em;}
-.beat-sub.beam-8{border-bottom:1.6px solid currentColor;}
-.beat-sub.beam-3{border-bottom:1.6px solid currentColor;}
-.beat-sub.beam-16{border-bottom:1.6px solid currentColor;box-shadow:0 3px 0 -1.4px currentColor;}
+.beat-sub{display:inline-flex;gap:0.16em;align-items:flex-end;position:relative;padding-bottom:3px;line-height:1;font-size:0.8em;}
+.beat-sub.beam-8{border-bottom:2.6px solid currentColor;}
+.beat-sub.beam-3{border-bottom:2.6px solid currentColor;}
+.beat-sub.beam-16{border-bottom:2.6px solid currentColor;box-shadow:0 4px 0 -1.2px currentColor;}
 .beat-sub.beam-3::after{content:'3';position:absolute;top:-0.9em;left:50%;transform:translateX(-50%);font-size:0.6em;opacity:.8;font-weight:400;}
 .ccard-note{font-size:0.76em;color:#b08fde;padding:0.35em 0.65em;border-top:1px solid rgba(155,114,207,0.2);background:rgba(155,114,207,0.05);}
 .mix-ins{padding:0.4em 0.55em 0.55em;border-top:1px dashed var(--border2);display:flex;flex-direction:column;gap:0.3em;}
@@ -422,6 +423,10 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   body.print-mix .icchip{background:#fafafa!important;}
   body.print-mix .ic-val{color:#111!important;}
   body.print-chord .ccard-note,body.print-mix .ccard-note{color:#6a4ca0!important;background:#f6f2fb!important;}
+  /* 經典 A4：整體縮放塞進一張 */
+  body.print-fit #vp-chord>.chord-content,
+  body.print-fit #vp-mix>.icpages{ zoom:var(--fit-scale,1); }
+  body.print-fit .ccard{page-break-inside:auto!important;}
 }
 </style>
 </head>
@@ -530,7 +535,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
     <!-- CHORD CHART VIEW -->
     <div id="vp-chord" style="display:none">
       <div class="print-head"></div>
-      <div class="view-print"><button class="btn" onclick="openOcr()">🔍 辨識匯入</button><button class="btn btna" onclick="printView('chord')">🖨 列印 / 存 PDF</button></div>
+      <div class="view-print"><button class="btn" onclick="openOcr()">🔍 辨識匯入</button><button class="btn" onclick="printFit('chord')" title="自動縮放，盡量塞進一張 A4">📄 經典A4</button><button class="btn btna" onclick="printView('chord')">🖨 列印 / 存 PDF</button></div>
       <div class="icon-toolbar">
         <label class="ic-hint">拍號 <select class="ic-sel" id="chord-timesig" onchange="setTimeSig(this.value)"></select></label>
         <label class="ic-hint">顯示 <select class="ic-sel" id="chord-disp" onchange="setChordDisp(this.value)"><option value="num">級數</option><option value="male">和弦名(男Key)</option><option value="female">和弦名(女Key)</option></select></label>
@@ -543,7 +548,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
     <!-- MIX VIEW (和弦 + 樂器) -->
     <div id="vp-mix" style="display:none">
       <div class="print-head"></div>
-      <div class="view-print"><button class="btn" onclick="openOcr()">🔍 辨識匯入</button><button class="btn btna" onclick="printView('mix')">🖨 列印 / 存 PDF</button></div>
+      <div class="view-print"><button class="btn" onclick="openOcr()">🔍 辨識匯入</button><button class="btn" onclick="printFit('mix')" title="自動縮放，盡量塞進一張 A4">📄 經典A4</button><button class="btn btna" onclick="printView('mix')">🖨 列印 / 存 PDF</button></div>
       <div class="ic-legend" id="mix-legend"></div>
       <div class="icon-toolbar">
         <button class="ic-navbtn" id="mix-prev" onclick="mixNav(-1)" title="上一頁">‹</button>
@@ -975,7 +980,30 @@ async function printView(name){
   setTimeout(()=>window.print(),60);
 }
 function printIcon(){ return printView('icon'); }   // 相容舊呼叫
-window.addEventListener('afterprint',()=>{ if(window._printCls){ document.body.classList.remove(window._printCls); window._printCls=null; } });
+/* 經典 A4：自動縮放，盡量塞進一張 A4 */
+async function printFit(view){
+  const cls='print-'+view;
+  if(view==='chord')renderChord(); else if(view==='mix')renderMix();
+  if(document.fonts&&document.fonts.ready){ try{ await document.fonts.ready; }catch(e){} }
+  const src=document.getElementById(view==='chord'?'chord-content':'mix-content');
+  const PH=1040;   // A4 直式可列印高度（約 px @96dpi，已扣邊界）
+  let scale=1;
+  try{
+    const clone=src.cloneNode(true);
+    clone.querySelectorAll('.beat-i').forEach(n=>n.remove());
+    clone.querySelectorAll('.icpage').forEach(p=>{p.style.minWidth='0';p.style.width='100%';});
+    clone.style.cssText='position:fixed;left:-99999px;top:0;width:720px;display:block;';
+    document.body.appendChild(clone);
+    const h=clone.scrollHeight||PH;
+    document.body.removeChild(clone);
+    scale=Math.max(0.45,Math.min(1, PH/h));
+  }catch(e){}
+  document.documentElement.style.setProperty('--fit-scale', scale.toFixed(3));
+  document.body.classList.add(cls,'print-fit');
+  window._printCls=cls;
+  setTimeout(()=>window.print(),60);
+}
+window.addEventListener('afterprint',()=>{ if(window._printCls){ document.body.classList.remove(window._printCls); } document.body.classList.remove('print-fit'); window._printCls=null; });
 
 /* ── OCR 圖片/PDF 辨識匯入 ── */
 function openOcr(){ document.getElementById('ocr-modal').style.display='flex'; }
@@ -1143,6 +1171,14 @@ function convChord(tok,keySemi,pf){
   if(bass){ const bm=bass.match(/^([#b]?)([1-7])$/); out+='/'+(bm?degToNoteName(keySemi,+bm[2],bm[1],pfFor(bm[1])):bass); }
   return out;
 }
+/* 把和弦拆成 根音 / 品質後綴 / 轉位低音（後綴顯示小字） */
+function splitChordDisplay(text){
+  const m=text.match(/^([#b]?[1-7])(.*)$/)||text.match(/^([A-G][#b]?)(.*)$/);
+  if(!m)return {root:text,suf:'',bass:''};
+  let rest=m[2]||'',bass=''; const sl=rest.indexOf('/');
+  if(sl>=0){ bass=rest.slice(sl); rest=rest.slice(0,sl); }
+  return {root:m[1],suf:rest,bass:bass};
+}
 /* token → 顯示 HTML（休止 ✕ / 延續 · / 括號細分連音底線） */
 function renderBeatToken(tok){
   tok=String(tok||'').trim();
@@ -1151,7 +1187,8 @@ function renderBeatToken(tok){
   const one=(t)=>{ t=t.trim();
     if(t===''||t==='.')return '<span class="bt-sus">·</span>';
     if(t==='x'||t==='X')return '<span class="bt-rest">✕</span>';
-    return '<span class="bt-note">'+esc(chordDisp==='num'?t:convChord(t,keySemi,pf))+'</span>';
+    const sp=splitChordDisplay(chordDisp==='num'?t:convChord(t,keySemi,pf));
+    return '<span class="bt-note">'+esc(sp.root)+(sp.suf?'<span class="bt-suf">'+esc(sp.suf)+'</span>':'')+(sp.bass?esc(sp.bass):'')+'</span>';
   };
   if(tok.startsWith('(')){
     const inner=tok.replace(/^\(|\)$/g,'').trim().split(/\s+/).filter(Boolean);
