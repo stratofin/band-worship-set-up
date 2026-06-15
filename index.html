@@ -239,7 +239,10 @@ body.tb-collapsed .topbar-row-2{display:none;}
 .cjump:hover{color:var(--accent);background:rgba(212,168,67,0.18);}
 .cjump.on{background:rgba(212,86,74,0.5);color:#fff;}
 .cbeatcols{display:flex;align-items:stretch;width:100%;padding:0.95em 0.1em 0.45em;}
-.cbeatcol{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;gap:0.12em;border-left:1px solid var(--border);padding:0 0.05em;}
+.cbeatcol{position:relative;flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;gap:0.12em;border-left:1px solid var(--border);padding:0 0.05em;}
+.cbrep{position:absolute;bottom:2px;right:2px;z-index:4;font-size:0.5em;font-family:'Space Mono',monospace;color:var(--text2);cursor:pointer;line-height:1;min-width:1.7em;text-align:center;padding:0.18em 0.15em;border:1px solid var(--border2);border-radius:3px;background:var(--bg3);user-select:none;}
+.cbrep:hover{border-color:var(--accent);color:var(--accent);}
+.cbrep.on{background:#5b9bd5;color:#08121c;border-color:#5b9bd5;font-weight:700;}
 .cbeatcol:first-child{border-left:none;}
 .cbnum{font-size:0.5em;color:var(--text3);font-family:'Space Mono',monospace;line-height:1;opacity:.7;}
 .cbchord{width:100%;min-width:0;text-align:center;background:none;border:none;outline:none;color:var(--text);font-family:inherit;font-size:1em;font-weight:700;padding:0;}
@@ -377,7 +380,9 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   *{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
   @page{size:A4 portrait;margin:11mm;}
   body{background:#fff;color:#111;}
-  .topbar,.vtabs,.icon-toolbar,.summary,.chord-hint,.view-print,.ic-legend,.cbpr-sel{display:none!important;}
+  .topbar,.vtabs,.icon-toolbar,.summary,.chord-hint,.view-print,.ic-legend,.cbpr-sel,.cbsub{display:none!important;}
+  body[class*="print-"] .cbrep:not(.on){display:none!important;}
+  body[class*="print-"] .cbrep.on{color:#1a3a5a!important;background:#cfe0f3!important;}
   .left{display:none!important;}
   .page{display:block;}
   .right{padding:0;overflow:visible;}
@@ -1214,6 +1219,15 @@ function subdivLabel(b,fac){
   if(fac===2)return (b%2===0)?(b/2+1):'&';
   const r=b%4; return r===0?(b/4+1):(r===1?'e':r===2?'&':'a');
 }
+/* 每小節重複次數 ×N（點一下循環 ·/×2/×4/×8） */
+function repOf(s,bar){ const r=Array.isArray(s.rep)?s.rep[bar]:1; return [1,2,4,8].includes(r)?r:1; }
+function cycleRep(id,bar){
+  const s=sects.find(x=>x.id===id); if(!s)return;
+  const order=[1,2,4,8], nx=order[(order.indexOf(repOf(s,bar))+1)%order.length];
+  if(!Array.isArray(s.rep))s.rep=[]; s.rep[bar]=nx; autoSave(); renderChord(); renderMix();
+}
+/* 每拍格線顏色（螢光）：第1拍紅、2綠、3紫、4黃，循環 */
+const BEATCOL=['#ff3b5c','#3dff52','#c64dff','#f4ff2e'];
 /* 小節格 HTML：方框 + 拍號數字 + 記號顯示；橘色拍號徽章、最後一小節紅色接續徽章 */
 function barCellsHtml(s,beats){
   const bars=Math.max(1,parseInt(s.bars)||1);
@@ -1227,9 +1241,12 @@ function barCellsHtml(s,beats){
     let cols='';
     for(let b=0;b<cellsN;b++){
       const raw=pb[b]||'';
-      cols+=`<div class="cbeatcol" onclick="beatEdit(this)"><span class="cbnum">${subdivLabel(b,fac)}</span><span class="beat-r">${renderBeatToken(raw)}</span><input class="beat-i" value="${esc(raw)}" style="display:none" onblur="beatSave(${s.id},${i},${b},this)" onkeydown="if(event.key==='Enter'){this.blur();}"></div>`;
+      const lc=BEATCOL[Math.floor(b/fac)%BEATCOL.length];
+      cols+=`<div class="cbeatcol" style="border-left:2px solid ${lc}" onclick="beatEdit(this)"><span class="cbnum">${subdivLabel(b,fac)}</span><span class="beat-r">${renderBeatToken(raw)}</span><input class="beat-i" value="${esc(raw)}" style="display:none" onblur="beatSave(${s.id},${i},${b},this)" onkeydown="if(event.key==='Enter'){this.blur();}"></div>`;
     }
     const subSel=`<select class="cbsub" onclick="event.stopPropagation()" onchange="setSubdiv(${s.id},${i},this.value)" title="本小節分割：♩四分(4格) / ♪八分(8格) / ♬十六分(16格)"><option value="1"${fac===1?' selected':''}>♩</option><option value="2"${fac===2?' selected':''}>♪</option><option value="4"${fac===4?' selected':''}>♬</option></select>`;
+    const rep=repOf(s,i);
+    const repBadge=`<span class="cbrep ${rep>1?'on':''}" onclick="event.stopPropagation();cycleRep(${s.id},${i})" title="本小節重複次數（點擊循環 ·/×2/×4/×8）">${rep>1?'×'+rep:'·'}</span>`;
     const m=barMeter(s,i);
     const isLast=(i===bars-1);
     const g=getBarGoto(s,i,bars);
@@ -1238,7 +1255,7 @@ function barCellsHtml(s,beats){
     badges+= isLast
       ? `<select class="cgoto-badge ${g?'on':''}" onchange="setBarGoto(${s.id},${i},this.value)" title="接續到哪一段">${gopts}</select>`
       : `<select class="cjump ${g?'on':''}" onchange="setBarGoto(${s.id},${i},this.value)" title="此小節接續到哪一段">${gopts}</select>`;
-    cells+=`<div class="cbar2">${subSel}<div class="cbadges">${badges}</div><div class="cbeatcols" style="font-size:${fs}em">${cols}</div></div>`;
+    cells+=`<div class="cbar2">${subSel}${repBadge}<div class="cbadges">${badges}</div><div class="cbeatcols" style="font-size:${fs}em">${cols}</div></div>`;
   }
   return cells;
 }
@@ -1250,8 +1267,8 @@ function chordSummary(s){
   for(let i=0;i<bars;i++){
     const cn=cellsForBar(s,i); const pb=getBeatData(s,i,cn); const arr=[];
     for(let b=0;b<cn;b++){ const v=String(pb[b]||'').trim(); if(v)any=true; arr.push(v||'·'); }
-    const m=barMeter(s,i);
-    parts.push((m?`(${m}) `:'')+arr.join(' '));
+    const m=barMeter(s,i), rep=repOf(s,i);
+    parts.push((m?`(${m}) `:'')+arr.join(' ')+(rep>1?` ×${rep}`:''));
   }
   return any?('| '+parts.join(' | ')+' |'):'';
 }
