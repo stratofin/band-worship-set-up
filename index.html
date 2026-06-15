@@ -257,7 +257,17 @@ body.tb-collapsed .topbar-row-2{display:none;}
 .beat-sub.beam-3::after{content:'3';position:absolute;top:-0.9em;left:50%;transform:translateX(-50%);font-size:0.6em;opacity:.8;font-weight:400;}
 .ccard-note{font-size:0.76em;color:#b08fde;padding:0.35em 0.65em;border-top:1px solid rgba(155,114,207,0.2);background:rgba(155,114,207,0.05);}
 .mix-ins{padding:0.4em 0.55em 0.55em;border-top:1px dashed var(--border2);display:flex;flex-direction:column;gap:0.3em;}
-.view-print{display:flex;justify-content:flex-end;margin-bottom:0.7em;}
+.view-print{display:flex;justify-content:flex-end;gap:0.5em;margin-bottom:0.7em;}
+/* OCR 辨識匯入視窗 */
+.ocr-modal{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:200;display:none;align-items:center;justify-content:center;padding:1em;}
+.ocr-box{background:var(--bg2);border:1px solid var(--border2);border-radius:0.8em;width:min(560px,95vw);max-height:90vh;overflow:auto;}
+.ocr-head{display:flex;align-items:center;justify-content:space-between;padding:0.8em 1em;border-bottom:1px solid var(--border);font-weight:700;}
+.ocr-body{padding:1em;display:flex;flex-direction:column;gap:0.7em;}
+.ocr-status{font-size:0.82em;color:var(--text2);line-height:1.5;}
+.ocr-text{width:100%;min-height:9em;background:var(--bg3);border:1px solid var(--border);border-radius:0.4em;color:var(--text);font-family:'Space Mono',monospace;font-size:0.8em;padding:0.5em;resize:vertical;outline:none;}
+.ocr-opt{font-size:0.82em;color:var(--text2);display:flex;align-items:center;gap:0.4em;}
+.ocr-actions{display:flex;gap:0.5em;justify-content:flex-end;}
+.ocr-note{font-size:0.72em;color:var(--text3);line-height:1.6;}
 .mixpage-stack{display:flex;flex-direction:column;gap:0.7em;}
 
 /* ── TEXT LIST ── */
@@ -520,7 +530,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
     <!-- CHORD CHART VIEW -->
     <div id="vp-chord" style="display:none">
       <div class="print-head"></div>
-      <div class="view-print"><button class="btn btna" onclick="printView('chord')">🖨 列印 / 存 PDF</button></div>
+      <div class="view-print"><button class="btn" onclick="openOcr()">🔍 辨識匯入</button><button class="btn btna" onclick="printView('chord')">🖨 列印 / 存 PDF</button></div>
       <div class="icon-toolbar">
         <label class="ic-hint">拍號 <select class="ic-sel" id="chord-timesig" onchange="setTimeSig(this.value)"></select></label>
         <label class="ic-hint">顯示 <select class="ic-sel" id="chord-disp" onchange="setChordDisp(this.value)"><option value="num">級數</option><option value="male">和弦名(男)</option><option value="female">和弦名(女)</option></select></label>
@@ -533,7 +543,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
     <!-- MIX VIEW (和弦 + 樂器) -->
     <div id="vp-mix" style="display:none">
       <div class="print-head"></div>
-      <div class="view-print"><button class="btn btna" onclick="printView('mix')">🖨 列印 / 存 PDF</button></div>
+      <div class="view-print"><button class="btn" onclick="openOcr()">🔍 辨識匯入</button><button class="btn btna" onclick="printView('mix')">🖨 列印 / 存 PDF</button></div>
       <div class="ic-legend" id="mix-legend"></div>
       <div class="icon-toolbar">
         <button class="ic-navbtn" id="mix-prev" onclick="mixNav(-1)" title="上一頁">‹</button>
@@ -561,6 +571,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
     <!-- EXPORT VIEW -->
     <div id="vp-export" style="display:none">
       <div class="egrid">
+        <div class="ecard2"><h3>🔍 圖片 / PDF 辨識匯入</h3><p>上傳和弦譜圖片或 PDF，瀏覽器內 OCR 辨識並自動拆成段落／和弦（實驗性，通常需人工修正；可選依男/女 Key 轉級數）</p><button class="btn btna" onclick="openOcr()">🔍 辨識匯入</button></div>
         <div class="ecard2"><h3>🎼 圖示譜 PDF</h3><p>純圖示／色塊呈現，A4 直式、每頁段數依目前設定（電腦/平板 3–15、手機 4–14），適合發給團員或現場看譜</p><button class="btn btna" onclick="printView('icon')">🖨 列印 / 存 PDF</button></div>
         <div class="ecard2"><h3>🎵 和弦譜 PDF</h3><p>每段小節攤開、依拍號顯示拍點，A4 直式列印，適合主領 / 樂手看和弦進行</p><button class="btn btna" onclick="printView('chord')">🖨 列印 / 存 PDF</button></div>
         <div class="ecard2"><h3>🎼 混合 PDF（和弦＋樂器）</h3><p>同一頁同時呈現和弦小節與各樂器部位，最完整的樂團總表</p><button class="btn btna" onclick="printView('mix')">🖨 列印 / 存 PDF</button></div>
@@ -578,6 +589,27 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
       </div>
     </div>
   </section>
+</div>
+
+<!-- OCR 辨識匯入視窗 -->
+<div id="ocr-modal" class="ocr-modal">
+  <div class="ocr-box">
+    <div class="ocr-head"><span>🔍 圖片 / PDF 和弦譜辨識匯入</span><button class="btn" onclick="closeOcr()">✕</button></div>
+    <div class="ocr-body">
+      <input id="ocr-file" type="file" accept="image/*,application/pdf" onchange="ocrFile(this)">
+      <div id="ocr-status" class="ocr-status">選擇和弦譜「圖片」或「PDF」，會在瀏覽器內辨識文字（首次需下載辨識引擎，約數秒～數十秒；需網路）。</div>
+      <textarea id="ocr-text" class="ocr-text" placeholder="辨識出的文字會出現在這裡，可手動修正後再解析…"></textarea>
+      <div class="ocr-opt">和弦轉級數：
+        <select id="ocr-tonum" class="ic-sel"><option value="">不轉（保留和弦名）</option><option value="male">依男 Key 轉級數</option><option value="female">依女 Key 轉級數</option></select>
+      </div>
+      <label class="ocr-opt"><input type="checkbox" id="ocr-replace"> 取代目前所有段落（不勾＝附加在後面）</label>
+      <div class="ocr-actions">
+        <button class="btn btna" onclick="parseOcr()">解析成段落 / 和弦</button>
+        <button class="btn" onclick="closeOcr()">關閉</button>
+      </div>
+      <div class="ocr-note">⚠ 辨識僅供輔助，結果通常需人工修正。段落依關鍵字（Intro/Verse/Chorus…）切分；和弦逐一填入拍位（每拍一個）。手寫、複雜排版、五線譜辨識效果較差。</div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -944,6 +976,74 @@ async function printView(name){
 }
 function printIcon(){ return printView('icon'); }   // 相容舊呼叫
 window.addEventListener('afterprint',()=>{ if(window._printCls){ document.body.classList.remove(window._printCls); window._printCls=null; } });
+
+/* ── OCR 圖片/PDF 辨識匯入 ── */
+function openOcr(){ document.getElementById('ocr-modal').style.display='flex'; }
+function closeOcr(){ document.getElementById('ocr-modal').style.display='none'; }
+function ocrStatus(t){ const e=document.getElementById('ocr-status'); if(e)e.textContent=t; }
+function loadScript(src){ return new Promise((res,rej)=>{ if([...document.scripts].some(s=>s.src===src))return res(); const sc=document.createElement('script'); sc.src=src; sc.onload=()=>res(); sc.onerror=()=>rej(new Error('載入失敗')); document.head.appendChild(sc); }); }
+async function ensureTesseract(){ if(window.Tesseract)return; await loadScript('https://cdn.jsdelivr.net/npm/tesseract.js@5.0.4/dist/tesseract.min.js'); }
+async function ensurePdfjs(){ if(window.pdfjsLib)return; await loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js'); try{window.pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';}catch(e){} }
+async function ocrFile(input){
+  const f=input.files[0]; if(!f)return;
+  try{
+    ocrStatus('準備中…'); document.getElementById('ocr-text').value='';
+    let imgs=[];
+    if(f.type==='application/pdf'){
+      ocrStatus('讀取 PDF…'); await ensurePdfjs();
+      const pdf=await pdfjsLib.getDocument({data:await f.arrayBuffer()}).promise;
+      const nP=Math.min(pdf.numPages,3);
+      for(let p=1;p<=nP;p++){ const page=await pdf.getPage(p); const vp=page.getViewport({scale:2}); const cv=document.createElement('canvas'); cv.width=vp.width; cv.height=vp.height; await page.render({canvasContext:cv.getContext('2d'),viewport:vp}).promise; imgs.push(cv); }
+    } else { imgs.push(f); }
+    ocrStatus('載入辨識引擎…'); await ensureTesseract();
+    let all='';
+    for(let i=0;i<imgs.length;i++){
+      const r=await Tesseract.recognize(imgs[i],'eng',{logger:m=>{ if(m.status==='recognizing text')ocrStatus(`辨識中 ${i+1}/${imgs.length}… ${Math.round((m.progress||0)*100)}%`); }});
+      all+=((r&&r.data&&r.data.text)||'')+'\n';
+    }
+    document.getElementById('ocr-text').value=all.trim();
+    ocrStatus('辨識完成。可修正文字後按「解析成段落 / 和弦」。');
+  }catch(e){ ocrStatus('辨識失敗：'+e.message+'（可能無網路 / 檔案不支援）'); }
+}
+const NOTE_BASE={C:0,D:2,E:4,F:5,G:7,A:9,B:11};
+const SEMI_TO_DEG=['1','b2','2','b3','3','4','#4','5','b6','6','b7','7'];
+function noteToSemi(n){ const m=String(n).match(/^([A-Ga-g])([#b]?)/); if(!m)return null; return ((NOTE_BASE[m[1].toUpperCase()]+(m[2]==='#'?1:m[2]==='b'?-1:0))%12+12)%12; }
+function chordNameToNumber(tok,keySemi){
+  if(keySemi==null)return tok;
+  const m=tok.match(/^([A-G][#b]?)(.*)$/); if(!m)return tok;
+  let rest=m[2]||'', bass='';
+  const sl=rest.indexOf('/'); if(sl>=0){ bass=rest.slice(sl+1); rest=rest.slice(0,sl); }
+  const rs=noteToSemi(m[1]); if(rs==null)return tok;
+  let out=SEMI_TO_DEG[((rs-keySemi)%12+12)%12]+rest;
+  if(bass){ const bs=noteToSemi(bass); out+='/'+(bs!=null?SEMI_TO_DEG[((bs-keySemi)%12+12)%12]:bass); }
+  return out;
+}
+const OCR_SECT_RE=/^\s*(intro|verse\s*\d*|pre[-\s]?chorus|chorus\s*\d*|bridge\s*\d*|tag\s*\d*|interlude\s*\d*|instrumental|turnaround|outro|ending|coda|refrain|vamp|sign\s*in)\b/i;
+const OCR_CHORD_RE=/\b([A-G](?:#|b)?(?:maj7|maj9|m7b5|m7|m9|m6|m|dim7|dim|aug|sus4|sus2|sus|add9|add2|6|7|9|11|13|2)?(?:\/[A-G](?:#|b)?)?)\b/g;
+function parseOcr(){
+  const txt=document.getElementById('ocr-text').value||'';
+  const tonum=document.getElementById('ocr-tonum').value;
+  const keyForNum= tonum==='male'?gv('s-mkey'):tonum==='female'?gv('s-fkey'):'';
+  const ks= keyForNum?keyRootSemi(keyForNum):null;
+  const beats=beatsPerBar();
+  const groups=[]; let cur=null;
+  txt.split(/\r?\n/).forEach(line=>{
+    const t=line.trim(); if(!t)return;
+    if(OCR_SECT_RE.test(t)){ cur={name:t.replace(/[:：].*$/,'').trim().slice(0,24),chords:[]}; groups.push(cur); return; }
+    let mm,arr=[]; const re=new RegExp(OCR_CHORD_RE);
+    while((mm=re.exec(t))){ arr.push(mm[1]); }
+    if(arr.length){ if(!cur){cur={name:'段落',chords:[]}; groups.push(cur);} arr.forEach(c=>cur.chords.push(ks!=null?chordNameToNumber(c,ks):c)); }
+  });
+  if(!groups.length){ alert('沒有解析到段落或和弦，請檢查辨識文字。'); return; }
+  const built=groups.map(g=>{
+    const list=g.chords, bars=Math.max(1,Math.ceil(list.length/beats)||1), cd=[];
+    for(let bar=0;bar<bars;bar++){ const a=[]; for(let bt=0;bt<beats;bt++)a.push(list[bar*beats+bt]||''); cd.push(a); }
+    return {id:nid++,name:g.name||'段落',bars,color:'black',layers:[{color:'black',ins:{}}],notes:'',chords:cd};
+  });
+  if(document.getElementById('ocr-replace').checked) sects=built; else sects=sects.concat(built);
+  renderSB(); renderAll(); closeOcr();
+  alert('已建立 '+built.length+' 個段落，請到編輯區 / 和弦譜檢查修正。');
+}
 
 /* ── RENDER CHORD CHART (和弦譜) ── */
 function beatsPerBar(){
