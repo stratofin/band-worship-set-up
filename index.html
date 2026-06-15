@@ -323,13 +323,15 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   body[class*="print-"] #vp-icon>.print-head,
   body[class*="print-"] #vp-chord>.print-head,
   body[class*="print-"] #vp-mix>.print-head{display:flex!important;align-items:baseline;justify-content:space-between;gap:1em;border-bottom:2px solid #333;padding-bottom:5px;margin-bottom:10px;}
-  /* 輸出文字大小：標題 14 / 主要資訊 12 / 次要資訊 8 */
-  .print-head .ph-title{font-size:14px;font-weight:700;color:#111;}
-  .print-head .ph-meta{font-size:8px;color:#333;font-family:'Space Mono',monospace;white-space:nowrap;}
+  /* 輸出文字大小：標題 14 / 主要資訊 11 / 次要資訊 6 */
+  .print-head .ph-l{display:flex;flex-direction:column;}
+  .print-head .ph-title{font-size:14px;font-weight:700;color:#111;line-height:1.15;}
+  .print-head .ph-sub{font-size:8px;color:#666;font-weight:400;}
+  .print-head .ph-meta{font-size:6px;color:#333;font-family:'Space Mono',monospace;white-space:nowrap;}
   body[class*="print-"] .cname,
   body[class*="print-"] .cbchord,
   body[class*="print-"] .ic-name,
-  body[class*="print-"] .ic-val{font-size:12px!important;}
+  body[class*="print-"] .ic-val{font-size:11px!important;}
   body[class*="print-"] .cmeta,
   body[class*="print-"] .cbnum,
   body[class*="print-"] .ic-code,
@@ -341,7 +343,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   body[class*="print-"] .icpage-foot,
   body[class*="print-"] .cmeter,
   body[class*="print-"] .cgoto-badge,
-  body[class*="print-"] .cjump{font-size:8px!important;}
+  body[class*="print-"] .cjump{font-size:6px!important;}
   *{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
   @page{size:A4 portrait;margin:11mm;}
   body{background:#fff;color:#111;}
@@ -412,9 +414,12 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
     </span>
     <div class="pills">
       <div class="pill"><label>曲目</label><input id="s-title" value="King Of Kings" oninput="renderAll()" style="width:100px"></div>
-      <div class="pill"><label>Key</label><input id="s-key" value="D" oninput="renderAll()" style="width:28px"></div>
+      <div class="pill"><label>演唱者</label><input id="s-artist" value="" placeholder="—" oninput="renderAll()" style="width:90px"></div>
       <div class="pill"><label>拍號</label><input id="s-time" value="4/4" oninput="renderAll()" style="width:34px"></div>
       <div class="pill"><label>BPM</label><input id="s-bpm" value="71" oninput="renderAll()" style="width:38px"></div>
+      <div class="pill"><label>用途</label><select id="s-usage" onchange="renderAll()" style="background:none;border:none;color:var(--text);font-family:inherit;font-size:1em;outline:none;cursor:pointer"><option value="">—</option><option>短歌</option><option>讚美</option><option>敬拜</option></select></div>
+      <div class="pill"><label>♂男</label><input id="s-mkey" value="" placeholder="—" oninput="renderAll()" style="width:30px"></div>
+      <div class="pill"><label>♀女</label><input id="s-fkey" value="" placeholder="—" oninput="renderAll()" style="width:30px"></div>
       <div class="pill" style="gap:5px">
         <label>字級</label>
         <button class="fbtn" onclick="bumpFont(-2)" title="縮小檢視字級">−</button>
@@ -609,7 +614,7 @@ function bumpFont(d){setFontSize(curFont+d);}
 /* ── SAVE / LOAD ── */
 function getProjectData(){
   return {
-    meta:{title:gv('s-title'),key:gv('s-key'),time:gv('s-time'),bpm:gv('s-bpm'),fontSize:curFont},
+    meta:{title:gv('s-title'),artist:gv('s-artist'),time:gv('s-time'),bpm:gv('s-bpm'),usage:gv('s-usage'),mkey:gv('s-mkey'),fkey:gv('s-fkey'),fontSize:curFont},
     sects:JSON.parse(JSON.stringify(sects)),
     nid
   };
@@ -617,9 +622,12 @@ function getProjectData(){
 function applyProjectData(data){
   if(!data||!data.sects)return false;
   document.getElementById('s-title').value=data.meta?.title||'';
-  document.getElementById('s-key').value=data.meta?.key||'';
+  document.getElementById('s-artist').value=data.meta?.artist||'';
   document.getElementById('s-time').value=data.meta?.time||'';
   document.getElementById('s-bpm').value=data.meta?.bpm||'';
+  document.getElementById('s-usage').value=data.meta?.usage||'';
+  document.getElementById('s-mkey').value=data.meta?.mkey||'';
+  document.getElementById('s-fkey').value=data.meta?.fkey||'';
   if(data.meta?.fontSize) setFontSize(data.meta.fontSize);
   sects=data.sects;
   nid=data.nid||sects.length+1;
@@ -861,7 +869,7 @@ function renderIcon(){
         ${s.notes?`<div class="iccard-note">⚑ ${esc(s.notes)}</div>`:''}
       </div>`;
     }).join('');
-    const foot=`${esc(gv('s-title'))} · Key ${esc(gv('s-key'))} · ${esc(gv('s-time'))} · ${esc(gv('s-bpm'))} BPM　—　第 ${pi+1} / ${total} 頁`;
+    const foot=`${esc(gv('s-title'))}${keyLabel()?' · '+keyLabel():''} · ${esc(gv('s-time'))} · ${esc(gv('s-bpm'))} BPM　—　第 ${pi+1} / ${total} 頁`;
     return `<div class="icpage" data-page="${pi}">
        <div class="icpage-grid">${cards}</div>
        <div class="icpage-foot">${foot}</div>
@@ -1212,15 +1220,21 @@ function initMode(){
 let dt;
 function schedRender(){clearTimeout(dt);dt=setTimeout(renderAll,80);}
 
+function keyLabel(){
+  const m=gv('s-mkey'), f=gv('s-fkey');
+  return [m?'♂ '+esc(m):'', f?'♀ '+esc(f):''].filter(Boolean).join('　');
+}
 function updatePrintHead(){
-  const html=`<span class="ph-title">${esc(gv('s-title')||'(未命名)')}</span><span class="ph-meta">Key ${esc(gv('s-key'))}　${esc(gv('s-time'))}　${esc(gv('s-bpm'))} BPM</span>`;
+  const usage=gv('s-usage'), artist=gv('s-artist'), kl=keyLabel();
+  const metaParts=[usage?esc(usage):'', kl, esc(gv('s-time')), esc(gv('s-bpm'))+' BPM'].filter(Boolean);
+  const html=`<div class="ph-l"><span class="ph-title">${esc(gv('s-title')||'(未命名)')}</span>${artist?`<span class="ph-sub">${esc(artist)}</span>`:''}</div><span class="ph-meta">${metaParts.join('　｜　')}</span>`;
   document.querySelectorAll('.print-head').forEach(el=>el.innerHTML=html);
 }
 function renderAll(){renderFlow();renderBlock();renderIcon();renderChord();renderMix();renderTimeSelects();updatePrintHead();renderSummary();buildTL();autoSave();}
 
 /* ── TEXT LIST ── */
 function buildTL(){
-  let t=`=== 編曲架構 ===\n曲目：${gv('s-title')}  Key：${gv('s-key')}  拍號：${gv('s-time')}  BPM：${gv('s-bpm')}\n${'─'.repeat(38)}\n\n`;
+  let t=`=== 編曲架構 ===\n曲目：${gv('s-title')}${gv('s-artist')?'／'+gv('s-artist'):''}  ${keyLabel().replace(/<[^>]+>/g,'')}  拍號：${gv('s-time')}  BPM：${gv('s-bpm')}\n${'─'.repeat(38)}\n\n`;
   sects.forEach((s,i)=>{
     t+=`[${i+1}] ${s.name}  ${s.bars} Bar  ${COL[s.color].label}\n`;
     const ch=chordSummary(s); if(ch)t+=`    ${'和弦'.padEnd(5)}: ${ch}\n`;
@@ -1300,7 +1314,7 @@ async function expPNG(view){
     ctx.fillText('ARRANGER  by Alex.Syu & Stratofin.Lai', 24, headH*0.36);
     ctx.fillStyle = '#928f88';
     ctx.font = `${fMeta}px 'Noto Sans TC', sans-serif`;
-    ctx.fillText(`${title}  Key:${gv('s-key')}  ${gv('s-time')}  BPM:${gv('s-bpm')}`, 24, headH*0.72);
+    ctx.fillText(`${title}  ${keyLabel().replace(/<[^>]+>/g,'')}  ${gv('s-time')}  BPM:${gv('s-bpm')}`, 24, headH*0.72);
     ctx.fillStyle = 'rgba(255,255,255,0.07)';
     ctx.fillRect(0,headH-1,final.width,1);
     ctx.drawImage(canvas, 0, headH);
