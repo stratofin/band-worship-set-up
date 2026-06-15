@@ -103,6 +103,9 @@ body.tb-collapsed .topbar-row-2{display:none;}
 /* meta summary strip */
 .summary{display:flex;gap:1.2em;flex-wrap:wrap;font-size:0.8em;color:var(--text2);margin:-0.6em 0 1.1em;font-family:'Space Mono',monospace;}
 .summary b{color:var(--accent);font-weight:700;}
+.meta-chip{display:inline-block;font-family:'Noto Sans TC',sans-serif;font-size:0.95em;border-radius:99px;padding:0.12em 0.75em;font-weight:600;margin-left:0.35em;}
+.chip-usage,.chip-m{background:rgba(91,155,213,0.18);color:#8fc0ef;border:1px solid rgba(91,155,213,0.4);}
+.chip-f{background:rgba(212,86,74,0.16);color:#e89a90;border:1px solid rgba(212,86,74,0.4);}
 
 /* ── FLOW VIEW ── */
 .flow{display:flex;flex-direction:column;gap:0;}
@@ -689,8 +692,13 @@ function renderSummary(){
     const sec=Math.round(totalBars*beatsPerBar/bpm*60);
     dur=Math.floor(sec/60)+':'+String(sec%60).padStart(2,'0');
   }
+  const usage=gv('s-usage'),mkey=gv('s-mkey'),fkey=gv('s-fkey');
+  let chips='';
+  if(usage)chips+=`<span class="meta-chip chip-usage">${esc(usage)}</span>`;
+  if(mkey)chips+=`<span class="meta-chip chip-m">♂ ${esc(mkey)}</span>`;
+  if(fkey)chips+=`<span class="meta-chip chip-f">♀ ${esc(fkey)}</span>`;
   document.getElementById('summary').innerHTML=
-    `段落 <b>${sects.length}</b>　總小節 <b>${totalBars}</b> Bar　預估長度 <b>${dur}</b>　頁數(圖示譜) <b>${pageCount()}</b>`;
+    `段落 <b>${sects.length}</b>　總小節 <b>${totalBars}</b> Bar　預估長度 <b>${dur}</b>　頁數(圖示譜) <b>${pageCount()}</b>${chips}`;
 }
 
 /* ── RENDER FLOW VIEW ── */
