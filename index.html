@@ -227,6 +227,8 @@ body.tb-collapsed .topbar-row-2{display:none;}
 .cbar-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(11em,1fr));padding:0.4em;gap:0.35em;}
 .cbar2{position:relative;border:1.5px solid var(--border2);border-radius:0.4em;background:rgba(255,255,255,0.015);overflow:hidden;min-height:3.6em;}
 .cbadges{position:absolute;top:0;right:0;display:flex;gap:2px;z-index:3;}
+.cbsub{position:absolute;top:0;left:0;z-index:4;font-size:0.5em;font-family:'Space Mono',monospace;border:none;border-radius:0 0 4px 0;padding:0.16em 0.18em;background:rgba(255,255,255,0.06);color:var(--text3);cursor:pointer;outline:none;line-height:1;}
+.cbsub:hover{color:var(--accent);background:rgba(212,168,67,0.2);}
 .cmeter{font-size:0.5em;font-family:'Space Mono',monospace;border:none;border-radius:0 0 0 4px;padding:0.18em 0.4em;cursor:pointer;line-height:1.2;}
 .cmeter.on{background:#d4a843;color:#1a1a1a;font-weight:700;}
 .cmeter.off{background:rgba(255,255,255,0.05);color:var(--text3);}
@@ -1203,19 +1205,31 @@ function beatSave(id,bar,beat,inp){
   const cell=inp.closest('.cbeatcol'), r=cell.querySelector('.beat-r');
   r.innerHTML=renderBeatToken(inp.value); r.style.display=''; inp.style.display='none';
 }
+/* 每小節分割：1=四分(♩) / 2=八分(♪) / 4=十六分(♬)，格數 = 拍數 × 分割 */
+function subdivFactor(s,bar){ const f=Array.isArray(s.subdiv)?s.subdiv[bar]:1; return [1,2,4].includes(f)?f:1; }
+function cellsForBar(s,bar){ return barBeats(s,bar)*subdivFactor(s,bar); }
+function setSubdiv(id,bar,f){ const s=sects.find(x=>x.id===id); if(!s)return; if(!Array.isArray(s.subdiv))s.subdiv=[]; s.subdiv[bar]=parseInt(f)||1; autoSave(); renderChord(); renderMix(); }
+function subdivLabel(b,fac){
+  if(fac===1)return (b+1);
+  if(fac===2)return (b%2===0)?(b/2+1):'&';
+  const r=b%4; return r===0?(b/4+1):(r===1?'e':r===2?'&':'a');
+}
 /* 小節格 HTML：方框 + 拍號數字 + 記號顯示；橘色拍號徽章、最後一小節紅色接續徽章 */
 function barCellsHtml(s,beats){
   const bars=Math.max(1,parseInt(s.bars)||1);
   let cells='';
   for(let i=0;i<bars;i++){
     const bb=barBeats(s,i);
-    const pb=getBeatData(s,i,bb);
-    const fs = bb<=4?1 : bb<=6?0.84 : bb<=8?0.7 : bb<=10?0.6 : 0.52;
+    const fac=subdivFactor(s,i);
+    const cellsN=bb*fac;
+    const pb=getBeatData(s,i,cellsN);
+    const fs = cellsN<=4?1 : cellsN<=6?0.82 : cellsN<=8?0.68 : cellsN<=12?0.54 : 0.44;
     let cols='';
-    for(let b=0;b<bb;b++){
+    for(let b=0;b<cellsN;b++){
       const raw=pb[b]||'';
-      cols+=`<div class="cbeatcol" onclick="beatEdit(this)"><span class="cbnum">${b+1}</span><span class="beat-r">${renderBeatToken(raw)}</span><input class="beat-i" value="${esc(raw)}" style="display:none" onblur="beatSave(${s.id},${i},${b},this)" onkeydown="if(event.key==='Enter'){this.blur();}"></div>`;
+      cols+=`<div class="cbeatcol" onclick="beatEdit(this)"><span class="cbnum">${subdivLabel(b,fac)}</span><span class="beat-r">${renderBeatToken(raw)}</span><input class="beat-i" value="${esc(raw)}" style="display:none" onblur="beatSave(${s.id},${i},${b},this)" onkeydown="if(event.key==='Enter'){this.blur();}"></div>`;
     }
+    const subSel=`<select class="cbsub" onclick="event.stopPropagation()" onchange="setSubdiv(${s.id},${i},this.value)" title="本小節分割：♩四分(4格) / ♪八分(8格) / ♬十六分(16格)"><option value="1"${fac===1?' selected':''}>♩</option><option value="2"${fac===2?' selected':''}>♪</option><option value="4"${fac===4?' selected':''}>♬</option></select>`;
     const m=barMeter(s,i);
     const isLast=(i===bars-1);
     const g=getBarGoto(s,i,bars);
@@ -1224,7 +1238,7 @@ function barCellsHtml(s,beats){
     badges+= isLast
       ? `<select class="cgoto-badge ${g?'on':''}" onchange="setBarGoto(${s.id},${i},this.value)" title="接續到哪一段">${gopts}</select>`
       : `<select class="cjump ${g?'on':''}" onchange="setBarGoto(${s.id},${i},this.value)" title="此小節接續到哪一段">${gopts}</select>`;
-    cells+=`<div class="cbar2"><div class="cbadges">${badges}</div><div class="cbeatcols" style="font-size:${fs}em">${cols}</div></div>`;
+    cells+=`<div class="cbar2">${subSel}<div class="cbadges">${badges}</div><div class="cbeatcols" style="font-size:${fs}em">${cols}</div></div>`;
   }
   return cells;
 }
@@ -1234,8 +1248,8 @@ function chordSummary(s){
   const bars=Math.max(1,parseInt(s.bars)||1);
   let any=false; const parts=[];
   for(let i=0;i<bars;i++){
-    const bb=barBeats(s,i); const pb=getBeatData(s,i,bb); const arr=[];
-    for(let b=0;b<bb;b++){ const v=String(pb[b]||'').trim(); if(v)any=true; arr.push(v||'·'); }
+    const cn=cellsForBar(s,i); const pb=getBeatData(s,i,cn); const arr=[];
+    for(let b=0;b<cn;b++){ const v=String(pb[b]||'').trim(); if(v)any=true; arr.push(v||'·'); }
     const m=barMeter(s,i);
     parts.push((m?`(${m}) `:'')+arr.join(' '));
   }
