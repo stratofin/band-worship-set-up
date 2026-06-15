@@ -484,7 +484,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
       <div class="view-print"><button class="btn btna" onclick="printView('chord')">🖨 列印 / 存 PDF</button></div>
       <div class="icon-toolbar">
         <label class="ic-hint">拍號 <select class="ic-sel" id="chord-timesig" onchange="setTimeSig(this.value)"></select></label>
-        <span class="ic-leghint">改拍號會同步更新所有檢視與輸出</span>
+        <label class="ic-hint">全部每排 <select class="ic-sel" onchange="applyAllBPR(this)" title="一次設定所有段落每排小節數"><option value="__">套用…</option><option value="">自動</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option></select></label>
       </div>
       <div class="chord-hint">每小節為方框、上方標拍號數字；空拍顯示圓點「·」＝延續前一個和弦。右上角<b>橘色徽章</b>點擊設定<b>本小節拍號</b>；每段<b>最後一小節</b>右上角可選<b>「→ 接續到」</b>哪一段。</div>
       <div class="chord-content" id="chord-content"></div>
@@ -503,6 +503,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
           <select class="ic-sel" id="mix-perpage" onchange="setMixPerPage(this.value)"></select>
         段</label>
         <label class="ic-hint">拍號 <select class="ic-sel" id="mix-timesig" onchange="setTimeSig(this.value)"></select></label>
+        <label class="ic-hint">全部每排 <select class="ic-sel" onchange="applyAllBPR(this)" title="一次設定所有段落每排小節數"><option value="__">套用…</option><option value="">自動</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option></select></label>
       </div>
       <div class="chord-hint">混合檢視：上方和弦小節（方框＋拍號數字，空拍圓點＝延續；右上橘徽章設本小節拍號、末小節可選接續段），下方顯示各樂器部位。</div>
       <div class="icpages" id="mix-content"></div>
@@ -955,14 +956,21 @@ function setBarGoto(id,bar,v){
   autoSave(); renderChord(); renderMix();
 }
 /* 每段「每排幾個小節」設定（標題旁選單；空＝自動） */
+const BPR_LIST=['','2','3','4','5','6','7','8'];
 function bprSelect(s){
   const cur=String(s.barsPerRow||'');
-  const list=['','2','3','4','6'];
   return `<select class="cbpr-sel" onchange="setSecBPR(${s.id},this.value)" title="每排幾個小節">`+
-    list.map(v=>`<option value="${v}"${cur===v?' selected':''}>${v===''?'每排:自動':'每排:'+v}</option>`).join('')+`</select>`;
+    BPR_LIST.map(v=>`<option value="${v}"${cur===v?' selected':''}>${v===''?'每排:自動':'每排:'+v}</option>`).join('')+`</select>`;
 }
 function barGridStyle(s){ const n=parseInt(s.barsPerRow)||0; return n>0?`style="grid-template-columns:repeat(${n},1fr)"`:''; }
 function setSecBPR(id,v){ const s=sects.find(x=>x.id===id); if(!s)return; s.barsPerRow= v?parseInt(v):''; autoSave(); renderChord(); renderMix(); }
+/* 一次套用所有段落 */
+function setAllBPR(v){ sects.forEach(s=>{ s.barsPerRow = v?parseInt(v):''; }); autoSave(); renderChord(); renderMix(); }
+function applyAllBPR(sel){ const v=sel.value; sel.selectedIndex=0; if(v==='__')return; setAllBPR(v); }
+function allBPRSelectHTML(){
+  return `<select class="ic-sel" onchange="applyAllBPR(this)" title="一次設定所有段落每排小節數"><option value="__">全部每排…</option>`+
+    BPR_LIST.map(v=>`<option value="${v}">${v===''?'自動':v}</option>`).join('')+`</select>`;
+}
 /* 小節格 HTML：方框 + 拍號數字 + 圓點；橘色拍號徽章、最後一小節紅色接續徽章 */
 function barCellsHtml(s,beats){
   const bars=Math.max(1,parseInt(s.bars)||1);
