@@ -533,7 +533,8 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
       <div class="view-print"><button class="btn" onclick="openOcr()">🔍 辨識匯入</button><button class="btn btna" onclick="printView('chord')">🖨 列印 / 存 PDF</button></div>
       <div class="icon-toolbar">
         <label class="ic-hint">拍號 <select class="ic-sel" id="chord-timesig" onchange="setTimeSig(this.value)"></select></label>
-        <label class="ic-hint">顯示 <select class="ic-sel" id="chord-disp" onchange="setChordDisp(this.value)"><option value="num">級數</option><option value="male">和弦名(男)</option><option value="female">和弦名(女)</option></select></label>
+        <label class="ic-hint">顯示 <select class="ic-sel" id="chord-disp" onchange="setChordDisp(this.value)"><option value="num">依照譜</option><option value="name">和弦名</option></select></label>
+        <label class="ic-hint">調性 <select class="ic-sel" id="chord-key" onchange="setDispKey(this.value)"><option value="0">C</option><option value="1">D♭</option><option value="2">D</option><option value="3">E♭</option><option value="4">E</option><option value="5">F</option><option value="6">F#</option><option value="7">G</option><option value="8">A♭</option><option value="9">A</option><option value="10">B♭</option><option value="11">B</option><option value="male">♂男Key</option><option value="female">♀女Key</option></select></label>
         <label class="ic-hint">全部每排 <select class="ic-sel" onchange="applyAllBPR(this)" title="一次設定所有段落每排小節數"><option value="__">套用…</option><option value="">自動</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option></select></label>
       </div>
       <div class="chord-hint">點拍格可編輯。記號：<b>1–7</b>級數、<b>b/#</b>升降、<b>m/sus4/maj7</b>品質、<b>1/3</b>轉位、<b>.</b>延續、<b>x</b>休止、<b>(1 5)</b>細分(2音=八分、3音=三連音、4音=十六分)。右上橘徽章設本小節拍號、末小節選「→接續」。上方「顯示」可切級數↔和弦名(男/女Key)。</div>
@@ -553,7 +554,8 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
           <select class="ic-sel" id="mix-perpage" onchange="setMixPerPage(this.value)"></select>
         段</label>
         <label class="ic-hint">拍號 <select class="ic-sel" id="mix-timesig" onchange="setTimeSig(this.value)"></select></label>
-        <label class="ic-hint">顯示 <select class="ic-sel" id="mix-disp" onchange="setChordDisp(this.value)"><option value="num">級數</option><option value="male">和弦名(男)</option><option value="female">和弦名(女)</option></select></label>
+        <label class="ic-hint">顯示 <select class="ic-sel" id="mix-disp" onchange="setChordDisp(this.value)"><option value="num">依照譜</option><option value="name">和弦名</option></select></label>
+        <label class="ic-hint">調性 <select class="ic-sel" id="mix-key" onchange="setDispKey(this.value)"><option value="0">C</option><option value="1">D♭</option><option value="2">D</option><option value="3">E♭</option><option value="4">E</option><option value="5">F</option><option value="6">F#</option><option value="7">G</option><option value="8">A♭</option><option value="9">A</option><option value="10">B♭</option><option value="11">B</option><option value="male">♂男Key</option><option value="female">♀女Key</option></select></label>
         <label class="ic-hint">全部每排 <select class="ic-sel" onchange="applyAllBPR(this)" title="一次設定所有段落每排小節數"><option value="__">套用…</option><option value="">自動</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option></select></label>
       </div>
       <div class="chord-hint">混合檢視：上方和弦小節（方框＋拍號數字，空拍圓點＝延續；右上橘徽章設本小節拍號、末小節可選接續段），下方顯示各樂器部位。</div>
@@ -1121,15 +1123,21 @@ function allBPRSelectHTML(){
     BPR_LIST.map(v=>`<option value="${v}">${v===''?'自動':v}</option>`).join('')+`</select>`;
 }
 /* ── Nashville 級數記號系統：解析 / 換算 / 顯示 ── */
-let chordDisp='num';  // num=級數 / male=和弦名(男Key) / female=和弦名(女Key)
-try{const cd=localStorage.getItem('arranger_chorddisp'); if(cd)chordDisp=cd;}catch(e){}
+let chordDisp='num';   // num=依照譜（原樣顯示）/ name=和弦名（依 selectedKey 換算）
+let dispKey='0';       // '0'..'11'（半音，預設 C）或 'male'/'female'（依 meta Key）
+try{chordDisp=localStorage.getItem('arranger_chorddisp')||'num';}catch(e){}
+if(chordDisp!=='num'&&chordDisp!=='name')chordDisp='num';
+try{dispKey=localStorage.getItem('arranger_dispkey')||'0';}catch(e){}
+const KEYS=[{n:'C',f:false},{n:'D♭',f:true},{n:'D',f:false},{n:'E♭',f:true},{n:'E',f:false},{n:'F',f:true},{n:'F#',f:false},{n:'G',f:false},{n:'A♭',f:true},{n:'A',f:false},{n:'B♭',f:true},{n:'B',f:false}];
 function setChordDisp(v){ chordDisp=v; try{localStorage.setItem('arranger_chorddisp',v);}catch(e){} syncDispSelects(); renderChord(); renderMix(); }
-function syncDispSelects(){ ['chord-disp','mix-disp'].forEach(id=>{const s=document.getElementById(id); if(s)s.value=chordDisp;}); }
+function setDispKey(v){ dispKey=v; try{localStorage.setItem('arranger_dispkey',v);}catch(e){} syncDispSelects(); renderChord(); renderMix(); }
+function syncDispSelects(){ ['chord-disp','mix-disp'].forEach(id=>{const s=document.getElementById(id);if(s)s.value=chordDisp;}); ['chord-key','mix-key'].forEach(id=>{const s=document.getElementById(id);if(s)s.value=dispKey;}); }
+function dispKeySemi(){ if(dispKey==='male')return keyRootSemi(gv('s-mkey')); if(dispKey==='female')return keyRootSemi(gv('s-fkey')); const n=parseInt(dispKey); return isNaN(n)?0:((n%12)+12)%12; }
+function dispPreferFlat(){ if(dispKey==='male')return preferFlatForKey(gv('s-mkey')); if(dispKey==='female')return preferFlatForKey(gv('s-fkey')); const n=parseInt(dispKey)||0; return KEYS[n]?KEYS[n].f:false; }
 const DEG_SEMI={1:0,2:2,3:4,4:5,5:7,6:9,7:11};
 const NOTE_SHARP=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
 const NOTE_FLAT =['C','Db','D','Eb','E','F','Gb','G','Ab','A','Bb','B'];
 function keyRootSemi(key){ if(!key)return null; const m=String(key).trim().match(/^([A-Ga-g])([#b]?)/); if(!m)return null; const base={C:0,D:2,E:4,F:5,G:7,A:9,B:11}[m[1].toUpperCase()]; return (((base+(m[2]==='#'?1:m[2]==='b'?-1:0))%12)+12)%12; }
-function curDispKey(){ return chordDisp==='male'?gv('s-mkey'):chordDisp==='female'?gv('s-fkey'):''; }
 function preferFlatForKey(key){ const k=String(key||'').trim().replace(/m$/,''); return /b/.test(k)||k==='F'; }
 function degToNoteName(keySemi,deg,acc,pf){ const semi=(((keySemi+DEG_SEMI[deg]+(acc==='#'?1:acc==='b'?-1:0))%12)+12)%12; return (pf?NOTE_FLAT:NOTE_SHARP)[semi]; }
 function convChord(tok,keySemi,pf){
@@ -1137,15 +1145,16 @@ function convChord(tok,keySemi,pf){
   const m=tok.match(/^([#b]?)([1-7])(.*)$/); if(!m)return tok;  // 非數字級數 → 原樣（已是和弦名）
   let rest=m[3]||'', bass='';
   const sl=rest.indexOf('/'); if(sl>=0){ bass=rest.slice(sl+1); rest=rest.slice(0,sl); }
-  let out=degToNoteName(keySemi,+m[2],m[1],pf)+rest;
-  if(bass){ const bm=bass.match(/^([#b]?)([1-7])$/); out+='/'+(bm?degToNoteName(keySemi,+bm[2],bm[1],pf):bass); }
+  const pfFor=(acc)=>acc==='b'?true:acc==='#'?false:pf;   // 有 b/# 前綴就照前綴拼寫
+  let out=degToNoteName(keySemi,+m[2],m[1],pfFor(m[1]))+rest;
+  if(bass){ const bm=bass.match(/^([#b]?)([1-7])$/); out+='/'+(bm?degToNoteName(keySemi,+bm[2],bm[1],pfFor(bm[1])):bass); }
   return out;
 }
 /* token → 顯示 HTML（休止 ✕ / 延續 · / 括號細分連音底線） */
 function renderBeatToken(tok){
   tok=String(tok||'').trim();
-  const keySemi=chordDisp==='num'?null:keyRootSemi(curDispKey());
-  const pf=preferFlatForKey(curDispKey());
+  const keySemi=chordDisp==='num'?null:dispKeySemi();
+  const pf=dispPreferFlat();
   const one=(t)=>{ t=t.trim();
     if(t===''||t==='.')return '<span class="bt-sus">·</span>';
     if(t==='x'||t==='X')return '<span class="bt-rest">✕</span>';
