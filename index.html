@@ -226,6 +226,10 @@ body.tb-collapsed .topbar-row-2{display:none;}
 .cbpr-sel{background:rgba(0,0,0,0.18);border:1px solid var(--border2);border-radius:0.3em;color:inherit;font-family:inherit;font-size:0.62em;font-weight:400;padding:0.05em 0.25em;outline:none;cursor:pointer;}
 .ctrl-toggle{font-size:0.6em;font-weight:400;border:1px solid var(--border2);background:rgba(0,0,0,0.18);color:inherit;border-radius:0.3em;padding:0.08em 0.4em;cursor:pointer;font-family:inherit;white-space:nowrap;}
 .ctrl-toggle:hover{border-color:var(--accent);}
+.ctrl-toggle.paste{border-color:#5b9bd5;color:#cfe6ff;background:rgba(91,155,213,0.18);}
+.clear-btn{font-size:0.82em;border:1px solid var(--border2);background:var(--bg3);color:var(--text);border-radius:0.4em;padding:0.3em 0.7em;cursor:pointer;font-family:inherit;white-space:nowrap;}
+.clear-btn:hover{border-color:#d4564a;color:#d4564a;}
+.clear-btn.on{background:var(--accent);color:#0d0d0d;border-color:var(--accent);}
 .cbsub.static,.cbrep.static,.cmeter.static,.cgoto-badge.static,.cjump.static{pointer-events:none;cursor:default;}
 /* 統一小型 select 在各瀏覽器的外觀（Safari/Firefox 原生 select 較大、有箭頭） */
 .cbsub,.cgoto-badge,.cjump{-webkit-appearance:none;-moz-appearance:none;appearance:none;text-align:center;}
@@ -555,6 +559,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
         <label class="ic-hint">拍號 <select class="ic-sel" id="chord-timesig" onchange="setTimeSig(this.value)"></select></label>
         <label class="ic-hint">顯示 <select class="ic-sel" id="chord-disp" onchange="setChordDisp(this.value)"><option value="num">級數</option><option value="male">和弦名(男Key)</option><option value="female">和弦名(女Key)</option></select></label>
         <label class="ic-hint">全部每排 <select class="ic-sel" onchange="applyAllBPR(this)" title="一次設定所有段落每排小節數"><option value="__">套用…</option><option value="">自動</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option></select></label>
+        <button class="clear-btn" onclick="clearAll()" title="清除整個譜的和弦／分割／重複／拍號／接續資料（可再按一次復原）">🗑 全部清除</button>
       </div>
       <div class="chord-hint">點拍格可編輯。記號：<b>1–7</b>級數、<b>b/#</b>升降、<b>m/sus4/maj7</b>品質、<b>1/3</b>轉位、<b>.</b>延續、<b>x</b>休止、<b>(1 5)</b>細分(2音=八分、3音=三連音、4音=十六分)。右上橘徽章設本小節拍號、末小節選「→接續」。上方「顯示」可切級數↔和弦名(男/女Key)。</div>
       <div class="chord-content" id="chord-content"></div>
@@ -575,6 +580,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
         <label class="ic-hint">拍號 <select class="ic-sel" id="mix-timesig" onchange="setTimeSig(this.value)"></select></label>
         <label class="ic-hint">顯示 <select class="ic-sel" id="mix-disp" onchange="setChordDisp(this.value)"><option value="num">級數</option><option value="male">和弦名(男Key)</option><option value="female">和弦名(女Key)</option></select></label>
         <label class="ic-hint">全部每排 <select class="ic-sel" onchange="applyAllBPR(this)" title="一次設定所有段落每排小節數"><option value="__">套用…</option><option value="">自動</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option></select></label>
+        <button class="clear-btn" onclick="clearAll()" title="清除整個譜的和弦／分割／重複／拍號／接續資料（可再按一次復原）">🗑 全部清除</button>
       </div>
       <div class="chord-hint">混合檢視：上方和弦小節（方框＋拍號數字，空拍圓點＝延續；右上橘徽章設本小節拍號、末小節可選接續段），下方顯示各樂器部位。</div>
       <div class="icpages" id="mix-content"></div>
@@ -690,6 +696,18 @@ function getProjectData(){
     nid
   };
 }
+/* 把「正在編輯、尚未失焦」的格子/欄位先寫回資料，避免輸出時掉資料 */
+function commitEdits(){
+  try{
+    const a=document.activeElement;
+    if(a&&typeof a.blur==='function'&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)) a.blur();
+  }catch(e){}
+}
+if(typeof window!=='undefined'){
+  window.addEventListener('beforeprint',commitEdits);
+  window.addEventListener('pagehide',commitEdits);
+  document.addEventListener('visibilitychange',()=>{ if(document.hidden) commitEdits(); });
+}
 function applyProjectData(data){
   if(!data||!data.sects)return false;
   document.getElementById('s-title').value=data.meta?.title||'';
@@ -707,6 +725,7 @@ function applyProjectData(data){
 }
 function saveProject(btn){
   try{
+    commitEdits();
     localStorage.setItem('arranger_project',JSON.stringify(getProjectData()));
     btn=btn||(window.event&&window.event.target); if(btn){btn.textContent='✓ 已存檔';setTimeout(()=>btn.textContent='💾 存檔',1500);}
   }catch(e){alert('存檔失敗：'+e.message);}
@@ -726,6 +745,7 @@ function autoSave(){
   try{localStorage.setItem('arranger_project',JSON.stringify(getProjectData()));}catch(e){}
 }
 function expJSON(){
+  commitEdits();
   const a=document.createElement('a');
   const title=(gv('s-title')||'arrangement').replace(/\s+/g,'_');
   a.download=title+'.json';
@@ -987,6 +1007,7 @@ function bindSwipe(){
 
 /* ── PRINT ICON SHEET (A4, 4 segments / page) ── */
 async function printView(name){
+  commitEdits();
   if(name==='icon')renderIcon(); else if(name==='chord')renderChord(); else if(name==='mix')renderMix();
   if(document.fonts&&document.fonts.ready){ try{ await document.fonts.ready; }catch(e){} }
   const cls='print-'+name;
@@ -997,6 +1018,7 @@ async function printView(name){
 function printIcon(){ return printView('icon'); }   // 相容舊呼叫
 /* 經典 A4：自動縮放，盡量塞進一張 A4 */
 async function printFit(view){
+  commitEdits();
   const cls='print-'+view;
   if(view==='chord')renderChord(); else if(view==='mix')renderMix();
   if(document.fonts&&document.fonts.ready){ try{ await document.fonts.ready; }catch(e){} }
@@ -1290,6 +1312,33 @@ function barCellsHtml(s,beats){
   return cells;
 }
 function toggleCtrl(id){ const s=sects.find(x=>x.id===id); if(!s)return; s.ctrlOff=!s.ctrlOff; autoSave(); renderChord(); renderMix(); }
+
+/* ── 全部清除 / 復原 ── */
+let _clearBackup=null;
+function clearAll(){
+  if(_clearBackup){ sects=_clearBackup; _clearBackup=null; autoSave(); renderSB(); renderAll(); updateClearBtns(); return; }
+  if(!confirm('清除整個譜的和弦／分割／重複／拍號／接續資料？（可再按一次「復原」還原）'))return;
+  _clearBackup=JSON.parse(JSON.stringify(sects));
+  sects.forEach(s=>{ delete s.chords; delete s.subdiv; delete s.rep; delete s.meters; delete s.bargoto; delete s.goto; });
+  autoSave(); renderSB(); renderAll(); updateClearBtns();
+}
+function updateClearBtns(){ document.querySelectorAll('.clear-btn').forEach(b=>{ b.textContent=_clearBackup?'↩ 復原':'🗑 全部清除'; b.classList.toggle('on',!!_clearBackup); }); }
+
+/* ── 段落複製 / 貼上（同樣的段落不用重打）── */
+let _secClip=null;
+function copySection(id){
+  const s=sects.find(x=>x.id===id); if(!s)return;
+  _secClip=JSON.parse(JSON.stringify({_name:s.name,bars:s.bars,color:s.color,layers:s.layers,notes:s.notes,chords:s.chords,subdiv:s.subdiv,rep:s.rep,meters:s.meters,bargoto:s.bargoto,goto:s.goto,barsPerRow:s.barsPerRow,ctrlOff:s.ctrlOff}));
+  renderChord(); renderMix();
+}
+function pasteSection(id){
+  if(!_secClip)return;
+  const s=sects.find(x=>x.id===id); if(!s)return;
+  if(!confirm(`把「${_secClip._name}」的內容貼到「${s.name}」？（會覆蓋此段，名稱保留）`))return;
+  const c=JSON.parse(JSON.stringify(_secClip));
+  ['bars','color','layers','notes','chords','subdiv','rep','meters','bargoto','goto','barsPerRow','ctrlOff'].forEach(k=>{ s[k]=c[k]; });
+  autoSave(); renderSB(); renderAll();
+}
 /* 段落和弦摘要（文字 / CSV 用）：| G A · · | D · · · | */
 function chordSummary(s){
   const beats=beatsPerBar();
@@ -1311,7 +1360,7 @@ function renderChord(){
     const bars=Math.max(1,parseInt(s.bars)||1);
     return `<div class="ccard" style="border-color:${col.stroke}">
       <div class="ccard-head" style="background:${col.fill};color:${col.stroke}">
-        <span class="chead-l"><span class="cname">${esc(s.name)}</span>${bprSelect(s)}<button class="ctrl-toggle" onclick="toggleCtrl(${s.id})" title="顯示/隱藏每個小節的控制鈕；隱藏時仍顯示已設定的值">控制項 ${s.ctrlOff?'關':'開'}</button></span>
+        <span class="chead-l"><span class="cname">${esc(s.name)}</span>${bprSelect(s)}<button class="ctrl-toggle" onclick="toggleCtrl(${s.id})" title="顯示/隱藏每個小節的控制鈕；隱藏時仍顯示已設定的值">控制項 ${s.ctrlOff?'關':'開'}</button><button class="ctrl-toggle" onclick="copySection(${s.id})" title="複製此段落全部內容（和弦／分割／重複／樂器…）">⧉ 複製</button>${_secClip?`<button class="ctrl-toggle paste" onclick="pasteSection(${s.id})" title="把已複製的「${esc(_secClip._name)}」貼到此段（覆蓋，名稱保留）">📋 貼上</button>`:''}</span>
         <span class="cmeta">${bars} Bar · ${esc(gv('s-time'))}</span>
       </div>
       <div class="cbar-grid" ${barGridStyle(s)}>${barCellsHtml(s,beats)}</div>
@@ -1368,7 +1417,7 @@ function renderMix(){
       + (rhy.length?`<div class="ic-rhythm-div">節奏組 ◈</div><div class="icchip-grid">${rhy.map(chipHtml).join('')}</div>`:'');
     return `<div class="ccard" style="border-color:${col.stroke}">
       <div class="ccard-head" style="background:${col.fill};color:${col.stroke}">
-        <span class="chead-l"><span class="cname">${esc(s.name)}</span>${bprSelect(s)}<button class="ctrl-toggle" onclick="toggleCtrl(${s.id})" title="顯示/隱藏每個小節的控制鈕；隱藏時仍顯示已設定的值">控制項 ${s.ctrlOff?'關':'開'}</button></span><span class="cmeta">${bars} Bar · ${esc(gv('s-time'))}</span>
+        <span class="chead-l"><span class="cname">${esc(s.name)}</span>${bprSelect(s)}<button class="ctrl-toggle" onclick="toggleCtrl(${s.id})" title="顯示/隱藏每個小節的控制鈕；隱藏時仍顯示已設定的值">控制項 ${s.ctrlOff?'關':'開'}</button><button class="ctrl-toggle" onclick="copySection(${s.id})" title="複製此段落全部內容（和弦／分割／重複／樂器…）">⧉ 複製</button>${_secClip?`<button class="ctrl-toggle paste" onclick="pasteSection(${s.id})" title="把已複製的「${esc(_secClip._name)}」貼到此段（覆蓋，名稱保留）">📋 貼上</button>`:''}</span><span class="cmeta">${bars} Bar · ${esc(gv('s-time'))}</span>
       </div>
       <div class="cbar-grid" ${barGridStyle(s)}>${cells}</div>
       ${insBody?`<div class="mix-ins">${insBody}</div>`:''}
@@ -1535,12 +1584,14 @@ function copyTL(btn){
 
 /* ── EXPORT ── */
 function expCSV(){
+  commitEdits();
   let csv='﻿段落,Bar,顏色,層次,Vocal,KB,Pad,AG,EG1,EG2,Bass,Drum,和弦,備註\n';
   sects.forEach(s=>s.layers.forEach((l,li)=>{const ins=l.ins;csv+=`"${s.name}",${s.bars},"${COL[s.color].label}","${li===0?'基底':COL[l.color].label}","${ins.Vocal||''}","${ins.KB||''}","${ins.Pad||''}","${ins.AG||''}","${ins.EG1||''}","${ins.EG2||''}","${ins.Bass||''}","${ins.Drum||''}","${li===0?chordSummary(s).replace(/"/g,'""'):''}","${(s.notes||'').replace(/"/g,'""')}"\n`;}));
   const a=document.createElement('a');a.download='arrangement.csv';a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.click();
 }
 
 async function expPNG(view){
+  commitEdits();
   const panel = view==='block' ? 'block' : 'flow';
   sw(panel, null);
   document.querySelectorAll('.vtab').forEach(t=>{
