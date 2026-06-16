@@ -227,6 +227,8 @@ body.tb-collapsed .topbar-row-2{display:none;}
 .ctrl-toggle{font-size:0.6em;font-weight:400;border:1px solid var(--border2);background:rgba(0,0,0,0.18);color:inherit;border-radius:0.3em;padding:0.08em 0.4em;cursor:pointer;font-family:inherit;white-space:nowrap;}
 .ctrl-toggle:hover{border-color:var(--accent);}
 .cbsub.static,.cbrep.static,.cmeter.static,.cgoto-badge.static,.cjump.static{pointer-events:none;cursor:default;}
+/* 統一小型 select 在各瀏覽器的外觀（Safari/Firefox 原生 select 較大、有箭頭） */
+.cbsub,.cgoto-badge,.cjump{-webkit-appearance:none;-moz-appearance:none;appearance:none;text-align:center;}
 .cbar-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(11em,1fr));padding:0.4em;gap:0.35em;}
 .cbar2{position:relative;border:1.5px solid var(--border2);border-radius:0.4em;background:rgba(255,255,255,0.015);overflow:hidden;min-height:3.6em;}
 .cbadges{position:absolute;top:0;right:0;display:flex;gap:2px;z-index:3;}
@@ -271,7 +273,7 @@ body.tb-collapsed .topbar-row-2{display:none;}
 .mix-ins{padding:0.4em 0.55em 0.55em;border-top:1px dashed var(--border2);display:flex;flex-direction:column;gap:0.3em;}
 .view-print{display:flex;justify-content:flex-end;gap:0.5em;margin-bottom:0.7em;}
 /* OCR 辨識匯入視窗 */
-.ocr-modal{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:200;display:none;align-items:center;justify-content:center;padding:1em;}
+.ocr-modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:200;display:none;align-items:center;justify-content:center;padding:1em;}
 .ocr-box{background:var(--bg2);border:1px solid var(--border2);border-radius:0.8em;width:min(560px,95vw);max-height:90vh;overflow:auto;}
 .ocr-head{display:flex;align-items:center;justify-content:space-between;padding:0.8em 1em;border-bottom:1px solid var(--border);font-weight:700;}
 .ocr-body{padding:1em;display:flex;flex-direction:column;gap:0.7em;}
@@ -473,7 +475,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
       </div>
     </div>
     <div class="tbar-r">
-      <button class="btn" onclick="saveProject()" title="儲存到本機（localStorage）">💾 存檔</button>
+      <button class="btn" onclick="saveProject(this)" title="儲存到本機（localStorage）">💾 存檔</button>
       <button class="btn" onclick="loadProject()" title="載入上次存檔">📂 載入</button>
       <button class="btn" onclick="expJSON()" title="匯出 JSON 備份">↓ JSON</button>
       <input id="json-import" type="file" accept=".json" style="display:none" onchange="impJSON(this)">
@@ -703,10 +705,10 @@ function applyProjectData(data){
   iconPage=0;
   return true;
 }
-function saveProject(){
+function saveProject(btn){
   try{
     localStorage.setItem('arranger_project',JSON.stringify(getProjectData()));
-    const btn=event.target;btn.textContent='✓ 已存檔';setTimeout(()=>btn.textContent='💾 存檔',1500);
+    btn=btn||(window.event&&window.event.target); if(btn){btn.textContent='✓ 已存檔';setTimeout(()=>btn.textContent='💾 存檔',1500);}
   }catch(e){alert('存檔失敗：'+e.message);}
 }
 function loadProject(){
@@ -715,7 +717,7 @@ function loadProject(){
     if(!raw){alert('找不到存檔，請先儲存一次。');return;}
     if(applyProjectData(JSON.parse(raw))){
       renderSB();renderAll();
-      const btn=event.target;btn.textContent='✓ 已載入';setTimeout(()=>btn.textContent='📂 載入',1500);
+      const btn=(window.event&&window.event.target); if(btn){btn.textContent='✓ 已載入';setTimeout(()=>btn.textContent='📂 載入',1500);}
     }
   }catch(e){alert('載入失敗：'+e.message);}
 }
