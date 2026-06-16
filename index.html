@@ -1119,7 +1119,7 @@ function getBeatData(s,bar,beats){
 function setBeat(id,bar,beat,v){
   const s=sects.find(x=>x.id===id); if(!s)return;
   if(!Array.isArray(s.chords))s.chords=[];
-  const pb=getBeatData(s,bar,barBeats(s,bar));
+  const pb=getBeatData(s,bar,cellsForBar(s,bar));
   pb[beat]=v; s.chords[bar]=pb; autoSave();
 }
 /* 單小節拍號 override */
