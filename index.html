@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>編曲架構示意圖 v3.4</title>
+<title>Worship Arranger v3.5</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Space+Mono:wght@400;700&display=swap');
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -1219,7 +1219,21 @@ function beatSave(id,bar,beat,inp){
 /* 每小節分割：1=四分(♩) / 2=八分(♪) / 4=十六分(♬)，格數 = 拍數 × 分割 */
 function subdivFactor(s,bar){ const f=Array.isArray(s.subdiv)?s.subdiv[bar]:1; return [1,2,4].includes(f)?f:1; }
 function cellsForBar(s,bar){ return barBeats(s,bar)*subdivFactor(s,bar); }
-function setSubdiv(id,bar,f){ const s=sects.find(x=>x.id===id); if(!s)return; if(!Array.isArray(s.subdiv))s.subdiv=[]; s.subdiv[bar]=parseInt(f)||1; autoSave(); renderChord(); renderMix(); }
+function setSubdiv(id,bar,f){
+  const s=sects.find(x=>x.id===id); if(!s)return;
+  const bb=barBeats(s,bar);
+  const oldFac=subdivFactor(s,bar);
+  const newFac=parseInt(f)||1;
+  // 換分割時把和弦重新對到相同拍位（不洗掉、不錯位）
+  const old=getBeatData(s,bar,bb*oldFac);
+  const newLen=bb*newFac, nw=new Array(newLen).fill('');
+  old.forEach((v,i)=>{ if(!String(v||'').trim())return; const ni=Math.round(i*newFac/oldFac); if(ni>=0&&ni<newLen)nw[ni]=v; });
+  if(!Array.isArray(s.chords))s.chords=[];
+  s.chords[bar]=nw;
+  if(!Array.isArray(s.subdiv))s.subdiv=[];
+  s.subdiv[bar]=newFac;
+  autoSave(); renderChord(); renderMix();
+}
 function subdivLabel(b,fac){
   if(fac===1)return (b+1);
   if(fac===2)return (b%2===0)?(b/2+1):'&';
