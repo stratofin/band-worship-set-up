@@ -1049,8 +1049,31 @@ function ocrStatus(t){ const e=document.getElementById('ocr-status'); if(e)e.tex
 function loadScript(src){ return new Promise((res,rej)=>{ if([...document.scripts].some(s=>s.src===src))return res(); const sc=document.createElement('script'); sc.src=src; sc.onload=()=>res(); sc.onerror=()=>rej(new Error('載入失敗')); document.head.appendChild(sc); }); }
 async function ensureTesseract(){ if(window.Tesseract)return; await loadScript('https://cdn.jsdelivr.net/npm/tesseract.js@5.0.4/dist/tesseract.min.js'); }
 async function ensurePdfjs(){ if(window.pdfjsLib)return; await loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js'); try{window.pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';}catch(e){} }
+/* 影像前處理：放大 + 去彩 + 對比拉伸，大幅提升 Tesseract 辨識率 */
+function ocrPreprocess(src){
+  return new Promise((resolve,reject)=>{
+    const work=(el,w,h)=>{
+      try{
+        const targetW=Math.min(2600,Math.max(1700,w));   // 太小放大、太大縮小
+        const sc=targetW/w, cw=Math.round(w*sc), ch=Math.round(h*sc);
+        const cv=document.createElement('canvas'); cv.width=cw; cv.height=ch;
+        const ctx=cv.getContext('2d'); ctx.imageSmoothingEnabled=true; ctx.imageSmoothingQuality='high';
+        ctx.drawImage(el,0,0,cw,ch);
+        const id=ctx.getImageData(0,0,cw,ch), d=id.data;
+        let mn=255,mx=0;
+        for(let i=0;i<d.length;i+=4){ const g=(d[i]*0.299+d[i+1]*0.587+d[i+2]*0.114)|0; d[i]=d[i+1]=d[i+2]=g; if(g<mn)mn=g; if(g>mx)mx=g; }
+        const rng=Math.max(1,mx-mn);
+        for(let i=0;i<d.length;i+=4){ let v=(d[i]-mn)*255/rng; v=v<128? v*0.55 : 255-(255-v)*0.55; d[i]=d[i+1]=d[i+2]=v<0?0:v>255?255:v; }
+        ctx.putImageData(id,0,0); resolve(cv);
+      }catch(e){ resolve(el); }   // 退而求其次：用原圖
+    };
+    if(src instanceof HTMLCanvasElement){ work(src,src.width,src.height); }
+    else { const img=new Image(); img.onload=()=>work(img,img.naturalWidth||img.width,img.naturalHeight||img.height); img.onerror=()=>reject(new Error('圖片載入失敗')); img.src=URL.createObjectURL(src); }
+  });
+}
 async function ocrFile(input){
   const f=input.files[0]; if(!f)return;
+  let worker=null;
   try{
     ocrStatus('準備中…'); document.getElementById('ocr-text').value='';
     let imgs=[];
@@ -1058,17 +1081,22 @@ async function ocrFile(input){
       ocrStatus('讀取 PDF…'); await ensurePdfjs();
       const pdf=await pdfjsLib.getDocument({data:await f.arrayBuffer()}).promise;
       const nP=Math.min(pdf.numPages,3);
-      for(let p=1;p<=nP;p++){ const page=await pdf.getPage(p); const vp=page.getViewport({scale:2}); const cv=document.createElement('canvas'); cv.width=vp.width; cv.height=vp.height; await page.render({canvasContext:cv.getContext('2d'),viewport:vp}).promise; imgs.push(cv); }
+      for(let p=1;p<=nP;p++){ const page=await pdf.getPage(p); const vp=page.getViewport({scale:2.5}); const cv=document.createElement('canvas'); cv.width=vp.width; cv.height=vp.height; await page.render({canvasContext:cv.getContext('2d'),viewport:vp}).promise; imgs.push(cv); }
     } else { imgs.push(f); }
     ocrStatus('載入辨識引擎…'); await ensureTesseract();
+    worker=await Tesseract.createWorker('eng');
+    try{ await worker.setParameters({ tessedit_pageseg_mode:'6', preserve_interword_spaces:'1' }); }catch(e){}
     let all='';
     for(let i=0;i<imgs.length;i++){
-      const r=await Tesseract.recognize(imgs[i],'eng',{logger:m=>{ if(m.status==='recognizing text')ocrStatus(`辨識中 ${i+1}/${imgs.length}… ${Math.round((m.progress||0)*100)}%`); }});
+      ocrStatus(`前處理影像 ${i+1}/${imgs.length}…`);
+      let pre; try{ pre=await ocrPreprocess(imgs[i]); }catch(e){ pre=imgs[i]; }
+      const r=await worker.recognize(pre,{},{text:true,logger:m=>{ if(m.status==='recognizing text')ocrStatus(`辨識中 ${i+1}/${imgs.length}… ${Math.round((m.progress||0)*100)}%`); }});
       all+=((r&&r.data&&r.data.text)||'')+'\n';
     }
     document.getElementById('ocr-text').value=all.trim();
-    ocrStatus('辨識完成。可修正文字後按「解析成段落 / 和弦」。');
+    ocrStatus('辨識完成。可修正文字後按「解析成段落 / 和弦」。級數譜(1 4 5 6m)也能解析了。');
   }catch(e){ ocrStatus('辨識失敗：'+e.message+'（可能無網路 / 檔案不支援）'); }
+  finally{ if(worker){ try{ await worker.terminate(); }catch(e){} } }
 }
 const NOTE_BASE={C:0,D:2,E:4,F:5,G:7,A:9,B:11};
 const SEMI_TO_DEG=['1','b2','2','b3','3','4','#4','5','b6','6','b7','7'];
@@ -1083,8 +1111,10 @@ function chordNameToNumber(tok,keySemi){
   if(bass){ const bs=noteToSemi(bass); out+='/'+(bs!=null?SEMI_TO_DEG[((bs-keySemi)%12+12)%12]:bass); }
   return out;
 }
-const OCR_SECT_RE=/^\s*(intro|verse\s*\d*|pre[-\s]?chorus|chorus\s*\d*|bridge\s*\d*|tag\s*\d*|interlude\s*\d*|instrumental|turnaround|outro|ending|coda|refrain|vamp|sign\s*in)\b/i;
+const OCR_SECT_RE=/^\s*(intro|re[-\s]?intro|verse\s*\d*|pre[-\s]?chorus|post[-\s]?chorus|chorus\s*\d*|bridge\s*\d*|tag\s*\d*|interlude\s*\d*|instrumental|turnaround|outro|ending|coda|refrain|vamp|sign\s*in|spirit|breakdown|build(?:\s*up)?|hook|channel|drop|misc|verse|chorus)\b/i;
 const OCR_CHORD_RE=/\b([A-G](?:#|b)?(?:maj7|maj9|m7b5|m7|m9|m6|m|dim7|dim|aug|sus4|sus2|sus|add9|add2|6|7|9|11|13|2)?(?:\/[A-G](?:#|b)?)?)\b/g;
+/* 字母和弦 或 級數數字（1–7，含 b/#、m/sus/maj、/bass）。前綴吃掉分隔符（含節奏斜線），避免用到 lookbehind 以相容舊瀏覽器。 */
+const OCR_TOKEN_RE=/(?:^|[^A-Za-z0-9#])((?:[A-G](?:#|b)?(?:maj7|maj9|m7b5|m7|m9|m6|sus4|sus2|sus|add9|add2|dim7|dim|aug|m|6|7|9|11|13|2)?(?:\/[A-G](?:#|b)?)?)|(?:[1-7](?:#|b)?(?:maj7|maj9|m7|sus4|sus2|sus|add9|m|6|7|9|2)?(?:\/[1-7](?:#|b)?)?))(?![A-Za-z0-9])/g;
 function parseOcr(){
   const txt=document.getElementById('ocr-text').value||'';
   const tonum=document.getElementById('ocr-tonum').value;
@@ -1095,9 +1125,11 @@ function parseOcr(){
   txt.split(/\r?\n/).forEach(line=>{
     const t=line.trim(); if(!t)return;
     if(OCR_SECT_RE.test(t)){ cur={name:t.replace(/[:：].*$/,'').trim().slice(0,24),chords:[]}; groups.push(cur); return; }
-    let mm,arr=[]; const re=new RegExp(OCR_CHORD_RE);
-    while((mm=re.exec(t))){ arr.push(mm[1]); }
-    if(arr.length){ if(!cur){cur={name:'段落',chords:[]}; groups.push(cur);} arr.forEach(c=>cur.chords.push(ks!=null?chordNameToNumber(c,ks):c)); }
+    let mm,arr=[]; const re=new RegExp(OCR_TOKEN_RE);
+    while((mm=re.exec(t))){ const tok=mm[1]; const isLetter=/^[A-G]/.test(tok); arr.push(isLetter&&ks!=null?chordNameToNumber(tok,ks):tok); }
+    if(arr.length){ if(!cur){cur={name:'段落',chords:[]}; groups.push(cur);} arr.forEach(c=>cur.chords.push(c)); return; }
+    /* 後備：短的純文字行（無任何和弦/級數）視為段落標題，例如 Spirit、自訂段名 */
+    if(/^[A-Za-z][A-Za-z .()&|/0-9-]{0,22}$/.test(t)){ cur={name:t.replace(/[:：].*$/,'').trim().slice(0,24),chords:[]}; groups.push(cur); }
   });
   if(!groups.length){ alert('沒有解析到段落或和弦，請檢查辨識文字。'); return; }
   const built=groups.map(g=>{
