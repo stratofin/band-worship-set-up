@@ -275,6 +275,21 @@ body.tb-collapsed .topbar-row-2{display:none;}
 .beat-sub.beam-3::after{content:'3';position:absolute;top:-0.9em;left:50%;transform:translateX(-50%);font-size:0.6em;opacity:.8;font-weight:400;}
 .ccard-note{font-size:0.76em;color:#b08fde;padding:0.35em 0.65em;border-top:1px solid rgba(155,114,207,0.2);background:rgba(155,114,207,0.05);}
 .mix-ins{padding:0.4em 0.55em 0.55em;border-top:1px dashed var(--border2);display:flex;flex-direction:column;gap:0.3em;}
+/* 樂器配器區塊：依內容換行貼齊，不再固定兩欄留白 */
+.mix-ins .icchip-grid{display:flex;flex-wrap:wrap;gap:0.3em;}
+.mix-ins .icchip-grid>.icchip{flex:1 1 auto;max-width:100%;}
+/* 混合＋：樂器指令精簡標籤，放在標題（控制區）下方 */
+.mix-ins.compact{flex-direction:row;flex-wrap:wrap;gap:0.3em 0.35em;padding:0.4em 0.6em 0.45em;border-top:none;border-bottom:1px dashed var(--border2);}
+.icchip2{display:inline-flex;align-items:center;gap:0.28em;border:1px solid;border-left-width:4px;border-radius:0.4em;padding:0.12em 0.5em;background:rgba(255,255,255,0.02);font-size:0.82em;line-height:1.25;}
+.icchip2 .ic-emoji{font-size:0.95em;width:auto;}
+.icchip2 b{font-family:'Space Mono',monospace;font-size:0.78em;letter-spacing:.3px;}
+.icchip2 .ic-val{font-size:0.96em;color:var(--text);}
+/* 混合＋：每個小節整體放大 */
+.mixpage-stack.mixp .cbar-grid{grid-template-columns:repeat(auto-fill,minmax(16em,1fr));gap:0.5em;padding:0.55em;}
+.mixpage-stack.mixp .cbeatcols{padding:1.25em 0.15em 0.7em;}
+.mixpage-stack.mixp .beat-r{font-size:1.32em;}
+.mixpage-stack.mixp .beat-i{font-size:1.25em;}
+.mixpage-stack.mixp .cbnum{font-size:0.7em;}
 .view-print{display:flex;justify-content:flex-end;gap:0.5em;margin-bottom:0.7em;}
 /* OCR 辨識匯入視窗 */
 .ocr-modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:200;display:none;align-items:center;justify-content:center;padding:1em;}
@@ -283,6 +298,11 @@ body.tb-collapsed .topbar-row-2{display:none;}
 .ocr-body{padding:1em;display:flex;flex-direction:column;gap:0.7em;}
 .ocr-status{font-size:0.82em;color:var(--text2);line-height:1.5;}
 .ocr-text{width:100%;min-height:9em;background:var(--bg3);border:1px solid var(--border);border-radius:0.4em;color:var(--text);font-family:'Space Mono',monospace;font-size:0.8em;padding:0.5em;resize:vertical;outline:none;}
+.ai-block{border:1px solid var(--accent);background:rgba(212,168,67,0.07);border-radius:0.6em;padding:0.8em 0.9em;margin-bottom:0.6em;}
+.ai-title{font-weight:700;color:var(--accent);margin-bottom:0.4em;}
+.ai-steps{margin:0 0 0.6em 0;padding-left:1.4em;font-size:0.86em;color:var(--text2);line-height:1.7;}
+.ai-steps b{color:var(--text);}
+.ai-divider{text-align:center;color:var(--text3);font-size:0.8em;margin:0.5em 0;}
 .ocr-opt{font-size:0.82em;color:var(--text2);display:flex;align-items:center;gap:0.4em;}
 .ocr-actions{display:flex;gap:0.5em;justify-content:flex-end;}
 .ocr-note{font-size:0.72em;color:var(--text3);line-height:1.6;}
@@ -444,7 +464,8 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   body.print-chord .ccard-note,body.print-mix .ccard-note{color:#6a4ca0!important;background:#f6f2fb!important;}
   /* 經典 A4：整體縮放塞進一張 */
   body.print-fit #vp-chord>.chord-content,
-  body.print-fit #vp-mix>.icpages{ zoom:var(--fit-scale,1); }
+  body.print-fit #vp-mix>.icpages,
+  body.print-fit #vp-mixp>.icpages{ zoom:var(--fit-scale,1); }
   body.print-fit .ccard{page-break-inside:auto!important;}
 }
 </style>
@@ -512,6 +533,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
       <button class="vtab" onclick="sw('icon',this)">圖示譜</button>
       <button class="vtab" onclick="sw('chord',this)">和弦譜</button>
       <button class="vtab" onclick="sw('mix',this)">混合</button>
+      <button class="vtab" onclick="sw('mixp',this)">混合＋</button>
       <button class="vtab" onclick="sw('text',this)">文字清單</button>
       <button class="vtab" onclick="sw('export',this)">匯出</button>
     </div>
@@ -569,7 +591,6 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
     <div id="vp-mix" style="display:none">
       <div class="print-head"></div>
       <div class="view-print"><button class="btn" onclick="openOcr()">🔍 辨識匯入</button><button class="btn" onclick="printFit('mix')" title="自動縮放，盡量塞進一張 A4">📄 經典A4</button><button class="btn btna" onclick="printView('mix')">🖨 列印 / 存 PDF</button></div>
-      <div class="ic-legend" id="mix-legend"></div>
       <div class="icon-toolbar">
         <button class="ic-navbtn" id="mix-prev" onclick="mixNav(-1)" title="上一頁">‹</button>
         <span class="ic-pageind" id="mix-pageind">1 / 1</span>
@@ -583,7 +604,29 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
         <button class="clear-btn" onclick="clearAll()" title="清除整個譜的和弦／分割／重複／拍號／接續資料（可再按一次復原）">🗑 全部清除</button>
       </div>
       <div class="chord-hint">混合檢視：上方和弦小節（方框＋拍號數字，空拍圓點＝延續；右上橘徽章設本小節拍號、末小節可選接續段），下方顯示各樂器部位。</div>
+      <div class="ic-legend" id="mix-legend"></div>
       <div class="icpages" id="mix-content"></div>
+    </div>
+
+    <!-- MIX+ VIEW (大格 + 樂器指令在控制區) -->
+    <div id="vp-mixp" style="display:none">
+      <div class="print-head"></div>
+      <div class="view-print"><button class="btn" onclick="openOcr()">🔍 辨識匯入</button><button class="btn" onclick="printFit('mixp')" title="自動縮放，盡量塞進一張 A4">📄 經典A4</button><button class="btn btna" onclick="printView('mixp')">🖨 列印 / 存 PDF</button></div>
+      <div class="icon-toolbar">
+        <button class="ic-navbtn" id="mixp-prev" onclick="mixpNav(-1)" title="上一頁">‹</button>
+        <span class="ic-pageind" id="mixp-pageind">1 / 1</span>
+        <button class="ic-navbtn" id="mixp-next" onclick="mixpNav(1)" title="下一頁">›</button>
+        <label class="ic-hint">每頁
+          <select class="ic-sel" id="mixp-perpage" onchange="setMixpPerPage(this.value)"></select>
+        段</label>
+        <label class="ic-hint">拍號 <select class="ic-sel" id="mixp-timesig" onchange="setTimeSig(this.value)"></select></label>
+        <label class="ic-hint">顯示 <select class="ic-sel" id="mixp-disp" onchange="setChordDisp(this.value)"><option value="num">級數</option><option value="male">和弦名(男Key)</option><option value="female">和弦名(女Key)</option></select></label>
+        <label class="ic-hint">全部每排 <select class="ic-sel" onchange="applyAllBPR(this)" title="一次設定所有段落每排小節數"><option value="__">套用…</option><option value="">自動</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option></select></label>
+        <button class="clear-btn" onclick="clearAll()" title="清除整個譜的和弦／分割／重複／拍號／接續資料（可再按一次復原）">🗑 全部清除</button>
+      </div>
+      <div class="chord-hint">混合＋：每個小節加大；樂器配器指令以精簡標籤放在標題（控制項）下方，節省空間。</div>
+      <div class="ic-legend" id="mixp-legend"></div>
+      <div class="icpages" id="mixp-content"></div>
     </div>
 
     <!-- TEXT VIEW -->
@@ -620,8 +663,24 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
 <!-- OCR 辨識匯入視窗 -->
 <div id="ocr-modal" class="ocr-modal">
   <div class="ocr-box">
-    <div class="ocr-head"><span>🔍 圖片 / PDF 和弦譜辨識匯入</span><button class="btn" onclick="closeOcr()">✕</button></div>
+    <div class="ocr-head"><span>🎼 和弦譜匯入</span><button class="btn" onclick="closeOcr()">✕</button></div>
     <div class="ocr-body">
+      <div class="ai-block">
+        <div class="ai-title">🤖 AI 轉譜（最準・免費・免 API key）</div>
+        <ol class="ai-steps">
+          <li>按 <b>① 複製轉譜指令</b>。</li>
+          <li>開 ChatGPT / Claude / Gemini 任一個，貼上指令，<b>並附上這張譜的圖片</b>，送出。</li>
+          <li>把 AI 回傳的 JSON 整段貼到下面框裡，按 <b>② 匯入</b>。</li>
+        </ol>
+        <div class="ocr-actions"><button class="btn btna" id="ai-copy-btn" onclick="copyAIPrompt()">① 複製轉譜指令</button></div>
+        <textarea id="ai-json" class="ocr-text" placeholder="把 AI 回傳的 JSON 整段貼到這裡（含 ```json 圍欄也沒關係，會自動清掉）…"></textarea>
+        <label class="ocr-opt"><input type="checkbox" id="ai-replace"> 取代目前所有段落（不勾＝附加在後面）</label>
+        <div class="ocr-actions">
+          <button class="btn btna" onclick="importAIJson()">② 匯入 AI 轉譜結果</button>
+          <button class="btn" onclick="closeOcr()">關閉</button>
+        </div>
+      </div>
+      <div class="ai-divider">— 或 — 本機 OCR（離線、輔助用，準度有限）</div>
       <input id="ocr-file" type="file" accept="image/*,application/pdf" onchange="ocrFile(this)">
       <div id="ocr-status" class="ocr-status">選擇和弦譜「圖片」或「PDF」，會在瀏覽器內辨識文字（首次需下載辨識引擎，約數秒～數十秒；需網路）。</div>
       <textarea id="ocr-text" class="ocr-text" placeholder="辨識出的文字會出現在這裡，可手動修正後再解析…"></textarea>
@@ -926,7 +985,7 @@ function renderLegend(){
     return `<button class="ic-legitem${on?' on':''}" style="${style}" onclick="toggleIns('${k}')" title="切換 ${k}">${ICON[k]} ${k}</button>`;
   }).join('');
   html+=`<span class="ic-leghint">點樂器挑要看的部位</span>`;
-  ['ic-legend','mix-legend'].forEach(id=>{const el=document.getElementById(id); if(el)el.innerHTML=html;});
+  ['ic-legend','mix-legend','mixp-legend'].forEach(id=>{const el=document.getElementById(id); if(el)el.innerHTML=html;});
 }
 
 function renderIcon(){
@@ -1003,14 +1062,15 @@ function bindCarousel(id,getCount,setPage,updateInd,getPage){
 function bindSwipe(){
   bindCarousel('icon-pages',pageCount,(p)=>{iconPage=p;},icUpdateInd,()=>iconPage);
   bindCarousel('mix-content',mixPageCount,(p)=>{mixPage=p;},mixUpdateInd,()=>mixPage);
+  bindCarousel('mixp-content',mixpPageCount,(p)=>{mixpPage=p;},mixpUpdateInd,()=>mixpPage);
 }
 
 /* ── PRINT ICON SHEET (A4, 4 segments / page) ── */
 async function printView(name){
   commitEdits();
-  if(name==='icon')renderIcon(); else if(name==='chord')renderChord(); else if(name==='mix')renderMix();
+  if(name==='icon')renderIcon(); else if(name==='chord')renderChord(); else if(name==='mix')renderMix(); else if(name==='mixp')renderMixP();
   if(document.fonts&&document.fonts.ready){ try{ await document.fonts.ready; }catch(e){} }
-  const cls='print-'+name;
+  const cls='print-'+(name==='mixp'?'mix':name);
   document.body.classList.add(cls);
   window._printCls=cls;
   setTimeout(()=>window.print(),60);
@@ -1019,10 +1079,10 @@ function printIcon(){ return printView('icon'); }   // 相容舊呼叫
 /* 經典 A4：自動縮放，盡量塞進一張 A4 */
 async function printFit(view){
   commitEdits();
-  const cls='print-'+view;
-  if(view==='chord')renderChord(); else if(view==='mix')renderMix();
+  const cls='print-'+(view==='mixp'?'mix':view);
+  if(view==='chord')renderChord(); else if(view==='mix')renderMix(); else if(view==='mixp')renderMixP();
   if(document.fonts&&document.fonts.ready){ try{ await document.fonts.ready; }catch(e){} }
-  const src=document.getElementById(view==='chord'?'chord-content':'mix-content');
+  const src=document.getElementById(view==='chord'?'chord-content':view==='mixp'?'mixp-content':'mix-content');
   const PH=1040;   // A4 直式可列印高度（約 px @96dpi，已扣邊界）
   let scale=1;
   try{
@@ -1049,6 +1109,68 @@ function ocrStatus(t){ const e=document.getElementById('ocr-status'); if(e)e.tex
 function loadScript(src){ return new Promise((res,rej)=>{ if([...document.scripts].some(s=>s.src===src))return res(); const sc=document.createElement('script'); sc.src=src; sc.onload=()=>res(); sc.onerror=()=>rej(new Error('載入失敗')); document.head.appendChild(sc); }); }
 async function ensureTesseract(){ if(window.Tesseract)return; await loadScript('https://cdn.jsdelivr.net/npm/tesseract.js@5.0.4/dist/tesseract.min.js'); }
 async function ensurePdfjs(){ if(window.pdfjsLib)return; await loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js'); try{window.pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';}catch(e){} }
+/* ── AI 轉譜（免 API key）：產生標準指令給使用者貼到任意 AI，回傳 JSON 再匯入 ── */
+const AI_PROMPT=`你是敬拜和弦譜辨識助手。我會附上一張和弦譜的圖片，請「看懂」整張圖，輸出成下面這個 JSON 給我的編曲 App 匯入。只輸出 JSON 本身，不要任何解說文字、不要 markdown 圍欄。
+
+【JSON 格式】
+{
+  "meta": { "title":"歌名", "artist":"", "time":"4/4", "bpm":"", "usage":"讚美", "mkey":"", "fkey":"", "fontSize":18 },
+  "sects": [
+    { "id":1, "name":"Intro", "bars":4, "color":"black",
+      "layers":[{"color":"black","ins":{}}], "notes":"",
+      "chords":[ ["1/3","4",".","5"], ["6m",".",".","."], ["1/3","4",".","5"], ["6m",".",".","."] ] }
+  ],
+  "nid": 2
+}
+
+【chords 規則（最重要）】
+- 每個段落的 chords 是「一個小節一個陣列」；每個陣列長度＝該小節拍數（4/4 為 4 拍 → 長度 4）。
+- 陣列每個元素＝「那一拍」的內容，用級數記號：1–7，可加 b/# 升降（如 b3）、品質 m / sus4 / sus2 / maj7（如 6m、4sus4）、轉位用斜線接低音（如 1/3、4/5）。
+- 和弦延續到下一拍（同一和弦持續）用 "."；該拍空白用 ""；休止用 "x"。
+- 圖上若是字母和弦（C、G/B…），就原樣保留字母放進去，不要自行移調。
+- bars 必須等於該段 chords 的小節數。
+
+【color 只能填】 "black"(主/基底)、"blue"(第二層)、"red"(高潮)、"purple"(特效)。沒把握就 "black"。
+
+【段落】 依圖上的段名切分（Intro / Verse / Chorus / Bridge / Interlude / Spirit…）；同名段落可重複出現。每個 sect 的 id 從 1 遞增，nid 填「最後一個 id + 1」。
+
+【收尾自我檢查】 JSON 必須合法可解析；每段 bars 與 chords 長度一致；節奏斜線（/ / / /）不要當成和弦。`;
+function copyAIPrompt(){
+  const done=()=>{ const b=document.getElementById('ai-copy-btn'); if(b){const o=b.textContent;b.textContent='✓ 已複製，去貼給 AI ＋附圖';setTimeout(()=>b.textContent=o,1900);} };
+  if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(AI_PROMPT).then(done,()=>aiFallbackCopy(AI_PROMPT,done)); }
+  else aiFallbackCopy(AI_PROMPT,done);
+}
+function aiFallbackCopy(text,cb){ try{ const ta=document.createElement('textarea'); ta.value=text; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.focus(); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); }catch(e){ alert('複製失敗，請手動全選下面指令。'); } cb&&cb(); }
+function importAIJson(){
+  const ta=document.getElementById('ai-json'); let s=(ta.value||'').trim();
+  if(!s){ alert('請先把 AI 回傳的 JSON 貼到框裡。'); return; }
+  s=s.replace(/^```(?:json)?\s*/i,'').replace(/```\s*$/,'').trim();          // 去掉 ```json 圍欄
+  if(s[0]!=='{'){ const a=s.indexOf('{'),b=s.lastIndexOf('}'); if(a>=0&&b>a)s=s.slice(a,b+1); }  // 抓最外層大括號
+  let data; try{ data=JSON.parse(s); }catch(e){ alert('JSON 解析失敗：'+e.message+'\n請確認貼上的是完整 JSON（從 { 到 }）。'); return; }
+  if(!data.sects||!Array.isArray(data.sects)||!data.sects.length){ alert('格式不對：找不到 sects 段落陣列。'); return; }
+  const OKC=['black','blue','red','purple'];
+  data.sects.forEach((s,i)=>{
+    if(s.id==null)s.id=i+1;
+    if(!s.name)s.name='段落';
+    if(!OKC.includes(s.color))s.color='black';
+    if(!Array.isArray(s.layers)||!s.layers.length)s.layers=[{color:s.color,ins:{}}];
+    s.layers.forEach(l=>{ if(!l.ins||typeof l.ins!=='object')l.ins={}; if(!OKC.includes(l.color))l.color=s.color; });
+    if(s.notes==null)s.notes='';
+    if(!Array.isArray(s.chords))s.chords=[];
+    if(!s.bars)s.bars=Math.max(1,s.chords.length||1);
+  });
+  const replace=document.getElementById('ai-replace').checked;
+  if(replace){
+    if(!data.meta)data.meta={};
+    let mx=0; data.sects.forEach(s=>mx=Math.max(mx,s.id||0));
+    data.nid=data.nid||mx+1;
+    if(applyProjectData(data)){ renderSB(); renderAll(); closeOcr(); alert('✓ 已匯入 '+data.sects.length+' 段（取代）。請到和弦譜檢查微調。'); }
+  } else {
+    const n=data.sects.length;
+    data.sects.forEach(s=>{ s.id=nid++; sects.push(s); });
+    renderSB(); renderAll(); closeOcr(); alert('✓ 已附加 '+n+' 段。請到和弦譜檢查微調。');
+  }
+}
 /* 影像前處理：放大 + 去彩 + 對比拉伸，大幅提升 Tesseract 辨識率 */
 function ocrPreprocess(src){
   return new Promise((resolve,reject)=>{
@@ -1157,7 +1279,7 @@ function renderTimeSelects(){
   const base=['4/4','3/4','6/8','12/8'];
   const opts=base.includes(cur)?base:[cur,...base];
   const html=opts.map(o=>`<option value="${o}"${o===cur?' selected':''}>${o}</option>`).join('');
-  ['chord-timesig','mix-timesig'].forEach(id=>{const s=document.getElementById(id); if(s)s.innerHTML=html;});
+  ['chord-timesig','mix-timesig','mixp-timesig'].forEach(id=>{const s=document.getElementById(id); if(s)s.innerHTML=html;});
 }
 /* 每拍一個和弦欄位（空欄＝該拍延續前一個和弦，顯示圓點）。相容舊的 spans 與字串資料。 */
 function getBeatData(s,bar,beats){
@@ -1221,8 +1343,8 @@ function allBPRSelectHTML(){
 let chordDisp='num';   // num=級數（核心）/ male=男Key和弦 / female=女Key和弦
 try{chordDisp=localStorage.getItem('arranger_chorddisp')||'num';}catch(e){}
 if(!['num','male','female'].includes(chordDisp))chordDisp='num';
-function setChordDisp(v){ chordDisp=v; try{localStorage.setItem('arranger_chorddisp',v);}catch(e){} syncDispSelects(); renderChord(); renderMix(); }
-function syncDispSelects(){ ['chord-disp','mix-disp'].forEach(id=>{const s=document.getElementById(id);if(s)s.value=chordDisp;}); }
+function setChordDisp(v){ chordDisp=v; try{localStorage.setItem('arranger_chorddisp',v);}catch(e){} syncDispSelects(); renderChord(); renderMix(); renderMixP(); }
+function syncDispSelects(){ ['chord-disp','mix-disp','mixp-disp'].forEach(id=>{const s=document.getElementById(id);if(s)s.value=chordDisp;}); }
 function dispKeyName(){ return chordDisp==='male'?gv('s-mkey'):chordDisp==='female'?gv('s-fkey'):''; }
 const DEG_SEMI={1:0,2:2,3:4,4:5,5:7,6:9,7:11};
 const NOTE_SHARP=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
@@ -1430,39 +1552,90 @@ function mixNav(d){
   if(root&&root.clientWidth)root.scrollTo({left:mixPage*root.clientWidth,behavior:'smooth'});
   mixUpdateInd();
 }
+/* 共用：取出某段所有樂器配器（依篩選） */
+function mixChips(s){
+  const chips=[];
+  s.layers.forEach(l=>{ INS.forEach(k=>{ if(!insFilter.has(k))return; if(l.ins[k]&&String(l.ins[k]).trim())chips.push({k,v:l.ins[k],lc:COL[l.color]}); }); });
+  return chips;
+}
+function mixChipHtml(c){
+  const ic=INSCOL[c.k]||{stroke:c.lc.stroke,fill:'rgba(255,255,255,0.02)'};
+  return `<div class="icchip" style="border-color:${ic.stroke};border-left-color:${c.lc.stroke};background:${ic.fill}"><span class="ic-emoji">${ICON[c.k]||'🎵'}</span><span class="ic-code" style="color:${ic.stroke}">${c.k}</span><span class="ic-val">${esc(c.v)}</span></div>`;
+}
+function mixChipCompact(c){
+  const ic=INSCOL[c.k]||{stroke:c.lc.stroke,fill:'rgba(255,255,255,0.02)'};
+  return `<span class="icchip2" style="border-color:${ic.stroke};border-left-color:${c.lc.stroke};background:${ic.fill}"><span class="ic-emoji">${ICON[c.k]||'🎵'}</span><b style="color:${ic.stroke}">${c.k}</b><span class="ic-val">${esc(c.v)}</span></span>`;
+}
+function mixInsBody(s,plus){
+  const chips=mixChips(s); if(!chips.length)return '';
+  if(plus){ return `<div class="mix-ins compact">${chips.map(mixChipCompact).join('')}</div>`; }
+  const mel=chips.filter(c=>!RHYTHM.includes(c.k)), rhy=chips.filter(c=>RHYTHM.includes(c.k));
+  return `<div class="mix-ins">`
+    +(mel.length?`<div class="icchip-grid">${mel.map(mixChipHtml).join('')}</div>`:'')
+    +(rhy.length?`<div class="ic-rhythm-div">節奏組 ◈</div><div class="icchip-grid">${rhy.map(mixChipHtml).join('')}</div>`:'')
+    +`</div>`;
+}
+/* 共用卡片：plus=true → 大格 + 樂器指令放控制區（標題下、小節上） */
+function mixCardHtml(s,plus){
+  const col=COL[s.color];
+  const beats=beatsPerBar();
+  const bars=Math.max(1,parseInt(s.bars)||1);
+  const cells=barCellsHtml(s,beats);
+  const ins=mixInsBody(s,plus);
+  const head=`<div class="ccard-head" style="background:${col.fill};color:${col.stroke}">
+        <span class="chead-l"><span class="cname">${esc(s.name)}</span>${bprSelect(s)}<button class="ctrl-toggle" onclick="toggleCtrl(${s.id})" title="顯示/隱藏每個小節的控制鈕；隱藏時仍顯示已設定的值">控制項 ${s.ctrlOff?'關':'開'}</button><button class="ctrl-toggle" onclick="copySection(${s.id})" title="複製此段落全部內容（和弦／分割／重複／樂器…）">⧉ 複製</button>${_secClip?`<button class="ctrl-toggle paste" onclick="pasteSection(${s.id})" title="把已複製的「${esc(_secClip._name)}」貼到此段（覆蓋，名稱保留）">📋 貼上</button>`:''}</span><span class="cmeta">${bars} Bar · ${esc(gv('s-time'))}</span>
+      </div>`;
+  const barsHtml=`<div class="cbar-grid" ${barGridStyle(s)}>${cells}</div>`;
+  const note=s.notes?`<div class="ccard-note">⚑ ${esc(s.notes)}</div>`:'';
+  const inner = plus ? head+ins+barsHtml+note : head+barsHtml+ins+note;
+  return `<div class="ccard" style="border-color:${col.stroke}">${inner}</div>`;
+}
 function renderMix(){
   const root=document.getElementById('mix-content'); if(!root)return;
-  const beats=beatsPerBar();
-  const slashRow=Array.from({length:beats}).map(()=>'<span>／</span>').join('');
-  const chipHtml=(c)=>{
-    const ic=INSCOL[c.k]||{stroke:c.lc.stroke,fill:'rgba(255,255,255,0.02)'};
-    return `<div class="icchip" style="border-color:${ic.stroke};border-left-color:${c.lc.stroke};background:${ic.fill}"><span class="ic-emoji">${ICON[c.k]||'🎵'}</span><span class="ic-code" style="color:${ic.stroke}">${c.k}</span><span class="ic-val">${esc(c.v)}</span></div>`;
-  };
-  const cardHtml=(s)=>{
-    const col=COL[s.color];
-    const bars=Math.max(1,parseInt(s.bars)||1);
-    const cells=barCellsHtml(s,beats);
-    const chips=[];
-    s.layers.forEach(l=>{ INS.forEach(k=>{ if(!insFilter.has(k))return; if(l.ins[k]&&String(l.ins[k]).trim())chips.push({k,v:l.ins[k],lc:COL[l.color]}); }); });
-    const mel=chips.filter(c=>!RHYTHM.includes(c.k)), rhy=chips.filter(c=>RHYTHM.includes(c.k));
-    const insBody=(mel.length?`<div class="icchip-grid">${mel.map(chipHtml).join('')}</div>`:'')
-      + (rhy.length?`<div class="ic-rhythm-div">節奏組 ◈</div><div class="icchip-grid">${rhy.map(chipHtml).join('')}</div>`:'');
-    return `<div class="ccard" style="border-color:${col.stroke}">
-      <div class="ccard-head" style="background:${col.fill};color:${col.stroke}">
-        <span class="chead-l"><span class="cname">${esc(s.name)}</span>${bprSelect(s)}<button class="ctrl-toggle" onclick="toggleCtrl(${s.id})" title="顯示/隱藏每個小節的控制鈕；隱藏時仍顯示已設定的值">控制項 ${s.ctrlOff?'關':'開'}</button><button class="ctrl-toggle" onclick="copySection(${s.id})" title="複製此段落全部內容（和弦／分割／重複／樂器…）">⧉ 複製</button>${_secClip?`<button class="ctrl-toggle paste" onclick="pasteSection(${s.id})" title="把已複製的「${esc(_secClip._name)}」貼到此段（覆蓋，名稱保留）">📋 貼上</button>`:''}</span><span class="cmeta">${bars} Bar · ${esc(gv('s-time'))}</span>
-      </div>
-      <div class="cbar-grid" ${barGridStyle(s)}>${cells}</div>
-      ${insBody?`<div class="mix-ins">${insBody}</div>`:''}
-      ${s.notes?`<div class="ccard-note">⚑ ${esc(s.notes)}</div>`:''}
-    </div>`;
-  };
   const pages=chunk(sects,MIX_PER_PAGE);
   const total=Math.max(1,pages.length);
   if(mixPage>=total)mixPage=total-1; if(mixPage<0)mixPage=0;
-  root.innerHTML=(pages.length?pages:[[]]).map((pg,pi)=>`<div class="icpage" data-page="${pi}"><div class="mixpage-stack">${pg.map(cardHtml).join('')}</div></div>`).join('');
+  root.innerHTML=(pages.length?pages:[[]]).map((pg,pi)=>`<div class="icpage" data-page="${pi}"><div class="mixpage-stack">${pg.map(s=>mixCardHtml(s,false)).join('')}</div></div>`).join('');
   root.scrollLeft=mixPage*root.clientWidth;
-  mixUpdateInd();
-  renderLegend();
+  mixUpdateInd(); renderLegend();
+}
+/* ── MIX+ （大格版）分頁 ── */
+let mixpPage=0;
+let MIXP_PER_PAGE=2;
+function mixpPageCount(){return Math.max(1,Math.ceil(sects.length/MIXP_PER_PAGE));}
+function refreshMixpPerPageOptions(){
+  const sel=document.getElementById('mixp-perpage'); if(!sel)return;
+  const opts=MIX_PERPAGE_OPTS[currentMode()];
+  if(!opts.includes(MIXP_PER_PAGE))MIXP_PER_PAGE=opts.reduce((a,b)=>Math.abs(b-MIXP_PER_PAGE)<Math.abs(a-MIXP_PER_PAGE)?b:a,opts[0]);
+  sel.innerHTML=opts.map(n=>`<option value="${n}"${n===MIXP_PER_PAGE?' selected':''}>${n}</option>`).join('');
+}
+function setMixpPerPage(v){
+  MIXP_PER_PAGE=parseInt(v)||2; mixpPage=0;
+  const sel=document.getElementById('mixp-perpage'); if(sel)sel.value=String(MIXP_PER_PAGE);
+  try{localStorage.setItem('arranger_mixpperpage',MIXP_PER_PAGE);}catch(e){}
+  renderMixP();
+}
+function mixpUpdateInd(){
+  const total=mixpPageCount(); const pi=document.getElementById('mixp-pageind'); if(!pi)return;
+  pi.textContent=`${total?mixpPage+1:1} / ${total}`;
+  document.getElementById('mixp-prev').disabled=mixpPage<=0;
+  document.getElementById('mixp-next').disabled=mixpPage>=total-1;
+}
+function mixpNav(d){
+  const root=document.getElementById('mixp-content');
+  mixpPage=Math.max(0,Math.min(mixpPageCount()-1,mixpPage+d));
+  if(root&&root.clientWidth)root.scrollTo({left:mixpPage*root.clientWidth,behavior:'smooth'});
+  mixpUpdateInd();
+}
+function renderMixP(){
+  const root=document.getElementById('mixp-content'); if(!root)return;
+  refreshMixpPerPageOptions();
+  const pages=chunk(sects,MIXP_PER_PAGE);
+  const total=Math.max(1,pages.length);
+  if(mixpPage>=total)mixpPage=total-1; if(mixpPage<0)mixpPage=0;
+  root.innerHTML=(pages.length?pages:[[]]).map((pg,pi)=>`<div class="icpage" data-page="${pi}"><div class="mixpage-stack mixp">${pg.map(s=>mixCardHtml(s,true)).join('')}</div></div>`).join('');
+  root.scrollLeft=mixpPage*root.clientWidth;
+  mixpUpdateInd(); renderLegend();
 }
 
 /* ── RENDER SIDEBAR ── */
@@ -1554,8 +1727,10 @@ function setMode(m){
   try{localStorage.setItem('arranger_mode',m);}catch(e){}
   refreshPerPageOptions();                       // 不同模式給不同段數選項
   refreshMixPerPageOptions();
+  refreshMixpPerPageOptions();
   if(document.getElementById('icon-pages'))renderIcon();
   if(document.getElementById('mix-content'))renderMix();
+  if(document.getElementById('mixp-content'))renderMixP();
   if(document.getElementById('summary'))renderSummary();
 }
 function initMode(){
@@ -1588,6 +1763,7 @@ function renderCurrent(){
   else if(currentView==='icon')renderIcon();
   else if(currentView==='chord')renderChord();
   else if(currentView==='mix')renderMix();
+  else if(currentView==='mixp')renderMixP();
   else if(currentView==='text')buildTL();
 }
 /* 只重畫「目前看得到」的檢視 + 輕量項目，避免每次輸入都重畫全部而卡頓 */
@@ -1696,7 +1872,7 @@ async function expPNG(view){
 }
 
 /* ── TABS ── */
-const PANELS=['flow','block','icon','chord','mix','text','export'];
+const PANELS=['flow','block','icon','chord','mix','mixp','text','export'];
 function sw(name,btn){
   currentView=name;
   document.querySelectorAll('.vtab').forEach(t=>t.classList.remove('a'));
@@ -1728,6 +1904,7 @@ function initTopbar(){
 
 try{const pp=parseInt(localStorage.getItem('arranger_perpage'));if(pp>=3&&pp<=16)SEG_PER_PAGE=pp;}catch(e){}
 try{const mp=parseInt(localStorage.getItem('arranger_mixperpage'));if(mp>=1&&mp<=8)MIX_PER_PAGE=mp;}catch(e){}
+try{const mpp=parseInt(localStorage.getItem('arranger_mixpperpage'));if(mpp>=1&&mpp<=8)MIXP_PER_PAGE=mpp;}catch(e){}
 renderSB();
 renderAll();
 bindSwipe();
