@@ -284,15 +284,42 @@ body.tb-collapsed .topbar-row-2{display:none;}
 .icchip2 .ic-emoji{font-size:0.95em;width:auto;}
 .icchip2 b{font-family:'Space Mono',monospace;font-size:0.78em;letter-spacing:.3px;}
 .icchip2 .ic-val{font-size:0.96em;color:var(--text);}
-/* 混合＋：每個小節整體放大（保持大格，但可一頁多段、減少頁數） */
-.mixpage-stack.mixp{gap:0.55em;}
-.mixpage-stack.mixp .cbar-grid{grid-template-columns:repeat(auto-fill,minmax(16em,1fr));gap:0.5em;padding:0.55em;}
-.mixpage-stack.mixp .cbeatcols{padding:1.5em 0.2em 0.95em;min-height:3.6em;}
-.mixpage-stack.mixp .beat-r{font-size:1.45em;}
-.mixpage-stack.mixp .beat-i{font-size:1.35em;}
+/* 混合＋：每個小節整體放大 */
+.mixpage-stack.mixp{gap:0.7em;}
+.mixpage-stack.mixp .cbeatcols{padding:1.6em 0.2em 1em;min-height:4em;}
+.mixpage-stack.mixp .beat-r{font-size:1.5em;}
+.mixpage-stack.mixp .beat-i{font-size:1.4em;}
 .mixpage-stack.mixp .cbnum{font-size:0.72em;}
 .mixpage-stack.mixp .ccard-head{font-size:1.04em;padding:0.5em 0.8em;}
 .mixpage-stack.mixp .cname{font-size:1.1em;}
+/* 樂器配器：小節上方一條時間軸，配器條可自由拖曳（以比例定位、不卡小節），多了自動疊成多排 */
+/* 更新日誌透明視窗 */
+.cl-btn{margin-left:0.4em;}
+.cl-modal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:1000;background:rgba(0,0,0,0.45);align-items:flex-start;justify-content:center;padding:5vh 4vw;}
+.cl-modal.show{display:flex;}
+.cl-box{max-width:680px;width:100%;max-height:86vh;overflow:auto;background:rgba(22,22,24,0.9);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border:1px solid var(--border2);border-radius:0.8em;box-shadow:0 14px 50px rgba(0,0,0,0.55);}
+.cl-head{position:sticky;top:0;display:flex;justify-content:space-between;align-items:center;gap:0.5em;padding:0.7em 1em;border-bottom:1px solid var(--border);background:rgba(22,22,24,0.96);font-weight:700;color:var(--accent);}
+.cl-body{padding:0.8em 1.2em 1.4em;color:var(--text);font-size:0.9em;line-height:1.7;}
+.cl-body h4{color:var(--accent);margin:1em 0 0.25em;font-size:0.95em;}
+.cl-body ul{margin:0.15em 0 0.5em;padding-left:1.3em;}
+.cl-body li{margin:0.12em 0;}
+.cl-ver{color:var(--text3);font-size:0.82em;margin:0 0 0.4em;}
+.mixpage-stack.mixp{--barw:14em;}
+body.mode-tablet .mixpage-stack.mixp{--barw:12em;}
+body.mode-phone .mixpage-stack.mixp{--barw:8.5em;}
+.arr-rowblock{margin:0 0.55em 0.45em;}
+.arr-lane{position:relative;width:100%;margin:0.15em 0 0.05em;border-bottom:1px dashed var(--border2);}
+.arr-rowblock .cbar-grid{padding:0.25em 0 0;gap:0.5em;}
+.arrchip{position:absolute;display:flex;align-items:center;gap:0.1em;height:1.65em;border:1px solid;border-left-width:4px;border-radius:0.35em;padding:0 0.1em 0 0;background:rgba(255,255,255,0.06);overflow:hidden;box-sizing:border-box;min-width:2.6em;}
+.arr-grip{cursor:grab;color:var(--text3);font-size:0.62em;letter-spacing:-2px;padding:0 0.2em;flex:0 0 auto;user-select:none;touch-action:none;}
+.arr-ins{appearance:none;-webkit-appearance:none;background:transparent;border:none;font-family:'Space Mono',monospace;font-size:0.72em;font-weight:700;outline:none;cursor:pointer;max-width:4.6em;flex:0 0 auto;padding:0;}
+.arr-ins option{color:#111;}
+.arr-txt{flex:1 1 auto;min-width:0;background:transparent;border:none;color:var(--text);font-family:inherit;font-size:0.84em;outline:none;padding:0;}
+.arr-x{background:none;border:none;color:var(--text3);cursor:pointer;font-size:0.72em;line-height:1;flex:0 0 auto;padding:0 0.1em;}
+.arr-x:hover{color:#d4564a;}
+.arr-resize{position:absolute;right:0;top:0;bottom:0;width:8px;cursor:ew-resize;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.12));touch-action:none;}
+.arr-add{display:flex;align-items:center;gap:0.6em;padding:0.15em 0.7em 0.45em;}
+.arr-tip{font-size:0.7em;color:var(--text3);}
 .view-print{display:flex;justify-content:flex-end;gap:0.5em;margin-bottom:0.7em;}
 /* OCR 辨識匯入視窗 */
 .ocr-modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:200;display:none;align-items:center;justify-content:center;padding:1em;}
@@ -492,6 +519,10 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   body.print-mixp .mixpage-stack.mixp .cbar-grid{grid-template-columns:repeat(auto-fill,minmax(15em,1fr))!important;gap:0.35em!important;padding:0.35em!important;}
   body.print-mixp .mixpage-stack.mixp .beat-r{font-size:16px!important;}
   body.print-mixp .mixpage-stack.mixp .cbnum{font-size:8px!important;}
+  /* 配器軸：列印時隱藏拖曳/編輯控制、白底深字 */
+  body.print-mixp .arr-grip,body.print-mixp .arr-x,body.print-mixp .arr-resize,body.print-mixp .arr-add{display:none!important;}
+  body.print-mixp .arrchip{background:#f2f2f2!important;}
+  body.print-mixp .arr-ins,body.print-mixp .arr-txt{color:#111!important;}
   body.print-mixp .icchip2{font-size:10px!important;}
   body.print-mixp .icchip2 .ic-val{font-size:11px!important;}
   /* 經典 A4：整體縮放塞進一張 */
@@ -516,6 +547,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
       <button class="segbtn" id="mode-tablet-btn" onclick="setMode('tablet')" title="平板：編輯區移到上方、檢視全寬、圖示譜3欄">▦ 平板</button>
       <button class="segbtn" id="mode-phone-btn" onclick="setMode('phone')" title="手機：隱藏編輯區、圖示譜2欄">📱 手機</button>
     </span>
+    <button class="segbtn cl-btn" onclick="showChangelog(event)" title="查看歷次更新內容">📝 更新日誌</button>
     <div class="pills">
       <div class="pill"><label>曲目</label><input id="s-title" value="King Of Kings" oninput="schedRender()" style="width:100px"></div>
       <div class="pill"><label>演唱者</label><input id="s-artist" value="" placeholder="—" oninput="schedRender()" style="width:90px"></div>
@@ -656,7 +688,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
         <label class="ic-hint">全部每排 <select class="ic-sel" onchange="applyAllBPR(this)" title="一次設定所有段落每排小節數"><option value="__">套用…</option><option value="">自動</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option></select></label>
         <button class="clear-btn" onclick="clearAll()" title="清除整個譜的和弦／分割／重複／拍號／接續資料（可再按一次復原）">🗑 全部清除</button>
       </div>
-      <div class="chord-hint">混合＋：每個小節加大；樂器配器指令以精簡標籤放在標題（控制項）下方，節省空間。</div>
+      <div class="chord-hint">混合＋：用上方「樂器篩選鈕（ALL / Vocal / KB …）」挑要顯示哪些樂器的配器。配器在小節上方，可自由拖曳移位與調長度（不卡小節），內容與其他頁共用。</div>
       <div class="ic-legend" id="mixp-legend"></div>
       <div class="icpages" id="mixp-content"></div>
     </div>
@@ -725,6 +757,55 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
         <button class="btn" onclick="closeOcr()">關閉</button>
       </div>
       <div class="ocr-note">⚠ 辨識僅供輔助，結果通常需人工修正。段落依關鍵字（Intro/Verse/Chorus…）切分；和弦逐一填入拍位（每拍一個）。手寫、複雜排版、五線譜辨識效果較差。</div>
+    </div>
+  </div>
+</div>
+
+<!-- 更新日誌（透明視窗，按外面消失） -->
+<div id="cl-modal" class="cl-modal" onclick="if(event.target===this)hideChangelog()">
+  <div class="cl-box">
+    <div class="cl-head"><span>📝 更新日誌 · Worship Arranger</span><button class="btn" onclick="hideChangelog()">✕</button></div>
+    <div class="cl-body">
+      <p class="cl-ver">最後更新：2026-06（依使用回饋持續優化）</p>
+
+      <h4>基礎架構</h4>
+      <ul><li>段落結構視覺化：名稱、Bar 數、顏色、備註、8 樂器分軌、內層堆疊</li>
+      <li>檢視：展開示意圖、方塊流程圖、圖示譜、和弦譜、混合、混合＋、文字清單、匯出</li>
+      <li>存檔／載入（本機）、JSON 匯入匯出、CSV、PNG、A4 PDF</li></ul>
+
+      <h4>介面與版面</h4>
+      <ul><li>字級 ＋／－ 縮放（只縮放檢視區）</li>
+      <li>版面三段：🖥 電腦 / ▦ 平板 / 📱 手機</li>
+      <li>圖示譜每頁段數可選；標題列可收合</li></ul>
+
+      <h4>和弦譜（級數系統）</h4>
+      <ul><li>記號：1–7 級數、b/# 升降、m/sus4/maj7 品質、/bass 轉位、. 延續、x 休止、(1 5) 細分</li>
+      <li>每小節分割 ♩/♪/♬（4/8/16 格）、重複 ×2/×4/×8、拍號 override、末小節接續</li>
+      <li>每排小節數（單段／全部）、級數 ↔ 和弦名（男/女 Key）切換</li>
+      <li>點拍格即時編輯；格線實線/虛線交替</li></ul>
+
+      <h4>列印 / 輸出</h4>
+      <ul><li>各檢視列印／存 PDF；「經典 A4」自動縮放塞一頁</li>
+      <li>修正：編輯中（未失焦）就輸出會掉資料 → 輸出前自動寫回</li>
+      <li>修正：列印和弦顏色太淺 → 加深成接近邊框深度</li></ul>
+
+      <h4>匯入：圖片 / AI 轉譜</h4>
+      <ul><li>本機 OCR：影像前處理（放大、去彩、對比）＋ 解析器支援級數譜</li>
+      <li>AI 轉譜（推薦，免費免 key）：一鍵複製指令 → 貼到 ChatGPT/Claude/Gemini ＋ 附圖 → 回傳 JSON 貼回匯入</li>
+      <li>容錯匯入：自動修圍欄/尾逗號/註解/截斷/裸字詞；逐段救援（壞段跳過）</li></ul>
+
+      <h4>編輯效率</h4>
+      <ul><li>🗑 全部清除 / ↩ 復原（誤按可還原）</li>
+      <li>段落 ⧉ 複製 / 📋 貼上（重複段落不用重打）</li></ul>
+
+      <h4>混合 / 混合＋</h4>
+      <ul><li>混合：和弦 ＋ 各樂器配器一頁看清</li>
+      <li>混合＋：小節加大、可一頁多段、每排折行（預設一排 2 小節）</li>
+      <li>樂器配器軸：內容與各頁共用、上方「樂器篩選鈕」控制顯示哪些樂器</li>
+      <li>配器可自由拖曳移位、拖右緣調長度；預設一小節寬、與小節逐排對齊；小節改為固定寬不拉伸</li></ul>
+
+      <h4>資料一致性</h4>
+      <ul><li>輸入 ＝ 顯示 ＝ 輸出 ＝ 存檔 ＝ 讀取 全部一致（已逐項驗證）</li></ul>
     </div>
   </div>
 </div>
@@ -1002,11 +1083,11 @@ function setPerPage(v){
 function toggleAllIns(){
   if(insFilter.size===INS.length)insFilter.clear();      // 全部按掉
   else INS.forEach(k=>insFilter.add(k));                  // 顯示全部
-  renderIcon();renderMix();
+  renderIcon();renderMix();renderMixP();
 }
 function toggleIns(k){
   if(insFilter.has(k))insFilter.delete(k); else insFilter.add(k);
-  renderIcon();renderMix();
+  renderIcon();renderMix();renderMixP();
 }
 function renderLegend(){
   const allOn=insFilter.size===INS.length;
@@ -1534,9 +1615,14 @@ function cycleRep(id,bar){
 /* 小節格 HTML：方框 + 拍號數字 + 記號顯示；橘色拍號徽章、最後一小節紅色接續徽章 */
 function barCellsHtml(s,beats){
   const bars=Math.max(1,parseInt(s.bars)||1);
-  const ctrlsOn=!s.ctrlOff;
   let cells='';
-  for(let i=0;i<bars;i++){
+  for(let i=0;i<bars;i++) cells+=barOneHtml(s,i,beats);
+  return cells;
+}
+function barOneHtml(s,i,beats){
+  const bars=Math.max(1,parseInt(s.bars)||1);
+  const ctrlsOn=!s.ctrlOff;
+  {
     const bb=barBeats(s,i);
     const fac=subdivFactor(s,i);
     const cellsN=bb*fac;
@@ -1568,9 +1654,8 @@ function barCellsHtml(s,beats){
       if(m)badges+=`<span class="cmeter on static">${esc(m)}</span>`;
       if(g){const t=sects.find(x=>x.id===g); badges+=`<span class="${isLast?'cgoto-badge':'cjump'} on static">→ ${t?esc(t.name):''}</span>`;}
     }
-    cells+=`<div class="cbar2">${subSel}${repBadge}<div class="cbadges">${badges}</div><div class="cbeatcols" style="font-size:${fs}em">${cols}</div></div>`;
+    return `<div class="cbar2">${subSel}${repBadge}<div class="cbadges">${badges}</div><div class="cbeatcols" style="font-size:${fs}em">${cols}</div></div>`;
   }
-  return cells;
 }
 function toggleCtrl(id){ const s=sects.find(x=>x.id===id); if(!s)return; s.ctrlOff=!s.ctrlOff; autoSave(); renderCharts(); }
 
@@ -1589,7 +1674,7 @@ function updateClearBtns(){ document.querySelectorAll('.clear-btn').forEach(b=>{
 let _secClip=null;
 function copySection(id){
   const s=sects.find(x=>x.id===id); if(!s)return;
-  _secClip=JSON.parse(JSON.stringify({_name:s.name,bars:s.bars,color:s.color,layers:s.layers,notes:s.notes,chords:s.chords,subdiv:s.subdiv,rep:s.rep,meters:s.meters,bargoto:s.bargoto,goto:s.goto,barsPerRow:s.barsPerRow,ctrlOff:s.ctrlOff}));
+  _secClip=JSON.parse(JSON.stringify({_name:s.name,bars:s.bars,color:s.color,layers:s.layers,notes:s.notes,chords:s.chords,subdiv:s.subdiv,rep:s.rep,meters:s.meters,bargoto:s.bargoto,goto:s.goto,barsPerRow:s.barsPerRow,ctrlOff:s.ctrlOff,arr:s.arr}));
   renderCharts();
 }
 function pasteSection(id){
@@ -1597,7 +1682,7 @@ function pasteSection(id){
   const s=sects.find(x=>x.id===id); if(!s)return;
   if(!confirm(`把「${_secClip._name}」的內容貼到「${s.name}」？（會覆蓋此段，名稱保留）`))return;
   const c=JSON.parse(JSON.stringify(_secClip));
-  ['bars','color','layers','notes','chords','subdiv','rep','meters','bargoto','goto','barsPerRow','ctrlOff'].forEach(k=>{ s[k]=c[k]; });
+  ['bars','color','layers','notes','chords','subdiv','rep','meters','bargoto','goto','barsPerRow','ctrlOff','arr'].forEach(k=>{ s[k]=c[k]; });
   autoSave(); renderSB(); renderAll();
 }
 /* 段落和弦摘要（文字 / CSV 用）：| G A · · | D · · · | */
@@ -1692,11 +1777,94 @@ function mixCardHtml(s,plus){
   const head=`<div class="ccard-head" style="background:${col.fill};color:${col.stroke}">
         <span class="chead-l"><span class="cname">${esc(s.name)}</span>${bprSelect(s)}<button class="ctrl-toggle" onclick="toggleCtrl(${s.id})" title="顯示/隱藏每個小節的控制鈕；隱藏時仍顯示已設定的值">控制項 ${s.ctrlOff?'關':'開'}</button><button class="ctrl-toggle" onclick="copySection(${s.id})" title="複製此段落全部內容（和弦／分割／重複／樂器…）">⧉ 複製</button>${_secClip?`<button class="ctrl-toggle paste" onclick="pasteSection(${s.id})" title="把已複製的「${esc(_secClip._name)}」貼到此段（覆蓋，名稱保留）">📋 貼上</button>`:''}</span><span class="cmeta">${bars} Bar · ${esc(gv('s-time'))}</span>
       </div>`;
-  const barsHtml=`<div class="cbar-grid" ${barGridStyle(s)}>${cells}</div>`;
   const note=s.notes?`<div class="ccard-note">⚑ ${esc(s.notes)}</div>`:'';
-  const inner = plus ? head+ins+barsHtml+note : head+barsHtml+ins+note;
+  if(plus){
+    if(!Array.isArray(s.arr)) s.arr=seedArr(s);
+    s.arr.forEach(a=>{ if(a.x==null){ a.x=(a.start||0)/bars; a.w=Math.max(1,a.len||1)/bars; } delete a.start; delete a.len; delete a.lane; });
+    // 只顯示「樂器篩選鈕」選中的；垂直打包：不重疊者同一垂直列
+    const vis=s.arr.map((a,idx)=>({a,idx})).filter(o=>insFilter.has(o.a.ins));
+    const packed=[];
+    vis.forEach(o=>{ const a=o.a; a._x=Math.max(0,Math.min(1,a.x||0)); a._w=Math.max(0.02,Math.min(1-a._x,a.w||(1/bars))); let r=0; for(;;){ const row=packed[r]||(packed[r]=[]); if(!row.some(p=>!(a._x+a._w<=p.x||a._x>=p.x+p.w))){ row.push({x:a._x,w:a._w}); a._vrow=r; break; } r++; } });
+    const vrows=Math.max(1,packed.length);
+    // 預設一排 2 小節；配器軸逐排與小節對齊
+    const bpr=Math.max(1,Math.min(bars,(s.barsPerRow&&parseInt(s.barsPerRow)>0)?parseInt(s.barsPerRow):2));
+    const nRows=Math.ceil(bars/bpr);
+    let blocks='';
+    for(let br=0;br<nRows;br++){
+      const b0=br*bpr, b1=Math.min(bars,(br+1)*bpr), rowBars=b1-b0, f0=b0/bars, fW=(b1-b0)/bars;
+      const laneChips=vis.map(o=>{ const a=o.a; const s0=Math.max(a._x,f0), s1=Math.min(a._x+a._w,f0+fW); if(s1<=s0+1e-9)return ''; return arrChipHtml(s,a,o.idx,(s0-f0)/fW*100,(s1-s0)/fW*100,a._vrow); }).join('');
+      let barRow=''; for(let i=b0;i<b1;i++)barRow+=barOneHtml(s,i,beats);
+      blocks+=`<div class="arr-rowblock" style="width:min(100%,calc(var(--barw,14em) * ${rowBars}))"><div class="arr-lane" data-rf0="${f0}" data-rfw="${fW}" style="height:${vrows*1.95}em">${laneChips}</div><div class="cbar-grid" style="grid-template-columns:repeat(${rowBars},minmax(0,1fr))">${barRow}</div></div>`;
+    }
+    return `<div class="ccard" style="border-color:${col.stroke}">${head}
+      ${blocks}
+      <div class="arr-add"><button class="ctrl-toggle" onclick="addArr(${s.id})" title="新增一條配器（內容與其他頁共用）">＋ 加配器</button><span class="arr-tip">上方「樂器篩選鈕」挑要看的部位；拖 ⋮⋮ 移位、拖右緣調長度、✕刪除（清空文字＝各頁一起移除）</span></div>
+      ${note}</div>`;
+  }
+  const barsHtml=`<div class="cbar-grid" ${barGridStyle(s)}>${cells}</div>`;
+  const inner = head+barsHtml+ins+note;
   return `<div class="ccard" style="border-color:${col.stroke}">${inner}</div>`;
 }
+/* ── 混合＋ 樂器配器持續軸：內容與各段樂器彈法（layers[0].ins）共用，多條自動往下疊成多排 ── */
+function secIns(s){ if(!s.layers||!s.layers.length)s.layers=[{color:s.color||'black',ins:{}}]; if(!s.layers[0].ins)s.layers[0].ins={}; return s.layers[0].ins; }
+function secText(s,ins){ const o=(s.layers&&s.layers[0]&&s.layers[0].ins)||{}; return o[ins]!=null?String(o[ins]):''; }
+let mixpHideArr=false;
+try{ mixpHideArr=localStorage.getItem('arranger_mixphidearr')==='1'; }catch(e){}
+function toggleArrAll(){ mixpHideArr=!mixpHideArr; try{localStorage.setItem('arranger_mixphidearr',mixpHideArr?'1':'');}catch(e){} renderMixP();
+  document.querySelectorAll('.arrall-btn').forEach(b=>b.classList.toggle('on',mixpHideArr)); }
+function seedArr(s){
+  const bars=Math.max(1,parseInt(s.bars)||1); const o=(s.layers&&s.layers[0]&&s.layers[0].ins)||{}; const out=[];
+  INS.forEach(k=>{ if(o[k]&&String(o[k]).trim())out.push({ins:k,x:0,w:1/bars}); });   // 預設一小節寬
+  return out;
+}
+function arrChipHtml(s,a,idx,leftPct,widthPct,vrow){
+  const ic=INSCOL[a.ins]||{stroke:'#888'};
+  const opts=INS.map(k=>`<option value="${k}"${k===a.ins?' selected':''}>${ICON[k]||''} ${k}</option>`).join('');
+  return `<div class="arrchip" data-k="${s.id}-${idx}" style="left:${leftPct.toFixed(2)}%;width:${widthPct.toFixed(2)}%;top:${(vrow||0)*1.95}em;border-color:${ic.stroke};border-left-color:${ic.stroke}">
+    <span class="arr-grip" title="拖曳移位" onpointerdown="arrDown(event,${s.id},${idx},'move')">⋮⋮</span>
+    <select class="arr-ins" onchange="setArrIns(${s.id},${idx},this.value)" onpointerdown="event.stopPropagation()" style="color:${ic.stroke}">${opts}</select>
+    <input class="arr-txt" value="${esc(secText(s,a.ins))}" placeholder="彈法…" oninput="arrText(${s.id},${idx},this.value)" onpointerdown="event.stopPropagation()">
+    <button class="arr-x" onclick="arrDel(${s.id},${idx})" onpointerdown="event.stopPropagation()" title="刪除">✕</button>
+    <span class="arr-resize" title="拖曳調長度" onpointerdown="arrDown(event,${s.id},${idx},'resize')"></span>
+  </div>`;
+}
+function toggleArr(id){ const s=sects.find(x=>x.id===id); if(!s)return; s.arrOff=!s.arrOff; autoSave(); renderMixP(); }
+/* 更新日誌視窗：開啟 / 關閉（按外面或 Esc 關閉） */
+function showChangelog(e){ if(e&&e.stopPropagation)e.stopPropagation(); const m=document.getElementById('cl-modal'); if(m)m.classList.add('show'); }
+function hideChangelog(){ const m=document.getElementById('cl-modal'); if(m)m.classList.remove('show'); }
+document.addEventListener('keydown',e=>{ if(e.key==='Escape')hideChangelog(); });
+function addArr(id){
+  const s=sects.find(x=>x.id===id); if(!s)return;
+  const bars=Math.max(1,parseInt(s.bars)||1);
+  if(!Array.isArray(s.arr))s.arr=seedArr(s);
+  const used=new Set(s.arr.map(a=>a.ins));
+  const ins = INS.find(k=>!used.has(k)) || INS[0];
+  s.arr.push({ins,x:0,w:1/bars});   // 預設一小節寬
+  autoSave(); renderMixP();
+}
+function setArrIns(id,idx,v){ const s=sects.find(x=>x.id===id); if(!s||!s.arr||!s.arr[idx])return; s.arr[idx].ins=v; autoSave(); renderMixP(); }
+/* 文字寫回共用的 layers[0].ins（其他頁面一起更新）；不整段重繪以保留輸入焦點 */
+function arrText(id,idx,v){ const s=sects.find(x=>x.id===id); if(!s||!s.arr||!s.arr[idx])return; secIns(s)[s.arr[idx].ins]=v; autoSave(); }
+function arrDel(id,idx){ const s=sects.find(x=>x.id===id); if(!s||!s.arr)return; s.arr.splice(idx,1); autoSave(); renderMixP(); }
+/* 自由拖曳：移位 / 調長度（以小節軸的比例存 x,w，不卡格） */
+let _adrag=null;
+function arrDown(ev,id,idx,mode){
+  ev.preventDefault(); ev.stopPropagation();
+  const chip=ev.target.closest('.arrchip'); const lane=chip&&chip.parentElement; if(!lane)return;
+  const s=sects.find(x=>x.id===id); if(!s||!s.arr||!s.arr[idx])return; const a=s.arr[idx];
+  const rfw=parseFloat(lane.dataset.rfw)||1, rf0=parseFloat(lane.dataset.rf0)||0;
+  _adrag={id,idx,mode,laneW:lane.getBoundingClientRect().width||1,rfw,rf0,sx:ev.clientX,x0:a.x||0,w0:a.w||0.1,chip};
+  window.addEventListener('pointermove',arrMove); window.addEventListener('pointerup',arrUp);
+}
+function arrMove(ev){
+  if(!_adrag)return; const s=sects.find(x=>x.id===_adrag.id); const a=s&&s.arr&&s.arr[_adrag.idx]; if(!a)return;
+  const dFrac=(ev.clientX-_adrag.sx)/_adrag.laneW*_adrag.rfw;   // 像素→該排比例→整段比例
+  if(_adrag.mode==='move') a.x=Math.max(0,Math.min(1-(a.w||0.1),_adrag.x0+dFrac));
+  else a.w=Math.max(0.02,Math.min(1-(a.x||0),_adrag.w0+dFrac));
+  const left=(((a.x||0)-_adrag.rf0)/_adrag.rfw*100), width=((a.w||0.1)/_adrag.rfw*100);
+  _adrag.chip.style.left=left.toFixed(2)+'%'; _adrag.chip.style.width=width.toFixed(2)+'%';
+}
+function arrUp(){ const was=_adrag; _adrag=null; window.removeEventListener('pointermove',arrMove); window.removeEventListener('pointerup',arrUp); if(was){ autoSave(); renderMixP(); } }
 function renderMix(){
   const root=document.getElementById('mix-content'); if(!root)return;
   const pages=chunk(sects,MIX_PER_PAGE);
