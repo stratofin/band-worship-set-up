@@ -456,7 +456,12 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   body.print-chord .cbchord,body.print-mix .cbchord{color:#111!important;}
   body.print-chord .cbar2,body.print-mix .cbar2{background:#fff!important;border-color:#999!important;}
   body.print-chord .cbeatcol,body.print-mix .cbeatcol{border-color:#bbb!important;}
-  body.print-chord .cbnum,body.print-mix .cbnum{color:#888!important;}
+  /* 列印：和弦相關內容加深（原本沿用螢幕淺色，白底上太淡） */
+  body.print-chord .beat-r,body.print-mix .beat-r,body.print-mixp .beat-r,
+  body.print-chord .bt-suf,body.print-mix .bt-suf,body.print-mixp .bt-suf{color:#111!important;}
+  body.print-chord .bt-rest,body.print-mix .bt-rest,body.print-mixp .bt-rest{color:#222!important;}
+  body.print-chord .bt-sus,body.print-mix .bt-sus,body.print-mixp .bt-sus{color:#555!important;opacity:1!important;}
+  body.print-chord .cbnum,body.print-mix .cbnum,body.print-mixp .cbnum{color:#555!important;opacity:1!important;}
   body.print-chord .cmeter.on,body.print-mix .cmeter.on{background:#e0b84a!important;color:#000!important;}
   body.print-chord .cmeter.off,body.print-mix .cmeter.off{display:none!important;}
   body.print-chord .cgoto-badge.on,body.print-mix .cgoto-badge.on{background:#d4564a!important;color:#fff!important;}
@@ -474,7 +479,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   body.print-mixp .mixpage-stack>.ccard{margin-bottom:6px;}
   body.print-mixp .ccard{background:#fff!important;page-break-inside:avoid;border-width:2px;margin-bottom:6px;}
   body.print-mixp .cbeatcol{border-color:#bbb!important;}
-  body.print-mixp .cbnum{color:#888!important;}
+  body.print-mixp .cbnum{color:#555!important;opacity:1!important;}
   body.print-mixp .cmeter.on{background:#e0b84a!important;color:#000!important;}
   body.print-mixp .cmeter.off{display:none!important;}
   body.print-mixp .cgoto-badge.on,body.print-mixp .cjump.on{background:#d4564a!important;color:#fff!important;}
@@ -1156,6 +1161,7 @@ const AI_PROMPT=`你是敬拜和弦譜辨識助手。我會附上一張和弦譜
 - 和弦延續到下一拍（同一和弦持續）用 "."；該拍空白用 ""；休止用 "x"。
 - 圖上若是字母和弦（C、G/B…），就原樣保留字母放進去，不要自行移調。
 - bars 必須等於該段 chords 的小節數。
+- 若不確定巢狀陣列格式，chords 也可「每小節一個字串、拍與拍用空格分隔」，例： "chords":["1/3 4 . 5","6m . . ."]，系統會自動拆解。
 
 【color 只能填】 "black"(主/基底)、"blue"(第二層)、"red"(高潮)、"purple"(特效)。沒把握就 "black"。
 
@@ -1168,35 +1174,109 @@ function copyAIPrompt(){
   else aiFallbackCopy(AI_PROMPT,done);
 }
 function aiFallbackCopy(text,cb){ try{ const ta=document.createElement('textarea'); ta.value=text; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.focus(); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); }catch(e){ alert('複製失敗，請手動全選下面指令。'); } cb&&cb(); }
+/* ── 容錯匯入：盡量救，70% 完整也能用 ── */
+function aiClean(raw){
+  let s=(raw||'').trim();
+  s=s.replace(/^```(?:json)?\s*/i,'').replace(/```\s*$/,'').trim();   // 去 ```json 圍欄
+  s=s.replace(/\/\*[\s\S]*?\*\//g,'');                                // 去 /* */ 註解
+  s=s.replace(/(^|[^:])\/\/[^\n\r]*/g,'$1');                          // 去 // 註解（不碰 http://、1/3）
+  const fb=s.indexOf('{'), lb=s.lastIndexOf('}');
+  const fa=s.indexOf('['), la=s.lastIndexOf(']');
+  const hasObj=fb>=0&&lb>fb, hasArr=fa>=0&&la>fa;
+  if(hasObj&&(!hasArr||fb<fa)) s=s.slice(fb,lb+1);                    // 物件在最前 → 取最外層物件
+  else if(hasArr) s='{"sects":'+s.slice(fa,la+1)+'}';                // 陣列在最前 → 包成 sects
+  s=s.replace(/,\s*([}\]])/g,'$1');                                   // 去尾逗號
+  return s;
+}
+function aiBalance(str){                                              // 補上被截斷的引號/括號
+  let stack=[],inStr=false,esc=false;
+  for(let i=0;i<str.length;i++){const c=str[i];
+    if(inStr){ if(esc)esc=false; else if(c==='\\')esc=true; else if(c==='"')inStr=false; continue; }
+    if(c==='"')inStr=true; else if(c==='{'||c==='[')stack.push(c); else if(c==='}'||c===']')stack.pop();
+  }
+  let add=inStr?'"':''; for(let i=stack.length-1;i>=0;i--)add+=stack[i]==='{'?'}':']';
+  return str+add;
+}
+function aiFix(s){   // 陣列裡未加引號的裸字詞補引號（true/false/null 除外），救 ["5", Bird, …]
+  return s.replace(/([\[,]\s*)(?!true\b|false\b|null\b)([A-Za-z一-鿿][\w]*)(\s*[,\]])/g,'$1"$2"$3');
+}
+function aiTryParse(s){
+  const cand=[s, aiFix(s)];
+  for(const t of cand){
+    try{ return JSON.parse(t); }catch(e){}
+    try{ return JSON.parse(aiBalance(t.replace(/,\s*$/,''))); }catch(e){}   // 截斷修復
+  }
+  for(let cut=s.lastIndexOf('}'); cut>0; cut=s.lastIndexOf('}',cut-1)){      // 退回到能解析的位置
+    const pre=s.slice(0,cut+1).replace(/,\s*$/,'');
+    try{ return JSON.parse(aiBalance(pre)); }catch(e){}
+    try{ return JSON.parse(aiBalance(aiFix(pre))); }catch(e){}
+  }
+  return null;
+}
+/* 切出 sects 內每個 {…} 段落物件文字，供「逐段救援」（壞段跳過、其餘照收） */
+function aiSplitSects(clean){
+  const m=clean.match(/"sects"\s*:\s*\[/);
+  let start = m? clean.indexOf('[',m.index) : clean.indexOf('[');
+  if(start<0)return null;
+  const objs=[]; let depth=0,arrDepth=0,inStr=false,esc=false,os=-1;
+  for(let i=start;i<clean.length;i++){const c=clean[i];
+    if(inStr){ if(esc)esc=false; else if(c==='\\')esc=true; else if(c==='"')inStr=false; continue; }
+    if(c==='"'){inStr=true;continue;}
+    if(c==='['){arrDepth++;continue;}
+    if(c===']'){arrDepth--; if(arrDepth===0)break; continue;}
+    if(c==='{'){ if(depth===0)os=i; depth++; }
+    else if(c==='}'){ depth--; if(depth===0&&os>=0){objs.push(clean.slice(os,i+1));os=-1;} }
+  }
+  return objs.length?objs:null;
+}
+function aiBar(v){
+  if(Array.isArray(v))return v.map(x=>x==null?'':String(x).trim());
+  if(typeof v==='string')return v.trim()?v.trim().split(/\s+/):[''];
+  return v==null?['']:[String(v)];
+}
+function aiChords(ch){
+  if(ch==null)return [];
+  if(typeof ch==='string'){ return ch.split(/\s*\|\s*|\r?\n/).map(x=>x.trim()).filter(x=>x.length).map(aiBar); }
+  if(Array.isArray(ch))return ch.map(aiBar);
+  return [];
+}
 function importAIJson(){
-  const ta=document.getElementById('ai-json'); let s=(ta.value||'').trim();
-  if(!s){ alert('請先把 AI 回傳的 JSON 貼到框裡。'); return; }
-  s=s.replace(/^```(?:json)?\s*/i,'').replace(/```\s*$/,'').trim();          // 去掉 ```json 圍欄
-  if(s[0]!=='{'){ const a=s.indexOf('{'),b=s.lastIndexOf('}'); if(a>=0&&b>a)s=s.slice(a,b+1); }  // 抓最外層大括號
-  let data; try{ data=JSON.parse(s); }catch(e){ alert('JSON 解析失敗：'+e.message+'\n請確認貼上的是完整 JSON（從 { 到 }）。'); return; }
-  if(!data.sects||!Array.isArray(data.sects)||!data.sects.length){ alert('格式不對：找不到 sects 段落陣列。'); return; }
+  const ta=document.getElementById('ai-json'); const raw=(ta.value||'').trim();
+  if(!raw){ alert('請先把 AI 回傳的 JSON 貼到框裡。'); return; }
+  const clean=aiClean(raw);
+  const whole=aiTryParse(clean);
+  let wholeArr = whole ? (Array.isArray(whole)?whole:(Array.isArray(whole.sects)?whole.sects:null)) : null;
+  if(!wholeArr && whole){ for(const k in whole){ if(Array.isArray(whole[k])&&whole[k].some(x=>x&&(x.name||x.chords))){ wholeArr=whole[k]; break; } } }
+  const chunks=aiSplitSects(clean);
+  let arr=null, skipped=0;
+  if(chunks && (!wholeArr || chunks.length>wholeArr.length)){     // 逐段救援：能救幾段救幾段
+    arr=[]; chunks.forEach(ct=>{ const o=aiTryParse(ct); if(o&&typeof o==='object'&&!Array.isArray(o)&&(o.name||o.chords||o.bars))arr.push(o); else skipped++; });
+    if(!arr.length && wholeArr) arr=wholeArr;
+  } else { arr=wholeArr; }
+  if(!arr||!arr.length){ alert('完全無法解析。\n請確認有貼到含 "sects" 的 JSON（從 { 到 }）；若被截斷，請讓 AI 重貼完整內容。'); return; }
+  const data=whole||{};
   const OKC=['black','blue','red','purple'];
-  data.sects.forEach((s,i)=>{
-    if(s.id==null)s.id=i+1;
-    if(!s.name)s.name='段落';
-    if(!OKC.includes(s.color))s.color='black';
-    if(!Array.isArray(s.layers)||!s.layers.length)s.layers=[{color:s.color,ins:{}}];
-    s.layers.forEach(l=>{ if(!l.ins||typeof l.ins!=='object')l.ins={}; if(!OKC.includes(l.color))l.color=s.color; });
-    if(s.notes==null)s.notes='';
-    if(!Array.isArray(s.chords))s.chords=[];
-    if(!s.bars)s.bars=Math.max(1,s.chords.length||1);
+  const built=[];
+  arr.forEach((s,i)=>{
+    if(!s||typeof s!=='object'){ skipped++; return; }
+    const name=(s.name!=null&&String(s.name).trim())?String(s.name).trim().slice(0,24):('段落'+(i+1));
+    let layers=(Array.isArray(s.layers)&&s.layers.length)?s.layers:[{}];
+    layers=layers.map(l=>({color:OKC.includes(l&&l.color)?l.color:'black', ins:(l&&l.ins&&typeof l.ins==='object')?l.ins:{}}));
+    const chords=aiChords(s.chords);
+    const bars=Math.max(1, parseInt(s.bars)||chords.length||1);
+    built.push({id:i+1,name,bars,color:OKC.includes(s.color)?s.color:'black',layers,notes:s.notes!=null?String(s.notes):'',chords});
   });
+  if(!built.length){ alert('解析到資料，但沒有任何有效段落。'); return; }
   const replace=document.getElementById('ai-replace').checked;
   if(replace){
-    if(!data.meta)data.meta={};
-    let mx=0; data.sects.forEach(s=>mx=Math.max(mx,s.id||0));
-    data.nid=data.nid||mx+1;
-    if(applyProjectData(data)){ renderSB(); renderAll(); closeOcr(); alert('✓ 已匯入 '+data.sects.length+' 段（取代）。請到和弦譜檢查微調。'); }
+    const meta=(data&&data.meta&&typeof data.meta==='object')?data.meta:{};
+    let mx=0; built.forEach(s=>mx=Math.max(mx,s.id));
+    applyProjectData({meta,sects:built,nid:mx+1}); renderSB(); renderAll(); closeOcr();
   } else {
-    const n=data.sects.length;
-    data.sects.forEach(s=>{ s.id=nid++; sects.push(s); });
-    renderSB(); renderAll(); closeOcr(); alert('✓ 已附加 '+n+' 段。請到和弦譜檢查微調。');
+    built.forEach(s=>{ s.id=nid++; sects.push(s); });
+    renderSB(); renderAll(); closeOcr();
   }
+  alert('✓ 已'+(replace?'匯入':'附加')+' '+built.length+' 段'+(skipped?'（跳過 '+skipped+' 段無法解析）':'')+'。請到和弦譜檢查微調。');
 }
 /* 影像前處理：放大 + 去彩 + 對比拉伸，大幅提升 Tesseract 辨識率 */
 function ocrPreprocess(src){
@@ -1334,7 +1414,7 @@ function cycleMeter(id,bar){
   const cur=barMeter(s,bar); let i=(list.indexOf(cur)+1)%list.length;
   if(!Array.isArray(s.meters))s.meters=[];
   s.meters[bar]=list[i];
-  autoSave(); renderChord(); renderMix();
+  autoSave(); renderCharts();
 }
 /* 每小節接續（bargoto）；相容舊的段落級 s.goto（視為最後一小節的接續） */
 function getBarGoto(s,bar,bars){
@@ -1348,7 +1428,7 @@ function setBarGoto(id,bar,v){
   s.bargoto[bar] = v? parseInt(v) : '';
   const last=Math.max(1,parseInt(s.bars)||1)-1;
   if(s.goto && bar===last) s.goto='';   // 清掉舊欄位，避免重複
-  autoSave(); renderChord(); renderMix();
+  autoSave(); renderCharts();
 }
 /* 每段「每排幾個小節」設定（標題旁選單；空＝自動） */
 const BPR_LIST=['','2','3','4','5','6','7','8'];
@@ -1358,9 +1438,9 @@ function bprSelect(s){
     BPR_LIST.map(v=>`<option value="${v}"${cur===v?' selected':''}>${v===''?'每排:自動':'每排:'+v}</option>`).join('')+`</select>`;
 }
 function barGridStyle(s){ const n=parseInt(s.barsPerRow)||0; return n>0?`style="grid-template-columns:repeat(${n},1fr)"`:''; }
-function setSecBPR(id,v){ const s=sects.find(x=>x.id===id); if(!s)return; s.barsPerRow= v?parseInt(v):''; autoSave(); renderChord(); renderMix(); }
+function setSecBPR(id,v){ const s=sects.find(x=>x.id===id); if(!s)return; s.barsPerRow= v?parseInt(v):''; autoSave(); renderCharts(); }
 /* 一次套用所有段落 */
-function setAllBPR(v){ sects.forEach(s=>{ s.barsPerRow = v?parseInt(v):''; }); autoSave(); renderChord(); renderMix(); }
+function setAllBPR(v){ sects.forEach(s=>{ s.barsPerRow = v?parseInt(v):''; }); autoSave(); renderCharts(); }
 function applyAllBPR(sel){ const v=sel.value; sel.selectedIndex=0; if(v==='__')return; setAllBPR(v); }
 function allBPRSelectHTML(){
   return `<select class="ic-sel" onchange="applyAllBPR(this)" title="一次設定所有段落每排小節數"><option value="__">全部每排…</option>`+
@@ -1370,7 +1450,7 @@ function allBPRSelectHTML(){
 let chordDisp='num';   // num=級數（核心）/ male=男Key和弦 / female=女Key和弦
 try{chordDisp=localStorage.getItem('arranger_chorddisp')||'num';}catch(e){}
 if(!['num','male','female'].includes(chordDisp))chordDisp='num';
-function setChordDisp(v){ chordDisp=v; try{localStorage.setItem('arranger_chorddisp',v);}catch(e){} syncDispSelects(); renderChord(); renderMix(); renderMixP(); }
+function setChordDisp(v){ chordDisp=v; try{localStorage.setItem('arranger_chorddisp',v);}catch(e){} syncDispSelects(); renderCharts(); }
 function syncDispSelects(){ ['chord-disp','mix-disp','mixp-disp'].forEach(id=>{const s=document.getElementById(id);if(s)s.value=chordDisp;}); }
 function dispKeyName(){ return chordDisp==='male'?gv('s-mkey'):chordDisp==='female'?gv('s-fkey'):''; }
 const DEG_SEMI={1:0,2:2,3:4,4:5,5:7,6:9,7:11};
@@ -1437,7 +1517,7 @@ function setSubdiv(id,bar,f){
   s.chords[bar]=nw;
   if(!Array.isArray(s.subdiv))s.subdiv=[];
   s.subdiv[bar]=newFac;
-  autoSave(); renderChord(); renderMix();
+  autoSave(); renderCharts();
 }
 function subdivLabel(b,fac){
   if(fac===1)return (b+1);
@@ -1449,7 +1529,7 @@ function repOf(s,bar){ const r=Array.isArray(s.rep)?s.rep[bar]:1; return [1,2,4,
 function cycleRep(id,bar){
   const s=sects.find(x=>x.id===id); if(!s)return;
   const order=[1,2,4,8], nx=order[(order.indexOf(repOf(s,bar))+1)%order.length];
-  if(!Array.isArray(s.rep))s.rep=[]; s.rep[bar]=nx; autoSave(); renderChord(); renderMix();
+  if(!Array.isArray(s.rep))s.rep=[]; s.rep[bar]=nx; autoSave(); renderCharts();
 }
 /* 小節格 HTML：方框 + 拍號數字 + 記號顯示；橘色拍號徽章、最後一小節紅色接續徽章 */
 function barCellsHtml(s,beats){
@@ -1492,7 +1572,7 @@ function barCellsHtml(s,beats){
   }
   return cells;
 }
-function toggleCtrl(id){ const s=sects.find(x=>x.id===id); if(!s)return; s.ctrlOff=!s.ctrlOff; autoSave(); renderChord(); renderMix(); }
+function toggleCtrl(id){ const s=sects.find(x=>x.id===id); if(!s)return; s.ctrlOff=!s.ctrlOff; autoSave(); renderCharts(); }
 
 /* ── 全部清除 / 復原 ── */
 let _clearBackup=null;
@@ -1510,7 +1590,7 @@ let _secClip=null;
 function copySection(id){
   const s=sects.find(x=>x.id===id); if(!s)return;
   _secClip=JSON.parse(JSON.stringify({_name:s.name,bars:s.bars,color:s.color,layers:s.layers,notes:s.notes,chords:s.chords,subdiv:s.subdiv,rep:s.rep,meters:s.meters,bargoto:s.bargoto,goto:s.goto,barsPerRow:s.barsPerRow,ctrlOff:s.ctrlOff}));
-  renderChord(); renderMix();
+  renderCharts();
 }
 function pasteSection(id){
   if(!_secClip)return;
@@ -1665,6 +1745,8 @@ function renderMixP(){
   root.scrollLeft=mixpPage*root.clientWidth;
   mixpUpdateInd(); renderLegend();
 }
+/* 小節控制鈕（分割/重複/拍號/接續/每排/控制項）統一重繪三種譜面，確保混合＋同步更新 */
+function renderCharts(){ renderChord(); renderMix(); renderMixP(); }
 
 /* ── RENDER SIDEBAR ── */
 function renderSB(){
