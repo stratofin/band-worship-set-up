@@ -1785,16 +1785,17 @@ function mixCardHtml(s,plus){
     const vis=s.arr.map((a,idx)=>({a,idx})).filter(o=>insFilter.has(o.a.ins));
     const packed=[];
     vis.forEach(o=>{ const a=o.a; a._x=Math.max(0,Math.min(1,a.x||0)); a._w=Math.max(0.02,Math.min(1-a._x,a.w||(1/bars))); let r=0; for(;;){ const row=packed[r]||(packed[r]=[]); if(!row.some(p=>!(a._x+a._w<=p.x||a._x>=p.x+p.w))){ row.push({x:a._x,w:a._w}); a._vrow=r; break; } r++; } });
-    const vrows=Math.max(1,packed.length);
-    // 預設一排 2 小節；配器軸逐排與小節對齊
-    const bpr=Math.max(1,Math.min(bars,(s.barsPerRow&&parseInt(s.barsPerRow)>0)?parseInt(s.barsPerRow):2));
-    const nRows=Math.ceil(bars/bpr);
+    // 預設一排 2 小節；每排固定 bpr 欄（不足的排不拉滿）；配器軸逐排對齊
+    const bpr=Math.max(1,(s.barsPerRow&&parseInt(s.barsPerRow)>0)?parseInt(s.barsPerRow):2);
+    const nRows=Math.ceil(bars/bpr), rfw=bpr/bars;
     let blocks='';
     for(let br=0;br<nRows;br++){
-      const b0=br*bpr, b1=Math.min(bars,(br+1)*bpr), rowBars=b1-b0, f0=b0/bars, fW=(b1-b0)/bars;
-      const laneChips=vis.map(o=>{ const a=o.a; const s0=Math.max(a._x,f0), s1=Math.min(a._x+a._w,f0+fW); if(s1<=s0+1e-9)return ''; return arrChipHtml(s,a,o.idx,(s0-f0)/fW*100,(s1-s0)/fW*100,a._vrow); }).join('');
+      const b0=br*bpr, b1=Math.min(bars,(br+1)*bpr);
+      let maxV=-1;
+      const laneChips=vis.map(o=>{ const a=o.a; const bs=a._x*bars, be=(a._x+a._w)*bars, cs=Math.max(bs,b0), ce=Math.min(be,b1); if(ce<=cs+1e-9)return ''; if(a._vrow>maxV)maxV=a._vrow; return arrChipHtml(s,a,o.idx,(cs-b0)/bpr*100,(ce-cs)/bpr*100,a._vrow); }).join('');
+      const laneH=((maxV>=0?maxV+1:1)*1.95).toFixed(2);
       let barRow=''; for(let i=b0;i<b1;i++)barRow+=barOneHtml(s,i,beats);
-      blocks+=`<div class="arr-rowblock" style="width:min(100%,calc(var(--barw,14em) * ${rowBars}))"><div class="arr-lane" data-rf0="${f0}" data-rfw="${fW}" style="height:${vrows*1.95}em">${laneChips}</div><div class="cbar-grid" style="grid-template-columns:repeat(${rowBars},minmax(0,1fr))">${barRow}</div></div>`;
+      blocks+=`<div class="arr-rowblock"><div class="arr-lane" data-rf0="${b0/bars}" data-rfw="${rfw}" style="height:${laneH}em">${laneChips}</div><div class="cbar-grid" style="grid-template-columns:repeat(${bpr},minmax(0,1fr))">${barRow}</div></div>`;
     }
     return `<div class="ccard" style="border-color:${col.stroke}">${head}
       ${blocks}
