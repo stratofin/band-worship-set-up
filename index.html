@@ -518,8 +518,9 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   body.print-mixp .icchip2{background:#fafafa!important;}
   body.print-mixp .icchip2 .ic-val,body.print-mixp .icchip2 b{color:#111!important;}
   body.print-mixp .ccard-note{color:#6a4ca0!important;background:#f6f2fb!important;}
-  body.print-mixp .mixpage-stack.mixp .cbeatcols{min-height:0!important;padding:1em 0.12em 0.55em!important;}
-  body.print-mixp .mixpage-stack.mixp .cbar-grid{grid-template-columns:repeat(auto-fill,minmax(15em,1fr))!important;gap:0.35em!important;padding:0.35em!important;}
+  body.print-mixp .mixpage-stack.mixp .cbeatcols{min-height:0!important;padding:0.8em 0.12em 0.5em!important;}
+  /* 列印維持新版「每排 bpr 欄」（不要覆蓋 inline 的 grid-template），只調間距 */
+  body.print-mixp .arr-rowblock .cbar-grid{gap:0.3em!important;padding:0.2em 0 0!important;}
   body.print-mixp .mixpage-stack.mixp .beat-r{font-size:var(--bfs,1.2em)!important;}
   body.print-mixp .mixpage-stack.mixp .cbnum{font-size:8px!important;}
   /* 配器軸：列印時隱藏拖曳/編輯控制、白底深字 */
@@ -1771,6 +1772,10 @@ function mixCardHtml(s,plus){
   if(s.fold) return `<div class="ccard folded" style="border-color:${col.stroke}">${head}</div>`;
   if(plus){
     if(!Array.isArray(s.arr)) s.arr=seedArr(s);
+    else { /* 同步：其他頁面（左側編輯/示意圖）新增的樂器，自動補進配器軸 */
+      const have=new Set(s.arr.map(a=>a.ins)); const o=secIns(s);
+      INS.forEach(k=>{ if(o[k]&&String(o[k]).trim()&&!have.has(k)) s.arr.push({ins:k,x:0,w:1/bars}); });
+    }
     s.arr.forEach(a=>{ if(a.x==null){ a.x=(a.start||0)/bars; a.w=Math.max(1,a.len||1)/bars; } delete a.start; delete a.len; delete a.lane; });
     // 只顯示「樂器篩選鈕」選中的；垂直打包：不重疊者同一垂直列
     const vis=s.arr.map((a,idx)=>({a,idx})).filter(o=>insFilter.has(o.a.ins));
@@ -1817,7 +1822,7 @@ function arrChipHtml(s,a,idx,leftPct,widthPct,vrow){
     <span class="arr-grip" title="拖曳移位" onpointerdown="arrDown(event,${s.id},${idx},'move')">⋮⋮</span>
     <select class="arr-ins" onchange="setArrIns(${s.id},${idx},this.value)" onpointerdown="event.stopPropagation()" style="color:${ic.stroke}">${opts}</select>
     <input class="arr-txt" value="${esc(secText(s,a.ins))}" placeholder="彈法…" oninput="arrText(${s.id},${idx},this.value)" onpointerdown="event.stopPropagation()">
-    <button class="arr-x" onclick="arrDel(${s.id},${idx})" onpointerdown="event.stopPropagation()" title="刪除">✕</button>
+    <button class="arr-x" onclick="arrDel(${s.id},${idx})" onpointerdown="event.stopPropagation()" title="刪除此配器（各頁一起移除）">✕</button>
     <span class="arr-resize" title="拖曳調長度" onpointerdown="arrDown(event,${s.id},${idx},'resize')"></span>
   </div>`;
 }
@@ -1838,7 +1843,7 @@ function addArr(id){
 function setArrIns(id,idx,v){ const s=sects.find(x=>x.id===id); if(!s||!s.arr||!s.arr[idx])return; s.arr[idx].ins=v; autoSave(); renderMixP(); }
 /* 文字寫回共用的 layers[0].ins（其他頁面一起更新）；不整段重繪以保留輸入焦點 */
 function arrText(id,idx,v){ const s=sects.find(x=>x.id===id); if(!s||!s.arr||!s.arr[idx])return; secIns(s)[s.arr[idx].ins]=v; autoSave(); }
-function arrDel(id,idx){ const s=sects.find(x=>x.id===id); if(!s||!s.arr)return; s.arr.splice(idx,1); autoSave(); renderMixP(); }
+function arrDel(id,idx){ const s=sects.find(x=>x.id===id); if(!s||!s.arr||!s.arr[idx])return; const ins=s.arr[idx].ins; s.arr.splice(idx,1); if(s.layers&&s.layers[0]&&s.layers[0].ins)delete s.layers[0].ins[ins]; autoSave(); renderMixP(); }
 /* 自由拖曳：移位 / 調長度（以小節軸的比例存 x,w，不卡格） */
 let _adrag=null;
 function arrDown(ev,id,idx,mode){
