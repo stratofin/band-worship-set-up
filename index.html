@@ -286,10 +286,10 @@ body.tb-collapsed .topbar-row-2{display:none;}
 .icchip2 .ic-val{font-size:0.96em;color:var(--text);}
 /* 混合＋：每個小節整體放大 */
 .mixpage-stack.mixp{gap:0.7em;}
-/* 文字大小以「一排 4 個 BAR」為舒適基準 */
-.mixpage-stack.mixp .cbeatcols{padding:1.05em 0.18em 0.6em;min-height:2.5em;}
-.mixpage-stack.mixp .beat-r{font-size:1.2em;}
-.mixpage-stack.mixp .beat-i{font-size:1.15em;}
+/* 字級隨「每排」自動縮放（--bfs 依 bpr 計算）：每排=2 大字撐滿、每排=4 舒適 */
+.mixpage-stack.mixp .cbeatcols{padding:0.85em 0.18em 0.5em;min-height:calc(var(--bfs,1.2em) * 1.7);}
+.mixpage-stack.mixp .beat-r{font-size:var(--bfs,1.2em);}
+.mixpage-stack.mixp .beat-i{font-size:calc(var(--bfs,1.2em) * 0.92);}
 .mixpage-stack.mixp .cbnum{font-size:0.72em;}
 .mixpage-stack.mixp .ccard-head{font-size:1.04em;padding:0.5em 0.8em;}
 .mixpage-stack.mixp .cname{font-size:1.1em;}
@@ -511,15 +511,16 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   body.print-mixp .cbnum{color:#555!important;opacity:1!important;}
   body.print-mixp .cmeter.on{background:#e0b84a!important;color:#000!important;}
   body.print-mixp .cmeter.off{display:none!important;}
-  body.print-mixp .cgoto-badge.on,body.print-mixp .cjump.on{background:#d4564a!important;color:#fff!important;}
   body.print-mixp .cgoto-badge:not(.on),body.print-mixp .cjump:not(.on){display:none!important;}
+  /* 輸出時隱藏所有接續/跳段徽章（含已設定的），譜面更乾淨 */
+  body[class*="print-"] .cgoto-badge,body[class*="print-"] .cjump{display:none!important;}
   body.print-mixp .mix-ins{background:#fff!important;border-color:#ccc!important;}
   body.print-mixp .icchip2{background:#fafafa!important;}
   body.print-mixp .icchip2 .ic-val,body.print-mixp .icchip2 b{color:#111!important;}
   body.print-mixp .ccard-note{color:#6a4ca0!important;background:#f6f2fb!important;}
   body.print-mixp .mixpage-stack.mixp .cbeatcols{min-height:0!important;padding:1em 0.12em 0.55em!important;}
   body.print-mixp .mixpage-stack.mixp .cbar-grid{grid-template-columns:repeat(auto-fill,minmax(15em,1fr))!important;gap:0.35em!important;padding:0.35em!important;}
-  body.print-mixp .mixpage-stack.mixp .beat-r{font-size:16px!important;}
+  body.print-mixp .mixpage-stack.mixp .beat-r{font-size:var(--bfs,1.2em)!important;}
   body.print-mixp .mixpage-stack.mixp .cbnum{font-size:8px!important;}
   /* 配器軸：列印時隱藏拖曳/編輯控制、白底深字 */
   body.print-mixp .arr-grip,body.print-mixp .arr-x,body.print-mixp .arr-resize,body.print-mixp .arr-add{display:none!important;}
@@ -1778,6 +1779,7 @@ function mixCardHtml(s,plus){
     // 預設一排 2 小節；每排固定 bpr 欄（不足的排不拉滿）；配器軸逐排對齊
     const bpr=Math.max(1,(s.barsPerRow&&parseInt(s.barsPerRow)>0)?parseInt(s.barsPerRow):2);
     const nRows=Math.ceil(bars/bpr), rfw=bpr/bars;
+    const fsEm=Math.max(0.8,Math.min(2.6,4.8/bpr)).toFixed(2);   // 每排越少字越大，撐滿整行
     let blocks='';
     for(let br=0;br<nRows;br++){
       const b0=br*bpr, b1=Math.min(bars,(br+1)*bpr);
@@ -1787,7 +1789,7 @@ function mixCardHtml(s,plus){
       let barRow=''; for(let i=b0;i<b1;i++)barRow+=barOneHtml(s,i,beats);
       blocks+=`<div class="arr-rowblock"><div class="arr-lane" data-rf0="${b0/bars}" data-rfw="${rfw}" style="height:${laneH}em">${laneChips}</div><div class="cbar-grid" style="grid-template-columns:repeat(${bpr},minmax(0,1fr))">${barRow}</div></div>`;
     }
-    return `<div class="ccard" style="border-color:${col.stroke}">${head}
+    return `<div class="ccard" style="border-color:${col.stroke};--bfs:${fsEm}em">${head}
       ${blocks}
       <div class="arr-add"><button class="ctrl-toggle" onclick="addArr(${s.id})" title="新增一條配器（內容與其他頁共用）">＋ 加配器</button><span class="arr-tip">上方「樂器篩選鈕」挑要看的部位；拖 ⋮⋮ 移位、拖右緣調長度、✕刪除（清空文字＝各頁一起移除）</span></div>
       ${note}</div>`;
