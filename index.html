@@ -45,6 +45,7 @@ body.tb-collapsed .topbar-row-2{display:none;}
 .btn{padding:0.35em 0.9em;border-radius:0.45em;font-size:0.85em;cursor:pointer;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-family:inherit;transition:background .13s;white-space:nowrap;}
 .btn:hover{background:var(--bg4);}
 .btna{background:var(--accent);border-color:var(--accent);color:#0d0d0d;font-weight:700;}
+.tpl-sel{appearance:none;-webkit-appearance:none;-moz-appearance:none;cursor:pointer;max-width:11em;text-overflow:ellipsis;}
 .btna:hover{opacity:.88;}
 .mob-only{display:none;}
 .fbtn{width:1.7em;height:1.7em;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--border2);background:var(--bg3);color:var(--text);border-radius:0.35em;cursor:pointer;font-size:0.95em;line-height:1;font-family:inherit;padding:0;}
@@ -575,6 +576,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
     <div class="tbar-r">
       <button class="btn" onclick="saveProject(this)" title="儲存到本機（localStorage）">💾 存檔</button>
       <button class="btn" onclick="loadProject()" title="載入上次存檔">📂 載入</button>
+      <select class="btn tpl-sel" id="tpl-sel" onchange="loadTemplate(this.value)" title="載入資料夾／GitHub 內的範本譜"><option value="">📁 範本…</option></select>
       <button class="btn" onclick="expJSON()" title="匯出 JSON 備份">↓ JSON</button>
       <input id="json-import" type="file" accept=".json" style="display:none" onchange="impJSON(this)">
       <button class="btn" onclick="document.getElementById('json-import').click()" title="從 JSON 匯入">↑ JSON</button>
@@ -814,7 +816,8 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
       <h4>品牌 / 圖示 <span class="cl-date">2026-06-22</span></h4>
       <ul><li>新增 App 音符圖示：瀏覽器分頁 favicon ＋ 標題 ARRANGER 旁(向量 SVG，清晰不糊)</li>
       <li>更新日誌加上各項更新時間點，並持續記錄每次調整</li>
-      <li>移除工具列多餘的「＋ 新增段落」(左側段落編輯已內建)；左側新增段落按鈕加上 hover 互動回饋</li></ul>
+      <li>移除工具列多餘的「＋ 新增段落」(左側段落編輯已內建)；左側新增段落按鈕加上 hover 互動回饋</li>
+      <li>新增「📁 範本」選單：讀取資料夾／GitHub 內 templates.json 清單，一鍵載入預設譜（網址開啟時可用）</li></ul>
     </div>
   </div>
 </div>
@@ -920,6 +923,37 @@ function loadProject(){
       const btn=(window.event&&window.event.target); if(btn){btn.textContent='✓ 已載入';setTimeout(()=>btn.textContent='📂 載入',1500);}
     }
   }catch(e){alert('載入失敗：'+e.message);}
+}
+/* ── 範本：讀取資料夾/GitHub 內的 templates.json 清單，選一首載入 ── */
+function initTemplates(){
+  const sel=document.getElementById('tpl-sel'); if(!sel)return;
+  if(typeof fetch!=='function'){ sel.innerHTML='<option value="">📁 範本（需用網址開啟）</option>'; return; }
+  fetch('templates.json',{cache:'no-store'})
+    .then(r=>{ if(!r.ok)throw 0; return r.json(); })
+    .then(list=>{
+      if(!Array.isArray(list)||!list.length)throw 0;
+      sel.innerHTML='<option value="">📁 範本…</option>'+list.map(t=>{
+        const file=(typeof t==='string')?t:t.file;
+        const name=(typeof t==='string')?file.replace(/\.json$/i,''):(t.name||file);
+        return `<option value="${esc(file)}">${esc(name)}</option>`;
+      }).join('');
+    })
+    .catch(()=>{ sel.innerHTML='<option value="">📁 範本（需用網址開啟）</option>'; });
+}
+function loadTemplate(file){
+  const sel=document.getElementById('tpl-sel');
+  if(!file){ return; }
+  if(typeof fetch!=='function'){ alert('此環境無法讀取範本，請用「↑ JSON」匯入。'); if(sel)sel.value=''; return; }
+  fetch(file,{cache:'no-store'})
+    .then(r=>{ if(!r.ok)throw new Error('讀取失敗 '+r.status); return r.json(); })
+    .then(data=>{
+      if(!data||!Array.isArray(data.sects)){ alert('範本格式不正確。'); return; }
+      const nm=file.replace(/\.json$/i,'');
+      if(!confirm('載入範本「'+nm+'」會覆蓋目前內容（未存檔會遺失）。確定？')) return;
+      if(applyProjectData(data)){ renderSB(); renderAll(); }
+    })
+    .catch(e=>{ alert('範本載入失敗：'+e.message+'\n（本機 file:// 無法讀取；請用網址（GitHub Pages）開啟，或用「↑ JSON」匯入）'); })
+    .finally(()=>{ if(sel)sel.value=''; });
 }
 /* auto-save: silently keep a backup on every change */
 function autoSave(){
@@ -2205,6 +2239,7 @@ try{const mpp=parseInt(localStorage.getItem('arranger_mixpperpage'));if(mpp>=1&&
 renderSB();
 renderAll();
 bindSwipe();
+initTemplates();
 initMode();
 syncDispSelects();
 initTopbar();
