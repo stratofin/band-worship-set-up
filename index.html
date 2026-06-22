@@ -90,7 +90,8 @@ body.tb-collapsed .topbar-row-2{display:none;}
 .dupbtn:hover{border-color:var(--accent);color:var(--accent);}
 .ntxt{width:100%;margin-top:0.38em;background:var(--bg3);border:1px solid var(--border);border-radius:0.38em;padding:0.23em 0.46em;font-size:0.77em;color:var(--text);font-family:inherit;outline:none;resize:none;}
 .ntxt:focus{border-color:var(--accent);}
-.asect{width:100%;padding:0.54em;font-size:0.77em;border:1px dashed var(--border2);border-radius:0.46em;background:none;color:var(--text3);cursor:pointer;margin-top:0.54em;font-family:inherit;}
+.asect{width:100%;padding:0.6em;font-size:0.78em;font-weight:600;letter-spacing:0.5px;border:1px dashed var(--border2);border-radius:0.5em;background:none;color:var(--text2);cursor:pointer;margin-top:0.6em;font-family:inherit;transition:all .13s;}
+.asect:hover{border-color:var(--accent);border-style:solid;color:var(--accent);background:rgba(212,168,67,0.07);}
 .asect:hover{border-color:var(--accent);color:var(--accent);}
 .ltag{display:inline-flex;align-items:center;gap:0.23em;font-size:0.69em;padding:0.08em 0.46em;border-radius:99px;border:1px solid;font-weight:500;}
 
@@ -546,7 +547,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
 <!-- TOP BAR -->
 <header class="topbar">
   <div class="topbar-row topbar-row-1">
-    <div class="logo">ARRANGER<svg class="logo-note" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill="#fcc918" d="_圖層_1"/></svg> <span class="byline">by Alex.Syu &amp; Stratofin.Lai</span></div>
+    <div class="logo">ARRANGER<svg class="logo-note" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill="#fcc918" d="M484.08,351.66l-2.72,91.85-4.27,113.6-4.07,102.47-3.4,101.02c-.5,14.85-4.33,27.94-9.89,41.41-9.82,23.79-24.22,43.49-42.63,61.44-55.06,53.69-132.45,78.95-208.94,72.97-39.95-3.12-83.19-21.01-102.56-56.8-6.87-12.7-11.47-27.34-11.21-42.1,1.58-86.61,97.11-155.36,175.19-176.89,42.63-11.81,86.46-14.34,131.3-3l-6.94-203.62-2.69-81.19-93.25,24.1-89.32,23.96-6.23-131.06,92.51-22.61,92.68-21.56-5.37-131.98,114.09-26.96-7.32,137.33,83.67-17.92,85.16-17.91,158.07-26.69,64.44-8.19-3.36,61.97-7.87,162.66-10.78,250.23-4.09,58.72c-1.45,20.74-11.09,39.09-22.94,56.02-18.02,25.76-42.01,45.27-69.45,60.38-29.44,16.21-60.47,25.44-93.91,28.45-21.89,1.97-42.88,2.15-64.35-3.02-43.98-10.6-77.53-44.33-74.2-91.23,3.95-55.6,51.63-99.18,98.76-124.12,44.22-23.4,99.44-33.68,148.15-22.61l.1-48.93-.06-211.78.25-38.16-103.7,19.77-71.93,14.75-116.86,25.25Z"/></svg> <span class="byline">by Alex.Syu &amp; Stratofin.Lai</span></div>
     <button class="tb-toggle" id="tb-toggle" onclick="toggleTopbar()" title="收合 / 展開工具列">▲ 工具列</button>
   </div>
   <div class="topbar-row topbar-row-2">
@@ -583,7 +584,6 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
         <button class="btn" id="png-flow-btn" onclick="expPNG('flow')">↓ PNG 示意圖</button>
         <button class="btn" id="png-block-btn" onclick="expPNG('block')">↓ PNG 方塊圖</button>
         <button class="btn" onclick="printIcon()" title="列印圖示譜（每頁4段，A4）">🖨 圖示譜PDF</button>
-        <button class="btn btna" onclick="addSect()">＋ 新增段落</button>
       </div>
     </div>
   </div>
@@ -752,7 +752,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   <div class="cl-box">
     <div class="cl-head"><span>📝 更新日誌 · Worship Arranger</span><button class="btn" onclick="hideChangelog()">✕</button></div>
     <div class="cl-body">
-      <p class="cl-ver">開發時間軸：2026-06-17 ～ 2026-06-18（依使用回饋持續優化）</p>
+      <p class="cl-ver">開發時間軸：2026-06-17 ～ 2026-06-22（依使用回饋持續優化）</p>
 
       <h4>基礎架構 <span class="cl-date">2026-06-17</span></h4>
       <ul><li>段落結構視覺化：名稱、Bar 數、顏色、備註、8 樂器分軌、內層堆疊</li>
@@ -798,6 +798,23 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
       <li>樂器配器顯示改由上方「樂器篩選鈕」控制</li>
       <li>每頁段數新增 6、8（手機模式也可選）</li>
       <li>新增「📝 更新日誌」透明視窗（本頁）</li></ul>
+
+      <h4>樂器配器時間軸（混合＋） <span class="cl-date">2026-06-19 ～ 22</span></h4>
+      <ul><li>配器改為「可跨小節持續軸」：拖 ⋮⋮ 移位、拖右緣調長度（不卡小節）；多條自動疊成多排</li>
+      <li>由上方「樂器篩選鈕」決定顯示哪些樂器的配器（樂手只看自己部位）</li>
+      <li>配器與小節逐排對齊；預設一排 2 小節、配器預設一小節寬；小節固定寬、不拉伸</li>
+      <li>左側段落編輯 / 示意圖新增或修改的樂器，自動同步到混合配器軸（同一份資料）</li>
+      <li>字級隨「每排」自動縮放：每排 2 大字撐滿、每排 4 為舒適基準</li></ul>
+
+      <h4>檢視與輸出 <span class="cl-date">2026-06-19 ～ 22</span></h4>
+      <ul><li>段落新增「▾ 收合 / ▸ 展開」：收合只留標題，專注想看的段落</li>
+      <li>移除舊「混合」分頁，整合為單一「混合」檢視</li>
+      <li>列印修正：接續/跳段徽章可隱藏、和弦顏色加深、混合列印破版修正、字級封頂避免 A4 上爆版亂碼</li></ul>
+
+      <h4>品牌 / 圖示 <span class="cl-date">2026-06-22</span></h4>
+      <ul><li>新增 App 音符圖示：瀏覽器分頁 favicon ＋ 標題 ARRANGER 旁(向量 SVG，清晰不糊)</li>
+      <li>更新日誌加上各項更新時間點，並持續記錄每次調整</li>
+      <li>移除工具列多餘的「＋ 新增段落」(左側段落編輯已內建)；左側新增段落按鈕加上 hover 互動回饋</li></ul>
     </div>
   </div>
 </div>
