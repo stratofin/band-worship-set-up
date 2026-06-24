@@ -50,6 +50,16 @@ body.tb-collapsed .topbar-row-2{display:none;}
 .btna:hover{opacity:.88;}
 .mob-only{display:none;}
 .fbtn{width:1.7em;height:1.7em;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--border2);background:var(--bg3);color:var(--text);border-radius:0.35em;cursor:pointer;font-size:0.95em;line-height:1;font-family:inherit;padding:0;}
+/* 桌機 / 平板：標題列 pill 緊湊化，讓「字級」擠回第二行（手機不動） */
+body:not(.mode-phone) .pills{gap:0.26em;}
+body:not(.mode-phone) .pill{padding:0.18em 0.5em;font-size:0.82em;}
+body:not(.mode-phone) .pill label{font-size:0.78em;}
+body:not(.mode-phone) #s-title{width:82px!important;}
+body:not(.mode-phone) #s-artist{width:62px!important;}
+body:not(.mode-phone) #s-bpm{width:30px!important;}
+body:not(.mode-phone) #s-time{width:30px!important;}
+body:not(.mode-phone) #s-mkey,body:not(.mode-phone) #s-fkey{width:24px!important;}
+body:not(.mode-phone) .fbtn{width:1.5em;height:1.5em;}
 .fbtn:hover{background:var(--bg4);border-color:var(--accent);color:var(--accent);}
 #font-size-label{font-family:'Space Mono',monospace;color:var(--text);min-width:22px;text-align:center;}
 
@@ -585,7 +595,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
       <div class="pill"><label>用途</label><select id="s-usage" onchange="schedRender()" style="background:none;border:none;color:var(--text);font-family:inherit;font-size:1em;outline:none;cursor:pointer"><option value="">—</option><option>短歌</option><option>讚美</option><option>敬拜</option></select></div>
       <div class="pill"><label>♂男</label><input id="s-mkey" value="" placeholder="—" oninput="schedRender()" style="width:30px"></div>
       <div class="pill"><label>♀女</label><input id="s-fkey" value="" placeholder="—" oninput="schedRender()" style="width:30px"></div>
-      <div class="pill" style="gap:5px">
+      <div class="pill" style="gap:3px">
         <label>字級</label>
         <button class="fbtn" onclick="bumpFont(-2)" title="縮小檢視字級">−</button>
         <span id="font-size-label">13</span>
