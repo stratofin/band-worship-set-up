@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Worship Arranger v3.5</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyBpZD0iX+WcluWxpF8xIiBkYXRhLW5hbWU9IuWcluWxpCAxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDI0IDEwMjQiPgogIDxkZWZzPgogICAgPHN0eWxlPgogICAgICAuY2xzLTEgewogICAgICAgIGZpbGw6ICNmY2M5MTg7CiAgICAgIH0KICAgIDwvc3R5bGU+CiAgPC9kZWZzPgogIDxnIGlkPSJf55Sf5oiQ5byP54mp5Lu2IiBkYXRhLW5hbWU9IueUn+aIkOW8j+eJqeS7tiI+CiAgICA8cGF0aCBjbGFzcz0iY2xzLTEiIGQ9Ik00ODQuMDgsMzUxLjY2bC0yLjcyLDkxLjg1LTQuMjcsMTEzLjYtNC4wNywxMDIuNDctMy40LDEwMS4wMmMtLjUsMTQuODUtNC4zMywyNy45NC05Ljg5LDQxLjQxLTkuODIsMjMuNzktMjQuMjIsNDMuNDktNDIuNjMsNjEuNDQtNTUuMDYsNTMuNjktMTMyLjQ1LDc4Ljk1LTIwOC45NCw3Mi45Ny0zOS45NS0zLjEyLTgzLjE5LTIxLjAxLTEwMi41Ni01Ni44LTYuODctMTIuNy0xMS40Ny0yNy4zNC0xMS4yMS00Mi4xLDEuNTgtODYuNjEsOTcuMTEtMTU1LjM2LDE3NS4xOS0xNzYuODksNDIuNjMtMTEuODEsODYuNDYtMTQuMzQsMTMxLjMtM2wtNi45NC0yMDMuNjItMi42OS04MS4xOS05My4yNSwyNC4xLTg5LjMyLDIzLjk2LTYuMjMtMTMxLjA2LDkyLjUxLTIyLjYxLDkyLjY4LTIxLjU2LTUuMzctMTMxLjk4LDExNC4wOS0yNi45Ni03LjMyLDEzNy4zMyw4My42Ny0xNy45Miw4NS4xNi0xNy45MSwxNTguMDctMjYuNjksNjQuNDQtOC4xOS0zLjM2LDYxLjk3LTcuODcsMTYyLjY2LTEwLjc4LDI1MC4yMy00LjA5LDU4LjcyYy0xLjQ1LDIwLjc0LTExLjA5LDM5LjA5LTIyLjk0LDU2LjAyLTE4LjAyLDI1Ljc2LTQyLjAxLDQ1LjI3LTY5LjQ1LDYwLjM4LTI5LjQ0LDE2LjIxLTYwLjQ3LDI1LjQ0LTkzLjkxLDI4LjQ1LTIxLjg5LDEuOTctNDIuODgsMi4xNS02NC4zNS0zLjAyLTQzLjk4LTEwLjYtNzcuNTMtNDQuMzMtNzQuMi05MS4yMywzLjk1LTU1LjYsNTEuNjMtOTkuMTgsOTguNzYtMTI0LjEyLDQ0LjIyLTIzLjQsOTkuNDQtMzMuNjgsMTQ4LjE1LTIyLjYxbC4xLTQ4LjkzLS4wNi0yMTEuNzguMjUtMzguMTYtMTAzLjcsMTkuNzctNzEuOTMsMTQuNzUtMTE2Ljg2LDI1LjI1WiIvPgogIDwvZz4KPC9zdmc+">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Space+Mono:wght@400;700&display=swap');
@@ -310,6 +311,24 @@ body.tb-collapsed .topbar-row-2{display:none;}
 .cl-body li{margin:0.12em 0;}
 .cl-ver{color:var(--text3);font-size:0.82em;margin:0 0 0.4em;}
 .cl-date{color:var(--text3);font-size:0.78em;font-weight:400;margin-left:0.4em;}
+/* 雲端歌庫 */
+.cl-form{display:flex;flex-wrap:wrap;gap:0.5em;align-items:center;}
+.cl-form input{flex:1 1 12em;min-width:10em;background:var(--bg3);border:1px solid var(--border2);border-radius:0.4em;color:var(--text);font-family:inherit;font-size:0.9em;padding:0.45em 0.6em;outline:none;}
+.cl-actions{display:flex;gap:0.5em;flex-wrap:wrap;margin-top:0.2em;}
+.cl-userline{display:flex;align-items:center;gap:0.6em;flex-wrap:wrap;margin-bottom:0.5em;}
+.cl-email{font-weight:600;}
+.cl-role{font-size:0.74em;border:1px solid var(--border2);border-radius:99px;padding:0.08em 0.6em;color:var(--text2);}
+.cl-role.admin{border-color:var(--accent);color:var(--accent);}
+.cl-hint{font-size:0.82em;color:var(--text3);margin-top:0.3em;}
+.cl-msg{font-size:0.82em;color:var(--accent);min-height:1.2em;margin:0.4em 0;}
+.cl-libhd{font-size:0.7em;font-weight:700;letter-spacing:1px;color:var(--text3);text-transform:uppercase;margin:0.6em 0 0.3em;}
+.cl-row{display:flex;align-items:center;justify-content:space-between;gap:0.6em;padding:0.4em 0.5em;border:1px solid var(--border);border-radius:0.45em;margin-bottom:0.35em;}
+.cl-row.on{border-color:var(--accent);background:rgba(212,168,67,0.06);}
+.cl-stitle{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.cl-sacts{display:flex;gap:0.35em;flex:0 0 auto;}
+.cl-sacts .btn{font-size:0.78em;padding:0.25em 0.6em;}
+.cl-del:hover{border-color:#d4564a;color:#d4564a;}
+.cl-empty{color:var(--text3);font-size:0.85em;padding:0.4em;}
 .mixpage-stack.mixp{--barw:14em;}
 body.mode-tablet .mixpage-stack.mixp{--barw:12em;}
 body.mode-phone .mixpage-stack.mixp{--barw:8.5em;}
@@ -577,6 +596,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
       <button class="btn" onclick="saveProject(this)" title="儲存到本機（localStorage）">💾 存檔</button>
       <button class="btn" onclick="loadProject()" title="載入上次存檔">📂 載入</button>
       <select class="btn tpl-sel" id="tpl-sel" onchange="loadTemplate(this.value)" title="載入資料夾／GitHub 內的範本譜"><option value="">📁 範本…</option></select>
+      <button class="btn" id="cloud-btn" onclick="openCloud()" title="雲端歌庫（登入後使用）" style="display:none">☁ 雲端</button>
       <button class="btn" onclick="expJSON()" title="匯出 JSON 備份">↓ JSON</button>
       <input id="json-import" type="file" accept=".json" style="display:none" onchange="impJSON(this)">
       <button class="btn" onclick="document.getElementById('json-import').click()" title="從 JSON 匯入">↑ JSON</button>
@@ -819,6 +839,26 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
       <li>移除工具列多餘的「＋ 新增段落」(左側段落編輯已內建)；左側新增段落按鈕加上 hover 互動回饋</li>
       <li>新增「📁 範本」選單：讀取資料夾／GitHub 內 templates.json 清單，一鍵載入預設譜（網址開啟時可用）</li>
       <li>預設開啟內容改為內嵌「Awesome God」範本（本機/網址都直接顯示，免讀檔）</li></ul>
+
+      <h4>雲端版（Supabase，選用） <span class="cl-date">2026-06-22</span></h4>
+      <ul><li>使用者註冊／登入；角色：管理員（雲端增刪改）、使用者（讀雲端＋本機編輯）</li>
+      <li>權限由資料庫 RLS 把關；附 SQL 與設定說明（supabase_setup.sql / SUPABASE_SETUP.md）</li>
+      <li>未填連線設定時完全等同純本機，不影響現有功能</li></ul>
+    </div>
+  </div>
+</div>
+
+<!-- 雲端歌庫（Supabase） -->
+<div id="cloud-modal" class="cl-modal" onclick="if(event.target===this)closeCloud()">
+  <div class="cl-box" style="max-width:560px">
+    <div class="cl-head"><span>☁ 雲端歌庫</span><button class="btn" onclick="closeCloud()">✕</button></div>
+    <div class="cl-body">
+      <div id="cl-auth"></div>
+      <div id="cl-msg" class="cl-msg"></div>
+      <div id="cl-lib" style="display:none">
+        <div class="cl-libhd">雲端歌單</div>
+        <div id="cl-list"></div>
+      </div>
     </div>
   </div>
 </div>
@@ -955,6 +995,79 @@ function loadTemplate(file){
     })
     .catch(e=>{ alert('範本載入失敗：'+e.message+'\n（本機 file:// 無法讀取；請用網址（GitHub Pages）開啟，或用「↑ JSON」匯入）'); })
     .finally(()=>{ if(sel)sel.value=''; });
+}
+/* ════════ 雲端（Supabase）════════
+   填入你的 Supabase 連線資訊即可開啟雲端功能；留空＝純本機（不影響現有功能）。
+   設定步驟見 SUPABASE_SETUP.md。anon key 可公開、權限由資料庫 RLS 把關。 */
+const SUPA_URL = 'https://zkkzgnulojwkhfmbgjvz.supabase.co';   // 專案根網址（不含 /rest/v1/）
+const SUPA_KEY = 'sb_publishable_qEtADJHrjOhEFB26Mvfcow_Z47h7TSK';   // Publishable key（可公開；權限靠 RLS 把關）
+let _supa=null,_supaUser=null,_supaAdmin=false,_cloudId=null;
+function cv(id){ const e=document.getElementById(id); return e?e.value:''; }
+function cloudMsg(t){ const e=document.getElementById('cl-msg'); if(e)e.textContent=t||''; }
+async function cloudInit(){
+  if(!SUPA_URL || !SUPA_KEY || !window.supabase) return;     // 未設定 → 不啟用
+  try{
+    _supa=window.supabase.createClient(SUPA_URL, SUPA_KEY);
+    const cb=document.getElementById('cloud-btn'); if(cb)cb.style.display='';
+    const { data:{ session } } = await _supa.auth.getSession();
+    if(session){ _supaUser=session.user; await cloudFetchRole(); }
+    _supa.auth.onAuthStateChange((_e,s)=>{ _supaUser = s?s.user:null; });
+  }catch(e){ console.warn('cloudInit',e); }
+}
+async function cloudFetchRole(){
+  _supaAdmin=false; if(!_supaUser)return;
+  try{ const {data}=await _supa.from('profiles').select('role').eq('id',_supaUser.id).single(); _supaAdmin=!!(data&&data.role==='admin'); }catch(e){}
+}
+function openCloud(){ if(!_supa){ alert('雲端尚未設定（請見 SUPABASE_SETUP.md 填入連線資訊）。'); return; } document.getElementById('cloud-modal').classList.add('show'); cloudRenderModal(); }
+function closeCloud(){ const m=document.getElementById('cloud-modal'); if(m)m.classList.remove('show'); }
+function cloudRenderModal(){
+  const body=document.getElementById('cl-auth'), lib=document.getElementById('cl-lib'); if(!body)return; cloudMsg('');
+  if(_supaUser){
+    body.innerHTML=`<div class="cl-userline"><span class="cl-email">${esc(_supaUser.email||'')}</span><span class="cl-role ${_supaAdmin?'admin':''}">${_supaAdmin?'管理員':'使用者'}</span><button class="btn" onclick="cloudSignOut()">登出</button></div>`
+      +(_supaAdmin
+        ? `<div class="cl-actions"><button class="btn btna" onclick="cloudSave()">☁ 儲存目前到雲端</button><button class="btn" onclick="cloudNewSave()">另存新檔</button></div>`
+        : `<div class="cl-hint">使用者：可載入雲端譜到本機編輯；你的修改只存在本機（用「💾 存檔」）。</div>`);
+    if(lib){ lib.style.display=''; } cloudList();
+  } else {
+    body.innerHTML=`<div class="cl-form"><input id="cl-email" type="email" placeholder="email" autocomplete="username"><input id="cl-pw" type="password" placeholder="密碼（至少6碼）" autocomplete="current-password"><div class="cl-actions"><button class="btn btna" onclick="cloudSignIn()">登入</button><button class="btn" onclick="cloudSignUp()">註冊</button></div></div>`;
+    if(lib)lib.style.display='none';
+  }
+}
+async function cloudSignUp(){ cloudMsg('處理中…'); const {error}=await _supa.auth.signUp({email:cv('cl-email'),password:cv('cl-pw')}); cloudMsg(error?('註冊失敗：'+error.message):'註冊成功；若需 email 驗證請查收信件後再登入。'); }
+async function cloudSignIn(){ cloudMsg('登入中…'); const {data,error}=await _supa.auth.signInWithPassword({email:cv('cl-email'),password:cv('cl-pw')}); if(error){cloudMsg('登入失敗：'+error.message);return;} _supaUser=data.user; await cloudFetchRole(); cloudRenderModal(); }
+async function cloudSignOut(){ await _supa.auth.signOut(); _supaUser=null; _supaAdmin=false; _cloudId=null; cloudRenderModal(); }
+async function cloudList(){
+  const box=document.getElementById('cl-list'); if(!box||!_supaUser)return; box.innerHTML='讀取中…';
+  const {data,error}=await _supa.from('songs').select('id,title,updated_at').order('updated_at',{ascending:false});
+  if(error){ box.innerHTML='讀取失敗：'+esc(error.message); return; }
+  if(!data.length){ box.innerHTML='<div class="cl-empty">雲端尚無歌曲'+(_supaAdmin?'，按上方「儲存目前到雲端」新增。':'。')+'</div>'; return; }
+  box.innerHTML=data.map(s=>`<div class="cl-row${s.id===_cloudId?' on':''}"><span class="cl-stitle">${esc(s.title||'未命名')}</span><span class="cl-sacts"><button class="btn" onclick="cloudLoad('${s.id}')">載入</button>${_supaAdmin?`<button class="btn cl-del" onclick="cloudDelete('${s.id}',this)">刪除</button>`:''}</span></div>`).join('');
+}
+async function cloudLoad(id){
+  cloudMsg('載入中…');
+  const {data,error}=await _supa.from('songs').select('data').eq('id',id).single();
+  if(error){ cloudMsg('載入失敗：'+error.message); return; }
+  if(!data||!data.data||!Array.isArray(data.data.sects)){ cloudMsg('資料格式不正確。'); return; }
+  if(applyProjectData(data.data)){ _cloudId=id; renderSB(); renderAll(); closeCloud(); }
+}
+async function cloudSave(){
+  if(!_supaAdmin){ alert('只有管理員可儲存到雲端。'); return; }
+  commitEdits(); cloudMsg('儲存中…');
+  const title=gv('s-title')||'未命名', data=getProjectData();
+  let res;
+  if(_cloudId) res=await _supa.from('songs').update({title,data,updated_at:new Date().toISOString()}).eq('id',_cloudId);
+  else { res=await _supa.from('songs').insert({title,data,created_by:_supaUser.id}).select('id').single(); if(res.data)_cloudId=res.data.id; }
+  if(res.error){ cloudMsg('儲存失敗：'+res.error.message); return; }
+  cloudMsg('已儲存到雲端 ✓'); cloudList();
+}
+async function cloudNewSave(){ _cloudId=null; await cloudSave(); }
+async function cloudDelete(id,btn){
+  if(!_supaAdmin)return;
+  if(!confirm('刪除這首雲端歌曲？此動作無法復原。'))return;
+  if(btn)btn.disabled=true;
+  const {error}=await _supa.from('songs').delete().eq('id',id);
+  if(error){ cloudMsg('刪除失敗：'+error.message); if(btn)btn.disabled=false; return; }
+  if(_cloudId===id)_cloudId=null; cloudList();
 }
 /* auto-save: silently keep a backup on every change */
 function autoSave(){
@@ -2244,6 +2357,7 @@ renderSB();
 renderAll();
 bindSwipe();
 initTemplates();
+cloudInit();
 initMode();
 syncDispSelects();
 initTopbar();
