@@ -332,6 +332,11 @@ body:not(.mode-phone) .fbtn{width:1.5em;height:1.5em;}
 .cl-hint{font-size:0.82em;color:var(--text3);margin-top:0.3em;}
 .cl-msg{font-size:0.82em;color:var(--accent);min-height:1.2em;margin:0.4em 0;}
 .cl-libhd{font-size:0.7em;font-weight:700;letter-spacing:1px;color:var(--text3);text-transform:uppercase;margin:0.6em 0 0.3em;}
+.cl-cats{display:flex;gap:0.35em;flex-wrap:wrap;margin-bottom:0.5em;}
+.cl-cat{font-size:0.82em;padding:0.28em 0.85em;border:1px solid var(--border2);border-radius:99px;background:var(--bg3);color:var(--text2);cursor:pointer;font-family:inherit;transition:all .12s;}
+.cl-cat:hover{border-color:var(--accent);color:var(--accent);}
+.cl-cat.on{background:var(--accent);border-color:var(--accent);color:#0d0d0d;font-weight:700;}
+.cl-tag{font-size:0.7em;margin-left:0.5em;padding:0.05em 0.5em;border-radius:99px;background:rgba(212,168,67,0.16);color:var(--accent);}
 .cl-row{display:flex;align-items:center;justify-content:space-between;gap:0.6em;padding:0.4em 0.5em;border:1px solid var(--border);border-radius:0.45em;margin-bottom:0.35em;}
 .cl-row.on{border-color:var(--accent);background:rgba(212,168,67,0.06);}
 .cl-stitle{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
@@ -605,8 +610,8 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
     <div class="tbar-r">
       <button class="btn" onclick="saveProject(this)" title="儲存到本機（localStorage）">💾 存檔</button>
       <button class="btn" onclick="loadProject()" title="載入上次存檔">📂 載入</button>
-      <select class="btn tpl-sel" id="tpl-sel" onchange="loadTemplate(this.value)" title="載入資料夾／GitHub 內的範本譜"><option value="">📁 範本…</option></select>
-      <button class="btn" id="cloud-btn" onclick="openCloud()" title="雲端歌庫（登入後使用）" style="display:none">☁ 雲端</button>
+      <select class="btn tpl-sel" id="tpl-sel" onchange="loadTemplate(this.value)" title="範本"><option value="">範本</option></select>
+      <button class="btn" id="cloud-btn" onclick="openCloud()" title="使用者登入 / 雲端歌庫" style="display:none">👤 使用者</button>
       <button class="btn" onclick="expJSON()" title="匯出 JSON 備份">↓ JSON</button>
       <input id="json-import" type="file" accept=".json" style="display:none" onchange="impJSON(this)">
       <button class="btn" onclick="document.getElementById('json-import').click()" title="從 JSON 匯入">↑ JSON</button>
@@ -853,7 +858,10 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
       <h4>雲端版（Supabase，選用） <span class="cl-date">2026-06-22</span></h4>
       <ul><li>使用者註冊／登入；角色：管理員（雲端增刪改）、使用者（讀雲端＋本機編輯）</li>
       <li>權限由資料庫 RLS 把關；附 SQL 與設定說明（supabase_setup.sql / SUPABASE_SETUP.md）</li>
-      <li>未填連線設定時完全等同純本機，不影響現有功能</li></ul>
+      <li>未填連線設定時完全等同純本機，不影響現有功能</li>
+      <li>雲端歌庫依「用途」分類：短歌 / 讚美 / 敬拜（載入可依分類瀏覽）</li>
+      <li>管理員儲存前先跳確認（顯示歌名＋用途）；用途取自工具列「用途」，未選會擋下</li>
+      <li>「☁ 雲端」鈕改名「👤 使用者」、視窗標題「使用者登入」；範本精簡為 2 首、按鈕只顯示「範本」</li></ul>
     </div>
   </div>
 </div>
@@ -861,12 +869,18 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
 <!-- 雲端歌庫（Supabase） -->
 <div id="cloud-modal" class="cl-modal" onclick="if(event.target===this)closeCloud()">
   <div class="cl-box" style="max-width:560px">
-    <div class="cl-head"><span>☁ 雲端歌庫</span><button class="btn" onclick="closeCloud()">✕</button></div>
+    <div class="cl-head"><span>👤 使用者登入</span><button class="btn" onclick="closeCloud()">✕</button></div>
     <div class="cl-body">
       <div id="cl-auth"></div>
       <div id="cl-msg" class="cl-msg"></div>
       <div id="cl-lib" style="display:none">
-        <div class="cl-libhd">雲端歌單</div>
+        <div class="cl-libhd">雲端歌庫 · 依用途分類</div>
+        <div class="cl-cats" id="cl-cats">
+          <button class="cl-cat on" onclick="cloudCat('',this)">全部</button>
+          <button class="cl-cat" onclick="cloudCat('短歌',this)">短歌</button>
+          <button class="cl-cat" onclick="cloudCat('讚美',this)">讚美</button>
+          <button class="cl-cat" onclick="cloudCat('敬拜',this)">敬拜</button>
+        </div>
         <div id="cl-list"></div>
       </div>
     </div>
@@ -978,18 +992,18 @@ function loadProject(){
 /* ── 範本：讀取資料夾/GitHub 內的 templates.json 清單，選一首載入 ── */
 function initTemplates(){
   const sel=document.getElementById('tpl-sel'); if(!sel)return;
-  if(typeof fetch!=='function'){ sel.innerHTML='<option value="">📁 範本（需用網址開啟）</option>'; return; }
+  if(typeof fetch!=='function'){ sel.innerHTML='<option value="">範本</option>'; return; }
   fetch('templates.json',{cache:'no-store'})
     .then(r=>{ if(!r.ok)throw 0; return r.json(); })
     .then(list=>{
       if(!Array.isArray(list)||!list.length)throw 0;
-      sel.innerHTML='<option value="">📁 範本…</option>'+list.map(t=>{
+      sel.innerHTML='<option value="">範本</option>'+list.map(t=>{
         const file=(typeof t==='string')?t:t.file;
         const name=(typeof t==='string')?file.replace(/\.json$/i,''):(t.name||file);
         return `<option value="${esc(file)}">${esc(name)}</option>`;
       }).join('');
     })
-    .catch(()=>{ sel.innerHTML='<option value="">📁 範本（需用網址開啟）</option>'; });
+    .catch(()=>{ sel.innerHTML='<option value="">範本</option>'; });
 }
 function loadTemplate(file){
   const sel=document.getElementById('tpl-sel');
@@ -1046,12 +1060,16 @@ function cloudRenderModal(){
 async function cloudSignUp(){ cloudMsg('處理中…'); const {error}=await _supa.auth.signUp({email:cv('cl-email'),password:cv('cl-pw')}); cloudMsg(error?('註冊失敗：'+error.message):'註冊成功；若需 email 驗證請查收信件後再登入。'); }
 async function cloudSignIn(){ cloudMsg('登入中…'); const {data,error}=await _supa.auth.signInWithPassword({email:cv('cl-email'),password:cv('cl-pw')}); if(error){cloudMsg('登入失敗：'+error.message);return;} _supaUser=data.user; await cloudFetchRole(); cloudRenderModal(); }
 async function cloudSignOut(){ await _supa.auth.signOut(); _supaUser=null; _supaAdmin=false; _cloudId=null; cloudRenderModal(); }
+let _cloudCat='';   // '' = 全部 / 短歌 / 讚美 / 敬拜
+function cloudCat(c,btn){ _cloudCat=c; if(btn){ document.querySelectorAll('#cl-cats .cl-cat').forEach(b=>b.classList.remove('on')); btn.classList.add('on'); } cloudList(); }
 async function cloudList(){
   const box=document.getElementById('cl-list'); if(!box||!_supaUser)return; box.innerHTML='讀取中…';
-  const {data,error}=await _supa.from('songs').select('id,title,updated_at').order('updated_at',{ascending:false});
+  let q=_supa.from('songs').select('id,title,usage,updated_at').order('title',{ascending:true});
+  if(_cloudCat) q=q.eq('usage',_cloudCat);
+  const {data,error}=await q;
   if(error){ box.innerHTML='讀取失敗：'+esc(error.message); return; }
-  if(!data.length){ box.innerHTML='<div class="cl-empty">雲端尚無歌曲'+(_supaAdmin?'，按上方「儲存目前到雲端」新增。':'。')+'</div>'; return; }
-  box.innerHTML=data.map(s=>`<div class="cl-row${s.id===_cloudId?' on':''}"><span class="cl-stitle">${esc(s.title||'未命名')}</span><span class="cl-sacts"><button class="btn" onclick="cloudLoad('${s.id}')">載入</button>${_supaAdmin?`<button class="btn cl-del" onclick="cloudDelete('${s.id}',this)">刪除</button>`:''}</span></div>`).join('');
+  if(!data.length){ box.innerHTML='<div class="cl-empty">此分類目前沒有歌曲'+(_supaAdmin?'（管理員可設好「用途」後儲存）。':'。')+'</div>'; return; }
+  box.innerHTML=data.map(s=>`<div class="cl-row${s.id===_cloudId?' on':''}"><span class="cl-stitle">${esc(s.title||'未命名')}${s.usage?`<span class="cl-tag">${esc(s.usage)}</span>`:''}</span><span class="cl-sacts"><button class="btn" onclick="cloudLoad('${s.id}')">載入</button>${_supaAdmin?`<button class="btn cl-del" onclick="cloudDelete('${s.id}',this)">刪除</button>`:''}</span></div>`).join('');
 }
 async function cloudLoad(id){
   cloudMsg('載入中…');
@@ -1062,13 +1080,18 @@ async function cloudLoad(id){
 }
 async function cloudSave(){
   if(!_supaAdmin){ alert('只有管理員可儲存到雲端。'); return; }
-  commitEdits(); cloudMsg('儲存中…');
-  const title=gv('s-title')||'未命名', data=getProjectData();
+  commitEdits();
+  const title=gv('s-title')||'未命名';
+  const usage=gv('s-usage');
+  if(!usage){ alert('請先在工具列「用途」選擇分類（短歌／讚美／敬拜），再儲存到雲端。'); return; }
+  if(!confirm('準備儲存到雲端歌庫，請確認：\n\n　歌曲：'+title+'\n　用途：'+usage+'\n\n確定儲存？')) return;
+  cloudMsg('儲存中…');
+  const data=getProjectData();
   let res;
-  if(_cloudId) res=await _supa.from('songs').update({title,data,updated_at:new Date().toISOString()}).eq('id',_cloudId);
-  else { res=await _supa.from('songs').insert({title,data,created_by:_supaUser.id}).select('id').single(); if(res.data)_cloudId=res.data.id; }
+  if(_cloudId) res=await _supa.from('songs').update({title,usage,data,updated_at:new Date().toISOString()}).eq('id',_cloudId);
+  else { res=await _supa.from('songs').insert({title,usage,data,created_by:_supaUser.id}).select('id').single(); if(res.data)_cloudId=res.data.id; }
   if(res.error){ cloudMsg('儲存失敗：'+res.error.message); return; }
-  cloudMsg('已儲存到雲端 ✓'); cloudList();
+  cloudMsg('已儲存到雲端 ✓（'+usage+'）'); cloudList();
 }
 async function cloudNewSave(){ _cloudId=null; await cloudSave(); }
 async function cloudDelete(id,btn){
