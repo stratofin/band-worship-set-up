@@ -154,6 +154,15 @@ body:not(.mode-phone) .fbtn{width:1.5em;height:1.5em;}
   background:rgba(0,0,0,0.3);
 }
 .seg-circle-inner{position:absolute;border-radius:50%;border:1.5px solid;pointer-events:none;}
+/* 展開示意圖：可點圓圈列 + 展開說明 */
+.flow-hint{color:var(--text3);font-size:0.9em;margin:0.2em 0 1em;}
+.flow-top{display:flex;align-items:flex-start;gap:1.2em;margin-bottom:1.4em;flex-wrap:wrap;}
+.flow-panel{flex:1 1 16em;min-width:0;}
+.flow-panel-hd{font-weight:700;font-size:1.05em;margin-bottom:0.6em;letter-spacing:0.5px;}
+.flow-row{display:flex;flex-wrap:wrap;gap:0.9em 1em;align-items:flex-start;}
+.seg-circle-btn{background:none;border:none;cursor:pointer;padding:0;font-family:inherit;display:inline-flex;flex-direction:column;align-items:center;gap:0.25em;transition:transform .12s;}
+.seg-circle-btn:hover{transform:translateY(-3px);}
+.seg-circle-btn.sel .seg-circle{box-shadow:0 0 0 3px var(--accent),0 6px 18px rgba(0,0,0,0.45);}
 .seg-name{font-size:0.92em;font-weight:700;text-align:center;line-height:1.2;}
 .seg-bar{font-size:0.77em;font-family:'Space Mono',monospace;opacity:.6;}
 .seg-db-badge{
@@ -883,7 +892,8 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
       <li>雲端歌單每首加管理員「歸類」選單（短歌/讚美/敬拜，直接改分類）；移除工具列無用的「📂 載入」鈕</li>
       <li>分身分：「一般使用者：瀏覽歌譜」（免登入即可看/載入）vs「管理者登入」（帳密登入才可增刪改）→ songs 開放公開讀取</li>
       <li>和弦譜／混合新增「🔒 鎖定」鈕（辨識匯入左側）：開＝禁止一切編輯、只能看譜與左右滑頁，看譜彈奏不被誤觸</li>
-      <li>雲端「⛪ 聚會服事」模式：選最多 6 首、可排前後順序，「開始」依序串成一份，往右滑一頁一頁接，服事時免找譜</li></ul>
+      <li>雲端「⛪ 聚會服事」模式：選最多 6 首、可排前後順序，「開始」依序串成一份，往右滑一頁一頁接，服事時免找譜</li>
+      <li>展開示意圖改為互動式：平常只排一列圓圈，點某段才在右邊展開該段樂器說明，其餘圓圈排下方；再點收起</li></ul>
     </div>
   </div>
 </div>
@@ -1233,69 +1243,50 @@ function renderSummary(){
 }
 
 /* ── RENDER FLOW VIEW ── */
-function renderFlow(){
-  const root=document.getElementById('flow-content');
-
-  root.innerHTML=sects.map((s,i)=>{
-    const col=COL[s.color];
-    const hasDB=INS.some(k=>RHYTHM.includes(k)&&s.layers[0]?.ins[k]);
-
-    const innerRings=s.layers.slice(1).map((l,li)=>{
-      const lc=COL[l.color];
-      const pct=72-li*16;
-      return `<div class="seg-circle-inner" style="width:${pct}%;height:${pct}%;border-color:${lc.stroke};background:${lc.fill};top:${(100-pct)/2}%;left:${(100-pct)/2}%"></div>`;
-    }).join('');
-
-    const badge=`
-      <div class="seg-badge">
-        <div class="seg-circle" style="border-color:${col.stroke};background:${col.fill}">
-          ${innerRings}
-          <span class="seg-name" style="color:${col.text};position:relative;z-index:1;font-size:${s.name.length>7?'9px':'11px'}">${esc(s.name)}</span>
-          <span class="seg-bar" style="position:relative;z-index:1">${s.bars}B</span>
-        </div>
-        ${hasDB?'<div class="seg-db-badge">D + B</div>':''}
-      </div>`;
-
-    const layerHtml=s.layers.map((l,li)=>{
-      const lc=COL[l.color];
-      const activeIns=INS.filter(k=>l.ins[k]);
-      if(activeIns.length===0&&li>0)return '';
-
-      const melodyIns=activeIns.filter(k=>!RHYTHM.includes(k));
-      const rhythmIns=activeIns.filter(k=>RHYTHM.includes(k));
-
-      const renderRows=(keys)=>keys.map(k=>`
-        <div class="irow${RHYTHM.includes(k)?' rhythm':''}">
-          <span class="iname" style="color:${li===0?'var(--text3)':lc.stroke}">${k}</span>
-          <span class="ival">${esc(l.ins[k])||'<span class="empty">—</span>'}</span>
-        </div>`).join('');
-
-      const layerLabel=li===0?'':`
-        <div class="layer-hd" style="color:${lc.stroke}">
-          ${lc.label}
-        </div>`;
-
-      if(melodyIns.length===0&&rhythmIns.length===0&&li===0){
-        return '';
-      }
-      return `<div class="instr-layer">
-        ${layerLabel}
-        <div class="instr-row-list">${renderRows([...melodyIns,...rhythmIns])}</div>
-      </div>`;
-    }).join('');
-
-    const noteHtml=s.notes?`<div class="seg-note">⚑ ${esc(s.notes)}</div>`:'';
-
-    const panel=`
-      <div class="seg-instrs" style="border-color:${col.stroke}20;background:${col.fill}">
-        ${layerHtml}
-        ${noteHtml}
-      </div>`;
-
-    const connector=i<sects.length-1?`<div class="srow-gap"><div class="arrow-down"></div></div>`:'';
-
-    return `<div class="srow">${badge}${panel}</div>${connector}`;
+let _flowSel=-1;   // 目前展開的段落索引（-1＝未選，只顯示圓圈列）
+function flowSelect(i){ _flowSel=(_flowSel===i?-1:i); renderFlow(); }
+function flowCircle(s,i,selected){
+  const col=COL[s.color];
+  const innerRings=s.layers.slice(1).map((l,li)=>{
+    const lc=COL[l.color]; const pct=72-li*16;
+    return `<div class="seg-circle-inner" style="width:${pct}%;height:${pct}%;border-color:${lc.stroke};background:${lc.fill};top:${(100-pct)/2}%;left:${(100-pct)/2}%"></div>`;
   }).join('');
+  const hasDB=INS.some(k=>RHYTHM.includes(k)&&s.layers[0]?.ins[k]);
+  return `<button class="seg-circle-btn${selected?' sel':''}" onclick="flowSelect(${i})" title="${esc(s.name)}">
+    <div class="seg-circle" style="border-color:${col.stroke};background:${col.fill}">${innerRings}<span class="seg-name" style="color:${col.text};position:relative;z-index:1;font-size:${s.name.length>7?'9px':'11px'}">${esc(s.name)}</span><span class="seg-bar" style="position:relative;z-index:1">${s.bars}B</span></div>
+    ${hasDB?'<div class="seg-db-badge">D + B</div>':''}
+  </button>`;
+}
+function flowPanel(s){
+  const col=COL[s.color];
+  const layerHtml=s.layers.map((l,li)=>{
+    const lc=COL[l.color];
+    const activeIns=INS.filter(k=>l.ins[k]);
+    if(activeIns.length===0&&li>0)return '';
+    const melodyIns=activeIns.filter(k=>!RHYTHM.includes(k));
+    const rhythmIns=activeIns.filter(k=>RHYTHM.includes(k));
+    const renderRows=(keys)=>keys.map(k=>`<div class="irow${RHYTHM.includes(k)?' rhythm':''}"><span class="iname" style="color:${li===0?'var(--text3)':lc.stroke}">${k}</span><span class="ival">${esc(l.ins[k])||'<span class="empty">—</span>'}</span></div>`).join('');
+    const layerLabel=li===0?'':`<div class="layer-hd" style="color:${lc.stroke}">${lc.label}</div>`;
+    if(melodyIns.length===0&&rhythmIns.length===0&&li===0)return '';
+    return `<div class="instr-layer">${layerLabel}<div class="instr-row-list">${renderRows([...melodyIns,...rhythmIns])}</div></div>`;
+  }).join('');
+  const noteHtml=s.notes?`<div class="seg-note">⚑ ${esc(s.notes)}</div>`:'';
+  const empty=(!layerHtml&&!noteHtml)?'<div class="seg-note" style="color:var(--text3)">（此段尚未填樂器配置）</div>':'';
+  return `<div class="seg-instrs flow-panel" style="border-color:${col.stroke}55;background:${col.fill}"><div class="flow-panel-hd" style="color:${col.stroke}">${esc(s.name)} · ${s.bars} Bar</div>${layerHtml}${noteHtml}${empty}</div>`;
+}
+function renderFlow(){
+  const root=document.getElementById('flow-content'); if(!root)return;
+  if(_flowSel>=sects.length)_flowSel=-1;
+  let html='';
+  if(_flowSel>=0){
+    const s=sects[_flowSel];
+    html+=`<div class="flow-top">${flowCircle(s,_flowSel,true)}${flowPanel(s)}</div>`;
+  } else {
+    html+='<div class="flow-hint">點段落圓圈 → 右邊展開該段樂器配置（再點一次收起）</div>';
+  }
+  const others=sects.map((s,i)=>({s,i})).filter(o=>o.i!==_flowSel);
+  html+=`<div class="flow-row">${others.map(o=>flowCircle(o.s,o.i,false)).join('')}</div>`;
+  root.innerHTML=html;
 }
 
 /* ── RENDER BLOCK VIEW ── */
