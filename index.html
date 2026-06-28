@@ -54,6 +54,9 @@ body.locked .cbeatcol{cursor:default!important;}
 body.locked .left input,body.locked .left select,body.locked .left textarea,body.locked .left button,body.locked .eordbtn,body.locked .dbtn{pointer-events:none!important;opacity:.55;}
 body.locked .pills input,body.locked .pills select{pointer-events:none!important;}
 .lock-btn.btna{background:#d4564a!important;border-color:#d4564a!important;color:#fff!important;}
+.lock-banner{display:none;position:fixed;top:8px;left:50%;transform:translateX(-50%);z-index:3000;background:#d4564a;color:#fff;padding:0.42em 1em;border-radius:999px;font-size:0.92em;font-weight:600;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.28);border:none;align-items:center;gap:0.45em;}
+.lock-banner:hover{background:#c0473c;}
+body.locked .lock-banner{display:inline-flex;}
 .btna:hover{opacity:.88;}
 .mob-only{display:none;}
 .fbtn{width:1.7em;height:1.7em;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--border2);background:var(--bg3);color:var(--text);border-radius:0.35em;cursor:pointer;font-size:0.95em;line-height:1;font-family:inherit;padding:0;}
@@ -510,7 +513,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   *{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
   @page{size:A4 portrait;margin:11mm;}
   body{background:#fff;color:#111;}
-  .topbar,.vtabs,.icon-toolbar,.summary,.chord-hint,.view-print,.ic-legend,.cbpr-sel,.cbsub,.ctrl-toggle{display:none!important;}
+  .topbar,.vtabs,.icon-toolbar,.summary,.chord-hint,.view-print,.ic-legend,.cbpr-sel,.cbsub,.ctrl-toggle,.lock-banner{display:none!important;}
   body[class*="print-"] .cbrep:not(.on){display:none!important;}
   body[class*="print-"] .cbrep.on{color:#1a3a5a!important;background:#cfe0f3!important;}
   .left{display:none!important;}
@@ -606,6 +609,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
 </style>
 </head>
 <body>
+<button class="lock-banner" onclick="toggleLock()" title="目前為鎖定狀態，只能看譜與左右滑頁。點此解鎖即可編輯（含樂器配器）">🔒 鎖定中 — 點此解鎖編輯</button>
 
 <!-- TOP BAR -->
 <header class="topbar">
@@ -636,7 +640,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
       </div>
     </div>
     <div class="tbar-r">
-      <button class="btn" onclick="saveProject(this)" title="儲存到本機（localStorage）">💾 存檔</button>
+      <button class="btn" onclick="openSaveMenu()" title="儲存：可選存到瀏覽器本機，或另存成 .json 到資料夾">💾 存檔</button>
       <select class="btn tpl-sel" id="tpl-sel" onchange="loadTemplate(this.value)" title="範本"><option value="">範本</option></select>
       <button class="btn" id="cloud-btn" onclick="openCloud()" title="使用者登入 / 雲端歌庫" style="display:none">👤 使用者</button>
       <button class="btn" onclick="expJSON()" title="匯出 JSON 備份">↓ JSON</button>
@@ -1003,14 +1007,16 @@ function applyProjectData(data){
   sects=data.sects;
   nid=data.nid||sects.length+1;
   iconPage=0;
+  if(_locked && typeof toggleLock==='function') toggleLock();  /* 載入新譜自動解鎖，避免配器等編輯被鎖住而以為失效 */
   return true;
 }
-function saveProject(btn){
+function saveProject(){
   try{
     commitEdits();
     localStorage.setItem('arranger_project',JSON.stringify(getProjectData()));
-    btn=btn||(window.event&&window.event.target); if(btn){btn.textContent='✓ 已存檔';setTimeout(()=>btn.textContent='💾 存檔',1500);}
-  }catch(e){alert('存檔失敗：'+e.message);}
+    alert('✓ 已存到瀏覽器本機（下次開啟會自動載入）');
+    return true;
+  }catch(e){alert('存檔失敗：'+e.message);return false;}
 }
 function loadProject(){
   try{
@@ -1204,6 +1210,32 @@ function expJSON(){
   a.download=title+'.json';
   a.href='data:application/json;charset=utf-8,'+encodeURIComponent(JSON.stringify(getProjectData(),null,2));
   a.click();
+}
+/* 存檔選單：本機 or 資料夾 */
+function openSaveMenu(){ const m=document.getElementById('save-modal'); if(m)m.classList.add('show'); }
+function closeSaveMenu(){ const m=document.getElementById('save-modal'); if(m)m.classList.remove('show'); }
+function saveChoice(kind){ closeSaveMenu(); if(kind==='local'){ saveProject(); } else { saveToFile(); } }
+/* 另存到電腦：可自選資料夾位置（File System Access API；不支援的瀏覽器退回下載） */
+async function saveToFile(){
+  commitEdits();
+  const data=JSON.stringify(getProjectData(),null,2);
+  const name=((gv('s-title')||'arrangement').replace(/[\\/:*?"<>|]+/g,'_').trim()||'arrangement')+'.json';
+  if(window.showSaveFilePicker){
+    try{
+      const h=await window.showSaveFilePicker({
+        suggestedName:name,
+        types:[{description:'JSON 譜檔',accept:{'application/json':['.json']}}]
+      });
+      const ws=await h.createWritable(); await ws.write(data); await ws.close();
+      alert('✓ 已儲存到你選擇的位置：\n'+h.name);
+    }catch(e){ if(e&&e.name!=='AbortError') alert('儲存失敗：'+(e.message||e)); }
+  }else{
+    const blob=new Blob([data],{type:'application/json'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a'); a.href=url; a.download=name; a.click();
+    setTimeout(()=>URL.revokeObjectURL(url),1500);
+    alert('你的瀏覽器不支援「選擇資料夾位置」，已改用下載到預設下載資料夾。\n（建議用電腦版 Chrome 或 Edge，可自由選擇儲存資料夾）');
+  }
 }
 function impJSON(input){
   const file=input.files[0];if(!file)return;
@@ -2477,5 +2509,15 @@ syncTopbarH();
 window.addEventListener('load',syncTopbarH);
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<div class="cl-modal" id="save-modal" onclick="if(event.target===this)closeSaveMenu()">
+  <div class="cl-box" style="max-width:380px">
+    <div class="cl-head">💾 儲存譜 <button class="btn cl-btn" onclick="closeSaveMenu()">✕</button></div>
+    <div class="cl-body">
+      <p style="margin:.1em 0 1em;color:var(--text3)">請選擇儲存方式：</p>
+      <button class="btn" style="width:100%;margin-bottom:.6em;padding:.7em" onclick="saveChoice('local')">💾 存到瀏覽器本機<br><span style="font-size:.8em;color:var(--text3)">下次用同一台裝置開啟會自動載入</span></button>
+      <button class="btn" style="width:100%;padding:.7em" onclick="saveChoice('file')">📁 另存到資料夾（.json）<br><span style="font-size:.8em;color:var(--text3)">可自選電腦資料夾位置存成檔案</span></button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
