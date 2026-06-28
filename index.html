@@ -2107,7 +2107,9 @@ function mixCardHtml(s,plus){
       let barRow=''; for(let i=b0;i<b1;i++)barRow+=barOneHtml(s,i,beats);
       blocks+=`<div class="arr-rowblock"><div class="arr-lane" data-rf0="${b0/bars}" data-rfw="${rfw}" style="height:${laneH}em">${laneChips}</div><div class="cbar-grid" style="grid-template-columns:repeat(${bpr},minmax(0,1fr))">${barRow}</div></div>`;
     }
+    const insStrip=mixInsBody(s,true);   // 可讀的「配器重點」摘要：完整顯示每個樂器彈法（依篩選）
     return `<div class="ccard" style="border-color:${col.stroke};--bfs:${fsEm}em">${head}
+      ${insStrip}
       ${blocks}
       <div class="arr-add"><button class="ctrl-toggle" onclick="addArr(${s.id})" title="新增一條配器（內容與其他頁共用）">＋ 加配器</button><span class="arr-tip">上方「樂器篩選鈕」挑要看的部位；拖 ⋮⋮ 移位、拖右緣調長度、✕刪除（清空文字＝各頁一起移除）</span></div>
       ${note}</div>`;
