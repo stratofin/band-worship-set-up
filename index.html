@@ -820,7 +820,14 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   <div class="cl-box">
     <div class="cl-head"><span>📝 更新日誌 · Worship Arranger</span><button class="btn" onclick="hideChangelog()">✕</button></div>
     <div class="cl-body">
-      <p class="cl-ver">開發時間軸：2026-06-17 ～ 2026-06-22（依使用回饋持續優化）</p>
+      <p class="cl-ver">開發時間軸：2026-06-17 ～ 2026-06-28（依使用回饋持續優化）</p>
+
+      <h4>穩定性修正 ＋ 全系統驗收 <span class="cl-date">2026-06-28</span></h4>
+      <ul><li>刪小節（調小 Bar 數）會自動清掉殘留的和弦／拍號／重複／分割／接續資料，不再寫進 JSON、別處載入也不會再跑出來（舊雲端檔載入後重存一次即清乾淨）</li>
+      <li>混合頁加回可讀的「配器重點」摘要（標題下、配器軸上方），完整顯示每樂器彈法</li>
+      <li>存檔整合為一顆「💾 存檔」，按下可選「存到瀏覽器本機」或「另存到資料夾（.json，自選位置，Chrome/Edge）」</li>
+      <li>全域「🔒 鎖定中—點此解鎖」浮動提醒；載入任何新譜（聚會服事／範本／雲端／JSON）自動解鎖，避免配器看似失效</li>
+      <li>全系統驗收：4 首歌 × 載入／七檢視渲染／存讀往返一致／無殘留／列印流程／JSON·CSV 匯出，共 27 項全數通過、零錯誤</li></ul>
 
       <h4>基礎架構 <span class="cl-date">2026-06-17</span></h4>
       <ul><li>段落結構視覺化：名稱、Bar 數、顏色、備註、8 樂器分軌、內層堆疊</li>
@@ -978,7 +985,7 @@ function bumpFont(d){setFontSize(curFont+d);}
 function getProjectData(){
   return {
     meta:{title:gv('s-title'),artist:gv('s-artist'),time:gv('s-time'),bpm:gv('s-bpm'),usage:gv('s-usage'),mkey:gv('s-mkey'),fkey:gv('s-fkey'),fontSize:curFont},
-    sects:JSON.parse(JSON.stringify(sects)),
+    sects:JSON.parse(JSON.stringify(sects)).map(pruneSectionData),
     nid
   };
 }
@@ -1005,6 +1012,7 @@ function applyProjectData(data){
   document.getElementById('s-fkey').value=data.meta?.fkey||'';
   if(data.meta?.fontSize) setFontSize(data.meta.fontSize);
   sects=data.sects;
+  sects.forEach(pruneSectionData);   /* 載入舊檔時順手清掉殘留小節，之後再存就乾淨 */
   nid=data.nid||sects.length+1;
   iconPage=0;
   if(_locked && typeof toggleLock==='function') toggleLock();  /* 載入新譜自動解鎖，避免配器等編輯被鎖住而以為失效 */
@@ -2274,7 +2282,16 @@ function renderSB(){
 
 function togE(id){const b=document.getElementById('ebo-'+id),a=document.getElementById('ea-'+id),o=b.classList.toggle('o');a.classList.toggle('o',o);}
 function setSN(id,v){sects.find(s=>s.id===id).name=v;schedRender();}
-function setBars(id,v){const s=sects.find(s=>s.id===id);s.bars=Math.max(1,parseInt(v)||1);document.getElementById('eb-'+id).textContent=s.bars+'B';schedRender();}
+/* 清掉超出目前 Bar 數的殘留小節資料（避免刪掉的格子還寫進 JSON、之後又跑出來） */
+function pruneSectionData(s){
+  if(!s)return s;
+  const bars=Math.max(1,parseInt(s.bars)||1);
+  ['chords','subdiv','rep','meters','bargoto'].forEach(k=>{
+    if(Array.isArray(s[k]) && s[k].length>bars) s[k].length=bars;
+  });
+  return s;
+}
+function setBars(id,v){const s=sects.find(s=>s.id===id);s.bars=Math.max(1,parseInt(v)||1);pruneSectionData(s);document.getElementById('eb-'+id).textContent=s.bars+'B';schedRender();}
 function setC(id,v){sects.find(s=>s.id===id).color=v;renderSB();schedRender();}
 function setI(id,li,k,v){const s=sects.find(s=>s.id===id);if(!s.layers[li])s.layers[li]={color:'black',ins:{}};s.layers[li].ins[k]=v;schedRender();}
 function setLC(id,li,v){sects.find(s=>s.id===id).layers[li].color=v;renderSB();schedRender();}
