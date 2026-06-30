@@ -269,6 +269,9 @@ body:not(.mode-phone) .fbtn{width:1.5em;height:1.5em;}
 .ccard-head{display:flex;align-items:center;justify-content:space-between;gap:0.5em;padding:0.45em 0.7em;font-weight:700;}
 .cname{font-size:1.02em;line-height:1.15;}
 .csong{font-size:0.82em;font-weight:700;padding:0.08em 0.5em;border-radius:99px;background:rgba(0,0,0,0.28);border:1px solid currentColor;white-space:nowrap;flex:0 0 auto;opacity:0.95;}
+.svc-only{display:none!important;}
+body.svc-mode .svc-only{display:inline-flex!important;}
+.svc-pb-btn.on{background:#3a7d44!important;border-color:#3a7d44!important;color:#fff!important;}
 .cmeta{font-family:'Space Mono',monospace;font-size:0.76em;opacity:.85;white-space:nowrap;}
 .chead-l{display:inline-flex;align-items:center;gap:0.45em;min-width:0;}
 .cbpr-sel{background:rgba(0,0,0,0.18);border:1px solid var(--border2);border-radius:0.3em;color:inherit;font-family:inherit;font-size:0.62em;font-weight:400;padding:0.05em 0.25em;outline:none;cursor:pointer;}
@@ -593,6 +596,9 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   /* 混合＋ 列印：輪播→直向分頁、白底、收斂放大格高度避免破版 */
   body.print-mixp .icpages{display:block!important;overflow:visible!important;}
   body.print-mixp .icpage{display:block!important;min-width:0!important;}
+  /* 聚會服事「每首分頁」：每首歌的第一段換新頁 */
+  body.svc-pagebreak.print-chord .ccard.song-start,
+  body.svc-pagebreak.print-mixp .ccard.song-start{page-break-before:always;break-before:page;}
   body.print-mixp .mixpage-stack{display:block!important;}
   body.print-mixp .mixpage-stack>.ccard{margin-bottom:6px;}
   body.print-mixp .ccard{background:#fff!important;page-break-inside:avoid;border-width:2px;margin-bottom:6px;}
@@ -736,7 +742,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
     <!-- CHORD CHART VIEW -->
     <div id="vp-chord" style="display:none">
       <div class="print-head"></div>
-      <div class="view-print"><button class="btn lock-btn" onclick="toggleLock()" title="鎖定：開＝只能看譜與左右滑頁、禁止任何編輯；關＝可編輯">🔓 鎖定 關</button><button class="btn" onclick="openOcr()">🔍 辨識匯入</button><button class="btn" onclick="printFit('chord')" title="自動縮放，盡量塞進一張 A4">📄 經典A4</button><button class="btn btna" onclick="printView('chord')">🖨 列印 / 存 PDF</button></div>
+      <div class="view-print"><button class="btn lock-btn" onclick="toggleLock()" title="鎖定：開＝只能看譜與左右滑頁、禁止任何編輯；關＝可編輯">🔓 鎖定 關</button><button class="btn svc-only svc-pb-btn" onclick="toggleSvcPB(this)" title="聚會服事列印：開＝每首歌各自從新頁開始；關＝段落連續接著印">📄 聚會分頁 關</button><button class="btn" onclick="openOcr()">🔍 辨識匯入</button><button class="btn" onclick="printFit('chord')" title="自動縮放，盡量塞進一張 A4">📄 經典A4</button><button class="btn btna" onclick="printView('chord')">🖨 列印 / 存 PDF</button></div>
       <div class="icon-toolbar">
         <label class="ic-hint">拍號 <select class="ic-sel" id="chord-timesig" onchange="setTimeSig(this.value)"></select></label>
         <label class="ic-hint">顯示 <select class="ic-sel" id="chord-disp" onchange="setChordDisp(this.value)"><option value="num">級數</option><option value="male">和弦名(男Key)</option><option value="female">和弦名(女Key)</option></select></label>
@@ -750,7 +756,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
     <!-- MIX+ VIEW (大格 + 樂器指令在控制區) -->
     <div id="vp-mixp" style="display:none">
       <div class="print-head"></div>
-      <div class="view-print"><button class="btn lock-btn" onclick="toggleLock()" title="鎖定：開＝只能看譜與左右滑頁、禁止任何編輯；關＝可編輯">🔓 鎖定 關</button><button class="btn" onclick="openOcr()">🔍 辨識匯入</button><button class="btn" onclick="printFit('mixp')" title="自動縮放，盡量塞進一張 A4">📄 經典A4</button><button class="btn btna" onclick="printView('mixp')">🖨 列印 / 存 PDF</button></div>
+      <div class="view-print"><button class="btn lock-btn" onclick="toggleLock()" title="鎖定：開＝只能看譜與左右滑頁、禁止任何編輯；關＝可編輯">🔓 鎖定 關</button><button class="btn svc-only svc-pb-btn" onclick="toggleSvcPB(this)" title="聚會服事列印：開＝每首歌各自從新頁開始；關＝段落連續接著印">📄 聚會分頁 關</button><button class="btn" onclick="openOcr()">🔍 辨識匯入</button><button class="btn" onclick="printFit('mixp')" title="自動縮放，盡量塞進一張 A4">📄 經典A4</button><button class="btn btna" onclick="printView('mixp')">🖨 列印 / 存 PDF</button></div>
       <div class="icon-toolbar">
         <button class="ic-navbtn" id="mixp-prev" onclick="mixpNav(-1)" title="上一頁">‹</button>
         <span class="ic-pageind" id="mixp-pageind">1 / 1</span>
@@ -843,8 +849,10 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
     <div class="cl-body">
       <p class="cl-ver">開發時間軸：2026-06-17 ～ 2026-06-28（依使用回饋持續優化）</p>
 
-      <h4>聚會模式段落標歌名 <span class="cl-date">2026-06-28</span></h4>
-      <ul><li>聚會服事串接後，和弦譜／混合每段標題左邊顯示該段所屬歌名（🎵 歌名），翻頁不再搞混；單曲不顯示</li></ul>
+      <h4>聚會模式段落標歌名與輸出 <span class="cl-date">2026-06-28</span></h4>
+      <ul><li>聚會服事串接後，和弦譜／混合每段標題左邊顯示該段所屬歌名（🎵 歌名），翻頁不再搞混；單曲不顯示</li>
+      <li>文字清單（輸出）依歌名分隔，每段標《歌名》</li>
+      <li>列印／輸出新增「📄 聚會分頁」（只在聚會模式顯示）：開＝每首歌分頁、關＝段落連續（預設），選擇會記住</li></ul>
 
       <h4>介面配色主題 <span class="cl-date">2026-06-28</span></h4>
       <ul><li>字級右邊新增「主題」：🌑 黑（預設）／🌕 白／🌸 粉，即時切換並記住選擇</li>
@@ -1018,6 +1026,13 @@ function setTheme(name){
   const sel=document.getElementById('theme-sel'); if(sel)sel.value=t;
 }
 (function initTheme(){ let t='dark'; try{t=localStorage.getItem('arranger_theme')||'dark';}catch(e){} setTheme(t); })();
+/* 聚會服事列印分頁：開＝每首歌分頁、關＝連續 */
+let _svcPB=false; try{_svcPB=localStorage.getItem('arranger_svcpb')==='1';}catch(e){}
+function applySvcPB(){ document.body.classList.toggle('svc-pagebreak',_svcPB);
+  document.querySelectorAll('.svc-pb-btn').forEach(b=>{ b.innerHTML='📄 聚會分頁 '+(_svcPB?'開':'關'); b.classList.toggle('on',_svcPB); }); }
+function toggleSvcPB(){ _svcPB=!_svcPB; try{localStorage.setItem('arranger_svcpb',_svcPB?'1':'');}catch(e){} applySvcPB(); }
+/* 是否為聚會服事（任一段帶歌名）→ 顯示聚會專屬選項 */
+function refreshSvcMode(){ const on=Array.isArray(sects)&&sects.some(s=>s&&s._song); document.body.classList.toggle('svc-mode',!!on); }
 
 /* ── SAVE / LOAD ── */
 function getProjectData(){
@@ -1053,6 +1068,7 @@ function applyProjectData(data){
   sects.forEach(pruneSectionData);   /* 載入舊檔時順手清掉殘留小節，之後再存就乾淨 */
   nid=data.nid||sects.length+1;
   iconPage=0;
+  if(typeof refreshSvcMode==='function') refreshSvcMode();   /* 有歌名→顯示聚會專屬選項 */
   if(_locked && typeof toggleLock==='function') toggleLock();  /* 載入新譜自動解鎖，避免配器等編輯被鎖住而以為失效 */
   return true;
 }
@@ -2047,18 +2063,23 @@ function chordSummary(s){
   }
   return any?('| '+parts.join(' | ')+' |'):'';
 }
+/* 聚會服事：標記每首歌的第一段（給「每首分頁」列印用） */
+let _songStartSet=new Set();
+function computeSongStarts(){ _songStartSet=new Set(); for(let i=1;i<sects.length;i++){ if(sects[i]._song && sects[i]._song!==sects[i-1]._song) _songStartSet.add(sects[i].id); } }
 function renderChord(){
   const root=document.getElementById('chord-content'); if(!root)return;
   const beats=beatsPerBar();
+  computeSongStarts();
   root.innerHTML=sects.map(s=>{
     const col=COL[s.color];
     const bars=Math.max(1,parseInt(s.bars)||1);
+    const ssc=_songStartSet.has(s.id)?' song-start':'';
     const head=`<div class="ccard-head" style="background:${col.fill};color:${col.stroke}">
         <span class="chead-l">${s._song?`<span class="csong">🎵 ${esc(s._song)}</span>`:''}<span class="cname">${esc(s.name)}</span>${bprSelect(s)}<button class="ctrl-toggle" onclick="toggleCtrl(${s.id})" title="顯示/隱藏每個小節的控制鈕；隱藏時仍顯示已設定的值">控制項 ${s.ctrlOff?'關':'開'}</button><button class="ctrl-toggle" onclick="copySection(${s.id})" title="複製此段落全部內容（和弦／分割／重複／樂器…）">⧉ 複製</button><button class="ctrl-toggle" onclick="toggleFold(${s.id})" title="收合/展開此段（收合只留標題，方便專注其他段）">${s.fold?'▸ 展開':'▾ 收合'}</button>${_secClip?`<button class="ctrl-toggle paste" onclick="pasteSection(${s.id})" title="把已複製的「${esc(_secClip._name)}」貼到此段（覆蓋，名稱保留）">📋 貼上</button>`:''}</span>
         <span class="cmeta">${bars} Bar · ${esc(gv('s-time'))}</span>
       </div>`;
-    if(s.fold) return `<div class="ccard folded" style="border-color:${col.stroke}">${head}</div>`;
-    return `<div class="ccard" style="border-color:${col.stroke}">${head}
+    if(s.fold) return `<div class="ccard folded${ssc}" style="border-color:${col.stroke}">${head}</div>`;
+    return `<div class="ccard${ssc}" style="border-color:${col.stroke}">${head}
       <div class="cbar-grid" ${barGridStyle(s)}>${barCellsHtml(s,beats)}</div>
       ${s.notes?`<div class="ccard-note">⚑ ${esc(s.notes)}</div>`:''}
     </div>`;
@@ -2128,7 +2149,8 @@ function mixCardHtml(s,plus){
         <span class="chead-l">${s._song?`<span class="csong">🎵 ${esc(s._song)}</span>`:''}<span class="cname">${esc(s.name)}</span>${bprSelect(s)}<button class="ctrl-toggle" onclick="toggleCtrl(${s.id})" title="顯示/隱藏每個小節的控制鈕；隱藏時仍顯示已設定的值">控制項 ${s.ctrlOff?'關':'開'}</button><button class="ctrl-toggle" onclick="copySection(${s.id})" title="複製此段落全部內容（和弦／分割／重複／樂器…）">⧉ 複製</button><button class="ctrl-toggle" onclick="toggleFold(${s.id})" title="收合/展開此段（收合只留標題，方便專注其他段）">${s.fold?'▸ 展開':'▾ 收合'}</button>${_secClip?`<button class="ctrl-toggle paste" onclick="pasteSection(${s.id})" title="把已複製的「${esc(_secClip._name)}」貼到此段（覆蓋，名稱保留）">📋 貼上</button>`:''}</span><span class="cmeta">${bars} Bar · ${esc(gv('s-time'))}</span>
       </div>`;
   const note=s.notes?`<div class="ccard-note">⚑ ${esc(s.notes)}</div>`:'';
-  if(s.fold) return `<div class="ccard folded" style="border-color:${col.stroke}">${head}</div>`;
+  const ssc=_songStartSet.has(s.id)?' song-start':'';
+  if(s.fold) return `<div class="ccard folded${ssc}" style="border-color:${col.stroke}">${head}</div>`;
   if(plus){
     if(!Array.isArray(s.arr)) s.arr=seedArr(s);
     else { /* 同步：其他頁面（左側編輯/示意圖）新增的樂器，自動補進配器軸 */
@@ -2154,7 +2176,7 @@ function mixCardHtml(s,plus){
       blocks+=`<div class="arr-rowblock"><div class="arr-lane" data-rf0="${b0/bars}" data-rfw="${rfw}" style="height:${laneH}em">${laneChips}</div><div class="cbar-grid" style="grid-template-columns:repeat(${bpr},minmax(0,1fr))">${barRow}</div></div>`;
     }
     const insStrip=mixInsBody(s,true);   // 可讀的「配器重點」摘要：完整顯示每個樂器彈法（依篩選）
-    return `<div class="ccard" style="border-color:${col.stroke};--bfs:${fsEm}em">${head}
+    return `<div class="ccard${ssc}" style="border-color:${col.stroke};--bfs:${fsEm}em">${head}
       ${insStrip}
       ${blocks}
       <div class="arr-add"><button class="ctrl-toggle" onclick="addArr(${s.id})" title="新增一條配器（內容與其他頁共用）">＋ 加配器</button><span class="arr-tip">上方「樂器篩選鈕」挑要看的部位；拖 ⋮⋮ 移位、拖右緣調長度、✕刪除（清空文字＝各頁一起移除）</span></div>
@@ -2264,6 +2286,7 @@ function mixpNav(d){
 }
 function renderMixP(){
   const root=document.getElementById('mixp-content'); if(!root)return;
+  computeSongStarts();
   refreshMixpPerPageOptions();
   const pages=chunk(sects,MIXP_PER_PAGE);
   const total=Math.max(1,pages.length);
@@ -2418,8 +2441,10 @@ function renderAll(){renderCurrent();renderTimeSelects();updatePrintHead();rende
 /* ── TEXT LIST ── */
 function buildTL(){
   let t=`=== 編曲架構 ===\n曲目：${gv('s-title')}${gv('s-artist')?'／'+gv('s-artist'):''}  ${keyLabel().replace(/<[^>]+>/g,'')}  拍號：${gv('s-time')}  BPM：${gv('s-bpm')}\n${'─'.repeat(38)}\n\n`;
+  let _prevSong=null;
   sects.forEach((s,i)=>{
-    t+=`[${i+1}] ${s.name}  ${s.bars} Bar  ${COL[s.color].label}\n`;
+    if(s._song && s._song!==_prevSong){ t+=`\n🎵 ═══════ ${s._song} ═══════\n`; _prevSong=s._song; }
+    t+=`[${i+1}] ${s._song?'《'+s._song+'》 ':''}${s.name}  ${s.bars} Bar  ${COL[s.color].label}\n`;
     const ch=chordSummary(s); if(ch)t+=`    ${'和弦'.padEnd(5)}: ${ch}\n`;
     if(s.layers[0])INS.forEach(k=>{if(s.layers[0].ins[k])t+=`    ${k.padEnd(6)}: ${s.layers[0].ins[k]}\n`;});
     s.layers.slice(1).forEach((l,li)=>{t+=`  ↳ 內層${li+1}（${COL[l.color].label}）\n`;INS.forEach(k=>{if(l.ins[k])t+=`      ${k.padEnd(6)}: ${l.ins[k]}\n`;});});
@@ -2562,6 +2587,7 @@ cloudInit();
 initMode();
 syncDispSelects();
 initTopbar();
+applySvcPB();
 syncTopbarH();
 window.addEventListener('load',syncTopbarH);
 </script>
