@@ -20,6 +20,19 @@
   --c-red-stroke:#d4564a;   --c-red-fill:rgba(212,86,74,0.1);
   --c-purple-stroke:#9b72cf;--c-purple-fill:rgba(155,114,207,0.1);
 }
+/* ── 介面配色主題（只影響螢幕；列印一律白底原樣，見 @media print） ── */
+body.theme-light{
+  --bg:#f5f4ef; --bg2:#ffffff; --bg3:#ecebe4; --bg4:#e0ded4;
+  --border:rgba(0,0,0,0.10); --border2:rgba(0,0,0,0.20);
+  --text:#1f1d18; --text2:#6b675e; --text3:#a6a299;
+  --accent:#b8860b;
+}
+body.theme-pink{
+  --bg:#fff0f6; --bg2:#ffe3ef; --bg3:#ffd6e7; --bg4:#ffc6dc;
+  --border:rgba(120,30,70,0.12); --border2:rgba(120,30,70,0.22);
+  --text:#4a1230; --text2:#9c4a6f; --text3:#cf8fae;
+  --accent:#e0479b;
+}
 html{font-size:13px;}
 body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-serif;min-height:100vh;}
 
@@ -512,7 +525,13 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   body[class*="print-"] .cjump{font-size:6px!important;}
   *{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
   @page{size:A4 portrait;margin:11mm;}
-  body{background:#fff;color:#111;}
+  /* 列印時把主題變數還原成預設，確保任何配色主題都印出白底原樣 */
+  body,body.theme-light,body.theme-pink{
+    --bg:#fff;--bg2:#fff;--bg3:#fff;--bg4:#fff;
+    --border:rgba(0,0,0,0.07);--border2:rgba(0,0,0,0.13);
+    --text:#111;--text2:#444;--text3:#777;--accent:#b8860b;
+    background:#fff;color:#111;
+  }
   .topbar,.vtabs,.icon-toolbar,.summary,.chord-hint,.view-print,.ic-legend,.cbpr-sel,.cbsub,.ctrl-toggle,.lock-banner{display:none!important;}
   body[class*="print-"] .cbrep:not(.on){display:none!important;}
   body[class*="print-"] .cbrep.on{color:#1a3a5a!important;background:#cfe0f3!important;}
@@ -638,6 +657,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
         <span id="font-size-label">13</span>
         <button class="fbtn" onclick="bumpFont(2)" title="放大檢視字級">＋</button>
       </div>
+      <div class="pill" style="gap:3px"><label>主題</label><select id="theme-sel" onchange="setTheme(this.value)" title="介面配色（只影響螢幕，列印仍為白底原樣）" style="background:none;border:none;color:var(--text);font-family:inherit;font-size:1em;outline:none;cursor:pointer"><option value="dark">🌑 黑</option><option value="light">🌕 白</option><option value="pink">🌸 粉</option></select></div>
     </div>
     <div class="tbar-r">
       <button class="btn" onclick="openSaveMenu()" title="儲存：可選存到瀏覽器本機，或另存成 .json 到資料夾">💾 存檔</button>
@@ -822,6 +842,10 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
     <div class="cl-body">
       <p class="cl-ver">開發時間軸：2026-06-17 ～ 2026-06-28（依使用回饋持續優化）</p>
 
+      <h4>介面配色主題 <span class="cl-date">2026-06-28</span></h4>
+      <ul><li>字級右邊新增「主題」：🌑 黑（預設）／🌕 白／🌸 粉，即時切換並記住選擇</li>
+      <li>主題只影響螢幕顯示；列印／存 PDF 一律維持白底深字的原始輸出樣貌</li></ul>
+
       <h4>穩定性修正 ＋ 全系統驗收 <span class="cl-date">2026-06-28</span></h4>
       <ul><li>刪小節（調小 Bar 數）會自動清掉殘留的和弦／拍號／重複／分割／接續資料，不再寫進 JSON、別處載入也不會再跑出來（舊雲端檔載入後重存一次即清乾淨）</li>
       <li>混合頁加回可讀的「配器重點」摘要（標題下、配器軸上方），完整顯示每樂器彈法</li>
@@ -980,6 +1004,16 @@ function setFontSize(v){
   if(r)r.style.fontSize=v+'px';
 }
 function bumpFont(d){setFontSize(curFont+d);}
+/* 介面配色主題：dark(預設) / light / pink；只影響螢幕，存於本機 */
+function setTheme(name){
+  const t=['dark','light','pink'].includes(name)?name:'dark';
+  document.body.classList.remove('theme-light','theme-pink');
+  if(t==='light')document.body.classList.add('theme-light');
+  else if(t==='pink')document.body.classList.add('theme-pink');
+  try{localStorage.setItem('arranger_theme',t);}catch(e){}
+  const sel=document.getElementById('theme-sel'); if(sel)sel.value=t;
+}
+(function initTheme(){ let t='dark'; try{t=localStorage.getItem('arranger_theme')||'dark';}catch(e){} setTheme(t); })();
 
 /* ── SAVE / LOAD ── */
 function getProjectData(){
