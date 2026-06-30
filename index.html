@@ -268,6 +268,7 @@ body:not(.mode-phone) .fbtn{width:1.5em;height:1.5em;}
 .ccard{border:2.5px solid;border-radius:0.7em;overflow:hidden;background:var(--bg2);}
 .ccard-head{display:flex;align-items:center;justify-content:space-between;gap:0.5em;padding:0.45em 0.7em;font-weight:700;}
 .cname{font-size:1.02em;line-height:1.15;}
+.csong{font-size:0.82em;font-weight:700;padding:0.08em 0.5em;border-radius:99px;background:rgba(0,0,0,0.28);border:1px solid currentColor;white-space:nowrap;flex:0 0 auto;opacity:0.95;}
 .cmeta{font-family:'Space Mono',monospace;font-size:0.76em;opacity:.85;white-space:nowrap;}
 .chead-l{display:inline-flex;align-items:center;gap:0.45em;min-width:0;}
 .cbpr-sel{background:rgba(0,0,0,0.18);border:1px solid var(--border2);border-radius:0.3em;color:inherit;font-family:inherit;font-size:0.62em;font-weight:400;padding:0.05em 0.25em;outline:none;cursor:pointer;}
@@ -842,6 +843,9 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
     <div class="cl-body">
       <p class="cl-ver">開發時間軸：2026-06-17 ～ 2026-06-28（依使用回饋持續優化）</p>
 
+      <h4>聚會模式段落標歌名 <span class="cl-date">2026-06-28</span></h4>
+      <ul><li>聚會服事串接後，和弦譜／混合每段標題左邊顯示該段所屬歌名（🎵 歌名），翻頁不再搞混；單曲不顯示</li></ul>
+
       <h4>介面配色主題 <span class="cl-date">2026-06-28</span></h4>
       <ul><li>字級右邊新增「主題」：🌑 黑（預設）／🌕 白／🌸 粉，即時切換並記住選擇</li>
       <li>主題只影響螢幕顯示；列印／存 PDF 一律維持白底深字的原始輸出樣貌</li></ul>
@@ -1193,7 +1197,7 @@ async function startService(){
     if(!firstMeta && r.data.meta) firstMeta=r.data.meta;
     r.data.sects.forEach((sec,idx)=>{
       const c=JSON.parse(JSON.stringify(sec)); c.id=nid++;
-      if(idx===0) c.name='【'+(r.title||('歌'+(si+1)))+'】 '+(c.name||'');
+      c._song=r.title||('歌'+(si+1));   // 每段標記所屬歌名，標題列顯示，避免翻頁搞混
       sects.push(c);
     });
   });
@@ -2050,7 +2054,7 @@ function renderChord(){
     const col=COL[s.color];
     const bars=Math.max(1,parseInt(s.bars)||1);
     const head=`<div class="ccard-head" style="background:${col.fill};color:${col.stroke}">
-        <span class="chead-l"><span class="cname">${esc(s.name)}</span>${bprSelect(s)}<button class="ctrl-toggle" onclick="toggleCtrl(${s.id})" title="顯示/隱藏每個小節的控制鈕；隱藏時仍顯示已設定的值">控制項 ${s.ctrlOff?'關':'開'}</button><button class="ctrl-toggle" onclick="copySection(${s.id})" title="複製此段落全部內容（和弦／分割／重複／樂器…）">⧉ 複製</button><button class="ctrl-toggle" onclick="toggleFold(${s.id})" title="收合/展開此段（收合只留標題，方便專注其他段）">${s.fold?'▸ 展開':'▾ 收合'}</button>${_secClip?`<button class="ctrl-toggle paste" onclick="pasteSection(${s.id})" title="把已複製的「${esc(_secClip._name)}」貼到此段（覆蓋，名稱保留）">📋 貼上</button>`:''}</span>
+        <span class="chead-l">${s._song?`<span class="csong">🎵 ${esc(s._song)}</span>`:''}<span class="cname">${esc(s.name)}</span>${bprSelect(s)}<button class="ctrl-toggle" onclick="toggleCtrl(${s.id})" title="顯示/隱藏每個小節的控制鈕；隱藏時仍顯示已設定的值">控制項 ${s.ctrlOff?'關':'開'}</button><button class="ctrl-toggle" onclick="copySection(${s.id})" title="複製此段落全部內容（和弦／分割／重複／樂器…）">⧉ 複製</button><button class="ctrl-toggle" onclick="toggleFold(${s.id})" title="收合/展開此段（收合只留標題，方便專注其他段）">${s.fold?'▸ 展開':'▾ 收合'}</button>${_secClip?`<button class="ctrl-toggle paste" onclick="pasteSection(${s.id})" title="把已複製的「${esc(_secClip._name)}」貼到此段（覆蓋，名稱保留）">📋 貼上</button>`:''}</span>
         <span class="cmeta">${bars} Bar · ${esc(gv('s-time'))}</span>
       </div>`;
     if(s.fold) return `<div class="ccard folded" style="border-color:${col.stroke}">${head}</div>`;
@@ -2121,7 +2125,7 @@ function mixCardHtml(s,plus){
   const cells=barCellsHtml(s,beats);
   const ins=mixInsBody(s,plus);
   const head=`<div class="ccard-head" style="background:${col.fill};color:${col.stroke}">
-        <span class="chead-l"><span class="cname">${esc(s.name)}</span>${bprSelect(s)}<button class="ctrl-toggle" onclick="toggleCtrl(${s.id})" title="顯示/隱藏每個小節的控制鈕；隱藏時仍顯示已設定的值">控制項 ${s.ctrlOff?'關':'開'}</button><button class="ctrl-toggle" onclick="copySection(${s.id})" title="複製此段落全部內容（和弦／分割／重複／樂器…）">⧉ 複製</button><button class="ctrl-toggle" onclick="toggleFold(${s.id})" title="收合/展開此段（收合只留標題，方便專注其他段）">${s.fold?'▸ 展開':'▾ 收合'}</button>${_secClip?`<button class="ctrl-toggle paste" onclick="pasteSection(${s.id})" title="把已複製的「${esc(_secClip._name)}」貼到此段（覆蓋，名稱保留）">📋 貼上</button>`:''}</span><span class="cmeta">${bars} Bar · ${esc(gv('s-time'))}</span>
+        <span class="chead-l">${s._song?`<span class="csong">🎵 ${esc(s._song)}</span>`:''}<span class="cname">${esc(s.name)}</span>${bprSelect(s)}<button class="ctrl-toggle" onclick="toggleCtrl(${s.id})" title="顯示/隱藏每個小節的控制鈕；隱藏時仍顯示已設定的值">控制項 ${s.ctrlOff?'關':'開'}</button><button class="ctrl-toggle" onclick="copySection(${s.id})" title="複製此段落全部內容（和弦／分割／重複／樂器…）">⧉ 複製</button><button class="ctrl-toggle" onclick="toggleFold(${s.id})" title="收合/展開此段（收合只留標題，方便專注其他段）">${s.fold?'▸ 展開':'▾ 收合'}</button>${_secClip?`<button class="ctrl-toggle paste" onclick="pasteSection(${s.id})" title="把已複製的「${esc(_secClip._name)}」貼到此段（覆蓋，名稱保留）">📋 貼上</button>`:''}</span><span class="cmeta">${bars} Bar · ${esc(gv('s-time'))}</span>
       </div>`;
   const note=s.notes?`<div class="ccard-note">⚑ ${esc(s.notes)}</div>`:'';
   if(s.fold) return `<div class="ccard folded" style="border-color:${col.stroke}">${head}</div>`;
