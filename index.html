@@ -239,6 +239,9 @@ body:not(.mode-phone) .fbtn{width:1.5em;height:1.5em;}
 .key-step .keystep-lbl{font-family:'Space Mono',monospace;font-weight:700;color:var(--accent);min-width:2.6em;text-align:center;font-size:0.9em;}
 .key-step button{width:1.7em;height:1.7em;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--border2);background:var(--bg2);color:var(--text);border-radius:0.35em;cursor:pointer;font-size:0.85em;line-height:1;padding:0;}
 .key-step button:hover{border-color:var(--accent);color:var(--accent);}
+.key-step button:disabled{opacity:.35;cursor:not-allowed;}
+body.svc-mode .key-step{opacity:.5;}
+.ic-sel:disabled{opacity:.5;cursor:not-allowed;}
 
 .icpages{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;align-items:flex-start;scrollbar-width:thin;}
 .icpages::-webkit-scrollbar{height:5px;}
@@ -864,7 +867,8 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
       <p class="cl-ver">開發時間軸：2026-06-17 ～ 2026-06-28（依使用回饋持續優化）</p>
 
       <h4>聚會模式每首獨立 Key <span class="cl-date">2026-06-28</span></h4>
-      <ul><li>聚會服事清單每首左邊新增「調性（級數/男/女Key）＋ ▲▼ 半音微調」，加入時自動帶入原始 Key；串接後逐首用各自 Key 顯示，互不影響，段落標題顯示「🎵 歌名 · 男/女Key」</li></ul>
+      <ul><li>聚會服事清單每首左邊新增「調性（級數/男/女Key）＋ ▲▼ 半音微調」，加入時自動帶入原始 Key；串接後逐首用各自 Key 顯示，互不影響，段落標題顯示「🎵 歌名 · 男/女Key」</li>
+      <li>聚會模式中，圖表上的全域「顯示」與「微調Key」自動鎖定，避免與各首設定衝突；回單曲自動解鎖</li></ul>
 
       <h4>輸出收合空細分 <span class="cl-date">2026-06-28</span></h4>
       <ul><li>列印／輸出時，設成八分／十六分卻沒用到的小節自動收合（全空→四分、只有八分→八分），不再印整排空格；真有細分內容的照常完整呈現，螢幕編輯不受影響</li></ul>
@@ -1055,7 +1059,14 @@ function applySvcPB(){ document.body.classList.toggle('svc-pagebreak',_svcPB);
   document.querySelectorAll('.svc-pb-btn').forEach(b=>{ b.innerHTML='📄 聚會分頁 '+(_svcPB?'開':'關'); b.classList.toggle('on',_svcPB); }); }
 function toggleSvcPB(){ _svcPB=!_svcPB; try{localStorage.setItem('arranger_svcpb',_svcPB?'1':'');}catch(e){} applySvcPB(); }
 /* 是否為聚會服事（任一段帶歌名）→ 顯示聚會專屬選項 */
-function refreshSvcMode(){ const on=Array.isArray(sects)&&sects.some(s=>s&&s._song); document.body.classList.toggle('svc-mode',!!on); }
+function refreshSvcMode(){
+  const on=Array.isArray(sects)&&sects.some(s=>s&&s._song);
+  document.body.classList.toggle('svc-mode',!!on);
+  /* 聚會模式：每首 Key 已在聚會清單各自設定 → 鎖定圖表上的全域「顯示」與「微調Key」 */
+  ['chord-disp','mixp-disp'].forEach(id=>{ const s=document.getElementById(id); if(s){ s.disabled=on; s.title=on?'聚會模式：調性／Key 由聚會清單各首設定，此處已鎖定':''; } });
+  document.querySelectorAll('.key-step button').forEach(b=>{ b.disabled=on; });
+  document.querySelectorAll('.key-step').forEach(e=>{ e.title=on?'聚會模式：每首 Key 已在聚會清單設定，此處已鎖定':'半音微調 Key'; });
+}
 
 /* ── SAVE / LOAD ── */
 function getProjectData(){
@@ -1939,6 +1950,7 @@ if(!['num','male','female'].includes(chordDisp))chordDisp='num';
 function setChordDisp(v){ chordDisp=v; try{localStorage.setItem('arranger_chorddisp',v);}catch(e){} syncDispSelects(); renderCharts(); updateKeyStepLabels(); }
 /* 半音微調 Key：依目前「顯示」模式調男/女 Key（級數模式則自動切到有設定的那個並轉成和弦名顯示） */
 function transposeKey(dir){
+  if(document.body.classList.contains('svc-mode')){ alert('聚會模式中，每首 Key 請在「聚會服事」清單裡各自調整。'); return; }
   let mode=chordDisp;
   if(mode!=='male'&&mode!=='female'){ mode=gv('s-mkey')?'male':(gv('s-fkey')?'female':'male'); setChordDisp(mode); }
   const id=mode==='female'?'s-fkey':'s-mkey';
