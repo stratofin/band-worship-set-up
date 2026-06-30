@@ -664,6 +664,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
       <button class="segbtn" id="mode-tablet-btn" onclick="setMode('tablet')" title="平板：編輯區移到上方、檢視全寬、圖示譜3欄">▦ 平板</button>
       <button class="segbtn" id="mode-phone-btn" onclick="setMode('phone')" title="手機：隱藏編輯區、圖示譜2欄">📱 手機</button>
     </span>
+    <button class="segbtn cl-btn" id="lang-btn" onclick="toggleLang()" title="中文 / English">EN</button>
     <button class="segbtn cl-btn" onclick="showChangelog(event)" title="查看歷次更新內容">📝 更新日誌</button>
     <div class="pills">
       <div class="pill"><label>曲目</label><input id="s-title" value="King Of Kings" oninput="schedRender()" style="width:100px"></div>
@@ -866,6 +867,9 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
     <div class="cl-body">
       <p class="cl-ver">開發時間軸：2026-06-17 ～ 2026-06-28（依使用回饋持續優化）</p>
 
+      <h4>中英文介面切換 <span class="cl-date">2026-06-28</span></h4>
+      <ul><li>更新日誌鈕左邊新增語言鈕：預設中文顯示「EN」，按下切英文（變「中」）並記住；介面文字跟著切換，新渲染內容自動翻譯，列印輸出不受影響</li></ul>
+
       <h4>聚會模式每首獨立 Key <span class="cl-date">2026-06-28</span></h4>
       <ul><li>聚會服事清單每首左邊新增「調性（級數/男/女Key）＋ ▲▼ 半音微調」，加入時自動帶入原始 Key；串接後逐首用各自 Key 顯示，互不影響，段落標題顯示「🎵 歌名 · 男/女Key」</li>
       <li>聚會模式中，圖表上的全域「顯示」與「微調Key」自動鎖定，避免與各首設定衝突；回單曲自動解鎖</li></ul>
@@ -1053,6 +1057,51 @@ function setTheme(name){
   const sel=document.getElementById('theme-sel'); if(sel)sel.value=t;
 }
 (function initTheme(){ let t='dark'; try{t=localStorage.getItem('arranger_theme')||'dark';}catch(e){} setTheme(t); })();
+/* ── 介面語言：中文(預設) / English；字典逐字串對應，渲染後重套，可還原 ── */
+let _lang='zh'; try{_lang=localStorage.getItem('arranger_lang')||'zh';}catch(e){}
+const I18N={
+ "▲ 工具列":"▲ Toolbar","▼ 工具列":"▼ Toolbar","🖥 電腦":"🖥 Desktop","▦ 平板":"▦ Tablet","📱 手機":"📱 Phone","📝 更新日誌":"📝 Changelog",
+ "曲目":"Title","演唱者":"Artist","拍號":"Time","BPM":"BPM","用途":"Use","男":"M","女":"F","字級":"Font","主題":"Theme","微調Key":"Tune Key",
+ "🌑 黑":"🌑 Dark","🌕 白":"🌕 Light","🌸 粉":"🌸 Pink",
+ "💾 存檔":"💾 Save","範本":"Template","👤 使用者":"👤 User","⋯ 更多":"⋯ More","↓ CSV":"↓ CSV","↓ PNG 示意圖":"↓ PNG Flow","↓ PNG 方塊圖":"↓ PNG Blocks","🖨 圖示譜PDF":"🖨 Icon PDF",
+ "段落編輯":"Sections","＋ 新增段落":"＋ Add Section","刪":"Del",
+ "展開示意圖":"Flow Map","方塊流程圖":"Block Flow","圖示譜":"Icon Chart","和弦譜":"Chord Chart","混合":"Mix","文字清單":"Text List","匯出":"Export",
+ "顯示":"Show","級數":"Degrees","和弦名(男Key)":"Chord (M Key)","和弦名(女Key)":"Chord (F Key)","男Key":"M Key","女Key":"F Key",
+ "全部每排":"All / row","套用…":"Apply…","自動":"Auto",
+ "🗑 全部清除":"🗑 Clear All","↩ 復原":"↩ Undo",
+ "🔓 鎖定 關":"🔓 Lock Off","🔒 鎖定 開":"🔒 Lock On","🔒 鎖定中 — 點此解鎖編輯":"🔒 Locked — tap to unlock editing",
+ "📄 聚會分頁 關":"📄 Per-song page Off","📄 聚會分頁 開":"📄 Per-song page On",
+ "🔍 辨識匯入":"🔍 OCR Import","📄 經典A4":"📄 Fit A4","🖨 列印 / 存 PDF":"🖨 Print / PDF",
+ "控制項 開":"Controls On","控制項 關":"Controls Off","⧉ 複製":"⧉ Copy","▾ 收合":"▾ Collapse","▸ 展開":"▸ Expand","📋 貼上":"📋 Paste","＋ 加配器":"＋ Add part",
+ "每排:自動":"Per-row:Auto","每排:2":"Per-row:2","每排:3":"Per-row:3","每排:4":"Per-row:4","每排:5":"Per-row:5","每排:6":"Per-row:6","每排:7":"Per-row:7","每排:8":"Per-row:8",
+ "每頁":"Per page","段":"secs",
+ "短歌":"Short","讚美":"Praise","敬拜":"Worship",
+ "服事清單（最多 6 首，可排序）":"Service list (max 6, sortable)","▶ 開始（依序載入）":"▶ Start (load in order)","＋ 加入":"＋ Add","載入":"Load","刪除":"Delete","歸類":"Tag",
+ "一般使用者（瀏覽歌譜）":"Guest (browse)","管理者登入":"Admin Login","使用者登入":"User Login","聚會服事":"Service","登出":"Sign out","儲存目前到雲端":"Save current to cloud",
+ "調性顯示":"Tonality"
+};
+let _i18nEn=null;
+function i18nEnMap(){ if(!_i18nEn){ _i18nEn={}; for(const k in I18N){ if(_i18nEn[I18N[k]]==null)_i18nEn[I18N[k]]=k; } } return _i18nEn; }
+function _i18nSkip(el){ for(let n=el;n;n=n.parentElement){ if(n.id==='cl-modal'||n.id==='lang-btn')return true; } return false; }
+let _i18nBusy=false,_i18nQueued=false;
+function i18nApply(){
+  if(_i18nBusy)return; _i18nBusy=true;
+  try{
+    const dict=_lang==='en'?I18N:i18nEnMap();
+    const w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT,null);
+    const ns=[]; while(w.nextNode())ns.push(w.currentNode);
+    ns.forEach(tn=>{ const raw=tn.nodeValue, t=raw.trim(); if(!t)return; if(_i18nSkip(tn.parentElement))return; if(dict[t]!=null&&dict[t]!==t) tn.nodeValue=raw.replace(t,dict[t]); });
+    document.querySelectorAll('[title],[placeholder]').forEach(el=>{ if(_i18nSkip(el))return; ['title','placeholder'].forEach(a=>{ const v=el.getAttribute(a); if(v==null)return; const t=v.trim(); if(t&&dict[t]!=null&&dict[t]!==t) el.setAttribute(a,dict[t]); }); });
+  }finally{ _i18nBusy=false; }
+}
+function i18nMaybe(){ if(_lang==='en') i18nApply(); }
+/* 自動翻譯任何新渲染的內容（雲端視窗、聚會清單、卡片…），免逐一掛勾 */
+if(typeof MutationObserver!=='undefined'){
+  const obs=new MutationObserver(()=>{ if(_lang!=='en'||_i18nBusy||_i18nQueued)return; _i18nQueued=true; (window.requestAnimationFrame||setTimeout)(()=>{ _i18nQueued=false; i18nApply(); },0); });
+  try{ obs.observe(document.body,{childList:true,subtree:true,characterData:true}); }catch(e){}
+}
+function applyLang(){ const b=document.getElementById('lang-btn'); if(b)b.textContent=(_lang==='en')?'中':'EN'; i18nApply(); }
+function toggleLang(){ _lang=(_lang==='en')?'zh':'en'; try{localStorage.setItem('arranger_lang',_lang);}catch(e){} try{renderSB();renderAll();}catch(e){} applyLang(); }
 /* 聚會服事列印分頁：開＝每首歌分頁、關＝連續 */
 let _svcPB=false; try{_svcPB=localStorage.getItem('arranger_svcpb')==='1';}catch(e){}
 function applySvcPB(){ document.body.classList.toggle('svc-pagebreak',_svcPB);
@@ -2531,7 +2580,7 @@ function renderCurrent(){
   else if(currentView==='text')buildTL();
 }
 /* 只重畫「目前看得到」的檢視 + 輕量項目，避免每次輸入都重畫全部而卡頓 */
-function renderAll(){renderCurrent();renderTimeSelects();updatePrintHead();renderSummary();updateKeyStepLabels();autoSave();}
+function renderAll(){renderCurrent();renderTimeSelects();updatePrintHead();renderSummary();updateKeyStepLabels();i18nMaybe();autoSave();}
 
 /* ── TEXT LIST ── */
 function buildTL(){
@@ -2646,6 +2695,7 @@ function sw(name,btn){
   if(btn)btn.classList.add('a');
   document.getElementById('vp-'+name).style.display='';
   renderCurrent();   // 切到該檢視才渲染
+  i18nMaybe();
 }
 
 /* ── INIT ── */
@@ -2683,6 +2733,7 @@ initMode();
 syncDispSelects();
 initTopbar();
 applySvcPB();
+applyLang();
 syncTopbarH();
 window.addEventListener('load',syncTopbarH);
 </script>
