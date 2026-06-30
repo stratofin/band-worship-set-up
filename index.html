@@ -234,6 +234,11 @@ body:not(.mode-phone) .fbtn{width:1.5em;height:1.5em;}
 .ic-navbtn:disabled{opacity:.3;cursor:default;}
 .ic-spacer{flex:1;}
 .ic-hint{font-size:0.72em;color:var(--text3);}
+.key-step{display:inline-flex;align-items:center;gap:0.25em;background:var(--bg3);border:1px solid var(--border2);border-radius:0.45em;padding:0.12em 0.35em;}
+.key-step>label{font-size:0.72em;color:var(--text3);}
+.key-step .keystep-lbl{font-family:'Space Mono',monospace;font-weight:700;color:var(--accent);min-width:2.6em;text-align:center;font-size:0.9em;}
+.key-step button{width:1.7em;height:1.7em;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--border2);background:var(--bg2);color:var(--text);border-radius:0.35em;cursor:pointer;font-size:0.85em;line-height:1;padding:0;}
+.key-step button:hover{border-color:var(--accent);color:var(--accent);}
 
 .icpages{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;align-items:flex-start;scrollbar-width:thin;}
 .icpages::-webkit-scrollbar{height:5px;}
@@ -656,8 +661,8 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
       <div class="pill"><label>拍號</label><input id="s-time" value="4/4" oninput="schedRender()" style="width:34px"></div>
       <div class="pill"><label>BPM</label><input id="s-bpm" value="71" oninput="schedRender()" style="width:38px"></div>
       <div class="pill"><label>用途</label><select id="s-usage" onchange="schedRender()" style="background:none;border:none;color:var(--text);font-family:inherit;font-size:1em;outline:none;cursor:pointer"><option value="">—</option><option>短歌</option><option>讚美</option><option>敬拜</option></select></div>
-      <div class="pill"><label>♂男</label><input id="s-mkey" value="" placeholder="—" oninput="schedRender()" style="width:30px"></div>
-      <div class="pill"><label>♀女</label><input id="s-fkey" value="" placeholder="—" oninput="schedRender()" style="width:30px"></div>
+      <div class="pill"><label>男</label><input id="s-mkey" value="" placeholder="—" oninput="schedRender()" style="width:30px"></div>
+      <div class="pill"><label>女</label><input id="s-fkey" value="" placeholder="—" oninput="schedRender()" style="width:30px"></div>
       <div class="pill" style="gap:3px">
         <label>字級</label>
         <button class="fbtn" onclick="bumpFont(-2)" title="縮小檢視字級">−</button>
@@ -746,6 +751,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
       <div class="icon-toolbar">
         <label class="ic-hint">拍號 <select class="ic-sel" id="chord-timesig" onchange="setTimeSig(this.value)"></select></label>
         <label class="ic-hint">顯示 <select class="ic-sel" id="chord-disp" onchange="setChordDisp(this.value)"><option value="num">級數</option><option value="male">和弦名(男Key)</option><option value="female">和弦名(女Key)</option></select></label>
+        <span class="key-step" title="半音微調 Key：依目前『顯示』調男/女 Key"><label>微調Key</label><button onclick="transposeKey(1)" title="升半音">▲</button><b class="keystep-lbl">—</b><button onclick="transposeKey(-1)" title="降半音">▼</button></span>
         <label class="ic-hint">全部每排 <select class="ic-sel" onchange="applyAllBPR(this)" title="一次設定所有段落每排小節數"><option value="__">套用…</option><option value="">自動</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option></select></label>
         <button class="clear-btn" onclick="clearAll()" title="清除整個譜的和弦／分割／重複／拍號／接續資料（可再按一次復原）">🗑 全部清除</button>
       </div>
@@ -766,6 +772,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
         段</label>
         <label class="ic-hint">拍號 <select class="ic-sel" id="mixp-timesig" onchange="setTimeSig(this.value)"></select></label>
         <label class="ic-hint">顯示 <select class="ic-sel" id="mixp-disp" onchange="setChordDisp(this.value)"><option value="num">級數</option><option value="male">和弦名(男Key)</option><option value="female">和弦名(女Key)</option></select></label>
+        <span class="key-step" title="半音微調 Key：依目前『顯示』調男/女 Key"><label>微調Key</label><button onclick="transposeKey(1)" title="升半音">▲</button><b class="keystep-lbl">—</b><button onclick="transposeKey(-1)" title="降半音">▼</button></span>
         <label class="ic-hint">全部每排 <select class="ic-sel" onchange="applyAllBPR(this)" title="一次設定所有段落每排小節數"><option value="__">套用…</option><option value="">自動</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option></select></label>
         <button class="clear-btn" onclick="clearAll()" title="清除整個譜的和弦／分割／重複／拍號／接續資料（可再按一次復原）">🗑 全部清除</button>
       </div>
@@ -848,6 +855,9 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
     <div class="cl-head"><span>📝 更新日誌 · Worship Arranger</span><button class="btn" onclick="hideChangelog()">✕</button></div>
     <div class="cl-body">
       <p class="cl-ver">開發時間軸：2026-06-17 ～ 2026-06-28（依使用回饋持續優化）</p>
+
+      <h4>半音微調 Key <span class="cl-date">2026-06-28</span></h4>
+      <ul><li>和弦譜／混合「顯示」右邊新增「微調Key ▲▼」：每按升／降半音，調整目前顯示的男／女 Key；和弦名即時更新</li></ul>
 
       <h4>聚會模式段落標歌名與輸出 <span class="cl-date">2026-06-28</span></h4>
       <ul><li>聚會服事串接後，和弦譜／混合每段標題左邊顯示該段所屬歌名（🎵 歌名），翻頁不再搞混；單曲不顯示</li>
@@ -1330,8 +1340,8 @@ function renderSummary(){
   const usage=gv('s-usage'),mkey=gv('s-mkey'),fkey=gv('s-fkey');
   let chips='';
   if(usage)chips+=`<span class="meta-chip chip-usage">${esc(usage)}</span>`;
-  if(mkey)chips+=`<span class="meta-chip chip-m">♂ ${esc(mkey)}</span>`;
-  if(fkey)chips+=`<span class="meta-chip chip-f">♀ ${esc(fkey)}</span>`;
+  if(mkey)chips+=`<span class="meta-chip chip-m">男 ${esc(mkey)}</span>`;
+  if(fkey)chips+=`<span class="meta-chip chip-f">女 ${esc(fkey)}</span>`;
   document.getElementById('summary').innerHTML=
     `段落 <b>${sects.length}</b>　總小節 <b>${totalBars}</b> Bar　預估長度 <b>${dur}</b>　頁數(圖示譜) <b>${pageCount()}</b>${chips}`;
 }
@@ -1887,7 +1897,26 @@ function allBPRSelectHTML(){
 let chordDisp='num';   // num=級數（核心）/ male=男Key和弦 / female=女Key和弦
 try{chordDisp=localStorage.getItem('arranger_chorddisp')||'num';}catch(e){}
 if(!['num','male','female'].includes(chordDisp))chordDisp='num';
-function setChordDisp(v){ chordDisp=v; try{localStorage.setItem('arranger_chorddisp',v);}catch(e){} syncDispSelects(); renderCharts(); }
+function setChordDisp(v){ chordDisp=v; try{localStorage.setItem('arranger_chorddisp',v);}catch(e){} syncDispSelects(); renderCharts(); updateKeyStepLabels(); }
+/* 半音微調 Key：依目前「顯示」模式調男/女 Key（級數模式則自動切到有設定的那個並轉成和弦名顯示） */
+function transposeKey(dir){
+  let mode=chordDisp;
+  if(mode!=='male'&&mode!=='female'){ mode=gv('s-mkey')?'male':(gv('s-fkey')?'female':'male'); setChordDisp(mode); }
+  const id=mode==='female'?'s-fkey':'s-mkey';
+  const el=document.getElementById(id); if(!el)return;
+  let semi=keyRootSemi(el.value); if(semi==null)semi=0;
+  semi=(((semi+dir)%12)+12)%12;
+  const flat=/b/.test(String(el.value));   // 維持原本的升/降記號偏好，預設用升記號
+  el.value=(flat?NOTE_FLAT:NOTE_SHARP)[semi];
+  schedRender(); updateKeyStepLabels();
+}
+function updateKeyStepLabels(){
+  let mode=chordDisp, sym='', txt;
+  if(mode==='female'){ sym='女'; txt=gv('s-fkey')||'—'; }
+  else if(mode==='male'){ sym='男'; txt=gv('s-mkey')||'—'; }
+  else { txt=gv('s-mkey')||gv('s-fkey')||'—'; sym=(gv('s-mkey')||!gv('s-fkey'))?'男':'女'; }
+  document.querySelectorAll('.keystep-lbl').forEach(e=>e.textContent=sym+' '+txt);
+}
 function syncDispSelects(){ ['chord-disp','mix-disp','mixp-disp'].forEach(id=>{const s=document.getElementById(id);if(s)s.value=chordDisp;}); }
 function dispKeyName(){ return chordDisp==='male'?gv('s-mkey'):chordDisp==='female'?gv('s-fkey'):''; }
 const DEG_SEMI={1:0,2:2,3:4,4:5,5:7,6:9,7:11};
@@ -2417,7 +2446,7 @@ function schedRender(){clearTimeout(dt);dt=setTimeout(renderAll,80);}
 
 function keyLabel(){
   const m=gv('s-mkey'), f=gv('s-fkey');
-  return [m?'♂ '+esc(m):'', f?'♀ '+esc(f):''].filter(Boolean).join('　');
+  return [m?'男 '+esc(m):'', f?'女 '+esc(f):''].filter(Boolean).join('　');
 }
 function updatePrintHead(){
   const usage=gv('s-usage'), artist=gv('s-artist'), kl=keyLabel();
@@ -2436,7 +2465,7 @@ function renderCurrent(){
   else if(currentView==='text')buildTL();
 }
 /* 只重畫「目前看得到」的檢視 + 輕量項目，避免每次輸入都重畫全部而卡頓 */
-function renderAll(){renderCurrent();renderTimeSelects();updatePrintHead();renderSummary();autoSave();}
+function renderAll(){renderCurrent();renderTimeSelects();updatePrintHead();renderSummary();updateKeyStepLabels();autoSave();}
 
 /* ── TEXT LIST ── */
 function buildTL(){
