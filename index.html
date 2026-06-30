@@ -396,6 +396,13 @@ body.svc-mode .svc-only{display:inline-flex!important;}
 .cl-srow:last-of-type{border-bottom:none;}
 .cl-snum{width:1.5em;height:1.5em;flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;border-radius:99px;background:var(--accent);color:#0d0d0d;font-weight:700;font-size:0.76em;}
 .cl-srow .cl-sacts .btn{font-size:0.74em;padding:0.16em 0.4em;}
+.cl-keybox{display:inline-flex;align-items:center;gap:0.2em;flex:0 0 auto;background:var(--bg3);border:1px solid var(--border2);border-radius:0.4em;padding:0.1em 0.25em;}
+.cl-keysel{background:transparent;border:none;color:var(--text2);font-family:inherit;font-size:0.72em;outline:none;cursor:pointer;}
+.cl-keysel option{color:#111;}
+.cl-kbtn{width:1.4em;height:1.4em;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--border2);background:var(--bg2);color:var(--text);border-radius:0.3em;cursor:pointer;font-size:0.7em;line-height:1;padding:0;}
+.cl-kbtn:hover{border-color:var(--accent);color:var(--accent);}
+.cl-kbtn:disabled{opacity:.35;cursor:default;}
+.cl-kval{font-family:'Space Mono',monospace;font-weight:700;color:var(--accent);min-width:2em;text-align:center;font-size:0.78em;}
 .cl-srow .btn:disabled{opacity:.4;cursor:default;}
 .mixpage-stack.mixp{--barw:14em;}
 body.mode-tablet .mixpage-stack.mixp{--barw:12em;}
@@ -856,6 +863,12 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
     <div class="cl-body">
       <p class="cl-ver">開發時間軸：2026-06-17 ～ 2026-06-28（依使用回饋持續優化）</p>
 
+      <h4>聚會模式每首獨立 Key <span class="cl-date">2026-06-28</span></h4>
+      <ul><li>聚會服事清單每首左邊新增「調性（級數/男/女Key）＋ ▲▼ 半音微調」，加入時自動帶入原始 Key；串接後逐首用各自 Key 顯示，互不影響，段落標題顯示「🎵 歌名 · 男/女Key」</li></ul>
+
+      <h4>輸出收合空細分 <span class="cl-date">2026-06-28</span></h4>
+      <ul><li>列印／輸出時，設成八分／十六分卻沒用到的小節自動收合（全空→四分、只有八分→八分），不再印整排空格；真有細分內容的照常完整呈現，螢幕編輯不受影響</li></ul>
+
       <h4>半音微調 Key <span class="cl-date">2026-06-28</span></h4>
       <ul><li>和弦譜／混合「顯示」右邊新增「微調Key ▲▼」：每按升／降半音，調整目前顯示的男／女 Key；和弦名即時更新</li></ul>
 
@@ -1199,15 +1212,37 @@ async function cloudList(){
 /* ── 聚會服事：選最多 6 首、排序，依序載入成一份（往右滑一頁一頁接） ── */
 let _serviceMode=false, _setlist=[];
 function toggleService(){ _serviceMode=!_serviceMode; const b=document.getElementById('cl-svc-btn'); if(b)b.classList.toggle('on',_serviceMode); const p=document.getElementById('cl-setlist'); if(p)p.style.display=_serviceMode?'':'none'; renderSetlist(); cloudList(); }
-function setlistAdd(id){ if(_setlist.some(x=>x.id===id))return; if(_setlist.length>=6){ alert('聚會服事最多 6 首。'); return; } const s=_cloudSongs.find(x=>x.id===id); _setlist.push({id,title:(s&&s.title)||'未命名'}); renderSetlist(); cloudList(); }
+async function setlistAdd(id){
+  if(_setlist.some(x=>x.id===id))return;
+  if(_setlist.length>=6){ alert('聚會服事最多 6 首。'); return; }
+  const s=_cloudSongs.find(x=>x.id===id);
+  const item={id,title:(s&&s.title)||'未命名',mode:'male',key:''};
+  _setlist.push(item); renderSetlist(); cloudList();
+  /* 背景抓該首原始 Key 當預設（男 key 優先，沒有就用女 key） */
+  try{ const {data}=await _supa.from('songs').select('data').eq('id',id).single();
+    const m=data&&data.data&&data.data.meta;
+    if(m){ if(m.mkey){item.key=m.mkey;item.mode='male';} else if(m.fkey){item.key=m.fkey;item.mode='female';} renderSetlist(); }
+  }catch(e){}
+}
 function setlistRemove(i){ _setlist.splice(i,1); renderSetlist(); cloudList(); }
 function setlistMove(i,d){ const j=i+d; if(j<0||j>=_setlist.length)return; const t=_setlist[i]; _setlist[i]=_setlist[j]; _setlist[j]=t; renderSetlist(); }
+function setlistMode(i,v){ const it=_setlist[i]; if(it){ it.mode=v; renderSetlist(); } }
+/* 每首半音微調 Key（級數模式按下會自動切到男 Key 和弦名） */
+function setlistKey(i,dir){
+  const it=_setlist[i]; if(!it)return;
+  if(it.mode==='num') it.mode='male';
+  let semi=keyRootSemi(it.key); if(semi==null)semi=0;
+  semi=(((semi+dir)%12)+12)%12;
+  const flat=/b/.test(String(it.key));
+  it.key=(flat?NOTE_FLAT:NOTE_SHARP)[semi];
+  renderSetlist();
+}
 function renderSetlist(){
   const box=document.getElementById('cl-setlist'); if(!box)return;
   if(!_serviceMode){ box.innerHTML=''; return; }
   box.innerHTML=`<div class="cl-libhd">服事清單（最多 6 首，可排序）</div>`
     +(_setlist.length
-      ? _setlist.map((s,i)=>`<div class="cl-srow"><span class="cl-snum">${i+1}</span><span class="cl-stitle">${esc(s.title)}</span><span class="cl-sacts"><button class="btn" onclick="setlistMove(${i},-1)"${i===0?' disabled':''}>▲</button><button class="btn" onclick="setlistMove(${i},1)"${i===_setlist.length-1?' disabled':''}>▼</button><button class="btn cl-del" onclick="setlistRemove(${i})">✕</button></span></div>`).join('')
+      ? _setlist.map((s,i)=>`<div class="cl-srow"><span class="cl-snum">${i+1}</span><span class="cl-keybox"><select class="cl-keysel" onchange="setlistMode(${i},this.value)" title="調性顯示"><option value="num"${s.mode==='num'?' selected':''}>級數</option><option value="male"${s.mode==='male'?' selected':''}>男Key</option><option value="female"${s.mode==='female'?' selected':''}>女Key</option></select><button class="cl-kbtn" onclick="setlistKey(${i},1)" title="升半音"${s.mode==='num'?' disabled':''}>▲</button><b class="cl-kval">${s.mode==='num'?'級數':(s.key||'—')}</b><button class="cl-kbtn" onclick="setlistKey(${i},-1)" title="降半音"${s.mode==='num'?' disabled':''}>▼</button></span><span class="cl-stitle">${esc(s.title)}</span><span class="cl-sacts"><button class="btn" onclick="setlistMove(${i},-1)"${i===0?' disabled':''}>▲</button><button class="btn" onclick="setlistMove(${i},1)"${i===_setlist.length-1?' disabled':''}>▼</button><button class="btn cl-del" onclick="setlistRemove(${i})">✕</button></span></div>`).join('')
       : '<div class="cl-empty">從下方歌單按「＋ 加入」選歌（可排前後順序）。</div>')
     +(_setlist.length?`<div class="cl-actions"><button class="btn btna" onclick="startService()">▶ 開始（依序載入）</button></div>`:'');
 }
@@ -1224,6 +1259,8 @@ async function startService(){
     r.data.sects.forEach((sec,idx)=>{
       const c=JSON.parse(JSON.stringify(sec)); c.id=nid++;
       c._song=r.title||('歌'+(si+1));   // 每段標記所屬歌名，標題列顯示，避免翻頁搞混
+      c._dispMode=it.mode||'num';       // 每首獨立調性顯示（級數/男/女）
+      c._dispKey=(it.mode==='num')?'':(it.key||'');   // 每首獨立 Key
       sects.push(c);
     });
   });
@@ -1547,6 +1584,7 @@ function bindSwipe(){
 /* ── PRINT ICON SHEET (A4, 4 segments / page) ── */
 async function printView(name){
   commitEdits();
+  window._printMode=true;   /* 收合沒用到的八分/十六分空格 */
   if(name==='icon')renderIcon(); else if(name==='chord')renderChord(); else if(name==='mix')renderMix(); else if(name==='mixp')renderMixP();
   if(document.fonts&&document.fonts.ready){ try{ await document.fonts.ready; }catch(e){} }
   const cls='print-'+name;
@@ -1558,6 +1596,7 @@ function printIcon(){ return printView('icon'); }   // 相容舊呼叫
 /* 經典 A4：自動縮放，盡量塞進一張 A4 */
 async function printFit(view){
   commitEdits();
+  window._printMode=true;   /* 收合沒用到的八分/十六分空格 */
   const cls='print-'+view;
   if(view==='chord')renderChord(); else if(view==='mix')renderMix(); else if(view==='mixp')renderMixP();
   if(document.fonts&&document.fonts.ready){ try{ await document.fonts.ready; }catch(e){} }
@@ -1579,7 +1618,7 @@ async function printFit(view){
   window._printCls=cls;
   setTimeout(()=>window.print(),60);
 }
-window.addEventListener('afterprint',()=>{ if(window._printCls){ document.body.classList.remove(window._printCls); } document.body.classList.remove('print-fit'); window._printCls=null; });
+window.addEventListener('afterprint',()=>{ if(window._printCls){ document.body.classList.remove(window._printCls); } document.body.classList.remove('print-fit'); window._printCls=null; if(window._printMode){ window._printMode=false; try{renderCharts();}catch(e){} } });
 
 /* ── OCR 圖片/PDF 辨識匯入 ── */
 function openOcr(){ document.getElementById('ocr-modal').style.display='flex'; }
@@ -1944,14 +1983,17 @@ function splitChordDisplay(text){
   return {root:m[1],suf:rest,bass:bass};
 }
 /* token → 顯示 HTML（休止 ✕ / 延續 · / 括號細分連音底線） */
-function renderBeatToken(tok){
+function renderBeatToken(tok,s){
   tok=String(tok||'').trim();
-  const keySemi=chordDisp==='num'?null:keyRootSemi(dispKeyName());
-  const pf=preferFlatForKey(dispKeyName());
+  /* 聚會服事：若該段帶有獨立 Key（_dispMode/_dispKey）就用該段的，否則用全域顯示設定 */
+  const mode=(s&&s._dispMode)?s._dispMode:chordDisp;
+  const keyName=(s&&s._dispMode)?(s._dispKey||''):dispKeyName();
+  const keySemi=mode==='num'?null:keyRootSemi(keyName);
+  const pf=preferFlatForKey(keyName);
   const one=(t)=>{ t=t.trim();
     if(t===''||t==='.')return '<span class="bt-sus">·</span>';
     if(t==='x'||t==='X')return '<span class="bt-rest">✕</span>';
-    const sp=splitChordDisplay(chordDisp==='num'?t:convChord(t,keySemi,pf));
+    const sp=splitChordDisplay(mode==='num'?t:convChord(t,keySemi,pf));
     return '<span class="bt-note">'+esc(sp.root)+(sp.suf?'<span class="bt-suf">'+esc(sp.suf)+'</span>':'')+(sp.bass?esc(sp.bass):'')+'</span>';
   };
   if(tok.startsWith('(')){
@@ -1972,10 +2014,17 @@ function beatEdit(cell){ if(_locked)return; const r=cell.querySelector('.beat-r'
 function beatSave(id,bar,beat,inp){
   setBeat(id,bar,beat,inp.value);
   const cell=inp.closest('.cbeatcol'), r=cell.querySelector('.beat-r');
-  r.innerHTML=renderBeatToken(inp.value); r.style.display=''; inp.style.display='none';
+  r.innerHTML=renderBeatToken(inp.value,sects.find(x=>x.id===id)); r.style.display=''; inp.style.display='none';
 }
 /* 每小節分割：1=四分(♩) / 2=八分(♪) / 4=十六分(♬)，格數 = 拍數 × 分割 */
 function subdivFactor(s,bar){ const f=Array.isArray(s.subdiv)?s.subdiv[bar]:1; return [1,2,4].includes(f)?f:1; }
+/* 輸出收合：找出能容納所有「有內容」細格的最小分割（空格/延續點不算內容） */
+function effSubdivFactor(pb,fac,bb){
+  if(fac<=1)return 1;
+  const needed=[]; for(let b=0;b<bb*fac;b++){ const v=String(pb[b]||'').trim(); if(v&&v!=='.') needed.push(b); }
+  for(const cf of [1,2,4]){ if(cf>fac)break; const step=fac/cf; if(needed.every(b=>b%step===0)) return cf; }
+  return fac;
+}
 function cellsForBar(s,bar){ return barBeats(s,bar)*subdivFactor(s,bar); }
 function setSubdiv(id,bar,f){
   const s=sects.find(x=>x.id===id); if(!s)return;
@@ -2016,15 +2065,20 @@ function barOneHtml(s,i,beats){
   const ctrlsOn=!s.ctrlOff;
   {
     const bb=barBeats(s,i);
-    const fac=subdivFactor(s,i);
+    let fac=subdivFactor(s,i);
+    let pb=getBeatData(s,i,bb*fac);
+    /* 列印/輸出時：把沒用到細分的小節收合，不顯示空的八分/十六分格 */
+    if(window._printMode && fac>1){
+      const cf=effSubdivFactor(pb,fac,bb);
+      if(cf<fac){ const step=fac/cf, np=[]; for(let j=0;j<bb*cf;j++)np.push(pb[j*step]||''); pb=np; fac=cf; }
+    }
     const cellsN=bb*fac;
-    const pb=getBeatData(s,i,cellsN);
     const fs = cellsN<=4?1 : cellsN<=6?0.82 : cellsN<=8?0.68 : cellsN<=12?0.54 : 0.44;
     let cols='';
     for(let b=0;b<cellsN;b++){
       const raw=pb[b]||'';
       const bp=Math.floor(b/fac)%4;   // 該拍格線樣式：單/雙/三/虛
-      cols+=`<div class="cbeatcol bl${bp}" onclick="beatEdit(this)"><span class="cbnum">${subdivLabel(b,fac)}</span><span class="beat-r">${renderBeatToken(raw)}</span><input class="beat-i" value="${esc(raw)}" style="display:none" onblur="beatSave(${s.id},${i},${b},this)" onkeydown="if(event.key==='Enter'){this.blur();}"></div>`;
+      cols+=`<div class="cbeatcol bl${bp}" onclick="beatEdit(this)"><span class="cbnum">${subdivLabel(b,fac)}</span><span class="beat-r">${renderBeatToken(raw,s)}</span><input class="beat-i" value="${esc(raw)}" style="display:none" onblur="beatSave(${s.id},${i},${b},this)" onkeydown="if(event.key==='Enter'){this.blur();}"></div>`;
     }
     const m=barMeter(s,i);
     const isLast=(i===bars-1);
@@ -2104,7 +2158,7 @@ function renderChord(){
     const bars=Math.max(1,parseInt(s.bars)||1);
     const ssc=_songStartSet.has(s.id)?' song-start':'';
     const head=`<div class="ccard-head" style="background:${col.fill};color:${col.stroke}">
-        <span class="chead-l">${s._song?`<span class="csong">🎵 ${esc(s._song)}</span>`:''}<span class="cname">${esc(s.name)}</span>${bprSelect(s)}<button class="ctrl-toggle" onclick="toggleCtrl(${s.id})" title="顯示/隱藏每個小節的控制鈕；隱藏時仍顯示已設定的值">控制項 ${s.ctrlOff?'關':'開'}</button><button class="ctrl-toggle" onclick="copySection(${s.id})" title="複製此段落全部內容（和弦／分割／重複／樂器…）">⧉ 複製</button><button class="ctrl-toggle" onclick="toggleFold(${s.id})" title="收合/展開此段（收合只留標題，方便專注其他段）">${s.fold?'▸ 展開':'▾ 收合'}</button>${_secClip?`<button class="ctrl-toggle paste" onclick="pasteSection(${s.id})" title="把已複製的「${esc(_secClip._name)}」貼到此段（覆蓋，名稱保留）">📋 貼上</button>`:''}</span>
+        <span class="chead-l">${s._song?`<span class="csong">🎵 ${esc(s._song)}${(s._dispMode&&s._dispMode!=='num'&&s._dispKey)?' · '+(s._dispMode==='female'?'女':'男')+esc(s._dispKey):''}</span>`:''}<span class="cname">${esc(s.name)}</span>${bprSelect(s)}<button class="ctrl-toggle" onclick="toggleCtrl(${s.id})" title="顯示/隱藏每個小節的控制鈕；隱藏時仍顯示已設定的值">控制項 ${s.ctrlOff?'關':'開'}</button><button class="ctrl-toggle" onclick="copySection(${s.id})" title="複製此段落全部內容（和弦／分割／重複／樂器…）">⧉ 複製</button><button class="ctrl-toggle" onclick="toggleFold(${s.id})" title="收合/展開此段（收合只留標題，方便專注其他段）">${s.fold?'▸ 展開':'▾ 收合'}</button>${_secClip?`<button class="ctrl-toggle paste" onclick="pasteSection(${s.id})" title="把已複製的「${esc(_secClip._name)}」貼到此段（覆蓋，名稱保留）">📋 貼上</button>`:''}</span>
         <span class="cmeta">${bars} Bar · ${esc(gv('s-time'))}</span>
       </div>`;
     if(s.fold) return `<div class="ccard folded${ssc}" style="border-color:${col.stroke}">${head}</div>`;
@@ -2175,7 +2229,7 @@ function mixCardHtml(s,plus){
   const cells=barCellsHtml(s,beats);
   const ins=mixInsBody(s,plus);
   const head=`<div class="ccard-head" style="background:${col.fill};color:${col.stroke}">
-        <span class="chead-l">${s._song?`<span class="csong">🎵 ${esc(s._song)}</span>`:''}<span class="cname">${esc(s.name)}</span>${bprSelect(s)}<button class="ctrl-toggle" onclick="toggleCtrl(${s.id})" title="顯示/隱藏每個小節的控制鈕；隱藏時仍顯示已設定的值">控制項 ${s.ctrlOff?'關':'開'}</button><button class="ctrl-toggle" onclick="copySection(${s.id})" title="複製此段落全部內容（和弦／分割／重複／樂器…）">⧉ 複製</button><button class="ctrl-toggle" onclick="toggleFold(${s.id})" title="收合/展開此段（收合只留標題，方便專注其他段）">${s.fold?'▸ 展開':'▾ 收合'}</button>${_secClip?`<button class="ctrl-toggle paste" onclick="pasteSection(${s.id})" title="把已複製的「${esc(_secClip._name)}」貼到此段（覆蓋，名稱保留）">📋 貼上</button>`:''}</span><span class="cmeta">${bars} Bar · ${esc(gv('s-time'))}</span>
+        <span class="chead-l">${s._song?`<span class="csong">🎵 ${esc(s._song)}${(s._dispMode&&s._dispMode!=='num'&&s._dispKey)?' · '+(s._dispMode==='female'?'女':'男')+esc(s._dispKey):''}</span>`:''}<span class="cname">${esc(s.name)}</span>${bprSelect(s)}<button class="ctrl-toggle" onclick="toggleCtrl(${s.id})" title="顯示/隱藏每個小節的控制鈕；隱藏時仍顯示已設定的值">控制項 ${s.ctrlOff?'關':'開'}</button><button class="ctrl-toggle" onclick="copySection(${s.id})" title="複製此段落全部內容（和弦／分割／重複／樂器…）">⧉ 複製</button><button class="ctrl-toggle" onclick="toggleFold(${s.id})" title="收合/展開此段（收合只留標題，方便專注其他段）">${s.fold?'▸ 展開':'▾ 收合'}</button>${_secClip?`<button class="ctrl-toggle paste" onclick="pasteSection(${s.id})" title="把已複製的「${esc(_secClip._name)}」貼到此段（覆蓋，名稱保留）">📋 貼上</button>`:''}</span><span class="cmeta">${bars} Bar · ${esc(gv('s-time'))}</span>
       </div>`;
   const note=s.notes?`<div class="ccard-note">⚑ ${esc(s.notes)}</div>`:'';
   const ssc=_songStartSet.has(s.id)?' song-start':'';
