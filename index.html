@@ -867,6 +867,9 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
     <div class="cl-body">
       <p class="cl-ver">開發時間軸：2026-06-17 ～ 2026-06-28（依使用回饋持續優化）</p>
 
+      <h4>和弦記號化簡 <span class="cl-date">2026-06-28</span></h4>
+      <ul><li>轉調顯示時，音名同時出現升＋降記號會自動相抵，只顯示化簡後的音名（D#ᵇ→D、C#ᵇ→C、E/G#ᵇ→E/G）</li></ul>
+
       <h4>中英文介面切換 <span class="cl-date">2026-06-28</span></h4>
       <ul><li>更新日誌鈕左邊新增語言鈕：預設中文顯示「EN」，按下切英文（變「中」）並記住；介面文字跟著切換，新渲染內容自動翻譯，列印輸出不受影響</li></ul>
 
@@ -1078,7 +1081,18 @@ const I18N={
  "短歌":"Short","讚美":"Praise","敬拜":"Worship",
  "服事清單（最多 6 首，可排序）":"Service list (max 6, sortable)","▶ 開始（依序載入）":"▶ Start (load in order)","＋ 加入":"＋ Add","載入":"Load","刪除":"Delete","歸類":"Tag",
  "一般使用者（瀏覽歌譜）":"Guest (browse)","管理者登入":"Admin Login","使用者登入":"User Login","聚會服事":"Service","登出":"Sign out","儲存目前到雲端":"Save current to cloud",
- "調性顯示":"Tonality"
+ "調性顯示":"Tonality",
+ "內層":"Inner","基底":"Base","全部":"All","色":"Color","和弦":"Chord","返回":"Back","關閉":"Close","登入":"Login","註冊":"Sign up","上一頁":"Prev","下一頁":"Next","未命名":"Untitled","新段落":"New Section","另存新檔":"Save As","複製全部":"Copy all","雲端歌庫":"Cloud Library","複製文字清單":"Copy Text List","上移":"Up","下移":"Down","管理員":"Admin","節奏組 ◈":"Rhythm ◈","📂 載入":"📂 Load","總小節":"Total bars","段落":"Sections",
+ "✓ 已複製":"✓ Copied","✓ 已載入":"✓ Loaded","✓ 已存檔":"✓ Saved","✓ 匯入成功！":"✓ Imported!",
+ "讀取中…":"Loading…","載入中…":"Loading…","儲存中…":"Saving…","處理中…":"Processing…","登入中…":"Signing in…","歸類中…":"Tagging…","準備中…":"Preparing…","產生中…":"Generating…","讀取 PDF…":"Reading PDF…","載入服事清單…":"Loading service list…","載入辨識引擎…":"Loading OCR engine…",
+ "彈法…":"Play…","段落備註…":"Section note…","辨識出的文字會出現在這裡，可手動修正後再解析…":"OCR text appears here; edit then parse…",
+ "不轉（保留和弦名）":"Keep chord names","依男 Key 轉級數":"By M Key → degrees","依女 Key 轉級數":"By F Key → degrees","和弦轉級數：":"Chords → degrees:",
+ "🔍 圖片 / PDF 辨識匯入":"🔍 Image / PDF OCR","🎼 圖示譜 PDF":"🎼 Icon Chart PDF","🎵 和弦譜 PDF":"🎵 Chord Chart PDF","🎼 混合 PDF（和弦＋樂器）":"🎼 Mix PDF (chords+parts)","🖼 PNG 展開示意圖":"🖼 PNG Flow Map","📦 PNG 方塊流程圖":"📦 PNG Block Flow","📊 CSV 樂器備註表":"📊 CSV Parts Table","📋 文字清單":"📋 Text List","↓ JSON 備份":"↓ JSON Backup","↓ Download JSON":"↓ Download JSON","↓ PNG 展開示意圖":"↓ PNG Flow Map","↓ PNG 方塊流程圖":"↓ PNG Block Flow",
+ "👤 使用者登入":"👤 User Login","🔑 管理者登入":"🔑 Admin Login","👁 一般使用者：瀏覽歌譜":"👁 Guest: browse","⛪ 聚會服事":"⛪ Service","☁ 儲存目前到雲端":"☁ Save to cloud","一般使用者 · 瀏覽歌譜":"Guest · browse",
+ "💾 儲存譜":"💾 Save Chart","請選擇儲存方式：":"Choose how to save:","💾 存到瀏覽器本機":"💾 Save to browser","📁 另存到資料夾（.json）":"📁 Save to folder (.json)","下次用同一台裝置開啟會自動載入":"Auto-loads next time on this device","可自選電腦資料夾位置存成檔案":"Pick a folder on your computer",
+ "（此段尚未填樂器配置）":"(No parts set yet)","點段落圓圈 → 右邊展開該段樂器配置（再點一次收起）":"Tap a section circle → its parts expand on the right (tap again to close)","點樂器挑要看的部位":"Tap an instrument to filter",
+ "升半音":"Semitone up","降半音":"Semitone down","拖曳移位":"Drag to move","拖曳調長度":"Drag to resize","接續到哪一段":"Continue to…","此小節接續到哪一段":"This bar continues to…","本小節拍號（點擊切換）":"Bar meter (click to cycle)","每排幾個小節":"Bars per row","放大檢視字級":"Increase font","縮小檢視字級":"Decrease font","展開更多功能":"More features","查看歷次更新內容":"View changelog","新增一條配器（內容與其他頁共用）":"Add a part (shared across views)","刪除此配器（各頁一起移除）":"Delete this part","一次設定所有段落每排小節數":"Set bars-per-row for all sections","自動縮放，盡量塞進一張 A4":"Auto-fit onto one A4",
+ "① 複製轉譜指令":"① Copy prompt","② 匯入 AI 轉譜結果":"② Import AI result","解析成段落 / 和弦":"Parse to sections / chords","🤖 AI 轉譜（最準・免費・免 API key）":"🤖 AI transcribe (best · free · no API key)"
 };
 let _i18nEn=null;
 function i18nEnMap(){ if(!_i18nEn){ _i18nEn={}; for(const k in I18N){ if(_i18nEn[I18N[k]]==null)_i18nEn[I18N[k]]=k; } } return _i18nEn; }
@@ -2035,6 +2049,15 @@ function convChord(tok,keySemi,pf){
   if(bass){ const bm=bass.match(/^([#b]?)([1-7])$/); out+='/'+(bm?degToNoteName(keySemi,+bm[2],bm[1],pfFor(bm[1])):bass); }
   return out;
 }
+/* 記號化簡：把音名字母後相鄰的升降記號相抵（D#＋b→D、E#＋b→E）；淨值±1保留單一記號 */
+function foldAcc(s){
+  return String(s).replace(/^([A-G])([#b]+)/, (m,L,acc)=>{
+    let net=0; for(const c of acc){ net += c==='#'?1:-1; }
+    const na = net>0?'#'.repeat(net) : net<0?'b'.repeat(-net) : '';
+    return L+na;
+  });
+}
+function foldChordAcc(name){ return String(name).split('/').map(foldAcc).join('/'); }
 /* 把和弦拆成 根音 / 品質後綴 / 轉位低音（後綴顯示小字） */
 function splitChordDisplay(text){
   const m=text.match(/^([#b]?[1-7])(.*)$/)||text.match(/^([A-G][#b]?)(.*)$/);
@@ -2054,7 +2077,7 @@ function renderBeatToken(tok,s){
   const one=(t)=>{ t=t.trim();
     if(t===''||t==='.')return '<span class="bt-sus">·</span>';
     if(t==='x'||t==='X')return '<span class="bt-rest">✕</span>';
-    const sp=splitChordDisplay(mode==='num'?t:convChord(t,keySemi,pf));
+    const sp=splitChordDisplay(mode==='num'?t:foldChordAcc(convChord(t,keySemi,pf)));
     return '<span class="bt-note">'+esc(sp.root)+(sp.suf?'<span class="bt-suf">'+esc(sp.suf)+'</span>':'')+(sp.bass?esc(sp.bass):'')+'</span>';
   };
   if(tok.startsWith('(')){
