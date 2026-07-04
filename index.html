@@ -867,6 +867,9 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
     <div class="cl-body">
       <p class="cl-ver">開發時間軸：2026-06-17 ～ 2026-06-28（依使用回饋持續優化）</p>
 
+      <h4>經典A4 盡量一頁 <span class="cl-date">2026-06-28</span></h4>
+      <ul><li>經典A4 自動挑「每排小節數」找能塞一頁且字最大的版面，搭配重複收 ×N 與空細分收合，任何歌譜盡量整合成一頁；段落標題並標上歌名（🎵）</li></ul>
+
       <h4>經典A4 重複收合 <span class="cl-date">2026-06-28</span></h4>
       <ul><li>和弦譜「經典A4」列印時，連續完全相同的小節自動合併成一格 ×N（沿用重複徽章），縮短長度盡量塞一頁；有接續/已手動重複的不合併，螢幕與一般列印維持原樣</li></ul>
 
@@ -1675,28 +1678,45 @@ async function printFit(view){
   commitEdits();
   window._printMode=true;   /* 收合沒用到的八分/十六分空格 */
   window._printRepeat=true; /* 經典A4：連續相同小節收合成 ×N，盡量塞一頁 */
+  window._printSongTitle=(gv('s-title')||'').trim();   /* 經典A4：段落標題標上歌名（比照聚會模式） */
   const cls='print-'+view;
-  if(view==='chord')renderChord(); else if(view==='mix')renderMix(); else if(view==='mixp')renderMixP();
-  if(document.fonts&&document.fonts.ready){ try{ await document.fonts.ready; }catch(e){} }
-  const src=document.getElementById(view==='chord'?'chord-content':view==='mixp'?'mixp-content':'mix-content');
   const PH=1040;   // A4 直式可列印高度（約 px @96dpi，已扣邊界）
-  let scale=1;
-  try{
+  const srcId=view==='chord'?'chord-content':view==='mixp'?'mixp-content':'mix-content';
+  const renderView=()=>{ if(view==='chord')renderChord(); else if(view==='mix')renderMix(); else if(view==='mixp')renderMixP(); };
+  const measureH=()=>{ const src=document.getElementById(srcId); if(!src)return PH;
     const clone=src.cloneNode(true);
     clone.querySelectorAll('.beat-i').forEach(n=>n.remove());
     clone.querySelectorAll('.icpage').forEach(p=>{p.style.minWidth='0';p.style.width='100%';});
     clone.style.cssText='position:fixed;left:-99999px;top:0;width:720px;display:block;';
-    document.body.appendChild(clone);
-    const h=clone.scrollHeight||PH;
-    document.body.removeChild(clone);
-    scale=Math.max(0.45,Math.min(1, PH/h));
+    document.body.appendChild(clone); const h=clone.scrollHeight||PH; document.body.removeChild(clone); return h; };
+  renderView();
+  if(document.fonts&&document.fonts.ready){ try{ await document.fonts.ready; }catch(e){} }
+  let scale=1;
+  try{
+    if(view==='chord'){
+      // 嘗試不同「每排小節數」，由小(字大)到大，挑第一個塞得下一頁的；都塞不下就用最矮版面再縮到一頁
+      const cands=[0,2,3,4,5,6,7,8];   // 0 = 各段原設定
+      let chosen, fb={bpr:null,h:Infinity};
+      for(const bpr of cands){
+        const bv=bpr||null;
+        window._printBPR=bv; renderView();
+        const h=measureH();
+        if(h<fb.h) fb={bpr:bv,h};
+        if(h<=PH){ chosen=bv; break; }   // 由小排到大，第一個塞得下（字最大）
+      }
+      if(chosen!==undefined){ window._printBPR=chosen; scale=1; }
+      else { window._printBPR=fb.bpr; scale=Math.min(1, PH/fb.h); }   // 都塞不下→最矮版面再縮到一頁
+      renderView();
+    } else {
+      const h=measureH(); scale=Math.min(1, PH/h);
+    }
   }catch(e){}
   document.documentElement.style.setProperty('--fit-scale', scale.toFixed(3));
   document.body.classList.add(cls,'print-fit');
   window._printCls=cls;
   setTimeout(()=>window.print(),60);
 }
-window.addEventListener('afterprint',()=>{ if(window._printCls){ document.body.classList.remove(window._printCls); } document.body.classList.remove('print-fit'); window._printCls=null; const was=window._printMode||window._printRepeat; window._printMode=false; window._printRepeat=false; if(was){ try{renderCharts();}catch(e){} } });
+window.addEventListener('afterprint',()=>{ if(window._printCls){ document.body.classList.remove(window._printCls); } document.body.classList.remove('print-fit'); window._printCls=null; const was=window._printMode||window._printRepeat||window._printBPR||window._printSongTitle; window._printMode=false; window._printRepeat=false; window._printBPR=null; window._printSongTitle=''; if(was){ try{renderCharts();}catch(e){} } });
 
 /* ── OCR 圖片/PDF 辨識匯入 ── */
 function openOcr(){ document.getElementById('ocr-modal').style.display='flex'; }
@@ -2001,7 +2021,7 @@ function bprSelect(s){
   return `<select class="cbpr-sel" onchange="setSecBPR(${s.id},this.value)" title="每排幾個小節">`+
     BPR_LIST.map(v=>`<option value="${v}"${cur===v?' selected':''}>${v===''?'每排:自動':'每排:'+v}</option>`).join('')+`</select>`;
 }
-function barGridStyle(s){ const n=parseInt(s.barsPerRow)||0; return n>0?`style="grid-template-columns:repeat(${n},1fr)"`:''; }
+function barGridStyle(s){ const n=(window._printBPR||0)||(parseInt(s.barsPerRow)||0); return n>0?`style="grid-template-columns:repeat(${n},1fr)"`:''; }
 function setSecBPR(id,v){ const s=sects.find(x=>x.id===id); if(!s)return; s.barsPerRow= v?parseInt(v):''; autoSave(); renderCharts(); }
 /* 一次套用所有段落 */
 function setAllBPR(v){ sects.forEach(s=>{ s.barsPerRow = v?parseInt(v):''; }); autoSave(); renderCharts(); }
@@ -2267,7 +2287,7 @@ function renderChord(){
     const bars=Math.max(1,parseInt(s.bars)||1);
     const ssc=_songStartSet.has(s.id)?' song-start':'';
     const head=`<div class="ccard-head" style="background:${col.fill};color:${col.stroke}">
-        <span class="chead-l">${s._song?`<span class="csong">🎵 ${esc(s._song)}${(s._dispMode&&s._dispMode!=='num'&&s._dispKey)?' · '+(s._dispMode==='female'?'女':'男')+esc(s._dispKey):''}</span>`:''}<span class="cname">${esc(s.name)}</span>${bprSelect(s)}<button class="ctrl-toggle" onclick="toggleCtrl(${s.id})" title="顯示/隱藏每個小節的控制鈕；隱藏時仍顯示已設定的值">控制項 ${s.ctrlOff?'關':'開'}</button><button class="ctrl-toggle" onclick="copySection(${s.id})" title="複製此段落全部內容（和弦／分割／重複／樂器…）">⧉ 複製</button><button class="ctrl-toggle" onclick="toggleFold(${s.id})" title="收合/展開此段（收合只留標題，方便專注其他段）">${s.fold?'▸ 展開':'▾ 收合'}</button>${_secClip?`<button class="ctrl-toggle paste" onclick="pasteSection(${s.id})" title="把已複製的「${esc(_secClip._name)}」貼到此段（覆蓋，名稱保留）">📋 貼上</button>`:''}</span>
+        <span class="chead-l">${(s._song||window._printSongTitle)?`<span class="csong">🎵 ${esc(s._song||window._printSongTitle)}${(s._dispMode&&s._dispMode!=='num'&&s._dispKey)?' · '+(s._dispMode==='female'?'女':'男')+esc(s._dispKey):''}</span>`:''}<span class="cname">${esc(s.name)}</span>${bprSelect(s)}<button class="ctrl-toggle" onclick="toggleCtrl(${s.id})" title="顯示/隱藏每個小節的控制鈕；隱藏時仍顯示已設定的值">控制項 ${s.ctrlOff?'關':'開'}</button><button class="ctrl-toggle" onclick="copySection(${s.id})" title="複製此段落全部內容（和弦／分割／重複／樂器…）">⧉ 複製</button><button class="ctrl-toggle" onclick="toggleFold(${s.id})" title="收合/展開此段（收合只留標題，方便專注其他段）">${s.fold?'▸ 展開':'▾ 收合'}</button>${_secClip?`<button class="ctrl-toggle paste" onclick="pasteSection(${s.id})" title="把已複製的「${esc(_secClip._name)}」貼到此段（覆蓋，名稱保留）">📋 貼上</button>`:''}</span>
         <span class="cmeta">${bars} Bar · ${esc(gv('s-time'))}</span>
       </div>`;
     if(s.fold) return `<div class="ccard folded${ssc}" style="border-color:${col.stroke}">${head}</div>`;
@@ -2338,7 +2358,7 @@ function mixCardHtml(s,plus){
   const cells=barCellsHtml(s,beats);
   const ins=mixInsBody(s,plus);
   const head=`<div class="ccard-head" style="background:${col.fill};color:${col.stroke}">
-        <span class="chead-l">${s._song?`<span class="csong">🎵 ${esc(s._song)}${(s._dispMode&&s._dispMode!=='num'&&s._dispKey)?' · '+(s._dispMode==='female'?'女':'男')+esc(s._dispKey):''}</span>`:''}<span class="cname">${esc(s.name)}</span>${bprSelect(s)}<button class="ctrl-toggle" onclick="toggleCtrl(${s.id})" title="顯示/隱藏每個小節的控制鈕；隱藏時仍顯示已設定的值">控制項 ${s.ctrlOff?'關':'開'}</button><button class="ctrl-toggle" onclick="copySection(${s.id})" title="複製此段落全部內容（和弦／分割／重複／樂器…）">⧉ 複製</button><button class="ctrl-toggle" onclick="toggleFold(${s.id})" title="收合/展開此段（收合只留標題，方便專注其他段）">${s.fold?'▸ 展開':'▾ 收合'}</button>${_secClip?`<button class="ctrl-toggle paste" onclick="pasteSection(${s.id})" title="把已複製的「${esc(_secClip._name)}」貼到此段（覆蓋，名稱保留）">📋 貼上</button>`:''}</span><span class="cmeta">${bars} Bar · ${esc(gv('s-time'))}</span>
+        <span class="chead-l">${(s._song||window._printSongTitle)?`<span class="csong">🎵 ${esc(s._song||window._printSongTitle)}${(s._dispMode&&s._dispMode!=='num'&&s._dispKey)?' · '+(s._dispMode==='female'?'女':'男')+esc(s._dispKey):''}</span>`:''}<span class="cname">${esc(s.name)}</span>${bprSelect(s)}<button class="ctrl-toggle" onclick="toggleCtrl(${s.id})" title="顯示/隱藏每個小節的控制鈕；隱藏時仍顯示已設定的值">控制項 ${s.ctrlOff?'關':'開'}</button><button class="ctrl-toggle" onclick="copySection(${s.id})" title="複製此段落全部內容（和弦／分割／重複／樂器…）">⧉ 複製</button><button class="ctrl-toggle" onclick="toggleFold(${s.id})" title="收合/展開此段（收合只留標題，方便專注其他段）">${s.fold?'▸ 展開':'▾ 收合'}</button>${_secClip?`<button class="ctrl-toggle paste" onclick="pasteSection(${s.id})" title="把已複製的「${esc(_secClip._name)}」貼到此段（覆蓋，名稱保留）">📋 貼上</button>`:''}</span><span class="cmeta">${bars} Bar · ${esc(gv('s-time'))}</span>
       </div>`;
   const note=s.notes?`<div class="ccard-note">⚑ ${esc(s.notes)}</div>`:'';
   const ssc=_songStartSet.has(s.id)?' song-start':'';
