@@ -4,6 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Worship Arranger v3.5</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Worship Arranger v3.5</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyBpZD0iX+WcluWxpF8xIiBkYXRhLW5hbWU9IuWcluWxpCAxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDI0IDEwMjQiPgogIDxkZWZzPgogICAgPHN0eWxlPgogICAgICAuY2xzLTEgewogICAgICAgIGZpbGw6ICNmY2M5MTg7CiAgICAgIH0KICAgIDwvc3R5bGU+CiAgPC9kZWZzPgogIDxnIGlkPSJf55Sf5oiQ5byP54mp5Lu2IiBkYXRhLW5hbWU9IueUn+aIkOW8j+eJqeS7tiI+CiAgICA8cGF0aCBjbGFzcz0iY2xzLTEiIGQ9Ik00ODQuMDgsMzUxLjY2bC0yLjcyLDkxLjg1LTQuMjcsMTEzLjYtNC4wNywxMDIuNDctMy40LDEwMS4wMmMtLjUsMTQuODUtNC4zMywyNy45NC05Ljg5LDQxLjQxLTkuODIsMjMuNzktMjQuMjIsNDMuNDktNDIuNjMsNjEuNDQtNTUuMDYsNTMuNjktMTMyLjQ1LDc4Ljk1LTIwOC45NCw3Mi45Ny0zOS45NS0zLjEyLTgzLjE5LTIxLjAxLTEwMi41Ni01Ni44LTYuODctMTIuNy0xMS40Ny0yNy4zNC0xMS4yMS00Mi4xLDEuNTgtODYuNjEsOTcuMTEtMTU1LjM2LDE3NS4xOS0xNzYuODksNDIuNjMtMTEuODEsODYuNDYtMTQuMzQsMTMxLjMtM2wtNi45NC0yMDMuNjItMi42OS04MS4xOS05My4yNSwyNC4xLTg5LjMyLDIzLjk2LTYuMjMtMTMxLjA2LDkyLjUxLTIyLjYxLDkyLjY4LTIxLjU2LTUuMzctMTMxLjk4LDExNC4wOS0yNi45Ni03LjMyLDEzNy4zMyw4My42Ny0xNy45Miw4NS4xNi0xNy45MSwxNTguMDctMjYuNjksNjQuNDQtOC4xOS0zLjM2LDYxLjk3LTcuODcsMTYyLjY2LTEwLjc4LDI1MC4yMy00LjA5LDU4LjcyYy0xLjQ1LDIwLjc0LTExLjA5LDM5LjA5LTIyLjk0LDU2LjAyLTE4LjAyLDI1Ljc2LTQyLjAxLDQ1LjI3LTY5LjQ1LDYwLjM4LTI5LjQ0LDE2LjIxLTYwLjQ3LDI1LjQ0LTkzLjkxLDI4LjQ1LTIxLjg5LDEuOTctNDIuODgsMi4xNS02NC4zNS0zLjAyLTQzLjk4LTEwLjYtNzcuNTMtNDQuMzMtNzQuMi05MS4yMywzLjk1LTU1LjYsNTEuNjMtOTkuMTgsOTguNzYtMTI0LjEyLDQ0LjIyLTIzLjQsOTkuNDQtMzMuNjgsMTQ4LjE1LTIyLjYxbC4xLTQ4LjkzLS4wNi0yMTEuNzguMjUtMzguMTYtMTAzLjcsMTkuNzctNzEuOTMsMTQuNzUtMTE2Ljg2LDI1LjI1WiIvPgogIDwvZz4KPC9zdmc+">
 <style>
@@ -587,7 +593,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   body.print-mix .icpage{display:block!important;min-width:0!important;}
   body.print-mix .mixpage-stack{display:block!important;}
   body.print-mix .mixpage-stack>.ccard{margin-bottom:6px;}
-  body.print-chord .ccard,body.print-mix .ccard{background:#fff!important;page-break-inside:avoid;border-width:2px;margin-bottom:6px;}
+  body.print-chord .ccard,body.print-mix .ccard{background:#fff!important;page-break-inside:avoid!important;break-inside:avoid!important;-webkit-column-break-inside:avoid!important;border-width:2px;margin-bottom:6px;}
   body.print-chord .cbar,body.print-mix .cbar{background:#fff!important;}
   body.print-chord .cbchord,body.print-mix .cbchord{color:#111!important;}
   body.print-chord .cbar2,body.print-mix .cbar2{background:#fff!important;border-color:#999!important;}
@@ -596,8 +602,11 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   body.print-chord .beat-r,body.print-mix .beat-r,body.print-mixp .beat-r,
   body.print-chord .bt-suf,body.print-mix .bt-suf,body.print-mixp .bt-suf{color:#111!important;}
   body.print-chord .bt-rest,body.print-mix .bt-rest,body.print-mixp .bt-rest{color:#222!important;}
-  body.print-chord .bt-sus,body.print-mix .bt-sus,body.print-mixp .bt-sus{color:#555!important;opacity:1!important;}
-  body.print-chord .cbnum,body.print-mix .cbnum,body.print-mixp .cbnum{color:#555!important;opacity:1!important;}
+  body.print-chord .bt-sus,body.print-mix .bt-sus,body.print-mixp .bt-sus{color:#b3b3b3!important;opacity:1!important;font-size:0.78em!important;}
+  body.print-chord .cbnum,body.print-mix .cbnum,body.print-mixp .cbnum{color:#c4c4c4!important;opacity:1!important;font-size:0.42em!important;}
+  /* 和弦符號放大加黑，讓譜面好辨識（和弦譜／混合列印） */
+  body.print-chord .bt-note,body.print-mix .bt-note{font-size:1.22em!important;font-weight:800!important;}
+  body.print-chord .beat-r,body.print-mix .beat-r{min-height:1.5em!important;}
   body.print-chord .cmeter.on,body.print-mix .cmeter.on{background:#e0b84a!important;color:#000!important;}
   body.print-chord .cmeter.off,body.print-mix .cmeter.off{display:none!important;}
   body.print-chord .cgoto-badge.on,body.print-mix .cgoto-badge.on{background:#d4564a!important;color:#fff!important;}
@@ -616,7 +625,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   body.svc-pagebreak.print-mixp .ccard.song-start{page-break-before:always;break-before:page;}
   body.print-mixp .mixpage-stack{display:block!important;}
   body.print-mixp .mixpage-stack>.ccard{margin-bottom:6px;}
-  body.print-mixp .ccard{background:#fff!important;page-break-inside:avoid;border-width:2px;margin-bottom:6px;}
+  body.print-mixp .ccard{background:#fff!important;page-break-inside:avoid!important;break-inside:avoid!important;-webkit-column-break-inside:avoid!important;border-width:2px;margin-bottom:6px;}
   body.print-mixp .cbeatcol{border-color:#bbb!important;}
   body.print-mixp .cbnum{color:#555!important;opacity:1!important;}
   body.print-mixp .cmeter.on{background:#e0b84a!important;color:#000!important;}
@@ -645,7 +654,9 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   body.print-fit #vp-chord>.chord-content,
   body.print-fit #vp-mix>.icpages,
   body.print-fit #vp-mixp>.icpages{ zoom:var(--fit-scale,1); }
-  body.print-fit .ccard{page-break-inside:auto!important;}
+  body.print-fit .ccard{page-break-inside:avoid!important;break-inside:avoid!important;-webkit-column-break-inside:avoid!important;}
+  /* 每個段落內部的每一排也不要被切開 */
+  body[class*="print-"] .arr-rowblock{break-inside:avoid!important;page-break-inside:avoid!important;}
 }
 </style>
 </head>
@@ -866,6 +877,10 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
     <div class="cl-head"><span>📝 更新日誌 · Worship Arranger</span><button class="btn" onclick="hideChangelog()">✕</button></div>
     <div class="cl-body">
       <p class="cl-ver">開發時間軸：2026-06-17 ～ 2026-06-28（依使用回饋持續優化）</p>
+
+      <h4>列印段落不斷頁 ＋ 和弦更清楚 <span class="cl-date">2026-06-29</span></h4>
+      <ul><li>修正段落被切在兩頁之間 → 段落一律不跨頁（break-inside:avoid，行動版列印也生效），每段完整</li>
+      <li>經典A4 加可讀下限：多首串接不硬壓成一頁，改為可讀分頁；列印時和弦放大加黑、拍號數字與延續點淡化，更好辨識</li></ul>
 
       <h4>經典A4 盡量一頁 <span class="cl-date">2026-06-28</span></h4>
       <ul><li>經典A4 自動挑「每排小節數」找能塞一頁且字最大的版面，搭配重複收 ×N 與空細分收合，任何歌譜盡量整合成一頁；段落標題並標上歌名（🎵）</li></ul>
@@ -1705,7 +1720,7 @@ async function printFit(view){
         if(h<=PH){ chosen=bv; break; }   // 由小排到大，第一個塞得下（字最大）
       }
       if(chosen!==undefined){ window._printBPR=chosen; scale=1; }
-      else { window._printBPR=fb.bpr; scale=Math.min(1, PH/fb.h); }   // 都塞不下→最矮版面再縮到一頁
+      else { window._printBPR=fb.bpr; scale=Math.max(0.5, Math.min(1, PH/fb.h)); }   // 塞不下→縮到可讀下限；超過就分頁（段落保持完整）
       renderView();
     } else {
       const h=measureH(); scale=Math.min(1, PH/h);
