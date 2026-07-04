@@ -4,12 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Worship Arranger v3.5</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><!DOCTYPE html>
-<html lang="zh-TW">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Worship Arranger v3.5</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyBpZD0iX+WcluWxpF8xIiBkYXRhLW5hbWU9IuWcluWxpCAxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDI0IDEwMjQiPgogIDxkZWZzPgogICAgPHN0eWxlPgogICAgICAuY2xzLTEgewogICAgICAgIGZpbGw6ICNmY2M5MTg7CiAgICAgIH0KICAgIDwvc3R5bGU+CiAgPC9kZWZzPgogIDxnIGlkPSJf55Sf5oiQ5byP54mp5Lu2IiBkYXRhLW5hbWU9IueUn+aIkOW8j+eJqeS7tiI+CiAgICA8cGF0aCBjbGFzcz0iY2xzLTEiIGQ9Ik00ODQuMDgsMzUxLjY2bC0yLjcyLDkxLjg1LTQuMjcsMTEzLjYtNC4wNywxMDIuNDctMy40LDEwMS4wMmMtLjUsMTQuODUtNC4zMywyNy45NC05Ljg5LDQxLjQxLTkuODIsMjMuNzktMjQuMjIsNDMuNDktNDIuNjMsNjEuNDQtNTUuMDYsNTMuNjktMTMyLjQ1LDc4Ljk1LTIwOC45NCw3Mi45Ny0zOS45NS0zLjEyLTgzLjE5LTIxLjAxLTEwMi41Ni01Ni44LTYuODctMTIuNy0xMS40Ny0yNy4zNC0xMS4yMS00Mi4xLDEuNTgtODYuNjEsOTcuMTEtMTU1LjM2LDE3NS4xOS0xNzYuODksNDIuNjMtMTEuODEsODYuNDYtMTQuMzQsMTMxLjMtM2wtNi45NC0yMDMuNjItMi42OS04MS4xOS05My4yNSwyNC4xLTg5LjMyLDIzLjk2LTYuMjMtMTMxLjA2LDkyLjUxLTIyLjYxLDkyLjY4LTIxLjU2LTUuMzctMTMxLjk4LDExNC4wOS0yNi45Ni03LjMyLDEzNy4zMyw4My42Ny0xNy45Miw4NS4xNi0xNy45MSwxNTguMDctMjYuNjksNjQuNDQtOC4xOS0zLjM2LDYxLjk3LTcuODcsMTYyLjY2LTEwLjc4LDI1MC4yMy00LjA5LDU4LjcyYy0xLjQ1LDIwLjc0LTExLjA5LDM5LjA5LTIyLjk0LDU2LjAyLTE4LjAyLDI1Ljc2LTQyLjAxLDQ1LjI3LTY5LjQ1LDYwLjM4LTI5LjQ0LDE2LjIxLTYwLjQ3LDI1LjQ0LTkzLjkxLDI4LjQ1LTIxLjg5LDEuOTctNDIuODgsMi4xNS02NC4zNS0zLjAyLTQzLjk4LTEwLjYtNzcuNTMtNDQuMzMtNzQuMi05MS4yMywzLjk1LTU1LjYsNTEuNjMtOTkuMTgsOTguNzYtMTI0LjEyLDQ0LjIyLTIzLjQsOTkuNDQtMzMuNjgsMTQ4LjE1LTIyLjYxbC4xLTQ4LjkzLS4wNi0yMTEuNzguMjUtMzguMTYtMTAzLjcsMTkuNzctNzEuOTMsMTQuNzUtMTE2Ljg2LDI1LjI1WiIvPgogIDwvZz4KPC9zdmc+">
 <style>
@@ -878,6 +872,9 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
     <div class="cl-body">
       <p class="cl-ver">開發時間軸：2026-06-17 ～ 2026-06-28（依使用回饋持續優化）</p>
 
+      <h4>聚會模式輸出維持原樣 <span class="cl-date">2026-06-29</span></h4>
+      <ul><li>聚會模式的和弦譜/混合經典A4 不再重排或收合，回到資料庫原始段落安排；段落一律不跨頁、必要時可讀分頁；單首歌仍維持智慧壓一頁</li></ul>
+
       <h4>列印段落不斷頁 ＋ 和弦更清楚 <span class="cl-date">2026-06-29</span></h4>
       <ul><li>修正段落被切在兩頁之間 → 段落一律不跨頁（break-inside:avoid，行動版列印也生效），每段完整</li>
       <li>經典A4 加可讀下限：多首串接不硬壓成一頁，改為可讀分頁；列印時和弦放大加黑、拍號數字與延續點淡化，更好辨識</li></ul>
@@ -1691,9 +1688,10 @@ function printIcon(){ return printView('icon'); }   // 相容舊呼叫
 /* 經典 A4：自動縮放，盡量塞進一張 A4 */
 async function printFit(view){
   commitEdits();
-  window._printMode=true;   /* 收合沒用到的八分/十六分空格 */
-  window._printRepeat=true; /* 經典A4：連續相同小節收合成 ×N，盡量塞一頁 */
-  window._printSongTitle=(gv('s-title')||'').trim();   /* 經典A4：段落標題標上歌名（比照聚會模式） */
+  const svc = Array.isArray(sects) && sects.some(s=>s&&s._song);   // 聚會模式：維持資料庫原始段落安排，不重排也不收合
+  window._printMode=!svc;   /* 收合沒用到的八分/十六分空格（聚會模式關閉，維持原貌） */
+  window._printRepeat=!svc; /* 連續相同小節收合成 ×N（聚會模式關閉） */
+  window._printSongTitle=(gv('s-title')||'').trim();   /* 段落標題標上歌名（比照聚會模式） */
   const cls='print-'+view;
   const PH=1040;   // A4 直式可列印高度（約 px @96dpi，已扣邊界）
   const srcId=view==='chord'?'chord-content':view==='mixp'?'mixp-content':'mix-content';
@@ -1708,8 +1706,8 @@ async function printFit(view){
   if(document.fonts&&document.fonts.ready){ try{ await document.fonts.ready; }catch(e){} }
   let scale=1;
   try{
-    if(view==='chord'){
-      // 嘗試不同「每排小節數」，由小(字大)到大，挑第一個塞得下一頁的；都塞不下就用最矮版面再縮到一頁
+    if(view==='chord' && !svc){
+      // 單首歌：嘗試不同「每排小節數」，由小(字大)到大，挑第一個塞得下一頁的；都塞不下就用最矮版面再縮到一頁
       const cands=[0,2,3,4,5,6,7,8];   // 0 = 各段原設定
       let chosen, fb={bpr:null,h:Infinity};
       for(const bpr of cands){
@@ -1723,7 +1721,7 @@ async function printFit(view){
       else { window._printBPR=fb.bpr; scale=Math.max(0.5, Math.min(1, PH/fb.h)); }   // 塞不下→縮到可讀下限；超過就分頁（段落保持完整）
       renderView();
     } else {
-      const h=measureH(); scale=Math.min(1, PH/h);
+      const h=measureH(); scale=Math.max(0.5, Math.min(1, PH/h));   // 聚會/混合：縮到可讀下限；超過就分頁（段落完整）
     }
   }catch(e){}
   document.documentElement.style.setProperty('--fit-scale', scale.toFixed(3));
