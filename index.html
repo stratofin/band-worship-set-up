@@ -767,7 +767,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
     <!-- CHORD CHART VIEW -->
     <div id="vp-chord" style="display:none">
       <div class="print-head"></div>
-      <div class="view-print"><button class="btn lock-btn" onclick="toggleLock()" title="鎖定：開＝只能看譜與左右滑頁、禁止任何編輯；關＝可編輯">🔓 鎖定 關</button><button class="btn svc-only svc-pb-btn" onclick="toggleSvcPB(this)" title="聚會服事列印：開＝每首歌各自從新頁開始；關＝段落連續接著印">📄 聚會分頁 關</button><button class="btn" onclick="openOcr()">🔍 辨識匯入</button><button class="btn" onclick="printFit('chord')" title="自動縮放，盡量塞進一張 A4">📄 經典A4</button><button class="btn btna" onclick="printView('chord')">🖨 列印 / 存 PDF</button></div>
+      <div class="view-print"><button class="btn lock-btn" onclick="toggleLock()" title="鎖定：開＝只能看譜與左右滑頁、禁止任何編輯；關＝可編輯">🔓 鎖定 關</button><button class="btn svc-only svc-pb-btn" onclick="toggleSvcPB(this)" title="聚會服事列印：開＝每首歌各自從新頁開始；關＝段落連續接著印">📄 聚會分頁 關</button><button class="btn" onclick="openOcr()">🔍 辨識匯入</button><button class="btn" onclick="openFitMenu('chord')" title="自動縮放，盡量塞進一張 A4；可選輸出字級">📄 經典A4</button><button class="btn btna" onclick="printView('chord')">🖨 列印 / 存 PDF</button></div>
       <div class="icon-toolbar">
         <label class="ic-hint">拍號 <select class="ic-sel" id="chord-timesig" onchange="setTimeSig(this.value)"></select></label>
         <label class="ic-hint">顯示 <select class="ic-sel" id="chord-disp" onchange="setChordDisp(this.value)"><option value="num">級數</option><option value="male">和弦名(男Key)</option><option value="female">和弦名(女Key)</option></select></label>
@@ -782,7 +782,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
     <!-- MIX+ VIEW (大格 + 樂器指令在控制區) -->
     <div id="vp-mixp" style="display:none">
       <div class="print-head"></div>
-      <div class="view-print"><button class="btn lock-btn" onclick="toggleLock()" title="鎖定：開＝只能看譜與左右滑頁、禁止任何編輯；關＝可編輯">🔓 鎖定 關</button><button class="btn svc-only svc-pb-btn" onclick="toggleSvcPB(this)" title="聚會服事列印：開＝每首歌各自從新頁開始；關＝段落連續接著印">📄 聚會分頁 關</button><button class="btn" onclick="openOcr()">🔍 辨識匯入</button><button class="btn" onclick="printFit('mixp')" title="自動縮放，盡量塞進一張 A4">📄 經典A4</button><button class="btn btna" onclick="printView('mixp')">🖨 列印 / 存 PDF</button></div>
+      <div class="view-print"><button class="btn lock-btn" onclick="toggleLock()" title="鎖定：開＝只能看譜與左右滑頁、禁止任何編輯；關＝可編輯">🔓 鎖定 關</button><button class="btn svc-only svc-pb-btn" onclick="toggleSvcPB(this)" title="聚會服事列印：開＝每首歌各自從新頁開始；關＝段落連續接著印">📄 聚會分頁 關</button><button class="btn" onclick="openOcr()">🔍 辨識匯入</button><button class="btn" onclick="openFitMenu('mixp')" title="自動縮放，盡量塞進一張 A4；可選輸出字級">📄 經典A4</button><button class="btn btna" onclick="printView('mixp')">🖨 列印 / 存 PDF</button></div>
       <div class="icon-toolbar">
         <button class="ic-navbtn" id="mixp-prev" onclick="mixpNav(-1)" title="上一頁">‹</button>
         <span class="ic-pageind" id="mixp-pageind">1 / 1</span>
@@ -875,6 +875,9 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
     <div class="cl-head"><span>📝 更新日誌 · Worship Arranger</span><button class="btn" onclick="hideChangelog()">✕</button></div>
     <div class="cl-body">
       <p class="cl-ver">開發時間軸：2026-06-17 ～ 2026-07-06（依使用回饋持續優化）</p>
+
+      <h4>經典A4 輸出字級可選 <span class="cl-date">2026-07-06</span></h4>
+      <ul><li>按「📄 經典A4」先跳出選單：標準 14（推薦）或目前字級；量測與輸出都以所選字級為基準，列印後畫面字級自動還原</li></ul>
 
       <h4>列印段落零間距 · 版面用好用滿 <span class="cl-date">2026-07-06</span></h4>
       <ul><li>所有列印輸出（含經典A4）：段落卡片彼此貼合、邊框重疊成一條線，段落之間不再留白；紙張邊界 11mm → 8mm，可用面積更大</li>
@@ -1117,6 +1120,7 @@ const I18N={
  "🔍 圖片 / PDF 辨識匯入":"🔍 Image / PDF OCR","🎼 圖示譜 PDF":"🎼 Icon Chart PDF","🎵 和弦譜 PDF":"🎵 Chord Chart PDF","🎼 混合 PDF（和弦＋樂器）":"🎼 Mix PDF (chords+parts)","🖼 PNG 展開示意圖":"🖼 PNG Flow Map","📦 PNG 方塊流程圖":"📦 PNG Block Flow","📊 CSV 樂器備註表":"📊 CSV Parts Table","📋 文字清單":"📋 Text List","↓ JSON 備份":"↓ JSON Backup","↓ Download JSON":"↓ Download JSON","↓ PNG 展開示意圖":"↓ PNG Flow Map","↓ PNG 方塊流程圖":"↓ PNG Block Flow",
  "👤 使用者登入":"👤 User Login","🔑 管理者登入":"🔑 Admin Login","👁 一般使用者：瀏覽歌譜":"👁 Guest: browse","⛪ 聚會服事":"⛪ Service","☁ 儲存目前到雲端":"☁ Save to cloud","一般使用者 · 瀏覽歌譜":"Guest · browse",
  "💾 儲存譜":"💾 Save Chart","請選擇儲存方式：":"Choose how to save:","💾 存到瀏覽器本機":"💾 Save to browser","📁 另存到資料夾（.json）":"📁 Save to folder (.json)","下次用同一台裝置開啟會自動載入":"Auto-loads next time on this device","可自選電腦資料夾位置存成檔案":"Pick a folder on your computer",
+ "📄 經典A4 輸出":"📄 Fit A4 Output","請選擇輸出字級：":"Choose output font size:","📄 標準 14（推薦）":"📄 Standard 14 (recommended)","以字級 14 為基準，自動排版盡量塞進一張 A4":"Auto-fits one A4 page based on font size 14","以畫面目前的字級設定輸出（工具列「字級」）":"Output at the current on-screen font size",
  "（此段尚未填樂器配置）":"(No parts set yet)","點段落圓圈 → 右邊展開該段樂器配置（再點一次收起）":"Tap a section circle → its parts expand on the right (tap again to close)","點樂器挑要看的部位":"Tap an instrument to filter",
  "升半音":"Semitone up","降半音":"Semitone down","拖曳移位":"Drag to move","拖曳調長度":"Drag to resize","接續到哪一段":"Continue to…","此小節接續到哪一段":"This bar continues to…","本小節拍號（點擊切換）":"Bar meter (click to cycle)","每排幾個小節":"Bars per row","放大檢視字級":"Increase font","縮小檢視字級":"Decrease font","展開更多功能":"More features","查看歷次更新內容":"View changelog","新增一條配器（內容與其他頁共用）":"Add a part (shared across views)","刪除此配器（各頁一起移除）":"Delete this part","一次設定所有段落每排小節數":"Set bars-per-row for all sections","自動縮放，盡量塞進一張 A4":"Auto-fit onto one A4",
  "① 複製轉譜指令":"① Copy prompt","② 匯入 AI 轉譜結果":"② Import AI result","解析成段落 / 和弦":"Parse to sections / chords","🤖 AI 轉譜（最準・免費・免 API key）":"🤖 AI transcribe (best · free · no API key)"
@@ -1696,9 +1700,25 @@ async function printView(name){
   setTimeout(()=>window.print(),60);
 }
 function printIcon(){ return printView('icon'); }   // 相容舊呼叫
+/* 經典A4 輸出字級選單：標準14（推薦）或目前字級 */
+let _fitView='chord';
+function openFitMenu(view){
+  _fitView=view;
+  const b=document.getElementById('fit-cur-btn');
+  if(b){ const en=(_lang==='en');
+    b.innerHTML=(en?'🔠 Current font size ':'🔠 目前字級 ')+curFont+'<br><span style="font-size:.8em;color:var(--text3)">'+(en?'Output at the current on-screen font size':'以畫面目前的字級設定輸出（工具列「字級」）')+'</span>'; }
+  const m=document.getElementById('fit-modal'); if(m)m.classList.add('show');
+  try{i18nMaybe();}catch(e){}
+}
+function closeFitMenu(){ const m=document.getElementById('fit-modal'); if(m)m.classList.remove('show'); }
+function fitChoice(sz){ closeFitMenu(); window._printFontPx=sz||curFont; printFit(_fitView); }
 /* 經典 A4：自動縮放，盡量塞進一張 A4 */
 async function printFit(view){
   commitEdits();
+  const fpx=window._printFontPx||curFont;   // 輸出字級（選單選擇：14 或目前字級）
+  const rEl=document.querySelector('.right');
+  window._printPrevFS=rEl?rEl.style.fontSize:'';
+  if(rEl)rEl.style.fontSize=fpx+'px';
   const svc = Array.isArray(sects) && sects.some(s=>s&&s._song);   // 聚會模式：維持資料庫原始段落安排，不重排也不收合
   window._printMode=!svc;   /* 收合沒用到的八分/十六分空格（聚會模式關閉，維持原貌） */
   window._printRepeat=!svc; /* 連續相同小節收合成 ×N（聚會模式關閉） */
@@ -1714,7 +1734,7 @@ async function printFit(view){
     /* 比照列印版面：段落零間距、邊框重疊，量測才準、字才能放到最大 */
     clone.querySelectorAll('.mixpage-stack').forEach(st=>{st.style.display='block';st.style.gap='0';});
     clone.querySelectorAll('.ccard').forEach((c,i)=>{c.style.margin=(i?'-2px':'0')+' 0 0 0';});
-    clone.style.cssText='position:fixed;left:-99999px;top:0;width:733px;display:block;gap:0;';
+    clone.style.cssText='position:fixed;left:-99999px;top:0;width:733px;display:block;gap:0;font-size:'+fpx+'px;';
     document.body.appendChild(clone); const h=clone.scrollHeight||PH; document.body.removeChild(clone); return h; };
   renderView();
   if(document.fonts&&document.fonts.ready){ try{ await document.fonts.ready; }catch(e){} }
@@ -1743,7 +1763,7 @@ async function printFit(view){
   window._printCls=cls;
   setTimeout(()=>window.print(),60);
 }
-function _afterPrintRestore(){ if(window._printCls){ document.body.classList.remove(window._printCls); } document.body.classList.remove('print-fit'); window._printCls=null; const was=window._printMode||window._printRepeat||window._printBPR||window._printSongTitle; window._printMode=false; window._printRepeat=false; window._printBPR=null; window._printSongTitle=''; if(was){ try{renderCharts();}catch(e){} } }
+function _afterPrintRestore(){ if(window._printCls){ document.body.classList.remove(window._printCls); } document.body.classList.remove('print-fit'); window._printCls=null; const rEl=document.querySelector('.right'); if(rEl&&window._printFontPx){ rEl.style.fontSize=window._printPrevFS||(curFont+'px'); } window._printFontPx=null; window._printPrevFS=''; const was=window._printMode||window._printRepeat||window._printBPR||window._printSongTitle; window._printMode=false; window._printRepeat=false; window._printBPR=null; window._printSongTitle=''; if(was){ try{renderCharts();}catch(e){} } }
 window.addEventListener('afterprint',_afterPrintRestore);
 /* 行動瀏覽器後備：部分手機（尤其 iOS 分享面板列印）不觸發 afterprint，改監聽 print 媒體查詢離開時還原 */
 if(window.matchMedia){ try{ const _pmq=window.matchMedia('print'); const _pmh=e=>{ if(!e.matches)_afterPrintRestore(); }; _pmq.addEventListener?_pmq.addEventListener('change',_pmh):_pmq.addListener(_pmh); }catch(e){} }
@@ -2845,6 +2865,18 @@ window.addEventListener('load',syncTopbarH);
       <p style="margin:.1em 0 1em;color:var(--text3)">請選擇儲存方式：</p>
       <button class="btn" style="width:100%;margin-bottom:.6em;padding:.7em" onclick="saveChoice('local')">💾 存到瀏覽器本機<br><span style="font-size:.8em;color:var(--text3)">下次用同一台裝置開啟會自動載入</span></button>
       <button class="btn" style="width:100%;padding:.7em" onclick="saveChoice('file')">📁 另存到資料夾（.json）<br><span style="font-size:.8em;color:var(--text3)">可自選電腦資料夾位置存成檔案</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- 經典A4 輸出字級選擇 -->
+<div class="cl-modal" id="fit-modal" onclick="if(event.target===this)closeFitMenu()">
+  <div class="cl-box" style="max-width:380px">
+    <div class="cl-head">📄 經典A4 輸出 <button class="btn cl-btn" onclick="closeFitMenu()">✕</button></div>
+    <div class="cl-body">
+      <p style="margin:.1em 0 1em;color:var(--text3)">請選擇輸出字級：</p>
+      <button class="btn" style="width:100%;margin-bottom:.6em;padding:.7em" onclick="fitChoice(14)">📄 標準 14（推薦）<br><span style="font-size:.8em;color:var(--text3)">以字級 14 為基準，自動排版盡量塞進一張 A4</span></button>
+      <button class="btn" style="width:100%;padding:.7em" onclick="fitChoice(0)" id="fit-cur-btn">🔠 目前字級<br><span style="font-size:.8em;color:var(--text3)">以畫面目前的字級設定輸出（工具列「字級」）</span></button>
     </div>
   </div>
 </div>
