@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Worship Arranger v3.5</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyBpZD0iX+WcluWxpF8xIiBkYXRhLW5hbWU9IuWcluWxpCAxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDI0IDEwMjQiPgogIDxkZWZzPgogICAgPHN0eWxlPgogICAgICAuY2xzLTEgewogICAgICAgIGZpbGw6ICNmY2M5MTg7CiAgICAgIH0KICAgIDwvc3R5bGU+CiAgPC9kZWZzPgogIDxnIGlkPSJf55Sf5oiQ5byP54mp5Lu2IiBkYXRhLW5hbWU9IueUn+aIkOW8j+eJqeS7tiI+CiAgICA8cGF0aCBjbGFzcz0iY2xzLTEiIGQ9Ik00ODQuMDgsMzUxLjY2bC0yLjcyLDkxLjg1LTQuMjcsMTEzLjYtNC4wNywxMDIuNDctMy40LDEwMS4wMmMtLjUsMTQuODUtNC4zMywyNy45NC05Ljg5LDQxLjQxLTkuODIsMjMuNzktMjQuMjIsNDMuNDktNDIuNjMsNjEuNDQtNTUuMDYsNTMuNjktMTMyLjQ1LDc4Ljk1LTIwOC45NCw3Mi45Ny0zOS45NS0zLjEyLTgzLjE5LTIxLjAxLTEwMi41Ni01Ni44LTYuODctMTIuNy0xMS40Ny0yNy4zNC0xMS4yMS00Mi4xLDEuNTgtODYuNjEsOTcuMTEtMTU1LjM2LDE3NS4xOS0xNzYuODksNDIuNjMtMTEuODEsODYuNDYtMTQuMzQsMTMxLjMtM2wtNi45NC0yMDMuNjItMi42OS04MS4xOS05My4yNSwyNC4xLTg5LjMyLDIzLjk2LTYuMjMtMTMxLjA2LDkyLjUxLTIyLjYxLDkyLjY4LTIxLjU2LTUuMzctMTMxLjk4LDExNC4wOS0yNi45Ni03LjMyLDEzNy4zMyw4My42Ny0xNy45Miw4NS4xNi0xNy45MSwxNTguMDctMjYuNjksNjQuNDQtOC4xOS0zLjM2LDYxLjk3LTcuODcsMTYyLjY2LTEwLjc4LDI1MC4yMy00LjA5LDU4LjcyYy0xLjQ1LDIwLjc0LTExLjA5LDM5LjA5LTIyLjk0LDU2LjAyLTE4LjAyLDI1Ljc2LTQyLjAxLDQ1LjI3LTY5LjQ1LDYwLjM4LTI5LjQ0LDE2LjIxLTYwLjQ3LDI1LjQ0LTkzLjkxLDI4LjQ1LTIxLjg5LDEuOTctNDIuODgsMi4xNS02NC4zNS0zLjAyLTQzLjk4LTEwLjYtNzcuNTMtNDQuMzMtNzQuMi05MS4yMywzLjk1LTU1LjYsNTEuNjMtOTkuMTgsOTguNzYtMTI0LjEyLDQ0LjIyLTIzLjQsOTkuNDQtMzMuNjgsMTQ4LjE1LTIyLjYxbC4xLTQ4LjkzLS4wNi0yMTEuNzguMjUtMzguMTYtMTAzLjcsMTkuNzctNzEuOTMsMTQuNzUtMTE2Ljg2LDI1LjI1WiIvPgogIDwvZz4KPC9zdmc+">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Space+Mono:wght@400;700&display=swap');
@@ -518,7 +517,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
 @media print{
   body[class*="print-"] #vp-icon>.print-head,
   body[class*="print-"] #vp-chord>.print-head,
-  body[class*="print-"] #vp-mix>.print-head{display:flex!important;align-items:baseline;justify-content:space-between;gap:1em;border-bottom:2px solid #333;padding-bottom:5px;margin-bottom:10px;}
+  body[class*="print-"] #vp-mix>.print-head{display:flex!important;align-items:baseline;justify-content:space-between;gap:1em;border-bottom:2px solid #333;padding-bottom:3px;margin-bottom:5px;}
   /* 輸出文字大小：標題 14 / 主要資訊 11 / 次要資訊 6 */
   .print-head .ph-l{display:flex;flex-direction:column;}
   .print-head .ph-title{font-size:14px;font-weight:700;color:#111;line-height:1.15;}
@@ -543,7 +542,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   body[class*="print-"] .cgoto-badge,
   body[class*="print-"] .cjump{font-size:6px!important;}
   *{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
-  @page{size:A4 portrait;margin:11mm;}
+  @page{size:A4 portrait;margin:8mm;}
   /* 列印時把主題變數還原成預設，確保任何配色主題都印出白底原樣 */
   body,body.theme-light,body.theme-pink{
     --bg:#fff;--bg2:#fff;--bg3:#fff;--bg4:#fff;
@@ -574,20 +573,24 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   body.print-icon .icpages{display:block!important;overflow:visible!important;}
   body.print-icon .icpage{display:block!important;min-width:0!important;page-break-after:always;}
   body.print-icon .icpage:last-child{page-break-after:auto;}
-  body.print-icon .icpage-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+  body.print-icon .icpage-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px;}
   body.print-icon .iccard{background:#fff!important;page-break-inside:avoid;min-height:0;}
   body.print-icon .iccard-body{background:#fff!important;}
   body.print-icon .icchip{background:#fafafa!important;}
   body.print-icon .ic-val{color:#111!important;}
   body.print-icon .ic-bars{background:rgba(0,0,0,0.08)!important;color:#333!important;}
   body.print-icon .iccard-note{color:#6a4ca0!important;background:#f6f2fb!important;}
-  body.print-icon .icpage-foot{display:block;text-align:center;font-size:9px;color:#777;margin-top:9px;letter-spacing:.5px;}
+  body.print-icon .icpage-foot{display:block;text-align:center;font-size:9px;color:#777;margin-top:4px;letter-spacing:.5px;}
   /* 和弦譜 / 混合：每段卡片避免跨頁切斷 */
   body.print-mix .icpages{display:block!important;overflow:visible!important;}
   body.print-mix .icpage{display:block!important;min-width:0!important;}
   body.print-mix .mixpage-stack{display:block!important;}
-  body.print-mix .mixpage-stack>.ccard{margin-bottom:6px;}
-  body.print-chord .ccard,body.print-mix .ccard{background:#fff!important;page-break-inside:avoid!important;break-inside:avoid!important;-webkit-column-break-inside:avoid!important;border-width:2px;margin-bottom:6px;}
+  body.print-mix .mixpage-stack>.ccard{margin-bottom:0;}
+  /* 和弦譜列印：取消螢幕版的 flex gap，段落彼此貼合 */
+  body.print-chord #vp-chord>.chord-content{display:block!important;gap:0!important;}
+  body.print-chord .ccard,body.print-mix .ccard{background:#fff!important;page-break-inside:avoid!important;break-inside:avoid!important;-webkit-column-break-inside:avoid!important;border-width:2px;margin-bottom:0;border-radius:0!important;}
+  /* 相鄰段落邊框重疊成一條線，視覺上連成一體 */
+  body.print-chord .ccard+.ccard,body.print-mix .mixpage-stack>.ccard+.ccard{margin-top:-2px;}
   body.print-chord .cbar,body.print-mix .cbar{background:#fff!important;}
   body.print-chord .cbchord,body.print-mix .cbchord{color:#111!important;}
   body.print-chord .cbar2,body.print-mix .cbar2{background:#fff!important;border-color:#999!important;}
@@ -618,8 +621,9 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   body.svc-pagebreak.print-chord .ccard.song-start,
   body.svc-pagebreak.print-mixp .ccard.song-start{page-break-before:always;break-before:page;}
   body.print-mixp .mixpage-stack{display:block!important;}
-  body.print-mixp .mixpage-stack>.ccard{margin-bottom:6px;}
-  body.print-mixp .ccard{background:#fff!important;page-break-inside:avoid!important;break-inside:avoid!important;-webkit-column-break-inside:avoid!important;border-width:2px;margin-bottom:6px;}
+  body.print-mixp .mixpage-stack>.ccard{margin-bottom:0;}
+  body.print-mixp .ccard{background:#fff!important;page-break-inside:avoid!important;break-inside:avoid!important;-webkit-column-break-inside:avoid!important;border-width:2px;margin-bottom:0;border-radius:0!important;}
+  body.print-mixp .mixpage-stack>.ccard+.ccard{margin-top:-2px;}
   body.print-mixp .cbeatcol{border-color:#bbb!important;}
   body.print-mixp .cbnum{color:#555!important;opacity:1!important;}
   body.print-mixp .cmeter.on{background:#e0b84a!important;color:#000!important;}
@@ -870,7 +874,12 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   <div class="cl-box">
     <div class="cl-head"><span>📝 更新日誌 · Worship Arranger</span><button class="btn" onclick="hideChangelog()">✕</button></div>
     <div class="cl-body">
-      <p class="cl-ver">開發時間軸：2026-06-17 ～ 2026-06-28（依使用回饋持續優化）</p>
+      <p class="cl-ver">開發時間軸：2026-06-17 ～ 2026-07-06（依使用回饋持續優化）</p>
+
+      <h4>列印段落零間距 · 版面用好用滿 <span class="cl-date">2026-07-06</span></h4>
+      <ul><li>所有列印輸出（含經典A4）：段落卡片彼此貼合、邊框重疊成一條線，段落之間不再留白；紙張邊界 11mm → 8mm，可用面積更大</li>
+      <li>經典A4 量測同步改用零間距版面，字級可以放得更大；圖示譜列印格距同步收緊</li>
+      <li>效能與穩定：Supabase / html2canvas 改為用到才載入（首開更快、CDN 失敗不卡頁面）；列印還原補上行動瀏覽器後備（iOS 分享列印不再卡在列印版型）</li></ul>
 
       <h4>聚會模式輸出維持原樣 <span class="cl-date">2026-06-29</span></h4>
       <ul><li>聚會模式的和弦譜/混合經典A4 不再重排或收合，回到資料庫原始段落安排；段落一律不跨頁、必要時可讀分頁；單首歌仍維持智慧壓一頁</li></ul>
@@ -1245,7 +1254,9 @@ let _supa=null,_supaUser=null,_supaAdmin=false,_cloudId=null;
 function cv(id){ const e=document.getElementById(id); return e?e.value:''; }
 function cloudMsg(t){ const e=document.getElementById('cl-msg'); if(e)e.textContent=t||''; }
 async function cloudInit(){
-  if(!SUPA_URL || !SUPA_KEY || !window.supabase) return;     // 未設定 → 不啟用
+  if(!SUPA_URL || !SUPA_KEY) return;     // 未設定 → 不啟用
+  if(!window.supabase){ try{ await loadScript('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2'); }catch(e){ return; } }   // 延遲載入 SDK：加快首開、離線/CDN失敗不卡頁面
+  if(!window.supabase) return;
   try{
     _supa=window.supabase.createClient(SUPA_URL, SUPA_KEY);
     const cb=document.getElementById('cloud-btn'); if(cb)cb.style.display='';
@@ -1693,14 +1704,17 @@ async function printFit(view){
   window._printRepeat=!svc; /* 連續相同小節收合成 ×N（聚會模式關閉） */
   window._printSongTitle=(gv('s-title')||'').trim();   /* 段落標題標上歌名（比照聚會模式） */
   const cls='print-'+view;
-  const PH=1040;   // A4 直式可列印高度（約 px @96dpi，已扣邊界）
+  const PH=1058;   // A4 直式可列印高度（約 px @96dpi，@page 邊界 8mm）
   const srcId=view==='chord'?'chord-content':view==='mixp'?'mixp-content':'mix-content';
   const renderView=()=>{ if(view==='chord')renderChord(); else if(view==='mix')renderMix(); else if(view==='mixp')renderMixP(); };
   const measureH=()=>{ const src=document.getElementById(srcId); if(!src)return PH;
     const clone=src.cloneNode(true);
     clone.querySelectorAll('.beat-i').forEach(n=>n.remove());
     clone.querySelectorAll('.icpage').forEach(p=>{p.style.minWidth='0';p.style.width='100%';});
-    clone.style.cssText='position:fixed;left:-99999px;top:0;width:720px;display:block;';
+    /* 比照列印版面：段落零間距、邊框重疊，量測才準、字才能放到最大 */
+    clone.querySelectorAll('.mixpage-stack').forEach(st=>{st.style.display='block';st.style.gap='0';});
+    clone.querySelectorAll('.ccard').forEach((c,i)=>{c.style.margin=(i?'-2px':'0')+' 0 0 0';});
+    clone.style.cssText='position:fixed;left:-99999px;top:0;width:733px;display:block;gap:0;';
     document.body.appendChild(clone); const h=clone.scrollHeight||PH; document.body.removeChild(clone); return h; };
   renderView();
   if(document.fonts&&document.fonts.ready){ try{ await document.fonts.ready; }catch(e){} }
@@ -1729,7 +1743,10 @@ async function printFit(view){
   window._printCls=cls;
   setTimeout(()=>window.print(),60);
 }
-window.addEventListener('afterprint',()=>{ if(window._printCls){ document.body.classList.remove(window._printCls); } document.body.classList.remove('print-fit'); window._printCls=null; const was=window._printMode||window._printRepeat||window._printBPR||window._printSongTitle; window._printMode=false; window._printRepeat=false; window._printBPR=null; window._printSongTitle=''; if(was){ try{renderCharts();}catch(e){} } });
+function _afterPrintRestore(){ if(window._printCls){ document.body.classList.remove(window._printCls); } document.body.classList.remove('print-fit'); window._printCls=null; const was=window._printMode||window._printRepeat||window._printBPR||window._printSongTitle; window._printMode=false; window._printRepeat=false; window._printBPR=null; window._printSongTitle=''; if(was){ try{renderCharts();}catch(e){} } }
+window.addEventListener('afterprint',_afterPrintRestore);
+/* 行動瀏覽器後備：部分手機（尤其 iOS 分享面板列印）不觸發 afterprint，改監聽 print 媒體查詢離開時還原 */
+if(window.matchMedia){ try{ const _pmq=window.matchMedia('print'); const _pmh=e=>{ if(!e.matches)_afterPrintRestore(); }; _pmq.addEventListener?_pmq.addEventListener('change',_pmh):_pmq.addListener(_pmh); }catch(e){} }
 
 /* ── OCR 圖片/PDF 辨識匯入 ── */
 function openOcr(){ document.getElementById('ocr-modal').style.display='flex'; }
@@ -2707,6 +2724,9 @@ async function expPNG(view){
   const origText = btn.textContent;
   btn.textContent = '產生中…'; btn.disabled = true;
 
+  // 延遲載入 html2canvas（只有匯出 PNG 才需要，加快首開）
+  if(!window.html2canvas){ try{ await loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js'); }catch(e){ alert('PNG 元件載入失敗，請確認網路後重試'); btn.textContent=origText; btn.disabled=false; return; } }
+
   await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
 
   const targetEl = document.getElementById(view==='block' ? 'block-content' : 'flow-content');
@@ -2818,7 +2838,6 @@ applyLang();
 syncTopbarH();
 window.addEventListener('load',syncTopbarH);
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <div class="cl-modal" id="save-modal" onclick="if(event.target===this)closeSaveMenu()">
   <div class="cl-box" style="max-width:380px">
     <div class="cl-head">💾 儲存譜 <button class="btn cl-btn" onclick="closeSaveMenu()">✕</button></div>
