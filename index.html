@@ -846,16 +846,18 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
       <div class="print-head"></div>
       <div class="view-print"><button class="btn lock-btn" onclick="toggleLock()" title="鎖定：開＝只能看譜與左右滑頁、禁止任何編輯；關＝可編輯">🔓 鎖定 關</button><button class="btn svc-only svc-pb-btn" onclick="toggleSvcPB(this)" title="聚會服事列印：開＝每首歌各自從新頁開始；關＝段落連續接著印">📄 聚會分頁 關</button><button class="btn barpick-btn" onclick="toggleBarPick()" title="複製小節／區塊">⧉ 複製小節</button><button class="btn" onclick="printFit('staff')" title="自動縮放，盡量塞進一張 A4">📄 經典A4</button><button class="btn btna" onclick="printView('staff')">🖨 列印 / 存 PDF</button></div>
       <div class="icon-toolbar">
-        <label class="ic-hint">拍號 <select class="ic-sel" id="staff-timesig" onchange="setTimeSig(this.value)"></select></label>
         <label class="ic-hint">顯示 <select class="ic-sel" id="staff-disp" onchange="setChordDisp(this.value)"><option value="num">級數</option><option value="male">和弦名(男Key)</option><option value="female">和弦名(女Key)</option></select></label>
         <span class="key-step" title="半音微調 Key"><label>微調Key</label><button onclick="transposeKey(1)" title="升半音">▲</button><b class="keystep-lbl">—</b><button onclick="transposeKey(-1)" title="降半音">▼</button></span>
+        <span class="ic-hint">和弦</span>
+        <select class="ic-sel" id="kb-croot" title="和弦根音（級數）"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option></select>
+        <select class="ic-sel" id="kb-cqual" title="和弦性質"><option value="maj">大三 major</option><option value="min">小三 minor</option><option value="7">屬七 7</option><option value="maj7">大七 maj7</option><option value="m7">小七 m7</option><option value="sus2">sus2</option><option value="sus4">sus4</option><option value="dim">減 dim</option><option value="aug">增 aug</option></select>
+        <button class="stbtn" id="kb-chordmode" onclick="kbChordMode()" title="放和弦模式：開啟後，點任一格就把選好的和弦（整組級數）疊上去；再點一格可連續放">🎹 放和弦</button>
         <label class="ic-hint">全部每排 <select class="ic-sel" onchange="applyAllBPR(this)" title="一次設定所有段落每排小節數"><option value="__">套用…</option><option value="">自動</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option></select></label>
         <button class="stbtn" id="staff-undo" onclick="staffUndo()" title="上一步（只回復最近的動作，不清除其他）" disabled>↩ 上一步</button>
         <button class="stbtn" id="staff-redo" onclick="staffRedo()" title="下一步（重做）" disabled>↪ 下一步</button>
         <button class="clear-btn" onclick="clearStaff()" title="清除整個譜的 KB 數字（可用上一步還原）">🗑 清除</button>
       </div>
-      <div class="chord-hint">KB 數字譜：每小節分「上排＝右手／下排＝左手」，點格子輸入級數，同一格用空白分隔可直向疊 1–3 個音（和弦）。時值＝簡譜底線：無底線＝四分、一條＝八分、兩條＝十六分（跟著小節分割自動；每格右下 ♩/♪/♬ 可單獨改）。上方「顯示」可切級數↔男/女Key 和弦名。小節分割／重複／拍號／接續／每排／複製小節 全部沿用。</div>
-      <div class="ic-legend" id="staff-legend"></div>
+      <div class="chord-hint">KB 數字譜：每小節分「上排＝右手／下排＝左手」，點格子輸入級數，同一格用空白分隔可直向疊 1–3 個音（和弦）；或用右上「和弦」選根音級數＋性質，開「🎹 放和弦」後點格子整組疊上。時值＝簡譜底線：無＝四分、一條＝八分、兩條＝十六分（跟小節分割自動；每格右下 ↺/♩/♪/♬ 可單獨改）。上方「顯示」可切級數↔男/女Key 和弦名。小節分割／重複／接續／每排／複製小節 全部沿用。</div>
       <div class="chord-content" id="staff-content"></div>
     </div>
 
@@ -2803,6 +2805,20 @@ function kbSet(s,row,bar,c,v){ const k=kbKey(row); if(!Array.isArray(s[k]))s[k]=
 function kbGetD(s,row,bar,c){ const k=kbKey(row)+'D'; const a=s[k]; const rr=a&&a[bar]; const v=rr&&rr[c]; return (v===0||v===1||v===2)?v:null; }
 function kbSetD(s,row,bar,c,v){ const k=kbKey(row)+'D'; if(!Array.isArray(s[k]))s[k]=[]; if(!Array.isArray(s[k][bar]))s[k][bar]=[]; s[k][bar][c]=(v===0||v===1||v===2)?v:null; }
 function kbAutoDur(fac){ return fac===4?2:fac===2?1:0; }   // 分割 4/8/16 → 0/1/2 條底線
+/* 和弦快速輸入（級數）：根音級數 + 性質 → 疊起的級數 tokens（高音在上） */
+let _kbChordOn=false;
+const _SCALESEMI={1:0,2:2,3:4,4:5,5:7,6:9,7:11};
+const _KBQ={maj:{st:[0,2,4],se:[0,4,7]},min:{st:[0,2,4],se:[0,3,7]},dim:{st:[0,2,4],se:[0,3,6]},aug:{st:[0,2,4],se:[0,4,8]},sus2:{st:[0,1,4],se:[0,2,7]},sus4:{st:[0,3,4],se:[0,5,7]},'7':{st:[0,2,4,6],se:[0,4,7,10]},maj7:{st:[0,2,4,6],se:[0,4,7,11]},m7:{st:[0,2,4,6],se:[0,3,7,10]}};
+function chordDegsKB(rootDeg,qual){
+  const R=parseInt(rootDeg)||1, Q=_KBQ[qual]||_KBQ.maj, rootSemi=_SCALESEMI[R];
+  const out=Q.st.map((stp,k)=>{ const abs=(R-1)+stp, oct=Math.floor(abs/7), slot=(abs%7)+1, natAbs=oct*12+_SCALESEMI[slot];
+    let a=(rootSemi+Q.se[k])-natAbs; a=Math.max(-2,Math.min(2,a));
+    const acc=a===1?'#':a===-1?'b':a===2?'##':a===-2?'bb':'';
+    return {semi:rootSemi+Q.se[k], tok:acc+slot}; });
+  out.sort((x,y)=>y.semi-x.semi);
+  return out.map(o=>o.tok);
+}
+function kbChordMode(){ _kbChordOn=!_kbChordOn; const b=document.getElementById('kb-chordmode'); if(b)b.classList.toggle('on',_kbChordOn); }
 function kbCellHtml(s,row,i,c,fac,bp){
   const tok=kbGet(s,row,i,c);
   const d=kbGetD(s,row,i,c), eff=(d==null)?kbAutoDur(fac):d;
@@ -2835,6 +2851,12 @@ function kbEdit(cell){
   if(_barPickMode){ const w=cell.closest('.cbar2'); if(w&&w.dataset.sid!=null) barPickClick(+w.dataset.sid,+w.dataset.bar); return; }
   if(_locked)return;
   _staffSel={sid:+cell.dataset.sid,row:cell.dataset.row,bar:+cell.dataset.bar,c:+cell.dataset.c};
+  if(_kbChordOn){
+    const s=sects.find(x=>x.id===+cell.dataset.sid); if(!s)return;
+    staffPushHistory();
+    kbSet(s,cell.dataset.row,+cell.dataset.bar,+cell.dataset.c, chordDegsKB(gv('kb-croot'),gv('kb-cqual')).join(' '));
+    autoSave(); renderStaff(); return;
+  }
   const r=cell.querySelector('.kbstk'), inp=cell.querySelector('.kb-i');
   if(!inp||inp.style.display!=='none')return;
   r.style.display='none'; inp.style.display=''; inp.focus(); inp.select();
@@ -2863,10 +2885,9 @@ function kbCardHtml(s){
   const song=(s._song||window._printSongTitle);
   const head=`<div class="ccard-head" style="background:${col.fill};color:${col.stroke}"><span class="chead-l">${song?`<span class="csong">🎵 ${esc(song)}${(s._dispMode&&s._dispMode!=='num'&&s._dispKey)?' · '+(s._dispMode==='female'?'女':'男')+esc(s._dispKey):''}</span>`:''}<span class="cname">${esc(s.name)}</span>${bprSelect(s)}<button class="ctrl-toggle" onclick="toggleCtrl(${s.id})" title="顯示/隱藏每個小節的控制鈕">控制項 ${s.ctrlOff?'關':'開'}</button><button class="ctrl-toggle" onclick="toggleFold(${s.id})" title="收合/展開此段">${s.fold?'▸ 展開':'▾ 收合'}</button></span><span class="cmeta">${bars} Bar · ${esc(gv('s-time'))}</span></div>`;
   if(s.fold) return `<div class="ccard folded${ssc}" style="border-color:${col.stroke}">${head}</div>`;
-  const strip=mixInsBody(s,true);
   let cells='';
   for(let i=0;i<bars;i++) cells+=kbBarHtml(s,i);
-  return `<div class="ccard${ssc}" style="border-color:${col.stroke}">${head}${strip}<div class="cbar-grid" ${barGridStyle(s)}>${cells}</div>${s.notes?`<div class="ccard-note">⚑ ${esc(s.notes)}</div>`:''}</div>`;
+  return `<div class="ccard${ssc}" style="border-color:${col.stroke}">${head}<div class="cbar-grid" ${barGridStyle(s)}>${cells}</div>${s.notes?`<div class="ccard-note">⚑ ${esc(s.notes)}</div>`:''}</div>`;
 }
 function renderStaff(){
   const root=document.getElementById('staff-content'); if(!root)return;
