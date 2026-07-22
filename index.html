@@ -76,18 +76,31 @@ body.barpick .barpick-bar{display:inline-flex;}
 .barpick-btn.on{background:var(--accent)!important;border-color:var(--accent)!important;color:#0d0d0d!important;}
 body.barpick .cbar2,body.barpick .cbeatcol{cursor:pointer!important;}
 .cbar2.barsel{outline:2px solid var(--accent);outline-offset:-2px;background:rgba(212,168,67,0.14);border-radius:4px;}
-/* 五線譜 */
-:root{--staffline:#8a8a8a;}
-.cbar2.staffbar{min-height:0;background:rgba(255,255,255,0.02);padding:0.15em 0.1em;}
-.staffsvg{display:block;width:100%;height:5.2em;cursor:crosshair;touch-action:manipulation;}
-.staffclef{font-size:26px;fill:var(--text2);dominant-baseline:middle;}
-.staffacc{font-size:12px;fill:var(--accent);font-weight:700;}
-body.print-staff .staffacc{fill:#111!important;}
-body.locked .staffsvg{cursor:default;}
-.staff-tools{gap:0.4em;}
+/* KB 數字譜 */
 .stbtn{border:1px solid var(--border2);background:var(--bg3);color:var(--text);border-radius:0.35em;padding:0.22em 0.55em;cursor:pointer;font-family:inherit;font-size:0.85em;line-height:1;white-space:nowrap;}
 .stbtn:hover{border-color:var(--accent);}
-.stbtn.on{background:var(--accent);border-color:var(--accent);color:#0d0d0d;font-weight:700;}
+.stbtn:disabled{opacity:.4;cursor:default;}
+.cbar2.kbbar{display:flex;flex-direction:column;min-height:0;padding:0.15em 0.1em 0.1em;overflow:visible;}
+.kbrow{display:flex;align-items:stretch;gap:0.15em;border-top:1px dashed var(--border2);}
+.kbrow:first-of-type{border-top:none;}
+.kbhand{flex:0 0 auto;width:1.05em;font-size:0.6em;color:var(--text3);display:flex;align-items:center;justify-content:center;font-weight:700;}
+.kbcols{display:flex;flex:1 1 0;min-width:0;}
+.kbcol{position:relative;flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;gap:0.05em;padding:0.5em 0.05em 0.25em;cursor:text;}
+.kbcol::before{content:'';position:absolute;left:-0.5px;top:14%;bottom:14%;width:1px;pointer-events:none;}
+.kbcol.bl0::before,.kbcol.bl2::before{background:#666;}
+.kbcol.bl1::before,.kbcol.bl3::before{background:repeating-linear-gradient(to bottom,#666 0,#666 2.5px,transparent 2.5px,transparent 5px);}
+.kbcol:first-child::before{display:none;}
+.kbstk{display:inline-flex;flex-direction:column;align-items:center;line-height:1.05;font-weight:700;color:var(--text);}
+.kbstk .kbn{display:block;}
+.kbstk .kbempty{color:var(--text3);opacity:.35;font-weight:400;}
+.kbstk.d1{box-shadow:0 0.18em 0 -0.02em currentColor;}
+.kbstk.d2{box-shadow:0 0.18em 0 -0.02em currentColor,0 0.34em 0 -0.02em currentColor;}
+.kb-i{width:100%;min-width:2.2em;background:var(--bg4);border:1px solid var(--accent);color:var(--text);font-family:inherit;font-size:1em;text-align:center;outline:none;border-radius:3px;padding:0.05em 0;}
+.kbdur{position:absolute;right:0;bottom:-0.15em;font-size:0.62em;line-height:1;padding:0 1px;border:none;background:transparent;color:var(--text3);cursor:pointer;}
+.kbdur:hover{color:var(--accent);}
+body.locked .kbcol{cursor:default;}
+body.print-staff .kbcol::before{background:#999;}
+body.print-staff .kbdur{display:none!important;}
 .btna:hover{opacity:.88;}
 .mob-only{display:none;}
 .fbtn{width:1.7em;height:1.7em;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--border2);background:var(--bg3);color:var(--text);border-radius:0.35em;cursor:pointer;font-size:0.95em;line-height:1;font-family:inherit;padding:0;}
@@ -751,7 +764,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
       <button class="vtab" onclick="sw('icon',this)">圖示譜</button>
       <button class="vtab" onclick="sw('chord',this)">和弦譜</button>
       <button class="vtab" onclick="sw('mixp',this)">混合</button>
-      <button class="vtab" onclick="sw('staff',this)">五線譜</button>
+      <button class="vtab" onclick="sw('staff',this)">KB</button>
       <button class="vtab" onclick="sw('text',this)">文字清單</button>
       <button class="vtab" onclick="sw('export',this)">匯出</button>
     </div>
@@ -832,23 +845,16 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
     <div id="vp-staff" style="display:none">
       <div class="print-head"></div>
       <div class="view-print"><button class="btn lock-btn" onclick="toggleLock()" title="鎖定：開＝只能看譜與左右滑頁、禁止任何編輯；關＝可編輯">🔓 鎖定 關</button><button class="btn svc-only svc-pb-btn" onclick="toggleSvcPB(this)" title="聚會服事列印：開＝每首歌各自從新頁開始；關＝段落連續接著印">📄 聚會分頁 關</button><button class="btn barpick-btn" onclick="toggleBarPick()" title="複製小節／區塊">⧉ 複製小節</button><button class="btn" onclick="printFit('staff')" title="自動縮放，盡量塞進一張 A4">📄 經典A4</button><button class="btn btna" onclick="printView('staff')">🖨 列印 / 存 PDF</button></div>
-      <div class="icon-toolbar staff-tools">
-        <span class="ic-hint">音</span>
-        <button class="stbtn on" id="staff-acc-nat" onclick="staffAcc('nat')" title="還原（自然音）">♮</button>
-        <button class="stbtn" id="staff-acc-sharp" onclick="staffAcc('sharp')" title="升記號">♯</button>
-        <button class="stbtn" id="staff-acc-flat" onclick="staffAcc('flat')" title="降記號">♭</button>
-        <button class="stbtn" id="staff-dot" onclick="staffToggleAttr('dot')" title="附點：先點一個格子選它，再按此加/去附點">⚫﹒附點</button>
-        <button class="stbtn" id="staff-tie" onclick="staffToggleAttr('tie')" title="連結線到下一格：先點格子選它，再按此">⌒ 連結線</button>
-        <span class="ic-hint">和弦</span>
-        <select class="ic-sel" id="staff-croot" title="和弦根音"><option>C</option><option>C#</option><option>D</option><option>Eb</option><option>E</option><option>F</option><option>F#</option><option>G</option><option>Ab</option><option>A</option><option>Bb</option><option>B</option></select>
-        <select class="ic-sel" id="staff-cqual" title="和弦性質"><option value="maj">大三 major</option><option value="min">小三 minor</option><option value="7">屬七 7</option><option value="maj7">大七 maj7</option><option value="m7">小七 m7</option><option value="sus2">sus2</option><option value="sus4">sus4</option><option value="dim">減 dim</option><option value="aug">增 aug</option></select>
-        <button class="stbtn" id="staff-chordmode" onclick="staffChordMode()" title="放和弦模式：開啟後，點任一小節就把選好的和弦（同拍多音）放上去">🎹 放和弦</button>
-        <button class="stbtn" id="staff-undo" onclick="staffUndo()" title="上一步（只回復最近的動作，不清除其他音符）" disabled>↩ 上一步</button>
-        <button class="stbtn" id="staff-redo" onclick="staffRedo()" title="下一步（重做）" disabled>↪ 下一步</button>
+      <div class="icon-toolbar">
+        <label class="ic-hint">拍號 <select class="ic-sel" id="staff-timesig" onchange="setTimeSig(this.value)"></select></label>
+        <label class="ic-hint">顯示 <select class="ic-sel" id="staff-disp" onchange="setChordDisp(this.value)"><option value="num">級數</option><option value="male">和弦名(男Key)</option><option value="female">和弦名(女Key)</option></select></label>
+        <span class="key-step" title="半音微調 Key"><label>微調Key</label><button onclick="transposeKey(1)" title="升半音">▲</button><b class="keystep-lbl">—</b><button onclick="transposeKey(-1)" title="降半音">▼</button></span>
         <label class="ic-hint">全部每排 <select class="ic-sel" onchange="applyAllBPR(this)" title="一次設定所有段落每排小節數"><option value="__">套用…</option><option value="">自動</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option></select></label>
-        <button class="clear-btn" onclick="clearStaff()" title="清除整個譜的五線譜音符（可再按一次復原）">🗑 清除音符</button>
+        <button class="stbtn" id="staff-undo" onclick="staffUndo()" title="上一步（只回復最近的動作，不清除其他）" disabled>↩ 上一步</button>
+        <button class="stbtn" id="staff-redo" onclick="staffRedo()" title="下一步（重做）" disabled>↪ 下一步</button>
+        <button class="clear-btn" onclick="clearStaff()" title="清除整個譜的 KB 數字（可用上一步還原）">🗑 清除</button>
       </div>
-      <div class="chord-hint">五線譜：點小節放／收音符。同一拍點多個音＝和弦；左側「♮/♯/♭」設放音的升降；點一個格子選它後可加「附點／連結線」；或用「和弦」選根音＋性質，開「🎹 放和弦」後點小節整組放上。橫向＝拍位（依分割）、縱向＝音高，小節結構與其他頁共用。</div>
+      <div class="chord-hint">KB 數字譜：每小節分「上排＝右手／下排＝左手」，點格子輸入級數，同一格用空白分隔可直向疊 1–3 個音（和弦）。時值＝簡譜底線：無底線＝四分、一條＝八分、兩條＝十六分（跟著小節分割自動；每格右下 ♩/♪/♬ 可單獨改）。上方「顯示」可切級數↔男/女Key 和弦名。小節分割／重複／拍號／接續／每排／複製小節 全部沿用。</div>
       <div class="ic-legend" id="staff-legend"></div>
       <div class="chord-content" id="staff-content"></div>
     </div>
@@ -927,6 +933,9 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
     <div class="cl-head"><span>📝 更新日誌 · Worship Arranger</span><button class="btn" onclick="hideChangelog()">✕</button></div>
     <div class="cl-body">
       <p class="cl-ver">開發時間軸：2026-06-17 ～ 2026-06-28（依使用回饋持續優化）</p>
+
+      <h4>五線譜改為 KB 數字譜 <span class="cl-date">2026-07-01</span></h4>
+      <ul><li>「KB」分頁：每小節上排(右手)/下排(左手)，每格級數、空白分隔可疊 1–3 音；時值用簡譜底線（四/八/十六分），每格可單獨改；沿用小節分割/重複/拍號/接續/每排/複製小節/列印/上一步下一步</li></ul>
 
       <h4>五線譜 上一步／下一步 <span class="cl-date">2026-06-30</span></h4>
       <ul><li>五線譜新增「↩ 上一步／↪ 下一步」：只回復最近動作、不清除其他音符；清除音符後也可用上一步還原</li></ul>
@@ -2644,7 +2653,7 @@ function renderMixP(){
   mixpUpdateInd(); renderLegend();
 }
 /* 小節控制鈕（分割/重複/拍號/接續/每排/控制項）統一重繪三種譜面，確保混合＋同步更新 */
-function renderCharts(){ renderChord(); renderMix(); renderMixP(); }
+function renderCharts(){ renderChord(); renderMix(); renderMixP(); if(currentView==='staff')renderStaff(); }
 
 /* ── RENDER SIDEBAR ── */
 function renderSB(){
@@ -2695,7 +2704,7 @@ function setSN(id,v){sects.find(s=>s.id===id).name=v;schedRender();}
 function pruneSectionData(s){
   if(!s)return s;
   const bars=Math.max(1,parseInt(s.bars)||1);
-  ['chords','subdiv','rep','meters','bargoto','staff'].forEach(k=>{
+  ['chords','subdiv','rep','meters','bargoto','kbUp','kbLo','kbUpD','kbLoD'].forEach(k=>{
     if(Array.isArray(s[k]) && s[k].length>bars) s[k].length=bars;
   });
   return s;
@@ -2777,117 +2786,98 @@ let currentView='flow';
 /* ── 五線譜檢視：同拍多音（和弦）、升降記號、附點、連結線；每段沿用 bar 結構＋配器重點 ── */
 const STAFF_MIN=-6, STAFF_MAX=16;   // 音高索引（index 2=E4 底線、10=F5 頂線；0=C4 中央C）
 const STAFF_S=9, STAFF_YTOP=16;
-let _staffAcc='nat', _staffChordOn=false, _staffSel=null;
+let _staffSel=null;
 /* 五線譜 上一步/下一步：快照整份 staff（不影響其他頁資料） */
 let _staffUndo=[], _staffRedo=[];
-function staffSnapshot(){ return JSON.stringify(sects.map(s=>s.staff!=null?s.staff:null)); }
+const KB_KEYS=['kbUp','kbLo','kbUpD','kbLoD'];
+function staffSnapshot(){ return JSON.stringify(sects.map(s=>{const o={}; KB_KEYS.forEach(k=>o[k]=s[k]!=null?s[k]:null); return o;})); }
 function staffPushHistory(){ _staffUndo.push(staffSnapshot()); if(_staffUndo.length>120)_staffUndo.shift(); _staffRedo.length=0; }
-function staffRestore(snap){ const arr=JSON.parse(snap); sects.forEach((s,i)=>{ if(arr[i]==null) delete s.staff; else s.staff=arr[i]; }); }
+function staffRestore(snap){ const arr=JSON.parse(snap); sects.forEach((s,i)=>{ const o=arr[i]||{}; KB_KEYS.forEach(k=>{ if(o[k]==null) delete s[k]; else s[k]=o[k]; }); }); }
 function staffUndo(){ if(!_staffUndo.length)return; _staffRedo.push(staffSnapshot()); staffRestore(_staffUndo.pop()); _staffSel=null; autoSave(); renderStaff(); }
 function staffRedo(){ if(!_staffRedo.length)return; _staffUndo.push(staffSnapshot()); staffRestore(_staffRedo.pop()); _staffSel=null; autoSave(); renderStaff(); }
 function updateStaffUndoBtns(){ const u=document.getElementById('staff-undo'), r=document.getElementById('staff-redo'); if(u)u.disabled=!_staffUndo.length; if(r)r.disabled=!_staffRedo.length; }
-function staffYFor(idx){ return STAFF_YTOP + (10-idx)*(STAFF_S/2); }
-function accGlyph(a){ return a===1?'♯':a===-1?'♭':a===2?'𝄪':a===-2?'𝄫':''; }
-/* 格子資料統一成 {n:[{p,a}],dot,tie}；相容舊的純數字 */
-function normStaffCell(v){
-  if(v==null||v==='')return null;
-  if(typeof v==='number')return {n:[{p:v,a:0}],dot:0,tie:0};
-  if(Array.isArray(v))return {n:v.map(x=>typeof x==='number'?{p:x,a:0}:{p:x.p,a:x.a||0}),dot:0,tie:0};
-  return {n:(v.n||[]).map(x=>({p:x.p,a:x.a||0})),dot:v.dot?1:0,tie:v.tie?1:0};
+/* ── KB 數字譜：每小節 上排(右手)/下排(左手)，每格可疊 1–3 級數，時值＝簡譜底線 ── */
+function kbKey(row){ return 'kb'+(row==='up'?'Up':'Lo'); }
+function kbGet(s,row,bar,c){ const a=s[kbKey(row)]; const rr=a&&a[bar]; return (rr&&rr[c]!=null)?String(rr[c]):''; }
+function kbSet(s,row,bar,c,v){ const k=kbKey(row); if(!Array.isArray(s[k]))s[k]=[]; if(!Array.isArray(s[k][bar]))s[k][bar]=[]; s[k][bar][c]=v; }
+function kbGetD(s,row,bar,c){ const k=kbKey(row)+'D'; const a=s[k]; const rr=a&&a[bar]; const v=rr&&rr[c]; return (v===0||v===1||v===2)?v:null; }
+function kbSetD(s,row,bar,c,v){ const k=kbKey(row)+'D'; if(!Array.isArray(s[k]))s[k]=[]; if(!Array.isArray(s[k][bar]))s[k][bar]=[]; s[k][bar][c]=(v===0||v===1||v===2)?v:null; }
+function kbAutoDur(fac){ return fac===4?2:fac===2?1:0; }   // 分割 4/8/16 → 0/1/2 條底線
+function kbCellHtml(s,row,i,c,fac,bp){
+  const tok=kbGet(s,row,i,c);
+  const d=kbGetD(s,row,i,c), eff=(d==null)?kbAutoDur(fac):d;
+  const nums=tok.trim()?tok.trim().split(/\s+/).slice(0,3):[];
+  const stack=nums.length?nums.map(t=>`<span class="kbn">${renderBeatToken(t,s)}</span>`).join(''):'<span class="kbn kbempty">·</span>';
+  return `<div class="kbcol bl${bp}" data-sid="${s.id}" data-row="${row}" data-bar="${i}" data-c="${c}" onclick="kbEdit(this)">`
+    +`<span class="cbnum">${subdivLabel(c,fac)}</span>`
+    +`<span class="kbstk d${eff}">${stack}</span>`
+    +`<input class="kb-i" value="${esc(tok)}" style="display:none" onblur="kbSave(this)" onkeydown="if(event.key==='Enter'){this.blur();}" onclick="event.stopPropagation()">`
+    +(nums.length?`<button class="kbdur" onclick="event.stopPropagation();kbCycleDur(this)" title="時值：↺跟小節 / ♩四分 / ♪八分 / ♬十六分（點循環）">${d==null?'↺':['♩','♪','♬'][eff]}</button>`:'')
+    +`</div>`;
 }
-function staffCell(s,bar,c){ const row=(Array.isArray(s.staff)&&s.staff[bar])?s.staff[bar]:null; return normStaffCell(row?row[c]:null); }
-function setStaffCell(s,bar,c,cell){ if(!Array.isArray(s.staff))s.staff=[]; if(!Array.isArray(s.staff[bar]))s.staff[bar]=[];
-  if(!cell||!cell.n||!cell.n.length){ s.staff[bar][c]=''; } else { s.staff[bar][c]={n:cell.n.map(x=>({p:x.p,a:x.a||0})),dot:cell.dot?1:0,tie:cell.tie?1:0}; } }
-/* 和弦拼音：根音字母(+#/b) + 性質 → [{p,a}] */
-const _LET={C:{step:0,semi:0},D:{step:1,semi:2},E:{step:2,semi:4},F:{step:3,semi:5},G:{step:4,semi:7},A:{step:5,semi:9},B:{step:6,semi:11}};
-const _QUAL={maj:{st:[0,2,4],se:[0,4,7]},min:{st:[0,2,4],se:[0,3,7]},dim:{st:[0,2,4],se:[0,3,6]},aug:{st:[0,2,4],se:[0,4,8]},sus2:{st:[0,1,4],se:[0,2,7]},sus4:{st:[0,3,4],se:[0,5,7]},'7':{st:[0,2,4,6],se:[0,4,7,10]},maj7:{st:[0,2,4,6],se:[0,4,7,11]},m7:{st:[0,2,4,6],se:[0,3,7,10]}};
-function _natSemiAtIdx(idx){ const ls=((idx%7)+7)%7, oct=Math.floor(idx/7); return oct*12+[0,2,4,5,7,9,11][ls]; }
-function chordNotes(root,qual){
-  const m=String(root).match(/^([A-G])([#b]?)$/); if(!m)return [];
-  const L=_LET[m[1]], acc=m[2]==='#'?1:m[2]==='b'?-1:0, Ridx=L.step, rootAbs=_natSemiAtIdx(Ridx)+acc;
-  const Q=_QUAL[qual]||_QUAL.maj;
-  return Q.st.map((stp,k)=>{ const idx=Ridx+stp; let a=(rootAbs+Q.se[k])-_natSemiAtIdx(idx); a=Math.max(-2,Math.min(2,a)); return {p:idx,a}; });
+function kbBarHtml(s,i){
+  const bars=Math.max(1,parseInt(s.bars)||1), ctrlsOn=!s.ctrlOff;
+  const bb=barBeats(s,i), fac=subdivFactor(s,i), cellsN=bb*fac;
+  const fs=(cellsN<=4?1.0:cellsN<=8?0.78:0.6).toFixed(2);
+  const m=barMeter(s,i), isLast=(i===bars-1), g=getBarGoto(s,i,bars), rep=repOf(s,i);
+  let subSel='',repBadge='',badges='';
+  if(ctrlsOn){
+    subSel=`<select class="cbsub" onclick="event.stopPropagation()" onchange="setSubdiv(${s.id},${i},this.value)" title="本小節分割：♩四分(4格) / ♪八分(8格) / ♬十六分(16格)"><option value="1"${fac===1?' selected':''}>♩</option><option value="2"${fac===2?' selected':''}>♪</option><option value="4"${fac===4?' selected':''}>♬</option></select>`;
+    repBadge=`<span class="cbrep ${rep>1?'on':''}" onclick="event.stopPropagation();cycleRep(${s.id},${i})" title="本小節重複次數">${rep>1?'×'+rep:'·'}</span>`;
+    const gopts=`<option value="">${isLast?'→ ?':'⌄'}</option>`+sects.map(t=>`<option value="${t.id}"${String(g)===String(t.id)?' selected':''}>→ ${esc(t.name)}</option>`).join('');
+    badges=`<button class="cmeter ${m?'on':'off'}" onclick="cycleMeter(${s.id},${i})" title="本小節拍號">${m||'♩'}</button>`+(isLast?`<select class="cgoto-badge ${g?'on':''}" onchange="setBarGoto(${s.id},${i},this.value)" title="接續到哪一段">${gopts}</select>`:`<select class="cjump ${g?'on':''}" onchange="setBarGoto(${s.id},${i},this.value)" title="此小節接續到哪一段">${gopts}</select>`);
+  } else { if(fac>1)subSel=`<span class="cbsub static">${fac===2?'♪':'♬'}</span>`; if(rep>1)repBadge=`<span class="cbrep on static">×${rep}</span>`; if(m)badges+=`<span class="cmeter on static">${esc(m)}</span>`; if(g){const t=sects.find(x=>x.id===g); badges+=`<span class="${isLast?'cgoto-badge':'cjump'} on static">→ ${t?esc(t.name):''}</span>`;} }
+  const rowHtml=(row)=>{ let cols=''; for(let c=0;c<cellsN;c++){ cols+=kbCellHtml(s,row,i,c,fac,Math.floor(c/fac)%4); } return `<div class="kbrow"><span class="kbhand">${row==='up'?'右':'左'}</span><div class="kbcols" style="font-size:${fs}em">${cols}</div></div>`; };
+  const _sel=(_barPickMode&&_barSel&&_barSel.sid===s.id&&i>=Math.min(_barSel.a,_barSel.b)&&i<=Math.max(_barSel.a,_barSel.b))?' barsel':'';
+  return `<div class="cbar2 kbbar${_sel}" data-sid="${s.id}" data-bar="${i}">${subSel}${repBadge}<div class="cbadges">${badges}</div>${rowHtml('up')}${rowHtml('lo')}</div>`;
 }
-function staffBarSvg(s,i){
-  const cells=cellsForBar(s,i), beats=barBeats(s,i);
-  const W=Math.max(64, cells*22), H=96, x0=20, x1=W-4, cw=(x1-x0)/cells;
-  let lines=''; for(const li of [2,4,6,8,10]) lines+=`<line x1="${x0-14}" y1="${staffYFor(li)}" x2="${x1}" y2="${staffYFor(li)}" stroke="var(--staffline)" stroke-width="1"/>`;
-  const clef=`<text x="${x0-16}" y="${staffYFor(4)+7}" class="staffclef">𝄞</text>`;
-  let guides=''; for(let b=1;b<beats;b++){ const gx=x0+(b/beats)*(x1-x0); guides+=`<line x1="${gx}" y1="${staffYFor(10)}" x2="${gx}" y2="${staffYFor(2)}" stroke="var(--border2)" stroke-dasharray="2 3" stroke-width="0.7"/>`; }
-  const selC=(_staffSel&&_staffSel.sid===s.id&&_staffSel.bar===i)?_staffSel.cell:-1;
-  let g='';
-  for(let c=0;c<cells;c++){
-    const cx=x0+(c+0.5)*cw;
-    if(c===selC) g+=`<rect x="${cx-cw/2+1}" y="2" width="${cw-2}" height="${H-4}" fill="rgba(212,168,67,0.14)" rx="3"/>`;
-    const cell=staffCell(s,i,c); if(!cell)continue;
-    cell.n.forEach(note=>{ const cy=staffYFor(note.p);
-      if(note.p<2){ for(let e=0;e>=note.p;e-=2) g+=`<line x1="${cx-8}" y1="${staffYFor(e)}" x2="${cx+8}" y2="${staffYFor(e)}" stroke="var(--staffline)" stroke-width="1"/>`; }
-      if(note.p>10){ for(let e=12;e<=note.p;e+=2) g+=`<line x1="${cx-8}" y1="${staffYFor(e)}" x2="${cx+8}" y2="${staffYFor(e)}" stroke="var(--staffline)" stroke-width="1"/>`; }
-      const ac=accGlyph(note.a); if(ac) g+=`<text x="${cx-13}" y="${cy+3.4}" class="staffacc">${ac}</text>`;
-      g+=`<line x1="${cx+5.2}" y1="${cy}" x2="${cx+5.2}" y2="${cy-19}" stroke="var(--accent)" stroke-width="1.4"/><ellipse cx="${cx}" cy="${cy}" rx="5.3" ry="4" fill="var(--accent)" transform="rotate(-20 ${cx} ${cy})"/>`;
-    });
-    if(cell.dot){ const dy=staffYFor(cell.n[0].p); g+=`<circle cx="${cx+9}" cy="${dy}" r="1.7" fill="var(--accent)"/>`; }
-    if(cell.tie){ const lo=Math.min(...cell.n.map(n=>n.p)); const ty=staffYFor(lo)+7; g+=`<path d="M ${cx+2} ${ty} Q ${cx+cw*0.55} ${ty+8} ${cx+cw} ${ty}" fill="none" stroke="var(--accent)" stroke-width="1.3"/>`; }
-  }
-  return `<svg class="staffsvg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" onclick="staffClick(event,${s.id},${i},this)" data-cells="${cells}" data-x0="${x0}" data-x1="${x1}">${lines}${guides}${clef}${g}</svg>`;
-}
-function staffClick(e,sid,bar,svg){
-  if(_barPickMode){ const w=svg.closest('.cbar2'); if(w&&w.dataset.sid!=null) barPickClick(+w.dataset.sid,+w.dataset.bar); return; }
+function kbEdit(cell){
+  if(_barPickMode){ const w=cell.closest('.cbar2'); if(w&&w.dataset.sid!=null) barPickClick(+w.dataset.sid,+w.dataset.bar); return; }
   if(_locked)return;
+  _staffSel={sid:+cell.dataset.sid,row:cell.dataset.row,bar:+cell.dataset.bar,c:+cell.dataset.c};
+  const r=cell.querySelector('.kbstk'), inp=cell.querySelector('.kb-i');
+  if(!inp||inp.style.display!=='none')return;
+  r.style.display='none'; inp.style.display=''; inp.focus(); inp.select();
+}
+function kbSave(inp){
+  const cell=inp.closest('.kbcol'); if(!cell)return;
+  const sid=+cell.dataset.sid,row=cell.dataset.row,bar=+cell.dataset.bar,c=+cell.dataset.c;
   const s=sects.find(x=>x.id===sid); if(!s)return;
-  const vb=svg.viewBox.baseVal, rect=svg.getBoundingClientRect();
-  const x=(e.clientX-rect.left)/rect.width*vb.width, y=(e.clientY-rect.top)/rect.height*vb.height;
-  const cells=+svg.dataset.cells, x0=+svg.dataset.x0, x1=+svg.dataset.x1;
-  let c=Math.floor((x-x0)/((x1-x0)/cells)); c=Math.max(0,Math.min(cells-1,c));
-  _staffSel={sid,bar,cell:c};
-  staffPushHistory();
-  if(_staffChordOn){
-    const notes=chordNotes(gv('staff-croot'),gv('staff-cqual'));
-    const old=staffCell(s,bar,c);
-    setStaffCell(s,bar,c,{n:notes,dot:old?old.dot:0,tie:old?old.tie:0});
-    autoSave(); renderStaff(); return;
-  }
-  let idx=Math.round(10-(y-STAFF_YTOP)/(STAFF_S/2)); idx=Math.max(STAFF_MIN,Math.min(STAFF_MAX,idx));
-  const cell=staffCell(s,bar,c)||{n:[],dot:0,tie:0};
-  const acc=_staffAcc==='sharp'?1:_staffAcc==='flat'?-1:0;
-  const ex=cell.n.find(nn=>nn.p===idx);
-  if(ex){ if(ex.a!==acc) ex.a=acc; else cell.n=cell.n.filter(nn=>nn.p!==idx); }
-  else { cell.n.push({p:idx,a:acc}); cell.n.sort((a,b)=>a.p-b.p); }
-  setStaffCell(s,bar,c,cell);
-  autoSave(); renderStaff();
+  const val=inp.value.trim();
+  if(val!==kbGet(s,row,bar,c)){ staffPushHistory(); kbSet(s,row,bar,c,val); autoSave(); }
+  renderStaff();
 }
-function staffAcc(a){ _staffAcc=a; _staffChordOn=false; ['nat','sharp','flat'].forEach(k=>{const b=document.getElementById('staff-acc-'+k); if(b)b.classList.toggle('on',k===a);}); const cm=document.getElementById('staff-chordmode'); if(cm)cm.classList.remove('on'); }
-function staffChordMode(){ _staffChordOn=!_staffChordOn; const b=document.getElementById('staff-chordmode'); if(b)b.classList.toggle('on',_staffChordOn); }
-function staffToggleAttr(attr){
-  if(!_staffSel){ alert('請先點一個小節的格子選它，再按「'+(attr==='dot'?'附點':'連結線')+'」。'); return; }
-  const s=sects.find(x=>x.id===_staffSel.sid); if(!s)return;
-  const cell=staffCell(s,_staffSel.bar,_staffSel.cell); if(!cell){ alert('這個格子還沒有音符。'); return; }
+function kbCycleDur(btn){
+  const cell=btn.closest('.kbcol'); if(!cell)return;
+  const sid=+cell.dataset.sid,row=cell.dataset.row,bar=+cell.dataset.bar,c=+cell.dataset.c;
+  const s=sects.find(x=>x.id===sid); if(!s)return;
   staffPushHistory();
-  cell[attr]=cell[attr]?0:1; setStaffCell(s,_staffSel.bar,_staffSel.cell,cell);
-  autoSave(); renderStaff();
+  const cur=kbGetD(s,row,bar,c);
+  const next=cur==null?0:cur===0?1:cur===1?2:null;   // ↺→♩→♪→♬→↺
+  kbSetD(s,row,bar,c,next); autoSave(); renderStaff();
 }
-function staffCardHtml(s){
+function kbCardHtml(s){
   const col=COL[s.color];
   const bars=Math.max(1,parseInt(s.bars)||1);
   const ssc=_songStartSet.has(s.id)?' song-start':'';
   const song=(s._song||window._printSongTitle);
-  const head=`<div class="ccard-head" style="background:${col.fill};color:${col.stroke}"><span class="chead-l">${song?`<span class="csong">🎵 ${esc(song)}${(s._dispMode&&s._dispMode!=='num'&&s._dispKey)?' · '+(s._dispMode==='female'?'女':'男')+esc(s._dispKey):''}</span>`:''}<span class="cname">${esc(s.name)}</span>${bprSelect(s)}<button class="ctrl-toggle" onclick="toggleFold(${s.id})" title="收合/展開此段">${s.fold?'▸ 展開':'▾ 收合'}</button></span><span class="cmeta">${bars} Bar · ${esc(gv('s-time'))}</span></div>`;
+  const head=`<div class="ccard-head" style="background:${col.fill};color:${col.stroke}"><span class="chead-l">${song?`<span class="csong">🎵 ${esc(song)}${(s._dispMode&&s._dispMode!=='num'&&s._dispKey)?' · '+(s._dispMode==='female'?'女':'男')+esc(s._dispKey):''}</span>`:''}<span class="cname">${esc(s.name)}</span>${bprSelect(s)}<button class="ctrl-toggle" onclick="toggleCtrl(${s.id})" title="顯示/隱藏每個小節的控制鈕">控制項 ${s.ctrlOff?'關':'開'}</button><button class="ctrl-toggle" onclick="toggleFold(${s.id})" title="收合/展開此段">${s.fold?'▸ 展開':'▾ 收合'}</button></span><span class="cmeta">${bars} Bar · ${esc(gv('s-time'))}</span></div>`;
   if(s.fold) return `<div class="ccard folded${ssc}" style="border-color:${col.stroke}">${head}</div>`;
   const strip=mixInsBody(s,true);
   let cells='';
-  for(let i=0;i<bars;i++) cells+=`<div class="cbar2 staffbar" data-sid="${s.id}" data-bar="${i}">${staffBarSvg(s,i)}</div>`;
+  for(let i=0;i<bars;i++) cells+=kbBarHtml(s,i);
   return `<div class="ccard${ssc}" style="border-color:${col.stroke}">${head}${strip}<div class="cbar-grid" ${barGridStyle(s)}>${cells}</div>${s.notes?`<div class="ccard-note">⚑ ${esc(s.notes)}</div>`:''}</div>`;
 }
 function renderStaff(){
   const root=document.getElementById('staff-content'); if(!root)return;
   computeSongStarts();
-  root.innerHTML=sects.map(staffCardHtml).join('');
+  root.innerHTML=sects.map(kbCardHtml).join('');
   renderLegend(); updateStaffUndoBtns();
 }
 function clearStaff(){
-  if(!confirm('清除整個譜的五線譜音符？（可用「↩ 上一步」還原）'))return;
+  if(!confirm('清除整個譜的 KB 數字？（可用「↩ 上一步」還原）'))return;
   staffPushHistory();
-  sects.forEach(s=>{ delete s.staff; }); autoSave(); renderStaff();
+  sects.forEach(s=>{ KB_KEYS.forEach(k=>delete s[k]); }); autoSave(); renderStaff();
 }
 function renderCurrent(){
   if(currentView==='flow')renderFlow();
