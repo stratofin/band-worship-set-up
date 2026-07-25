@@ -61,7 +61,7 @@ body.tb-collapsed .topbar-row-2{display:none;}
 .btna{background:var(--accent);border-color:var(--accent);color:#0d0d0d;font-weight:700;}
 .tpl-sel{appearance:none;-webkit-appearance:none;-moz-appearance:none;cursor:pointer;max-width:9em;text-overflow:ellipsis;}
 /* 鎖定（看譜模式）：關閉所有編輯互動，保留滑頁與看譜 */
-body.locked .cbsub,body.locked .cbrep,body.locked .cmeter,body.locked .cgoto-badge,body.locked .cjump,body.locked .cbpr-sel,body.locked .ctrl-toggle,body.locked .arr-grip,body.locked .arr-x,body.locked .arr-resize,body.locked .arr-ins,body.locked .arr-txt,body.locked .beat-i{pointer-events:none!important;}
+body.locked .cbsub,body.locked .kbsub,body.locked .cbrep,body.locked .cmeter,body.locked .cgoto-badge,body.locked .cjump,body.locked .cbpr-sel,body.locked .ctrl-toggle,body.locked .arr-grip,body.locked .arr-x,body.locked .arr-resize,body.locked .arr-ins,body.locked .arr-txt,body.locked .beat-i{pointer-events:none!important;}
 body.locked .arr-add{display:none!important;}
 body.locked .cbeatcol{cursor:default!important;}
 body.locked .left input,body.locked .left select,body.locked .left textarea,body.locked .left button,body.locked .eordbtn,body.locked .dbtn{pointer-events:none!important;opacity:.55;}
@@ -81,25 +81,38 @@ body.barpick .cbar2,body.barpick .cbeatcol{cursor:pointer!important;}
 .stbtn:hover{border-color:var(--accent);}
 .stbtn:disabled{opacity:.4;cursor:default;}
 .cbar2.kbbar{display:flex;flex-direction:column;min-height:0;padding:0.15em 0.1em 0.1em;overflow:visible;}
-.kbrow{display:flex;align-items:stretch;gap:0.15em;border-top:1px dashed var(--border2);}
+.kbrow{display:flex;align-items:stretch;position:relative;border-top:1px dashed var(--border2);}
 .kbrow:first-of-type{border-top:none;}
-.kbhand{flex:0 0 auto;width:1.05em;font-size:0.6em;color:var(--text3);display:flex;align-items:center;justify-content:center;font-weight:700;}
-.kbcols{display:flex;flex:1 1 0;min-width:0;}
-.kbcol{position:relative;flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;gap:0.05em;padding:0.5em 0.05em 0.25em;cursor:text;}
-.kbcol::before{content:'';position:absolute;left:-0.5px;top:14%;bottom:14%;width:1px;pointer-events:none;}
-.kbcol.bl0::before,.kbcol.bl2::before{background:#666;}
-.kbcol.bl1::before,.kbcol.bl3::before{background:repeating-linear-gradient(to bottom,#666 0,#666 2.5px,transparent 2.5px,transparent 5px);}
-.kbcol:first-child::before{display:none;}
+/* 右手/左手 標記：縮小放在該列左上角，不再佔用整欄空間 */
+.kbrl{position:absolute;top:0;left:0.1em;z-index:3;font-size:0.5em;line-height:1;font-weight:700;color:var(--text3);pointer-events:none;}
+.kbbeats{display:flex;flex:1 1 0;min-width:0;}
+/* 每一拍固定等寬（撐滿一個四分音符的空間），切分只在這一拍內部發生，不會讓整排縮小 */
+.kbbeat{flex:1 1 0;min-width:0;display:flex;flex-direction:column;border-left:1px solid #666;}
+.kbbeat:first-child{border-left:none;}
+.kbbeat>.kbsub{align-self:flex-start;margin:0.06em 0 0 0.06em;}
+.kbbeat:first-child>.kbsub{margin-left:0.95em;}
+.kbsub{font-size:0.5em;font-family:'Space Mono',monospace;border:none;border-radius:4px;padding:0.12em 0.14em;background:rgba(255,255,255,0.06);color:var(--text3);cursor:pointer;outline:none;line-height:1;-webkit-appearance:none;-moz-appearance:none;appearance:none;text-align:center;}
+.kbsub:hover{color:var(--accent);background:rgba(212,168,67,0.2);}
+.kbsub.static{background:transparent;pointer-events:none;}
+.kbsubcells{display:flex;flex:1 1 0;min-width:0;}
+.kbcol{position:relative;flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;gap:0.05em;padding:0.3em 0.04em 0.58em;cursor:text;}
+.kbsubcells .kbcol+.kbcol{border-left:1px dashed #666;}
+/* 切得越細，格內字略縮，但該拍整體空間不變 */
+.kbbeat.s2 .kbn{font-size:0.86em;}
+.kbbeat.s4 .kbn{font-size:0.7em;}
+.kbbeat.s2 .cbnum,.kbbeat.s4 .cbnum{font-size:0.44em;}
 .kbstk{display:inline-flex;flex-direction:column;align-items:center;line-height:1.05;font-weight:700;color:var(--text);}
 .kbstk .kbn{display:block;}
 .kbstk .kbempty{color:var(--text3);opacity:.35;font-weight:400;}
-.kbstk.d1{box-shadow:0 0.18em 0 -0.02em currentColor;}
-.kbstk.d2{box-shadow:0 0.18em 0 -0.02em currentColor,0 0.34em 0 -0.02em currentColor;}
+.kbunder{position:absolute;left:50%;transform:translateX(-50%);bottom:0.3em;width:0.6em;height:0;pointer-events:none;color:var(--text);}
+.kbunder.d1{border-top:0.08em solid currentColor;}
+.kbunder.d2{border-top:0.08em solid currentColor;box-shadow:0 0.14em 0 0 currentColor;}
 .kb-i{width:100%;min-width:2.2em;background:var(--bg4);border:1px solid var(--accent);color:var(--text);font-family:inherit;font-size:1em;text-align:center;outline:none;border-radius:3px;padding:0.05em 0;}
 .kbdur{position:absolute;right:0;bottom:-0.15em;font-size:0.62em;line-height:1;padding:0 1px;border:none;background:transparent;color:var(--text3);cursor:pointer;}
 .kbdur:hover{color:var(--accent);}
 body.locked .kbcol{cursor:default;}
-body.print-staff .kbcol::before{background:#999;}
+body.print-staff .kbbeat{border-left-color:#999;}
+body.print-staff .kbsubcells .kbcol+.kbcol{border-left-color:#bbb;}
 body.print-staff .kbdur{display:none!important;}
 .btna:hover{opacity:.88;}
 .mob-only{display:none;}
@@ -587,7 +600,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
     --text:#111;--text2:#444;--text3:#777;--accent:#b8860b;
     background:#fff;color:#111;
   }
-  .topbar,.vtabs,.icon-toolbar,.summary,.chord-hint,.view-print,.ic-legend,.cbpr-sel,.cbsub,.ctrl-toggle,.lock-banner{display:none!important;}
+  .topbar,.vtabs,.icon-toolbar,.summary,.chord-hint,.view-print,.ic-legend,.cbpr-sel,.cbsub,.kbsub,.ctrl-toggle,.lock-banner{display:none!important;}
   body[class*="print-"] .cbrep:not(.on){display:none!important;}
   body[class*="print-"] .cbrep.on{color:#1a3a5a!important;background:#cfe0f3!important;}
   .left{display:none!important;}
@@ -688,6 +701,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   body.print-mixp .icchip2 .ic-val{font-size:11px!important;}
   /* 經典 A4：整體縮放塞進一張 */
   body.print-fit #vp-chord>.chord-content,
+  body.print-fit #vp-staff>.chord-content,
   body.print-fit #vp-mix>.icpages,
   body.print-fit #vp-mixp>.icpages{ zoom:var(--fit-scale,1); }
   body.print-fit .ccard{page-break-inside:avoid!important;break-inside:avoid!important;-webkit-column-break-inside:avoid!important;}
@@ -857,7 +871,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
         <button class="stbtn" id="staff-redo" onclick="staffRedo()" title="下一步（重做）" disabled>↪ 下一步</button>
         <button class="clear-btn" onclick="clearStaff()" title="清除整個譜的 KB 數字（可用上一步還原）">🗑 清除</button>
       </div>
-      <div class="chord-hint">KB 數字譜：每小節分「上排＝右手／下排＝左手」，點格子輸入級數，同一格用空白分隔可直向疊 1–3 個音（和弦）；或用右上「和弦」選根音級數＋性質，開「🎹 放和弦」後點格子整組疊上。時值＝簡譜底線：無＝四分、一條＝八分、兩條＝十六分（跟小節分割自動；每格右下 ↺/♩/♪/♬ 可單獨改）。上方「顯示」可切級數↔男/女Key 和弦名。小節分割／重複／接續／每排／複製小節 全部沿用。</div>
+      <div class="chord-hint">KB 數字譜：每小節分「上排＝右手／下排＝左手」，點格子輸入級數，同一格用空白分隔可直向疊 1–3 個音（和弦）；或用右上「和弦」選根音級數＋性質，開「🎹 放和弦」後點格子整組疊上。時值＝簡譜底線（顯示在每格底部）：無＝四分、一條＝八分、兩條＝十六分。每一「拍」可各自切分：拍左上角的 ♩/♪/♬ 選單只切分那一拍（每拍等寬，切細只在該拍內部發生，不會讓整排縮小）；右手 R／左手 L 標在每列左上角。上方「顯示」可切級數↔男/女Key 和弦名。重複／接續／每排／複製小節 全部沿用。</div>
       <div class="chord-content" id="staff-content"></div>
     </div>
 
@@ -875,7 +889,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
         <div class="ecard2"><h3>🔍 圖片 / PDF 辨識匯入</h3><p>上傳和弦譜圖片或 PDF，瀏覽器內 OCR 辨識並自動拆成段落／和弦（實驗性，通常需人工修正；可選依男/女 Key 轉級數）</p><button class="btn btna" onclick="openOcr()">🔍 辨識匯入</button></div>
         <div class="ecard2"><h3>🎼 圖示譜 PDF</h3><p>純圖示／色塊呈現，A4 直式、每頁段數依目前設定（電腦/平板 3–15、手機 4–14），適合發給團員或現場看譜</p><button class="btn btna" onclick="printView('icon')">🖨 列印 / 存 PDF</button></div>
         <div class="ecard2"><h3>🎵 和弦譜 PDF</h3><p>每段小節攤開、依拍號顯示拍點，A4 直式列印，適合主領 / 樂手看和弦進行</p><button class="btn btna" onclick="printView('chord')">🖨 列印 / 存 PDF</button></div>
-        <div class="ecard2"><h3>🎼 混合 PDF（和弦＋樂器）</h3><p>同一頁同時呈現和弦小節與各樂器部位，最完整的樂團總表</p><button class="btn btna" onclick="printView('mix')">🖨 列印 / 存 PDF</button></div>
+        <div class="ecard2"><h3>🎼 混合 PDF（和弦＋樂器）</h3><p>同一頁同時呈現和弦小節與各樂器部位，最完整的樂團總表</p><button class="btn btna" onclick="printView('mixp')">🖨 列印 / 存 PDF</button></div>
         <div class="ecard2"><h3>🖼 PNG 展開示意圖</h3><p>將「展開示意圖」整頁輸出為高解析 PNG，包含所有段落與樂器標註</p><button class="btn btna" onclick="expPNG('flow')">↓ PNG 展開示意圖</button></div>
         <div class="ecard2"><h3>📦 PNG 方塊流程圖</h3><p>將「方塊流程圖」橫向輸出為高解析 PNG</p><button class="btn btna" onclick="expPNG('block')">↓ PNG 方塊流程圖</button></div>
         <div class="ecard2"><h3>📊 CSV 樂器備註表</h3><p>包含所有段落、Bar 數、顏色、樂器備註</p><button class="btn" onclick="expCSV()">↓ Download CSV</button></div>
@@ -2706,7 +2720,7 @@ function setSN(id,v){sects.find(s=>s.id===id).name=v;schedRender();}
 function pruneSectionData(s){
   if(!s)return s;
   const bars=Math.max(1,parseInt(s.bars)||1);
-  ['chords','subdiv','rep','meters','bargoto','kbUp','kbLo','kbUpD','kbLoD'].forEach(k=>{
+  ['chords','subdiv','rep','meters','bargoto','kbUp','kbLo','kbUpD','kbLoD','kbUpSub','kbLoSub'].forEach(k=>{
     if(Array.isArray(s[k]) && s[k].length>bars) s[k].length=bars;
   });
   return s;
@@ -2791,7 +2805,7 @@ const STAFF_S=9, STAFF_YTOP=16;
 let _staffSel=null;
 /* 五線譜 上一步/下一步：快照整份 staff（不影響其他頁資料） */
 let _staffUndo=[], _staffRedo=[];
-const KB_KEYS=['kbUp','kbLo','kbUpD','kbLoD'];
+const KB_KEYS=['kbUp','kbLo','kbUpD','kbLoD','kbUpSub','kbLoSub'];
 function staffSnapshot(){ return JSON.stringify(sects.map(s=>{const o={}; KB_KEYS.forEach(k=>o[k]=s[k]!=null?s[k]:null); return o;})); }
 function staffPushHistory(){ _staffUndo.push(staffSnapshot()); if(_staffUndo.length>120)_staffUndo.shift(); _staffRedo.length=0; }
 function staffRestore(snap){ const arr=JSON.parse(snap); sects.forEach((s,i)=>{ const o=arr[i]||{}; KB_KEYS.forEach(k=>{ if(o[k]==null) delete s[k]; else s[k]=o[k]; }); }); }
@@ -2801,10 +2815,77 @@ function updateStaffUndoBtns(){ const u=document.getElementById('staff-undo'), r
 /* ── KB 數字譜：每小節 上排(右手)/下排(左手)，每格可疊 1–3 級數，時值＝簡譜底線 ── */
 function kbKey(row){ return 'kb'+(row==='up'?'Up':'Lo'); }
 function kbGet(s,row,bar,c){ const a=s[kbKey(row)]; const rr=a&&a[bar]; return (rr&&rr[c]!=null)?String(rr[c]):''; }
-function kbSet(s,row,bar,c,v){ const k=kbKey(row); if(!Array.isArray(s[k]))s[k]=[]; if(!Array.isArray(s[k][bar]))s[k][bar]=[]; s[k][bar][c]=v; }
+function kbSet(s,row,bar,c,v){ const k=kbKey(row); if(!Array.isArray(s[k]))s[k]=[]; if(!Array.isArray(s[k][bar]))s[k][bar]=[]; s[k][bar][c]=v; s._kbv=2; }
 function kbGetD(s,row,bar,c){ const k=kbKey(row)+'D'; const a=s[k]; const rr=a&&a[bar]; const v=rr&&rr[c]; return (v===0||v===1||v===2)?v:null; }
-function kbSetD(s,row,bar,c,v){ const k=kbKey(row)+'D'; if(!Array.isArray(s[k]))s[k]=[]; if(!Array.isArray(s[k][bar]))s[k][bar]=[]; s[k][bar][c]=(v===0||v===1||v===2)?v:null; }
+function kbSetD(s,row,bar,c,v){ const k=kbKey(row)+'D'; if(!Array.isArray(s[k]))s[k]=[]; if(!Array.isArray(s[k][bar]))s[k][bar]=[]; s[k][bar][c]=(v===0||v===1||v===2)?v:null; s._kbv=2; }
 function kbAutoDur(fac){ return fac===4?2:fac===2?1:0; }   // 分割 4/8/16 → 0/1/2 條底線
+/* KB 專用：右手/左手「每一拍」各自獨立的分割。
+   音符/底線資料改用固定的十六分格點索引：一拍佔 4 個細格點，第 k 個子格對應細格點 = 拍*4 + k*(4/切分)。
+   好處：切分切換不需重排、不洗掉音符（粗格點的音符在細分時原地保留），且每拍等寬、切分只在該拍內發生。 */
+function kbSubKey(row){ return kbKey(row)+'Sub'; }   // kbUpSub / kbLoSub（v2：每個 bar 存一個「每拍分割」陣列）
+function kbFine(beat,k,sub){ return beat*4 + k*(4/sub); }
+function kbGetBeatSub(s,row,bar,beat){
+  const a=s[kbSubKey(row)]; const rb=Array.isArray(a)?a[bar]:undefined;
+  if(Array.isArray(rb)){ const f=rb[beat]; return [1,2,4].includes(f)?f:1; }
+  if([1,2,4].includes(rb)) return rb;                 // 舊：每手一個 scalar（遷移前）
+  return subdivFactor(s,bar);                          // 更舊：每小節共用 s.subdiv
+}
+function kbSetBeatSub(id,row,bar,beat,f){
+  const s=sects.find(x=>x.id===id); if(!s)return;
+  migrateKBSection(s);
+  staffPushHistory();
+  const bb=barBeats(s,bar), nf=[1,2,4].includes(parseInt(f))?parseInt(f):1, sk=kbSubKey(row);
+  if(!Array.isArray(s[sk]))s[sk]=[];
+  let ra=s[sk][bar];
+  if(!Array.isArray(ra)){ const base=[1,2,4].includes(ra)?ra:subdivFactor(s,bar); ra=new Array(bb).fill(base); }
+  else { while(ra.length<bb)ra.push(subdivFactor(s,bar)); }
+  ra[beat]=nf; s[sk][bar]=ra; s._kbv=2;
+  autoSave(); renderStaff();
+}
+/* 每拍細格點的位置標籤：k=0 顯示拍號，其餘顯示 e/&/a */
+function kbSubLabel(beat,k,sub){
+  if(sub===1) return beat+1;
+  if(sub===2) return k===0?(beat+1):'&';
+  return k===0?(beat+1):(k===1?'e':k===2?'&':'a');
+}
+/* 舊格式（連續格點）→ v2 十六分格點；只在有 KB 內容且尚未遷移時執行一次 */
+function kbHasLegacy(s){
+  return ['up','lo'].some(row=>{
+    const d=s[kbKey(row)], dd=s[kbKey(row)+'D'], sub=s[kbSubKey(row)];
+    if(Array.isArray(d)&&d.some(b=>Array.isArray(b)&&b.some(v=>String(v||'').trim())))return true;
+    if(Array.isArray(dd)&&dd.some(b=>Array.isArray(b)&&b.some(v=>v===0||v===1||v===2)))return true;
+    if([1,2,4].includes(sub))return true;
+    if(Array.isArray(sub)&&sub.some(v=>[1,2,4].includes(v)))return true;
+    return false;
+  });
+}
+function migrateKBSection(s){
+  if(!s||s._kbv===2)return;
+  if(!kbHasLegacy(s)){ s._kbv=2; return; }
+  const bars=Math.max(1,parseInt(s.bars)||1);
+  ['up','lo'].forEach(row=>{
+    const dk=kbKey(row), ddk=kbKey(row)+'D', sk=kbSubKey(row);
+    const oldData=Array.isArray(s[dk])?s[dk]:[], oldDur=Array.isArray(s[ddk])?s[ddk]:[], oldSub=s[sk];
+    const nd=[], ndd=[], nsub=[];
+    for(let b=0;b<bars;b++){
+      const bb=barBeats(s,b);
+      let f=null;
+      if(Array.isArray(oldSub)){ const q=oldSub[b]; if([1,2,4].includes(q))f=q; }
+      else if([1,2,4].includes(oldSub)) f=oldSub;
+      if(f==null) f=subdivFactor(s,b);
+      const fineN=bb*4, arrD=new Array(fineN).fill(''), arrDur=new Array(fineN).fill(null);
+      const ob=Array.isArray(oldData[b])?oldData[b]:[], odb=Array.isArray(oldDur[b])?oldDur[b]:[];
+      for(let beat=0;beat<bb;beat++){ for(let k=0;k<f;k++){
+        const c=beat*f+k, fine=kbFine(beat,k,f);
+        if(ob[c]!=null&&String(ob[c]).trim()) arrD[fine]=ob[c];
+        if(odb[c]===0||odb[c]===1||odb[c]===2) arrDur[fine]=odb[c];
+      }}
+      nd[b]=arrD; ndd[b]=arrDur; nsub[b]=new Array(bb).fill(f);
+    }
+    s[dk]=nd; s[ddk]=ndd; s[sk]=nsub;
+  });
+  s._kbv=2;
+}
 /* 和弦快速輸入（級數）：根音級數 + 性質 → 疊起的級數 tokens（高音在上） */
 let _kbChordOn=false;
 const _SCALESEMI={1:0,2:2,3:4,4:5,5:7,6:9,7:11};
@@ -2819,32 +2900,43 @@ function chordDegsKB(rootDeg,qual){
   return out.map(o=>o.tok);
 }
 function kbChordMode(){ _kbChordOn=!_kbChordOn; const b=document.getElementById('kb-chordmode'); if(b)b.classList.toggle('on',_kbChordOn); }
-function kbCellHtml(s,row,i,c,fac,bp){
-  const tok=kbGet(s,row,i,c);
-  const d=kbGetD(s,row,i,c), eff=(d==null)?kbAutoDur(fac):d;
+function kbCellHtml(s,row,i,fine,beat,k,sub){
+  const tok=kbGet(s,row,i,fine);
+  const d=kbGetD(s,row,i,fine), eff=(d==null)?kbAutoDur(sub):d;
   const nums=tok.trim()?tok.trim().split(/\s+/).slice(0,3):[];
   const stack=nums.length?nums.map(t=>`<span class="kbn">${renderBeatToken(t,s)}</span>`).join(''):'<span class="kbn kbempty">·</span>';
-  return `<div class="kbcol bl${bp}" data-sid="${s.id}" data-row="${row}" data-bar="${i}" data-c="${c}" onclick="kbEdit(this)">`
-    +`<span class="cbnum">${subdivLabel(c,fac)}</span>`
-    +`<span class="kbstk d${eff}">${stack}</span>`
+  return `<div class="kbcol" data-sid="${s.id}" data-row="${row}" data-bar="${i}" data-c="${fine}" onclick="kbEdit(this)">`
+    +`<span class="cbnum">${kbSubLabel(beat,k,sub)}</span>`
+    +`<span class="kbstk">${stack}</span>`
+    +`<span class="kbunder d${eff}"></span>`
     +`<input class="kb-i" value="${esc(tok)}" style="display:none" onblur="kbSave(this)" onkeydown="if(event.key==='Enter'){this.blur();}" onclick="event.stopPropagation()">`
     +`</div>`;
 }
 function kbBarHtml(s,i){
   const bars=Math.max(1,parseInt(s.bars)||1), ctrlsOn=!s.ctrlOff;
-  const bb=barBeats(s,i), fac=subdivFactor(s,i), cellsN=bb*fac;
-  const fs=(cellsN<=4?1.0:cellsN<=8?0.78:0.6).toFixed(2);
+  const bb=barBeats(s,i);
   const m=barMeter(s,i), isLast=(i===bars-1), g=getBarGoto(s,i,bars), rep=repOf(s,i);
-  let subSel='',repBadge='',badges='';
+  let repBadge='',badges='';
   if(ctrlsOn){
-    subSel=`<select class="cbsub" onclick="event.stopPropagation()" onchange="setSubdiv(${s.id},${i},this.value)" title="本小節分割：♩四分(4格) / ♪八分(8格) / ♬十六分(16格)"><option value="1"${fac===1?' selected':''}>♩</option><option value="2"${fac===2?' selected':''}>♪</option><option value="4"${fac===4?' selected':''}>♬</option></select>`;
     repBadge=`<span class="cbrep ${rep>1?'on':''}" onclick="event.stopPropagation();cycleRep(${s.id},${i})" title="本小節重複次數">${rep>1?'×'+rep:'·'}</span>`;
     const gopts=`<option value="">${isLast?'→ ?':'⌄'}</option>`+sects.map(t=>`<option value="${t.id}"${String(g)===String(t.id)?' selected':''}>→ ${esc(t.name)}</option>`).join('');
     badges=`<button class="cmeter ${m?'on':'off'}" onclick="cycleMeter(${s.id},${i})" title="本小節拍號">${m||'♩'}</button>`+(isLast?`<select class="cgoto-badge ${g?'on':''}" onchange="setBarGoto(${s.id},${i},this.value)" title="接續到哪一段">${gopts}</select>`:`<select class="cjump ${g?'on':''}" onchange="setBarGoto(${s.id},${i},this.value)" title="此小節接續到哪一段">${gopts}</select>`);
-  } else { if(fac>1)subSel=`<span class="cbsub static">${fac===2?'♪':'♬'}</span>`; if(rep>1)repBadge=`<span class="cbrep on static">×${rep}</span>`; if(m)badges+=`<span class="cmeter on static">${esc(m)}</span>`; if(g){const t=sects.find(x=>x.id===g); badges+=`<span class="${isLast?'cgoto-badge':'cjump'} on static">→ ${t?esc(t.name):''}</span>`;} }
-  const rowHtml=(row)=>{ let cols=''; for(let c=0;c<cellsN;c++){ cols+=kbCellHtml(s,row,i,c,fac,Math.floor(c/fac)%4); } return `<div class="kbrow"><span class="kbhand">${row==='up'?'右':'左'}</span><div class="kbcols" style="font-size:${fs}em">${cols}</div></div>`; };
+  } else { if(rep>1)repBadge=`<span class="cbrep on static">×${rep}</span>`; if(m)badges+=`<span class="cmeter on static">${esc(m)}</span>`; if(g){const t=sects.find(x=>x.id===g); badges+=`<span class="${isLast?'cgoto-badge':'cjump'} on static">→ ${t?esc(t.name):''}</span>`;} }
+  /* 每一「拍」各自的分割選單（♩四分 / ♪八分 / ♬十六分），放在該拍左上角 */
+  const beatSel=(row,beat,sub)=> ctrlsOn
+    ? `<select class="kbsub" onclick="event.stopPropagation()" onchange="kbSetBeatSub(${s.id},'${row}',${i},${beat},this.value)" title="這一拍的分割：♩四分 / ♪八分 / ♬十六分"><option value="1"${sub===1?' selected':''}>♩</option><option value="2"${sub===2?' selected':''}>♪</option><option value="4"${sub===4?' selected':''}>♬</option></select>`
+    : (sub>1?`<span class="kbsub static">${sub===2?'♪':'♬'}</span>`:'');
+  const rowHtml=(row)=>{
+    let beats='';
+    for(let beat=0;beat<bb;beat++){
+      const sub=kbGetBeatSub(s,row,i,beat);
+      let cells=''; for(let k=0;k<sub;k++){ cells+=kbCellHtml(s,row,i,kbFine(beat,k,sub),beat,k,sub); }
+      beats+=`<div class="kbbeat s${sub}">${beatSel(row,beat,sub)}<div class="kbsubcells">${cells}</div></div>`;
+    }
+    return `<div class="kbrow" data-row="${row}"><span class="kbrl">${row==='up'?'R':'L'}</span><div class="kbbeats">${beats}</div></div>`;
+  };
   const _sel=(_barPickMode&&_barSel&&_barSel.sid===s.id&&i>=Math.min(_barSel.a,_barSel.b)&&i<=Math.max(_barSel.a,_barSel.b))?' barsel':'';
-  return `<div class="cbar2 kbbar${_sel}" data-sid="${s.id}" data-bar="${i}">${subSel}${repBadge}<div class="cbadges">${badges}</div>${rowHtml('up')}${rowHtml('lo')}</div>`;
+  return `<div class="cbar2 kbbar${_sel}" data-sid="${s.id}" data-bar="${i}">${repBadge}<div class="cbadges">${badges}</div>${rowHtml('up')}${rowHtml('lo')}</div>`;
 }
 function kbEdit(cell){
   if(_barPickMode){ const w=cell.closest('.cbar2'); if(w&&w.dataset.sid!=null) barPickClick(+w.dataset.sid,+w.dataset.bar); return; }
@@ -2891,6 +2983,7 @@ function kbCardHtml(s){
 function renderStaff(){
   const root=document.getElementById('staff-content'); if(!root)return;
   computeSongStarts();
+  sects.forEach(migrateKBSection);
   root.innerHTML=sects.map(kbCardHtml).join('');
   renderLegend(); updateStaffUndoBtns();
 }
