@@ -89,9 +89,8 @@ body.barpick .cbar2,body.barpick .cbeatcol{cursor:pointer!important;}
 /* 每一拍固定等寬（撐滿一個四分音符的空間），切分只在這一拍內部發生，不會讓整排縮小 */
 .kbbeat{flex:1 1 0;min-width:0;display:flex;flex-direction:column;border-left:1px solid #666;}
 .kbbeat:first-child{border-left:none;}
-.kbbeat>.kbsub{align-self:flex-start;margin:0.06em 0 0 0.06em;}
-.kbbeat:first-child>.kbsub{margin-left:0.95em;}
-.kbsub{font-size:0.5em;font-family:'Space Mono',monospace;border:none;border-radius:4px;padding:0.12em 0.14em;background:rgba(255,255,255,0.06);color:var(--text3);cursor:pointer;outline:none;line-height:1;-webkit-appearance:none;-moz-appearance:none;appearance:none;text-align:center;}
+.kbbeat>.kbsub{align-self:flex-start;margin:0.05em 0 0.05em 0.06em;}
+.kbsub{font-size:1em;font-family:'Space Mono',monospace;border:none;border-radius:4px;padding:0.12em 0.14em;background:rgba(255,255,255,0.06);color:var(--text3);cursor:pointer;outline:none;line-height:1;-webkit-appearance:none;-moz-appearance:none;appearance:none;text-align:center;}
 .kbsub:hover{color:var(--accent);background:rgba(212,168,67,0.2);}
 .kbsub.static{background:transparent;pointer-events:none;}
 .kbsubcells{display:flex;flex:1 1 0;min-width:0;}
@@ -569,7 +568,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   .cmeter,.ctrl-toggle,.fbtn,.arr-x,.arr-grip,.cbpr-sel{position:relative;}
   .cmeter::after,.ctrl-toggle::after,.fbtn::after,.arr-x::after,.arr-grip::after,.cbrep::after,.cbpr-sel::after{content:"";position:absolute;inset:-8px;z-index:2;}
   /* 下拉選單（::after 在 select 上不可靠）：改用透明內距＋負外距擴大點擊區，背景只裁到文字，外觀不會變大 */
-  .cbsub,.kbsub,.cgoto-badge,.cjump,.arr-ins{background-clip:content-box;padding-top:8px;padding-bottom:8px;margin-top:-8px;margin-bottom:-8px;}
+  .cbsub,.cgoto-badge,.cjump,.arr-ins{background-clip:content-box;padding-top:8px;padding-bottom:8px;margin-top:-8px;margin-bottom:-8px;}
 }
 
 /* 列印頁首（畫面隱藏，列印顯示） */
@@ -2944,7 +2943,7 @@ function kbBarHtml(s,i){
     const gopts=`<option value="">${isLast?'→ ?':'⌄'}</option>`+sects.map(t=>`<option value="${t.id}"${String(g)===String(t.id)?' selected':''}>→ ${esc(t.name)}</option>`).join('');
     badges=`<button class="cmeter ${m?'on':'off'}" onclick="cycleMeter(${s.id},${i})" title="本小節拍號">${m||'♩'}</button>`+(isLast?`<select class="cgoto-badge ${g?'on':''}" onchange="setBarGoto(${s.id},${i},this.value)" title="接續到哪一段">${gopts}</select>`:`<select class="cjump ${g?'on':''}" onchange="setBarGoto(${s.id},${i},this.value)" title="此小節接續到哪一段">${gopts}</select>`);
   } else { if(rep>1)repBadge=`<span class="cbrep on static">×${rep}</span>`; if(m)badges+=`<span class="cmeter on static">${esc(m)}</span>`; if(g){const t=sects.find(x=>x.id===g); badges+=`<span class="${isLast?'cgoto-badge':'cjump'} on static">→ ${t?esc(t.name):''}</span>`;} }
-  /* 每一「拍」各自的分割選單（♩四分 / ♪八分 / ♬十六分），放在該拍左上角 */
+  /* 每一「拍」各自的分割選單（♩四分 / ♪八分 / ♬十六分），放在該拍左下角（避開上方的拍號/接續徽章） */
   const beatSel=(row,beat,sub)=> ctrlsOn
     ? `<select class="kbsub" onclick="event.stopPropagation()" onchange="kbSetBeatSub(${s.id},'${row}',${i},${beat},this.value)" title="這一拍的分割：♩四分 / ♪八分 / ♬十六分"><option value="1"${sub===1?' selected':''}>♩</option><option value="2"${sub===2?' selected':''}>♪</option><option value="4"${sub===4?' selected':''}>♬</option></select>`
     : (sub>1?`<span class="kbsub static">${sub===2?'♪':'♬'}</span>`:'');
@@ -2953,7 +2952,7 @@ function kbBarHtml(s,i){
     for(let beat=0;beat<bb;beat++){
       const sub=kbGetBeatSub(s,row,i,beat);
       let cells=''; for(let k=0;k<sub;k++){ cells+=kbCellHtml(s,row,i,kbFine(beat,k,sub),beat,k,sub); }
-      beats+=`<div class="kbbeat s${sub}">${beatSel(row,beat,sub)}<div class="kbsubcells">${cells}</div></div>`;
+      beats+=`<div class="kbbeat s${sub}"><div class="kbsubcells">${cells}</div>${beatSel(row,beat,sub)}</div>`;
     }
     return `<div class="kbrow" data-row="${row}"><span class="kbrl">${row==='up'?'R':'L'}</span><div class="kbbeats">${beats}</div></div>`;
   };
