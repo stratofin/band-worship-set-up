@@ -1782,7 +1782,7 @@ async function printFit(view){
     const clone=src.cloneNode(true);
     clone.querySelectorAll('.beat-i').forEach(n=>n.remove());
     clone.querySelectorAll('.icpage').forEach(p=>{p.style.minWidth='0';p.style.width='100%';});
-    clone.style.cssText='position:fixed;left:-99999px;top:0;width:720px;display:block;';
+    clone.style.cssText='position:fixed;left:-99999px;top:0;width:720px;display:block;font-size:'+curFont+'px;font-family:\'Noto Sans TC\',sans-serif;';
     document.body.appendChild(clone); const h=clone.scrollHeight||PH; document.body.removeChild(clone); return h; };
   renderView();
   if(document.fonts&&document.fonts.ready){ try{ await document.fonts.ready; }catch(e){} }
@@ -2828,7 +2828,6 @@ function kbCellHtml(s,row,i,c,fac,bp){
     +`<span class="cbnum">${subdivLabel(c,fac)}</span>`
     +`<span class="kbstk d${eff}">${stack}</span>`
     +`<input class="kb-i" value="${esc(tok)}" style="display:none" onblur="kbSave(this)" onkeydown="if(event.key==='Enter'){this.blur();}" onclick="event.stopPropagation()">`
-    +(nums.length?`<button class="kbdur" onclick="event.stopPropagation();kbCycleDur(this)" title="時值：↺跟小節 / ♩四分 / ♪八分 / ♬十六分（點循環）">${d==null?'↺':['♩','♪','♬'][eff]}</button>`:'')
     +`</div>`;
 }
 function kbBarHtml(s,i){
