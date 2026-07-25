@@ -365,9 +365,12 @@ body.svc-mode .svc-only{display:inline-flex!important;}
 .cbeatcol:focus-within{background:rgba(212,168,67,0.08);}
 /* Nashville 記號顯示 / 編輯 */
 .cbeatcol{cursor:text;}
-.beat-r{display:inline-flex;align-items:center;justify-content:center;min-height:1.25em;color:var(--text);font-weight:700;}
+.beat-r{display:inline-flex;align-items:center;justify-content:center;min-height:1.25em;color:var(--text);font-weight:700;white-space:nowrap;}
 .beat-i{width:100%;min-width:0;text-align:center;background:rgba(212,168,67,0.12);border:none;outline:none;color:var(--text);font-family:inherit;font-size:0.95em;font-weight:700;padding:0;border-radius:2px;}
-.bt-note{font-weight:700;}
+.bt-note{font-weight:700;white-space:nowrap;}
+/* 較長的和弦（如 D/F#）自動縮字，避免在窄格中被切掉 */
+.bt-note.bt-long{font-size:0.8em;letter-spacing:-0.02em;}
+.bt-note.bt-xlong{font-size:0.64em;letter-spacing:-0.03em;}
 .bt-suf{font-size:0.55em;vertical-align:0.35em;font-weight:600;letter-spacing:-0.02em;}
 .bt-rest{color:var(--text3);}
 .bt-sus{color:var(--text3);opacity:.5;}
@@ -560,6 +563,15 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   .ic-val{font-size:0.85em;}
 }
 
+/* ── 觸控裝置（平板／手機）：擴大小按鈕的感應範圍，但按鈕外觀大小不變 ── */
+@media(pointer:coarse){
+  /* 一般按鈕/文字鈕：用透明的 ::after 往外撐開可點範圍（不影響版面與外觀） */
+  .cmeter,.ctrl-toggle,.fbtn,.arr-x,.arr-grip,.cbpr-sel{position:relative;}
+  .cmeter::after,.ctrl-toggle::after,.fbtn::after,.arr-x::after,.arr-grip::after,.cbrep::after,.cbpr-sel::after{content:"";position:absolute;inset:-8px;z-index:2;}
+  /* 下拉選單（::after 在 select 上不可靠）：改用透明內距＋負外距擴大點擊區，背景只裁到文字，外觀不會變大 */
+  .cbsub,.kbsub,.cgoto-badge,.cjump,.arr-ins{background-clip:content-box;padding-top:8px;padding-bottom:8px;margin-top:-8px;margin-bottom:-8px;}
+}
+
 /* 列印頁首（畫面隱藏，列印顯示） */
 .print-head{display:none;}
 
@@ -655,6 +667,13 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   body.print-chord .cbnum,body.print-mix .cbnum,body.print-mixp .cbnum{color:#c4c4c4!important;opacity:1!important;font-size:0.42em!important;}
   /* 和弦符號放大加黑，讓譜面好辨識（和弦譜／混合列印） */
   body.print-chord .bt-note,body.print-mix .bt-note{font-size:1.22em!important;font-weight:800!important;}
+  /* 列印：長和弦（D/F# 等）縮字，並允許溢出到同小節空拍，避免被切掉 */
+  body.print-chord .bt-note.bt-long,body.print-mix .bt-note.bt-long{font-size:0.86em!important;letter-spacing:-0.02em!important;}
+  body.print-chord .bt-note.bt-xlong,body.print-mix .bt-note.bt-xlong{font-size:0.7em!important;letter-spacing:-0.03em!important;}
+  body.print-chord .cbeatcol,body.print-mix .cbeatcol,body.print-mixp .cbeatcol{overflow:visible!important;}
+  body.print-chord .cbar2,body.print-mix .cbar2,body.print-mixp .cbar2{overflow:visible!important;}
+  body.print-mixp .bt-note.bt-long{font-size:0.82em!important;letter-spacing:-0.02em!important;}
+  body.print-mixp .bt-note.bt-xlong{font-size:0.66em!important;letter-spacing:-0.03em!important;}
   body.print-chord .beat-r,body.print-mix .beat-r{min-height:1.5em!important;}
   body.print-chord .cmeter.on,body.print-mix .cmeter.on{background:#e0b84a!important;color:#000!important;}
   body.print-chord .cmeter.off,body.print-mix .cmeter.off{display:none!important;}
@@ -2211,7 +2230,10 @@ function renderBeatToken(tok,s){
     if(t===''||t==='.')return '<span class="bt-sus">·</span>';
     if(t==='x'||t==='X')return '<span class="bt-rest">✕</span>';
     const sp=splitChordDisplay(mode==='num'?t:foldChordAcc(convChord(t,keySemi,pf)));
-    return '<span class="bt-note">'+esc(sp.root)+(sp.suf?'<span class="bt-suf">'+esc(sp.suf)+'</span>':'')+(sp.bass?esc(sp.bass):'')+'</span>';
+    // 估算顯示寬度：根音＋轉位低音為全尺寸，後綴為小字(約0.6倍)；太寬就縮字，避免 D/F#、Gmaj7/B 被切掉
+    const wide=String(sp.root).length+String(sp.bass).length+String(sp.suf).length*0.6;
+    const lc=wide>=6?' bt-xlong':wide>=4?' bt-long':'';
+    return '<span class="bt-note'+lc+'">'+esc(sp.root)+(sp.suf?'<span class="bt-suf">'+esc(sp.suf)+'</span>':'')+(sp.bass?esc(sp.bass):'')+'</span>';
   };
   if(tok.startsWith('(')){
     const inner=tok.replace(/^\(|\)$/g,'').trim().split(/\s+/).filter(Boolean);
