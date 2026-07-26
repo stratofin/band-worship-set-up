@@ -87,101 +87,6 @@ body.barpick .cbar2,body.barpick .cbeatcol{cursor:pointer!important;}
 .kbrl{position:absolute;top:0;left:0.1em;z-index:3;font-size:0.5em;line-height:1;font-weight:700;color:var(--text3);pointer-events:none;}
 .kbbeats{display:flex;flex:1 1 0;min-width:0;}
 /* 每一拍固定等寬（撐滿一個四分音符的空間），切分只在這一拍內部發生，不會讓整排縮小 */
-.kbbeat{flex:1 1 0;min-width:0;display:flex;flex-direction:column;border-left:1px solid #666;}
-.kbbeat:first-child{border-left:none;}
-.kbbeat>.kbsub{align-self:flex-start;margin:0.05em 0 0.05em 0.06em;}
-.kbsub{font-size:1em;font-family:'Space Mono',monospace;border:none;border-radius:4px;padding:0.12em 0.14em;background:rgba(255,255,255,0.06);color:var(--text3);cursor:pointer;outline:none;line-height:1;-webkit-appearance:none;-moz-appearance:none;appearance:none;text-align:center;}
-.kbsub:hover{color:var(--accent);background:rgba(212,168,67,0.2);}
-.kbsub.static{background:transparent;pointer-events:none;}
-.kbsubcells{display:flex;flex:1 1 0;min-width:0;}<!DOCTYPE html>
-<html lang="zh-TW">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Worship Arranger v3.5</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyBpZD0iX+WcluWxpF8xIiBkYXRhLW5hbWU9IuWcluWxpCAxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDI0IDEwMjQiPgogIDxkZWZzPgogICAgPHN0eWxlPgogICAgICAuY2xzLTEgewogICAgICAgIGZpbGw6ICNmY2M5MTg7CiAgICAgIH0KICAgIDwvc3R5bGU+CiAgPC9kZWZzPgogIDxnIGlkPSJf55Sf5oiQ5byP54mp5Lu2IiBkYXRhLW5hbWU9IueUn+aIkOW8j+eJqeS7tiI+CiAgICA8cGF0aCBjbGFzcz0iY2xzLTEiIGQ9Ik00ODQuMDgsMzUxLjY2bC0yLjcyLDkxLjg1LTQuMjcsMTEzLjYtNC4wNywxMDIuNDctMy40LDEwMS4wMmMtLjUsMTQuODUtNC4zMywyNy45NC05Ljg5LDQxLjQxLTkuODIsMjMuNzktMjQuMjIsNDMuNDktNDIuNjMsNjEuNDQtNTUuMDYsNTMuNjktMTMyLjQ1LDc4Ljk1LTIwOC45NCw3Mi45Ny0zOS45NS0zLjEyLTgzLjE5LTIxLjAxLTEwMi41Ni01Ni44LTYuODctMTIuNy0xMS40Ny0yNy4zNC0xMS4yMS00Mi4xLDEuNTgtODYuNjEsOTcuMTEtMTU1LjM2LDE3NS4xOS0xNzYuODksNDIuNjMtMTEuODEsODYuNDYtMTQuMzQsMTMxLjMtM2wtNi45NC0yMDMuNjItMi42OS04MS4xOS05My4yNSwyNC4xLTg5LjMyLDIzLjk2LTYuMjMtMTMxLjA2LDkyLjUxLTIyLjYxLDkyLjY4LTIxLjU2LTUuMzctMTMxLjk4LDExNC4wOS0yNi45Ni03LjMyLDEzNy4zMyw4My42Ny0xNy45Miw4NS4xNi0xNy45MSwxNTguMDctMjYuNjksNjQuNDQtOC4xOS0zLjM2LDYxLjk3LTcuODcsMTYyLjY2LTEwLjc4LDI1MC4yMy00LjA5LDU4LjcyYy0xLjQ1LDIwLjc0LTExLjA5LDM5LjA5LTIyLjk0LDU2LjAyLTE4LjAyLDI1Ljc2LTQyLjAxLDQ1LjI3LTY5LjQ1LDYwLjM4LTI5LjQ0LDE2LjIxLTYwLjQ3LDI1LjQ0LTkzLjkxLDI4LjQ1LTIxLjg5LDEuOTctNDIuODgsMi4xNS02NC4zNS0zLjAyLTQzLjk4LTEwLjYtNzcuNTMtNDQuMzMtNzQuMi05MS4yMywzLjk1LTU1LjYsNTEuNjMtOTkuMTgsOTguNzYtMTI0LjEyLDQ0LjIyLTIzLjQsOTkuNDQtMzMuNjgsMTQ4LjE1LTIyLjYxbC4xLTQ4LjkzLS4wNi0yMTEuNzguMjUtMzguMTYtMTAzLjcsMTkuNzctNzEuOTMsMTQuNzUtMTE2Ljg2LDI1LjI1WiIvPgogIDwvZz4KPC9zdmc+">
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Space+Mono:wght@400;700&display=swap');
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-:root{
-  --bg:#0d0d0d; --bg2:#151515; --bg3:#1c1c1c; --bg4:#242424;
-  --border:rgba(255,255,255,0.07); --border2:rgba(255,255,255,0.13);
-  --text:#e6e4dd; --text2:#928f88; --text3:#4e4d4a;
-  --accent:#d4a843;
-  --topbar-h:5.4em;
-  --c-black-stroke:#888; --c-black-fill:rgba(136,136,136,0.1);
-  --c-blue-stroke:#5b9bd5;  --c-blue-fill:rgba(91,155,213,0.1);
-  --c-red-stroke:#d4564a;   --c-red-fill:rgba(212,86,74,0.1);
-  --c-purple-stroke:#9b72cf;--c-purple-fill:rgba(155,114,207,0.1);
-}
-/* ── 介面配色主題（只影響螢幕；列印一律白底原樣，見 @media print） ── */
-body.theme-light{
-  --bg:#f5f4ef; --bg2:#ffffff; --bg3:#ecebe4; --bg4:#e0ded4;
-  --border:rgba(0,0,0,0.10); --border2:rgba(0,0,0,0.20);
-  --text:#1f1d18; --text2:#6b675e; --text3:#a6a299;
-  --accent:#b8860b;
-}
-body.theme-pink{
-  --bg:#fff0f6; --bg2:#ffe3ef; --bg3:#ffd6e7; --bg4:#ffc6dc;
-  --border:rgba(120,30,70,0.12); --border2:rgba(120,30,70,0.22);
-  --text:#4a1230; --text2:#9c4a6f; --text3:#cf8fae;
-  --accent:#e0479b;
-}
-html{font-size:13px;-webkit-text-size-adjust:100%;text-size-adjust:100%;}   /* iOS：禁止自動放大字體造成版面錯位 */
-body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-serif;min-height:100vh;min-height:100dvh;}
-
-/* ── TOP BAR ── */
-.topbar{
-  position:sticky;top:0;z-index:50;
-  background:var(--bg2);border-bottom:1px solid var(--border);
-  display:flex;flex-direction:column;gap:0.45em;padding:0.5em 1.5em;
-}
-.topbar-row{display:flex;align-items:center;gap:0.75em;}
-.topbar-row-1{justify-content:space-between;}
-.topbar-row-2{flex-wrap:wrap;}
-.tb-toggle{background:var(--bg3);border:1px solid var(--border2);color:var(--text2);border-radius:0.4em;padding:0.25em 0.7em;cursor:pointer;font-size:0.82em;font-family:inherit;line-height:1;white-space:nowrap;flex-shrink:0;}
-.tb-toggle:hover{background:var(--bg4);color:var(--text);border-color:var(--accent);}
-body.tb-collapsed .topbar-row-2{display:none;}
-.logo{font-family:'Space Mono',monospace;font-size:0.85em;color:var(--accent);letter-spacing:1.5px;white-space:nowrap;display:inline-flex;align-items:center;}
-.logo-note{height:1.7em;width:1.7em;margin:-0.2em 0 -0.2em 0.4em;flex:0 0 auto;}
-.byline{color:#c8ccd2;font-size:0.82em;font-weight:700;letter-spacing:0.5px;margin-left:0.3em;text-shadow:0 1px 1px rgba(0,0,0,0.5);}
-.pills{display:flex;gap:0.4em;flex:1;flex-wrap:wrap;}
-.pill{background:var(--bg3);border:1px solid var(--border);border-radius:99px;padding:0.22em 0.75em;font-size:0.85em;display:flex;align-items:center;gap:0.3em;}
-.pill label{color:var(--text3);font-size:0.8em;}
-.pill input{background:none;border:none;outline:none;color:var(--text);font-size:1em;font-family:inherit;}
-.tbar-r{display:flex;gap:0.4em;flex-shrink:0;flex-wrap:wrap;}
-.btn{padding:0.35em 0.9em;border-radius:0.45em;font-size:0.85em;cursor:pointer;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-family:inherit;transition:background .13s;white-space:nowrap;}
-.btn:hover{background:var(--bg4);}
-.btna{background:var(--accent);border-color:var(--accent);color:#0d0d0d;font-weight:700;}
-.tpl-sel{appearance:none;-webkit-appearance:none;-moz-appearance:none;cursor:pointer;max-width:9em;text-overflow:ellipsis;}
-/* 鎖定（看譜模式）：關閉所有編輯互動，保留滑頁與看譜 */
-body.locked .cbsub,body.locked .kbsub,body.locked .cbrep,body.locked .cmeter,body.locked .cgoto-badge,body.locked .cjump,body.locked .cbpr-sel,body.locked .ctrl-toggle,body.locked .arr-grip,body.locked .arr-x,body.locked .arr-resize,body.locked .arr-ins,body.locked .arr-txt,body.locked .beat-i{pointer-events:none!important;}
-body.locked .arr-add{display:none!important;}
-body.locked .cbeatcol{cursor:default!important;}
-body.locked .left input,body.locked .left select,body.locked .left textarea,body.locked .left button,body.locked .eordbtn,body.locked .dbtn{pointer-events:none!important;opacity:.55;}
-body.locked .pills input,body.locked .pills select{pointer-events:none!important;}
-.lock-btn.btna{background:#d4564a!important;border-color:#d4564a!important;color:#fff!important;}
-.lock-banner{display:none;position:fixed;top:8px;left:50%;transform:translateX(-50%);z-index:3000;background:#d4564a;color:#fff;padding:0.42em 1em;border-radius:999px;font-size:0.92em;font-weight:600;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.28);border:none;align-items:center;gap:0.45em;}
-.lock-banner:hover{background:#c0473c;}
-body.locked .lock-banner{display:inline-flex;}
-.barpick-bar{display:none;position:fixed;left:50%;bottom:12px;transform:translateX(-50%);z-index:3200;background:var(--bg2);border:1px solid var(--accent);border-radius:0.6em;box-shadow:0 4px 16px rgba(0,0,0,.35);padding:0.45em 0.75em;gap:0.55em;align-items:center;font-size:0.9em;color:var(--text);max-width:94vw;flex-wrap:wrap;justify-content:center;}
-body.barpick .barpick-bar{display:inline-flex;}
-.barpick-bar .btn{font-size:0.85em;padding:0.28em 0.7em;}
-.barpick-btn.on{background:var(--accent)!important;border-color:var(--accent)!important;color:#0d0d0d!important;}
-body.barpick .cbar2,body.barpick .cbeatcol{cursor:pointer!important;}
-.cbar2.barsel{outline:2px solid var(--accent);outline-offset:-2px;background:rgba(212,168,67,0.14);border-radius:4px;}
-/* KB 數字譜 */
-.stbtn{border:1px solid var(--border2);background:var(--bg3);color:var(--text);border-radius:0.35em;padding:0.22em 0.55em;cursor:pointer;font-family:inherit;font-size:0.85em;line-height:1;white-space:nowrap;}
-.stbtn:hover{border-color:var(--accent);}
-.stbtn:disabled{opacity:.4;cursor:default;}
-.cbar2.kbbar{display:flex;flex-direction:column;min-height:0;padding:0.15em 0.1em 0.1em;overflow:visible;}
-.kbrow{display:flex;align-items:stretch;position:relative;border-top:1px dashed var(--border2);}
-.kbrow:first-of-type{border-top:none;}
-/* 右手/左手 標記：縮小放在該列左上角，不再佔用整欄空間 */
-.kbrl{position:absolute;top:0;left:0.1em;z-index:3;font-size:0.5em;line-height:1;font-weight:700;color:var(--text3);pointer-events:none;}
-.kbbeats{display:flex;flex:1 1 0;min-width:0;}
-/* 每一拍固定等寬（撐滿一個四分音符的空間），切分只在這一拍內部發生，不會讓整排縮小 */
 .kbbeat{flex:1 1 0;min-width:0;display:flex;flex-direction:column;border-left:1px solid #666;position:relative;}
 .kbbeat:first-child{border-left:none;}
 /* 切分鈕改用絕對定位疊在該拍左下角，不再佔用填寫空間（音符格撐滿整拍） */
@@ -2452,8 +2357,7 @@ function barOneHtml(s,i,beats,repX){
           ? `<select class="cgoto-badge ${g?'on':''}" onchange="setBarGoto(${s.id},${i},this.value)" title="接續到哪一段">${gopts}</select>`
           : `<select class="cjump ${g?'on':''}" onchange="setBarGoto(${s.id},${i},this.value)" title="此小節接續到哪一段">${gopts}</select>`);
     } else {
-      // 控制項關閉：只把「有設定」的值靜態顯示
-      if(fac>1)subSel=`<span class="cbsub static">${fac===2?'♪':'♬'}</span>`;
+      // 控制項關閉：切分鈕圖形完全隱藏（切分已由格數表達）；重複/拍號/接續仍保留已設定值
       if(rep>1)repBadge=`<span class="cbrep on static">×${rep}</span>`;
       if(m)badges+=`<span class="cmeter on static">${esc(m)}</span>`;
       if(g){const t=sects.find(x=>x.id===g); badges+=`<span class="${isLast?'cgoto-badge':'cjump'} on static">→ ${t?esc(t.name):''}</span>`;}
@@ -3043,9 +2947,10 @@ function kbBarHtml(s,i){
     badges=`<button class="cmeter ${m?'on':'off'}" onclick="cycleMeter(${s.id},${i})" title="本小節拍號">${m||'♩'}</button>`+(isLast?`<select class="cgoto-badge ${g?'on':''}" onchange="setBarGoto(${s.id},${i},this.value)" title="接續到哪一段">${gopts}</select>`:`<select class="cjump ${g?'on':''}" onchange="setBarGoto(${s.id},${i},this.value)" title="此小節接續到哪一段">${gopts}</select>`);
   } else { if(rep>1)repBadge=`<span class="cbrep on static">×${rep}</span>`; if(m)badges+=`<span class="cmeter on static">${esc(m)}</span>`; if(g){const t=sects.find(x=>x.id===g); badges+=`<span class="${isLast?'cgoto-badge':'cjump'} on static">→ ${t?esc(t.name):''}</span>`;} }
   /* 每一「拍」各自的分割選單（♩四分 / ♪八分 / ♬十六分），放在該拍左下角（避開上方的拍號/接續徽章） */
+  // 控制項關掉時，切分鈕圖形完全隱藏（切分狀態已由格子底線與格數表達，不需要唯讀圖示）
   const beatSel=(row,beat,sub)=> ctrlsOn
     ? `<select class="kbsub" onclick="event.stopPropagation()" onchange="kbSetBeatSub(${s.id},'${row}',${i},${beat},this.value)" title="這一拍的分割：♩四分 / ♪八分 / ♬十六分"><option value="1"${sub===1?' selected':''}>♩</option><option value="2"${sub===2?' selected':''}>♪</option><option value="4"${sub===4?' selected':''}>♬</option></select>`
-    : (sub>1?`<span class="kbsub static">${sub===2?'♪':'♬'}</span>`:'');
+    : '';
   const rowHtml=(row)=>{
     let beats='';
     for(let beat=0;beat<bb;beat++){
