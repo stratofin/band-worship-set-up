@@ -894,6 +894,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
         <label class="ic-hint">顯示 <select class="ic-sel" id="staff-disp" onchange="setChordDisp(this.value)"><option value="num">級數</option><option value="male">和弦名(男Key)</option><option value="female">和弦名(女Key)</option></select></label>
         <span class="key-step" title="半音微調 Key"><label>微調Key</label><button onclick="transposeKey(1)" title="升半音">▲</button><b class="keystep-lbl">—</b><button onclick="transposeKey(-1)" title="降半音">▼</button></span>
         <span class="ic-hint">和弦</span>
+        <select class="ic-sel" id="kb-cacc" title="根音升降"><option value="">♮</option><option value="b">♭</option><option value="#">♯</option></select>
         <select class="ic-sel" id="kb-croot" title="和弦根音（級數）"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option></select>
         <select class="ic-sel" id="kb-cqual" title="和弦性質"><option value="maj">大三 major</option><option value="min">小三 minor</option><option value="7">屬七 7</option><option value="maj7">大七 maj7</option><option value="m7">小七 m7</option><option value="sus2">sus2</option><option value="sus4">sus4</option><option value="dim">減 dim</option><option value="aug">增 aug</option></select>
         <button class="stbtn" id="kb-chordmode" onclick="kbChordMode()" title="放和弦模式：開啟後，點任一格就把選好的和弦（整組級數）疊上去；再點一格可連續放">🎹 放和弦</button>
@@ -3003,8 +3004,10 @@ function migrateKBSection(s){
 let _kbChordOn=false;
 const _SCALESEMI={1:0,2:2,3:4,4:5,5:7,6:9,7:11};
 const _KBQ={maj:{st:[0,2,4],se:[0,4,7]},min:{st:[0,2,4],se:[0,3,7]},dim:{st:[0,2,4],se:[0,3,6]},aug:{st:[0,2,4],se:[0,4,8]},sus2:{st:[0,1,4],se:[0,2,7]},sus4:{st:[0,3,4],se:[0,5,7]},'7':{st:[0,2,4,6],se:[0,4,7,10]},maj7:{st:[0,2,4,6],se:[0,4,7,11]},m7:{st:[0,2,4,6],se:[0,3,7,10]}};
-function chordDegsKB(rootDeg,qual){
-  const R=parseInt(rootDeg)||1, Q=_KBQ[qual]||_KBQ.maj, rootSemi=_SCALESEMI[R];
+function chordDegsKB(rootDeg,qual,acc){
+  const R=parseInt(rootDeg)||1, Q=_KBQ[qual]||_KBQ.maj;
+  const accSemi=(acc==='#')?1:(acc==='b')?-1:0;          // 根音升降：整個和弦平移半音，組成音自動帶正確 b/#
+  const rootSemi=_SCALESEMI[R]+accSemi;
   const out=Q.st.map((stp,k)=>{ const abs=(R-1)+stp, oct=Math.floor(abs/7), slot=(abs%7)+1, natAbs=oct*12+_SCALESEMI[slot];
     let a=(rootSemi+Q.se[k])-natAbs; a=Math.max(-2,Math.min(2,a));
     const acc=a===1?'#':a===-1?'b':a===2?'##':a===-2?'bb':'';
@@ -3059,7 +3062,7 @@ function kbEdit(cell){
   if(_kbChordOn){
     const s=sects.find(x=>x.id===+cell.dataset.sid); if(!s)return;
     staffPushHistory();
-    kbSet(s,cell.dataset.row,+cell.dataset.bar,+cell.dataset.c, chordDegsKB(gv('kb-croot'),gv('kb-cqual')).join(' '));
+    kbSet(s,cell.dataset.row,+cell.dataset.bar,+cell.dataset.c, chordDegsKB(gv('kb-croot'),gv('kb-cqual'),gv('kb-cacc')).join(' '));
     autoSave(); renderStaff(); return;
   }
   const r=cell.querySelector('.kbstk'), inp=cell.querySelector('.kb-i');
