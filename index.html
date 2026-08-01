@@ -76,6 +76,7 @@ body.barpick .barpick-bar{display:inline-flex;}
 .barpick-btn.on{background:var(--accent)!important;border-color:var(--accent)!important;color:#0d0d0d!important;}
 body.barpick .cbar2,body.barpick .cbeatcol{cursor:pointer!important;}
 body.barpick .cbar2{touch-action:none;overflow:visible;}   /* 拖曳選取不捲動；讓插入豎線可顯示在小節外緣 */
+body.toolbar-collapsed .icon-toolbar{display:none!important;}   /* 收合上方設定工具列 */
 .cbar2.barsel{outline:2px solid var(--accent);outline-offset:-2px;background:rgba(212,168,67,0.14);border-radius:4px;}
 /* 已複製的來源區塊：持續閃亮的虛線邊框（類似文書軟體的複製選取） */
 @keyframes barclipblink{0%,100%{outline-color:var(--accent);}50%{outline-color:rgba(212,168,67,0.15);}}
@@ -341,6 +342,14 @@ body.svc-mode .svc-only{display:inline-flex!important;}
 .ctrl-toggle:hover{border-color:var(--accent);}
 .ctrl-toggle.paste{border-color:#5b9bd5;color:#cfe6ff;background:rgba(91,155,213,0.18);}
 .clear-btn{font-size:0.82em;border:1px solid var(--border2);background:var(--bg3);color:var(--text);border-radius:0.4em;padding:0.3em 0.7em;cursor:pointer;font-family:inherit;white-space:nowrap;}
+/* 工具列上排(.btn/鎖定)＋下排(icon-toolbar) 所有控制項統一成同一高度：用固定 height＋border-box
+   徹底消除 button 與 <select> 的原生盒模型差異，讓整排看起來一致舒適。標準高度＝原「鎖定 關」約 1.85rem */
+.view-print .btn,.icon-toolbar .stbtn,.icon-toolbar .clear-btn,.icon-toolbar .ic-sel{height:1.85rem;box-sizing:border-box;font-size:0.85rem;border-radius:0.45em;}
+.view-print .btn,.icon-toolbar .stbtn,.icon-toolbar .clear-btn{display:inline-flex;align-items:center;justify-content:center;padding:0 0.85em;line-height:1;}
+.icon-toolbar .ic-sel{padding:0 0.5em;line-height:1;}
+.icon-toolbar .key-step{height:1.85rem;box-sizing:border-box;padding:0 0.4em;border-radius:0.45em;}
+.icon-toolbar .key-step button{width:1.45rem;height:1.45rem;}
+.icon-toolbar .ic-navbtn{height:1.85rem;width:1.85rem;box-sizing:border-box;font-size:1rem;border-radius:0.45em;}   /* 混合頁換頁 ‹ › 也對齊統一高度 */
 .clear-btn:hover{border-color:#d4564a;color:#d4564a;}
 .clear-btn.on{background:var(--accent);color:#0d0d0d;border-color:var(--accent);}
 .cbsub.static,.cbrep.static,.cmeter.static,.cgoto-badge.static,.cjump.static{pointer-events:none;cursor:default;}
@@ -850,7 +859,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
     <!-- CHORD CHART VIEW -->
     <div id="vp-chord" style="display:none">
       <div class="print-head"></div>
-      <div class="view-print"><button class="btn lock-btn" onclick="toggleLock()" title="鎖定：開＝只能看譜與左右滑頁、禁止任何編輯；關＝可編輯">🔓 鎖定 關</button><button class="btn svc-only svc-pb-btn" onclick="toggleSvcPB(this)" title="聚會服事列印：開＝每首歌各自從新頁開始；關＝段落連續接著印">📄 聚會分頁 關</button><button class="btn barpick-btn" onclick="toggleBarPick()" title="複製小節：進入後按住小節左右拖曳選取範圍 → 複製 → 點目標小節左/右緣出現藍線 → 貼上（含 KB 音符，可插到任意位置）">⧉ 複製小節</button><button class="btn" onclick="openOcr()">🔍 辨識匯入</button><button class="btn" onclick="printFit('chord')" title="自動縮放，盡量塞進一張 A4">📄 經典A4</button><button class="btn btna" onclick="printView('chord')">🖨 列印 / 存 PDF</button></div>
+      <div class="view-print"><button class="btn tbcollapse-btn" onclick="toggleToolbar()" title="收合/展開上方設定工具列">▾ 工具列</button><button class="btn lock-btn" onclick="toggleLock()" title="鎖定：開＝只能看譜與左右滑頁、禁止任何編輯；關＝可編輯">🔓 鎖定 關</button><button class="btn svc-only svc-pb-btn" onclick="toggleSvcPB(this)" title="聚會服事列印：開＝每首歌各自從新頁開始；關＝段落連續接著印">📄 聚會分頁 關</button><button class="btn" onclick="openOcr()">🔍 辨識匯入</button><button class="btn" onclick="printFit('chord')" title="自動縮放，盡量塞進一張 A4">📄 經典A4</button><button class="btn btna" onclick="printView('chord')">🖨 列印 / 存 PDF</button></div>
       <div class="icon-toolbar">
         <label class="ic-hint">拍號 <select class="ic-sel" id="chord-timesig" onchange="setTimeSig(this.value)"></select></label>
         <label class="ic-hint">顯示 <select class="ic-sel" id="chord-disp" onchange="setChordDisp(this.value)"><option value="num">級數</option><option value="male">和弦名(男Key)</option><option value="female">和弦名(女Key)</option></select></label>
@@ -859,14 +868,14 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
         <label class="ic-hint">全部每排 <select class="ic-sel" onchange="applyAllBPR(this)" title="一次設定所有段落每排小節數"><option value="__">套用…</option><option value="">自動</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option></select></label>
         <button class="clear-btn" onclick="clearAll()" title="清除整個譜的和弦／分割／重複／拍號／接續資料（可再按一次復原）">🗑 全部清除</button>
       </div>
-      <div class="chord-hint">點拍格可編輯。記號：<b>1–7</b>級數、<b>b/#</b>升降、<b>m/sus4/maj7</b>品質、<b>1/3</b>轉位、<b>.</b>延續、<b>x</b>休止、<b>(1 5)</b>細分(2音=八分、3音=三連音、4音=十六分)。右上橘徽章設本小節拍號、末小節選「→接續」。上方「顯示」可切級數↔和弦名(男/女Key)。</div>
+      <div class="chord-hint">點拍格可編輯。記號：<b>1–7</b>級數、<b>b/#</b>升降、<b>m/sus4/maj7</b>品質、<b>1/3</b>轉位、<b>.</b>延續、<b>x</b>休止、<b>(1 5)</b>細分(2音=八分、3音=三連音、4音=十六分)。右上橘徽章設本小節拍號、末小節選「→接續」。上方「顯示」可切級數↔和弦名(男/女Key)。長按任一小節→拖曳選取→複製→點目標小節左/右緣(藍線)→貼到任意位置。</div>
       <div class="chord-content" id="chord-content"></div>
     </div>
 
     <!-- MIX+ VIEW (大格 + 樂器指令在控制區) -->
     <div id="vp-mixp" style="display:none">
       <div class="print-head"></div>
-      <div class="view-print"><button class="btn lock-btn" onclick="toggleLock()" title="鎖定：開＝只能看譜與左右滑頁、禁止任何編輯；關＝可編輯">🔓 鎖定 關</button><button class="btn svc-only svc-pb-btn" onclick="toggleSvcPB(this)" title="聚會服事列印：開＝每首歌各自從新頁開始；關＝段落連續接著印">📄 聚會分頁 關</button><button class="btn barpick-btn" onclick="toggleBarPick()" title="複製小節：進入後按住小節左右拖曳選取範圍 → 複製 → 點目標小節左/右緣出現藍線 → 貼上（含 KB 音符，可插到任意位置）">⧉ 複製小節</button><button class="btn" onclick="openOcr()">🔍 辨識匯入</button><button class="btn" onclick="printFit('mixp')" title="自動縮放，盡量塞進一張 A4">📄 經典A4</button><button class="btn btna" onclick="printView('mixp')">🖨 列印 / 存 PDF</button></div>
+      <div class="view-print"><button class="btn tbcollapse-btn" onclick="toggleToolbar()" title="收合/展開上方設定工具列">▾ 工具列</button><button class="btn lock-btn" onclick="toggleLock()" title="鎖定：開＝只能看譜與左右滑頁、禁止任何編輯；關＝可編輯">🔓 鎖定 關</button><button class="btn svc-only svc-pb-btn" onclick="toggleSvcPB(this)" title="聚會服事列印：開＝每首歌各自從新頁開始；關＝段落連續接著印">📄 聚會分頁 關</button><button class="btn" onclick="openOcr()">🔍 辨識匯入</button><button class="btn" onclick="printFit('mixp')" title="自動縮放，盡量塞進一張 A4">📄 經典A4</button><button class="btn btna" onclick="printView('mixp')">🖨 列印 / 存 PDF</button></div>
       <div class="icon-toolbar">
         <button class="ic-navbtn" id="mixp-prev" onclick="mixpNav(-1)" title="上一頁">‹</button>
         <span class="ic-pageind" id="mixp-pageind">1 / 1</span>
@@ -881,7 +890,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
         <label class="ic-hint">全部每排 <select class="ic-sel" onchange="applyAllBPR(this)" title="一次設定所有段落每排小節數"><option value="__">套用…</option><option value="">自動</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option></select></label>
         <button class="clear-btn" onclick="clearAll()" title="清除整個譜的和弦／分割／重複／拍號／接續資料（可再按一次復原）">🗑 全部清除</button>
       </div>
-      <div class="chord-hint">混合＋：用上方「樂器篩選鈕（ALL / Vocal / KB …）」挑要顯示哪些樂器的配器。配器在小節上方，可自由拖曳移位與調長度（不卡小節），內容與其他頁共用。</div>
+      <div class="chord-hint">混合＋：用上方「樂器篩選鈕（ALL / Vocal / KB …）」挑要顯示哪些樂器的配器。配器在小節上方，可自由拖曳移位與調長度（不卡小節），內容與其他頁共用。長按任一小節→拖曳選取→複製→點目標小節左/右緣(藍線)→貼到任意位置。</div>
       <div class="ic-legend" id="mixp-legend"></div>
       <div class="icpages" id="mixp-content"></div>
     </div>
@@ -889,7 +898,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
     <!-- STAFF (五線譜) VIEW -->
     <div id="vp-staff" style="display:none">
       <div class="print-head"></div>
-      <div class="view-print"><button class="btn lock-btn" onclick="toggleLock()" title="鎖定：開＝只能看譜與左右滑頁、禁止任何編輯；關＝可編輯">🔓 鎖定 關</button><button class="btn svc-only svc-pb-btn" onclick="toggleSvcPB(this)" title="聚會服事列印：開＝每首歌各自從新頁開始；關＝段落連續接著印">📄 聚會分頁 關</button><button class="btn barpick-btn" onclick="toggleBarPick()" title="複製小節：進入後按住小節左右拖曳選取範圍 → 複製 → 點目標小節左/右緣出現藍線 → 貼上（含 KB 音符，可插到任意位置）">⧉ 複製小節</button><button class="btn" onclick="printFit('staff')" title="自動縮放，盡量塞進一張 A4">📄 經典A4</button><button class="btn btna" onclick="printView('staff')">🖨 列印 / 存 PDF</button></div>
+      <div class="view-print"><button class="btn tbcollapse-btn" onclick="toggleToolbar()" title="收合/展開上方設定工具列">▾ 工具列</button><button class="btn lock-btn" onclick="toggleLock()" title="鎖定：開＝只能看譜與左右滑頁、禁止任何編輯；關＝可編輯">🔓 鎖定 關</button><button class="btn svc-only svc-pb-btn" onclick="toggleSvcPB(this)" title="聚會服事列印：開＝每首歌各自從新頁開始；關＝段落連續接著印">📄 聚會分頁 關</button><button class="btn" onclick="printFit('staff')" title="自動縮放，盡量塞進一張 A4">📄 經典A4</button><button class="btn btna" onclick="printView('staff')">🖨 列印 / 存 PDF</button></div>
       <div class="icon-toolbar">
         <label class="ic-hint">顯示 <select class="ic-sel" id="staff-disp" onchange="setChordDisp(this.value)"><option value="num">級數</option><option value="male">和弦名(男Key)</option><option value="female">和弦名(女Key)</option></select></label>
         <span class="key-step" title="半音微調 Key"><label>微調Key</label><button onclick="transposeKey(1)" title="升半音">▲</button><b class="keystep-lbl">—</b><button onclick="transposeKey(-1)" title="降半音">▼</button></span>
@@ -903,7 +912,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
         <button class="stbtn" id="staff-redo" onclick="staffRedo()" title="下一步（重做）" disabled>↪ 下一步</button>
         <button class="clear-btn" onclick="clearStaff()" title="清除整個譜的 KB 數字（可用上一步還原）">🗑 清除</button>
       </div>
-      <div class="chord-hint">KB 數字譜：每小節分「上排＝右手／下排＝左手」，點格子輸入級數，同一格用空白分隔可直向疊 1–3 個音（和弦）；或用右上「和弦」選根音級數＋性質，開「🎹 放和弦」後點格子整組疊上。時值＝簡譜底線（顯示在每格底部）：無＝四分、一條＝八分、兩條＝十六分。每一「拍」可各自切分：拍左上角的 ♩/♪/♬ 選單只切分那一拍（每拍等寬，切細只在該拍內部發生，不會讓整排縮小）；右手 R／左手 L 標在每列左上角。上方「顯示」可切級數↔男/女Key 和弦名。重複／接續／每排／複製小節 全部沿用。</div>
+      <div class="chord-hint">KB 數字譜：每小節分「上排＝右手／下排＝左手」，點格子輸入級數，同一格用空白分隔可直向疊 1–3 個音（和弦）；或用右上「和弦」選根音級數＋性質，開「🎹 放和弦」後點格子整組疊上。時值＝簡譜底線（顯示在每格底部）：無＝四分、一條＝八分、兩條＝十六分。每一「拍」可各自切分：拍左上角的 ♩/♪/♬ 選單只切分那一拍（每拍等寬，切細只在該拍內部發生，不會讓整排縮小）；右手 R／左手 L 標在每列左上角。上方「顯示」可切級數↔男/女Key 和弦名。重複／接續／每排 全部沿用。長按任一小節→拖曳選取→複製→點目標小節左/右緣(藍線)→貼到任意位置。</div>
       <div class="chord-content" id="staff-content"></div>
     </div>
 
@@ -2440,6 +2449,23 @@ function toggleBarPick(){
   document.querySelectorAll('.barpick-btn').forEach(b=>b.classList.toggle('on',_barPickMode));
   renderBarPickBar(); renderCharts();
 }
+/* 按段落標題「複製」鈕：進入複製模式並預設選取整段（可再拖曳/長按調整範圍） */
+function barPickSection(id){
+  const s=sects.find(x=>x.id===id); if(!s)return;
+  if(_chordPlaceOn)toggleChordPlace();
+  const bars=Math.max(1,parseInt(s.bars)||1);
+  _barPickMode=true; _barStage='select'; _barClip=null; _barInsert=null; _barDragging=false;
+  document.body.classList.add('barpick');
+  _barSel={sid:id,a:0,b:bars-1,done:true};
+  renderCharts(); renderBarPickBar();
+}
+/* 收合/展開上方設定工具列 */
+let _toolbarHidden=false;
+function toggleToolbar(){
+  _toolbarHidden=!_toolbarHidden;
+  document.body.classList.toggle('toolbar-collapsed',_toolbarHidden);
+  document.querySelectorAll('.tbcollapse-btn').forEach(b=>{ b.textContent=_toolbarHidden?'▸ 工具列':'▾ 工具列'; b.classList.toggle('on',_toolbarHidden); });
+}
 /* 點擊後備（拖曳以外）：select 階段點小節設起點/延伸；paste 階段點小節設插入點（左半＝前、右半＝後） */
 function barPickClick(sid,bar){
   if(_barStage==='paste'){ _barInsert={sid,index:bar+1}; renderCharts(); renderBarPickBar(); return; }
@@ -2499,15 +2525,31 @@ function copyBarsReselect(){ _barStage='select'; _barSel=null; _barInsert=null; 
 /* ── 複製小節互動：按住小節拖曳選取；paste 階段點小節左/右半設插入點（觸控＋滑鼠共用 pointer 事件） ── */
 function _barElAtPoint(x,y){ const el=document.elementFromPoint(x,y); return el?el.closest('.cbar2[data-bar]'):null; }
 function _barHalf(el,x){ const r=el.getBoundingClientRect(); return (x<r.left+r.width/2)?0:1; }   // 0＝左(插前)、1＝右(插後)
+/* 長按小節 450ms → 進入複製選取（短按或移動則取消，交給一般點擊編輯／捲動） */
+let _lpTimer=null, _lpCand=null;
+function _clearLongPress(){ if(_lpTimer){clearTimeout(_lpTimer);_lpTimer=null;} _lpCand=null; }
+function _startBarPickFromLongPress(){
+  _lpTimer=null; if(!_lpCand)return;
+  _barPickMode=true; _barStage='select'; _barClip=null; _barInsert=null;
+  document.body.classList.add('barpick');
+  _barSel={sid:_lpCand.sid,a:_lpCand.bar,b:_lpCand.bar,done:false}; _barDragging=true;
+  _lpCand=null;
+  if(navigator.vibrate){try{navigator.vibrate(15);}catch(_){}}
+  renderCharts(); renderBarPickBar();
+}
 function onBarPickDown(e){
-  if(!_barPickMode||!e.target||!e.target.closest)return;
+  if(_locked||!e.target||!e.target.closest)return;
   const el=e.target.closest('.cbar2[data-bar]'); if(!el||el.dataset.sid==null)return;
   const sid=+el.dataset.sid, bar=+el.dataset.bar;
-  if(_barStage==='paste'){ _barInsert={sid,index:bar+_barHalf(el,e.clientX)}; e.preventDefault(); renderCharts(); renderBarPickBar(); return; }
-  _barSel={sid,a:bar,b:bar,done:false}; _barDragging=true;
-  e.preventDefault(); renderCharts(); renderBarPickBar();
+  if(_barPickMode){
+    if(_barStage==='paste'){ _barInsert={sid,index:bar+_barHalf(el,e.clientX)}; e.preventDefault(); renderCharts(); renderBarPickBar(); return; }
+    _barSel={sid,a:bar,b:bar,done:false}; _barDragging=true; e.preventDefault(); renderCharts(); renderBarPickBar(); return;
+  }
+  _lpCand={sid,bar,x:e.clientX,y:e.clientY};       // 尚未進入：起長按計時
+  _lpTimer=setTimeout(_startBarPickFromLongPress,450);
 }
 function onBarPickMove(e){
+  if(_lpCand){ if(Math.abs(e.clientX-_lpCand.x)>10||Math.abs(e.clientY-_lpCand.y)>10)_clearLongPress(); return; }
   if(!_barDragging||_barStage!=='select'||!_barSel)return;
   const el=_barElAtPoint(e.clientX,e.clientY); if(!el||el.dataset.sid==null)return;
   if(+el.dataset.sid!==_barSel.sid)return;      // 只在同段落內延伸
@@ -2515,7 +2557,11 @@ function onBarPickMove(e){
   if(bar!==_barSel.b){ _barSel.b=bar; renderCharts(); renderBarPickBar(); }
   e.preventDefault();
 }
-function onBarPickUp(){ if(!_barDragging)return; _barDragging=false; if(_barSel)_barSel.done=true; renderCharts(); renderBarPickBar(); }
+function onBarPickUp(){
+  if(_lpCand){ _clearLongPress(); return; }      // 短按放開＝一般點擊，交給格子編輯
+  if(!_barDragging)return;
+  _barDragging=false; if(_barSel)_barSel.done=true; renderCharts(); renderBarPickBar();
+}
 document.addEventListener('pointerdown',onBarPickDown,true);
 document.addEventListener('pointermove',onBarPickMove,true);
 document.addEventListener('pointerup',onBarPickUp,true);
@@ -2562,7 +2608,7 @@ function renderChord(){
     const bars=Math.max(1,parseInt(s.bars)||1);
     const ssc=_songStartSet.has(s.id)?' song-start':'';
     const head=`<div class="ccard-head" style="background:${col.fill};color:${col.stroke}">
-        <span class="chead-l">${(s._song||window._printSongTitle)?`<span class="csong">🎵 ${esc(s._song||window._printSongTitle)}${(s._dispMode&&s._dispMode!=='num'&&s._dispKey)?' · '+(s._dispMode==='female'?'女':'男')+esc(s._dispKey):''}</span>`:''}<span class="cname">${esc(s.name)}</span>${bprSelect(s)}<button class="ctrl-toggle" onclick="toggleCtrl(${s.id})" title="顯示/隱藏每個小節的控制鈕；隱藏時仍顯示已設定的值">控制項 ${s.ctrlOff?'關':'開'}</button><button class="ctrl-toggle" onclick="copySection(${s.id})" title="複製此段落全部內容（和弦／分割／重複／樂器…）">⧉ 複製</button><button class="ctrl-toggle" onclick="toggleFold(${s.id})" title="收合/展開此段（收合只留標題，方便專注其他段）">${s.fold?'▸ 展開':'▾ 收合'}</button>${_secClip?`<button class="ctrl-toggle paste" onclick="pasteSection(${s.id})" title="把已複製的「${esc(_secClip._name)}」貼到此段（覆蓋，名稱保留）">📋 貼上</button>`:''}</span>
+        <span class="chead-l">${(s._song||window._printSongTitle)?`<span class="csong">🎵 ${esc(s._song||window._printSongTitle)}${(s._dispMode&&s._dispMode!=='num'&&s._dispKey)?' · '+(s._dispMode==='female'?'女':'男')+esc(s._dispKey):''}</span>`:''}<span class="cname">${esc(s.name)}</span>${bprSelect(s)}<button class="ctrl-toggle" onclick="toggleCtrl(${s.id})" title="顯示/隱藏每個小節的控制鈕；隱藏時仍顯示已設定的值">控制項 ${s.ctrlOff?'關':'開'}</button><button class="ctrl-toggle" onclick="barPickSection(${s.id})" title="複製小節：進入複製模式（預設選整段，可再拖曳/長按調整）→ 複製 → 點目標小節左/右緣(藍線) → 貼到任意位置（可跨段）">⧉ 複製</button><button class="ctrl-toggle" onclick="toggleFold(${s.id})" title="收合/展開此段（收合只留標題，方便專注其他段）">${s.fold?'▸ 展開':'▾ 收合'}</button></span>
         <span class="cmeta">${bars} Bar · ${esc(gv('s-time'))}</span>
       </div>`;
     if(s.fold) return `<div class="ccard folded${ssc}" style="border-color:${col.stroke}">${head}</div>`;
@@ -2633,7 +2679,7 @@ function mixCardHtml(s,plus){
   const cells=barCellsHtml(s,beats);
   const ins=mixInsBody(s,plus);
   const head=`<div class="ccard-head" style="background:${col.fill};color:${col.stroke}">
-        <span class="chead-l">${(s._song||window._printSongTitle)?`<span class="csong">🎵 ${esc(s._song||window._printSongTitle)}${(s._dispMode&&s._dispMode!=='num'&&s._dispKey)?' · '+(s._dispMode==='female'?'女':'男')+esc(s._dispKey):''}</span>`:''}<span class="cname">${esc(s.name)}</span>${bprSelect(s)}<button class="ctrl-toggle" onclick="toggleCtrl(${s.id})" title="顯示/隱藏每個小節的控制鈕；隱藏時仍顯示已設定的值">控制項 ${s.ctrlOff?'關':'開'}</button><button class="ctrl-toggle" onclick="copySection(${s.id})" title="複製此段落全部內容（和弦／分割／重複／樂器…）">⧉ 複製</button><button class="ctrl-toggle" onclick="toggleFold(${s.id})" title="收合/展開此段（收合只留標題，方便專注其他段）">${s.fold?'▸ 展開':'▾ 收合'}</button>${_secClip?`<button class="ctrl-toggle paste" onclick="pasteSection(${s.id})" title="把已複製的「${esc(_secClip._name)}」貼到此段（覆蓋，名稱保留）">📋 貼上</button>`:''}</span><span class="cmeta">${bars} Bar · ${esc(gv('s-time'))}</span>
+        <span class="chead-l">${(s._song||window._printSongTitle)?`<span class="csong">🎵 ${esc(s._song||window._printSongTitle)}${(s._dispMode&&s._dispMode!=='num'&&s._dispKey)?' · '+(s._dispMode==='female'?'女':'男')+esc(s._dispKey):''}</span>`:''}<span class="cname">${esc(s.name)}</span>${bprSelect(s)}<button class="ctrl-toggle" onclick="toggleCtrl(${s.id})" title="顯示/隱藏每個小節的控制鈕；隱藏時仍顯示已設定的值">控制項 ${s.ctrlOff?'關':'開'}</button><button class="ctrl-toggle" onclick="barPickSection(${s.id})" title="複製小節：進入複製模式（預設選整段，可再拖曳/長按調整）→ 複製 → 點目標小節左/右緣(藍線) → 貼到任意位置（可跨段）">⧉ 複製</button><button class="ctrl-toggle" onclick="toggleFold(${s.id})" title="收合/展開此段（收合只留標題，方便專注其他段）">${s.fold?'▸ 展開':'▾ 收合'}</button></span><span class="cmeta">${bars} Bar · ${esc(gv('s-time'))}</span>
       </div>`;
   const note=s.notes?`<div class="ccard-note">⚑ ${esc(s.notes)}</div>`:'';
   const ssc=_songStartSet.has(s.id)?' song-start':'';
@@ -3091,7 +3137,7 @@ function kbCardHtml(s){
   const bars=Math.max(1,parseInt(s.bars)||1);
   const ssc=_songStartSet.has(s.id)?' song-start':'';
   const song=(s._song||window._printSongTitle);
-  const head=`<div class="ccard-head" style="background:${col.fill};color:${col.stroke}"><span class="chead-l">${song?`<span class="csong">🎵 ${esc(song)}${(s._dispMode&&s._dispMode!=='num'&&s._dispKey)?' · '+(s._dispMode==='female'?'女':'男')+esc(s._dispKey):''}</span>`:''}<span class="cname">${esc(s.name)}</span>${bprSelect(s)}<button class="ctrl-toggle" onclick="toggleCtrl(${s.id})" title="顯示/隱藏每個小節的控制鈕">控制項 ${s.ctrlOff?'關':'開'}</button><button class="ctrl-toggle" onclick="toggleFold(${s.id})" title="收合/展開此段">${s.fold?'▸ 展開':'▾ 收合'}</button></span><span class="cmeta">${bars} Bar · ${esc(gv('s-time'))}</span></div>`;
+  const head=`<div class="ccard-head" style="background:${col.fill};color:${col.stroke}"><span class="chead-l">${song?`<span class="csong">🎵 ${esc(song)}${(s._dispMode&&s._dispMode!=='num'&&s._dispKey)?' · '+(s._dispMode==='female'?'女':'男')+esc(s._dispKey):''}</span>`:''}<span class="cname">${esc(s.name)}</span>${bprSelect(s)}<button class="ctrl-toggle" onclick="toggleCtrl(${s.id})" title="顯示/隱藏每個小節的控制鈕">控制項 ${s.ctrlOff?'關':'開'}</button><button class="ctrl-toggle" onclick="barPickSection(${s.id})" title="複製小節：進入複製模式（預設選整段，可再拖曳/長按調整）→ 複製 → 點目標小節左/右緣(藍線) → 貼到任意位置（可跨段）">⧉ 複製</button><button class="ctrl-toggle" onclick="toggleFold(${s.id})" title="收合/展開此段">${s.fold?'▸ 展開':'▾ 收合'}</button></span><span class="cmeta">${bars} Bar · ${esc(gv('s-time'))}</span></div>`;
   if(s.fold) return `<div class="ccard folded${ssc}" style="border-color:${col.stroke}">${head}</div>`;
   let cells='';
   for(let i=0;i<bars;i++) cells+=kbBarHtml(s,i);
