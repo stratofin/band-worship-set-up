@@ -75,11 +75,21 @@ body.barpick .barpick-bar{display:inline-flex;}
 .barpick-bar .btn{font-size:0.85em;padding:0.28em 0.7em;}
 .barpick-btn.on{background:var(--accent)!important;border-color:var(--accent)!important;color:#0d0d0d!important;}
 body.barpick .cbar2,body.barpick .cbeatcol{cursor:pointer!important;}
+body.barpick .cbar2{touch-action:none;overflow:visible;}   /* 拖曳選取不捲動；讓插入豎線可顯示在小節外緣 */
 .cbar2.barsel{outline:2px solid var(--accent);outline-offset:-2px;background:rgba(212,168,67,0.14);border-radius:4px;}
+/* 已複製的來源區塊：持續閃亮的虛線邊框（類似文書軟體的複製選取） */
+@keyframes barclipblink{0%,100%{outline-color:var(--accent);}50%{outline-color:rgba(212,168,67,0.15);}}
+.cbar2.barclip{outline:2px dashed var(--accent);outline-offset:-2px;border-radius:4px;background:rgba(212,168,67,0.10);animation:barclipblink .7s ease-in-out infinite;}
+/* 貼上插入點：小節邊界的閃亮豎線 */
+@keyframes insblink{0%,100%{opacity:1;}50%{opacity:.18;}}
+.cbar2.ins-before::before,.cbar2.ins-after::after{content:'';position:absolute;top:-1px;bottom:-1px;width:3px;background:#5b9bd5;border-radius:2px;z-index:8;pointer-events:none;box-shadow:0 0 5px #5b9bd5;animation:insblink .6s ease-in-out infinite;}
+.cbar2.ins-before::before{left:-3px;}
+.cbar2.ins-after::after{right:-3px;}
 /* KB 數字譜 */
 .stbtn{border:1px solid var(--border2);background:var(--bg3);color:var(--text);border-radius:0.35em;padding:0.22em 0.55em;cursor:pointer;font-family:inherit;font-size:0.85em;line-height:1;white-space:nowrap;}
 .stbtn:hover{border-color:var(--accent);}
 .stbtn:disabled{opacity:.4;cursor:default;}
+.stbtn.on{background:var(--accent);border-color:var(--accent);color:#0d0d0d;font-weight:700;}
 .cbar2.kbbar{display:flex;flex-direction:column;min-height:0;padding:0.15em 0.1em 0.1em;overflow:visible;}
 .kbrow{display:flex;align-items:stretch;position:relative;border-top:1px dashed var(--border2);}
 .kbrow:first-of-type{border-top:none;}
@@ -840,11 +850,12 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
     <!-- CHORD CHART VIEW -->
     <div id="vp-chord" style="display:none">
       <div class="print-head"></div>
-      <div class="view-print"><button class="btn lock-btn" onclick="toggleLock()" title="鎖定：開＝只能看譜與左右滑頁、禁止任何編輯；關＝可編輯">🔓 鎖定 關</button><button class="btn svc-only svc-pb-btn" onclick="toggleSvcPB(this)" title="聚會服事列印：開＝每首歌各自從新頁開始；關＝段落連續接著印">📄 聚會分頁 關</button><button class="btn barpick-btn" onclick="toggleBarPick()" title="複製小節／區塊：進入後點小節選範圍→複製→再點目標小節，插入到它後面">⧉ 複製小節</button><button class="btn" onclick="openOcr()">🔍 辨識匯入</button><button class="btn" onclick="printFit('chord')" title="自動縮放，盡量塞進一張 A4">📄 經典A4</button><button class="btn btna" onclick="printView('chord')">🖨 列印 / 存 PDF</button></div>
+      <div class="view-print"><button class="btn lock-btn" onclick="toggleLock()" title="鎖定：開＝只能看譜與左右滑頁、禁止任何編輯；關＝可編輯">🔓 鎖定 關</button><button class="btn svc-only svc-pb-btn" onclick="toggleSvcPB(this)" title="聚會服事列印：開＝每首歌各自從新頁開始；關＝段落連續接著印">📄 聚會分頁 關</button><button class="btn barpick-btn" onclick="toggleBarPick()" title="複製小節：進入後按住小節左右拖曳選取範圍 → 複製 → 點目標小節左/右緣出現藍線 → 貼上（含 KB 音符，可插到任意位置）">⧉ 複製小節</button><button class="btn" onclick="openOcr()">🔍 辨識匯入</button><button class="btn" onclick="printFit('chord')" title="自動縮放，盡量塞進一張 A4">📄 經典A4</button><button class="btn btna" onclick="printView('chord')">🖨 列印 / 存 PDF</button></div>
       <div class="icon-toolbar">
         <label class="ic-hint">拍號 <select class="ic-sel" id="chord-timesig" onchange="setTimeSig(this.value)"></select></label>
         <label class="ic-hint">顯示 <select class="ic-sel" id="chord-disp" onchange="setChordDisp(this.value)"><option value="num">級數</option><option value="male">和弦名(男Key)</option><option value="female">和弦名(女Key)</option></select></label>
         <span class="key-step" title="半音微調 Key：依目前『顯示』調男/女 Key"><label>微調Key</label><button onclick="transposeKey(1)" title="升半音">▲</button><b class="keystep-lbl">—</b><button onclick="transposeKey(-1)" title="降半音">▼</button></span>
+        <label class="ic-hint">和弦 <select class="ic-sel cp-acc" onchange="setPlaceAcc(this.value)" title="升降"><option value="">♮</option><option value="b">♭</option><option value="#">♯</option></select><select class="ic-sel cp-root" onchange="setPlaceRoot(this.value)" title="根音（級數）"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option></select><select class="ic-sel cp-qual" onchange="setPlaceQual(this.value)" title="和弦性質"><option value="">大三</option><option value="m">小三 m</option><option value="7">屬七 7</option><option value="maj7">maj7</option><option value="m7">m7</option><option value="sus2">sus2</option><option value="sus4">sus4</option><option value="dim">dim</option><option value="aug">aug</option></select><button class="stbtn chordplace-btn" onclick="toggleChordPlace()" title="放和弦模式：開啟後點格子填入所選和弦（存級數，顯示可切級數/男女Key）">🎹 放和弦</button></label>
         <label class="ic-hint">全部每排 <select class="ic-sel" onchange="applyAllBPR(this)" title="一次設定所有段落每排小節數"><option value="__">套用…</option><option value="">自動</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option></select></label>
         <button class="clear-btn" onclick="clearAll()" title="清除整個譜的和弦／分割／重複／拍號／接續資料（可再按一次復原）">🗑 全部清除</button>
       </div>
@@ -855,7 +866,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
     <!-- MIX+ VIEW (大格 + 樂器指令在控制區) -->
     <div id="vp-mixp" style="display:none">
       <div class="print-head"></div>
-      <div class="view-print"><button class="btn lock-btn" onclick="toggleLock()" title="鎖定：開＝只能看譜與左右滑頁、禁止任何編輯；關＝可編輯">🔓 鎖定 關</button><button class="btn svc-only svc-pb-btn" onclick="toggleSvcPB(this)" title="聚會服事列印：開＝每首歌各自從新頁開始；關＝段落連續接著印">📄 聚會分頁 關</button><button class="btn barpick-btn" onclick="toggleBarPick()" title="複製小節／區塊：進入後點小節選範圍→複製→再點目標小節，插入到它後面">⧉ 複製小節</button><button class="btn" onclick="openOcr()">🔍 辨識匯入</button><button class="btn" onclick="printFit('mixp')" title="自動縮放，盡量塞進一張 A4">📄 經典A4</button><button class="btn btna" onclick="printView('mixp')">🖨 列印 / 存 PDF</button></div>
+      <div class="view-print"><button class="btn lock-btn" onclick="toggleLock()" title="鎖定：開＝只能看譜與左右滑頁、禁止任何編輯；關＝可編輯">🔓 鎖定 關</button><button class="btn svc-only svc-pb-btn" onclick="toggleSvcPB(this)" title="聚會服事列印：開＝每首歌各自從新頁開始；關＝段落連續接著印">📄 聚會分頁 關</button><button class="btn barpick-btn" onclick="toggleBarPick()" title="複製小節：進入後按住小節左右拖曳選取範圍 → 複製 → 點目標小節左/右緣出現藍線 → 貼上（含 KB 音符，可插到任意位置）">⧉ 複製小節</button><button class="btn" onclick="openOcr()">🔍 辨識匯入</button><button class="btn" onclick="printFit('mixp')" title="自動縮放，盡量塞進一張 A4">📄 經典A4</button><button class="btn btna" onclick="printView('mixp')">🖨 列印 / 存 PDF</button></div>
       <div class="icon-toolbar">
         <button class="ic-navbtn" id="mixp-prev" onclick="mixpNav(-1)" title="上一頁">‹</button>
         <span class="ic-pageind" id="mixp-pageind">1 / 1</span>
@@ -866,6 +877,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
         <label class="ic-hint">拍號 <select class="ic-sel" id="mixp-timesig" onchange="setTimeSig(this.value)"></select></label>
         <label class="ic-hint">顯示 <select class="ic-sel" id="mixp-disp" onchange="setChordDisp(this.value)"><option value="num">級數</option><option value="male">和弦名(男Key)</option><option value="female">和弦名(女Key)</option></select></label>
         <span class="key-step" title="半音微調 Key：依目前『顯示』調男/女 Key"><label>微調Key</label><button onclick="transposeKey(1)" title="升半音">▲</button><b class="keystep-lbl">—</b><button onclick="transposeKey(-1)" title="降半音">▼</button></span>
+        <label class="ic-hint">和弦 <select class="ic-sel cp-acc" onchange="setPlaceAcc(this.value)" title="升降"><option value="">♮</option><option value="b">♭</option><option value="#">♯</option></select><select class="ic-sel cp-root" onchange="setPlaceRoot(this.value)" title="根音（級數）"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option></select><select class="ic-sel cp-qual" onchange="setPlaceQual(this.value)" title="和弦性質"><option value="">大三</option><option value="m">小三 m</option><option value="7">屬七 7</option><option value="maj7">maj7</option><option value="m7">m7</option><option value="sus2">sus2</option><option value="sus4">sus4</option><option value="dim">dim</option><option value="aug">aug</option></select><button class="stbtn chordplace-btn" onclick="toggleChordPlace()" title="放和弦模式：開啟後點格子填入所選和弦（存級數，顯示可切級數/男女Key）">🎹 放和弦</button></label>
         <label class="ic-hint">全部每排 <select class="ic-sel" onchange="applyAllBPR(this)" title="一次設定所有段落每排小節數"><option value="__">套用…</option><option value="">自動</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option></select></label>
         <button class="clear-btn" onclick="clearAll()" title="清除整個譜的和弦／分割／重複／拍號／接續資料（可再按一次復原）">🗑 全部清除</button>
       </div>
@@ -877,7 +889,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
     <!-- STAFF (五線譜) VIEW -->
     <div id="vp-staff" style="display:none">
       <div class="print-head"></div>
-      <div class="view-print"><button class="btn lock-btn" onclick="toggleLock()" title="鎖定：開＝只能看譜與左右滑頁、禁止任何編輯；關＝可編輯">🔓 鎖定 關</button><button class="btn svc-only svc-pb-btn" onclick="toggleSvcPB(this)" title="聚會服事列印：開＝每首歌各自從新頁開始；關＝段落連續接著印">📄 聚會分頁 關</button><button class="btn barpick-btn" onclick="toggleBarPick()" title="複製小節／區塊">⧉ 複製小節</button><button class="btn" onclick="printFit('staff')" title="自動縮放，盡量塞進一張 A4">📄 經典A4</button><button class="btn btna" onclick="printView('staff')">🖨 列印 / 存 PDF</button></div>
+      <div class="view-print"><button class="btn lock-btn" onclick="toggleLock()" title="鎖定：開＝只能看譜與左右滑頁、禁止任何編輯；關＝可編輯">🔓 鎖定 關</button><button class="btn svc-only svc-pb-btn" onclick="toggleSvcPB(this)" title="聚會服事列印：開＝每首歌各自從新頁開始；關＝段落連續接著印">📄 聚會分頁 關</button><button class="btn barpick-btn" onclick="toggleBarPick()" title="複製小節：進入後按住小節左右拖曳選取範圍 → 複製 → 點目標小節左/右緣出現藍線 → 貼上（含 KB 音符，可插到任意位置）">⧉ 複製小節</button><button class="btn" onclick="printFit('staff')" title="自動縮放，盡量塞進一張 A4">📄 經典A4</button><button class="btn btna" onclick="printView('staff')">🖨 列印 / 存 PDF</button></div>
       <div class="icon-toolbar">
         <label class="ic-hint">顯示 <select class="ic-sel" id="staff-disp" onchange="setChordDisp(this.value)"><option value="num">級數</option><option value="male">和弦名(男Key)</option><option value="female">和弦名(女Key)</option></select></label>
         <span class="key-step" title="半音微調 Key"><label>微調Key</label><button onclick="transposeKey(1)" title="升半音">▲</button><b class="keystep-lbl">—</b><button onclick="transposeKey(-1)" title="降半音">▼</button></span>
@@ -2117,6 +2129,28 @@ function setBeat(id,bar,beat,v){
   const pb=getBeatData(s,bar,cellsForBar(s,bar));
   pb[beat]=v; s.chords[bar]=pb; autoSave();
 }
+/* ── 和弦快速輸入（和弦譜／混合頁）：選 升降＋根音級數＋性質 → 開「放和弦」點格子填入級數 token。
+   一律存級數（如 1maj7），顯示依「顯示」設定切級數↔男/女Key，切換自如。 ── */
+let _chordPlaceOn=false, _placeAcc='', _placeRoot='1', _placeQual='';
+function _syncPlaceSelects(){
+  document.querySelectorAll('.cp-acc').forEach(s=>s.value=_placeAcc);
+  document.querySelectorAll('.cp-root').forEach(s=>s.value=_placeRoot);
+  document.querySelectorAll('.cp-qual').forEach(s=>s.value=_placeQual);
+}
+function setPlaceAcc(v){ _placeAcc=v; _syncPlaceSelects(); }
+function setPlaceRoot(v){ _placeRoot=v; _syncPlaceSelects(); }
+function setPlaceQual(v){ _placeQual=v; _syncPlaceSelects(); }
+function placeChordToken(){ return (_placeAcc||'')+(_placeRoot||'1')+(_placeQual||''); }
+function toggleChordPlace(){
+  _chordPlaceOn=!_chordPlaceOn;
+  if(_chordPlaceOn && _barPickMode) toggleBarPick();      // 與複製小節模式互斥
+  document.querySelectorAll('.chordplace-btn').forEach(b=>b.classList.toggle('on',_chordPlaceOn));
+}
+function placeChordAt(cell){
+  const sid=+cell.dataset.sid, bar=+cell.dataset.bar, b=+cell.dataset.b;
+  if(!isFinite(sid)||!isFinite(bar)||!isFinite(b))return;
+  setBeat(sid,bar,b,placeChordToken()); renderCharts();
+}
 /* 單小節拍號 override */
 function barMeter(s,bar){ return (Array.isArray(s.meters)&&s.meters[bar])||''; }
 function barBeats(s,bar){ const m=barMeter(s,bar); if(m){const n=parseInt(m.split('/')[0]); if(n>0)return Math.min(16,n);} return beatsPerBar(); }
@@ -2252,7 +2286,7 @@ function toggleLock(){
   document.body.classList.toggle('locked',_locked);
   document.querySelectorAll('.lock-btn').forEach(b=>{ b.innerHTML=_locked?'🔒 鎖定 開':'🔓 鎖定 關'; b.classList.toggle('btna',_locked); });
 }
-function beatEdit(cell){ if(_barPickMode){ const w=cell.closest('.cbar2'); if(w&&w.dataset.sid!=null) barPickClick(+w.dataset.sid,+w.dataset.bar); return; } if(_locked)return; const r=cell.querySelector('.beat-r'), i=cell.querySelector('.beat-i'); if(!i||i.style.display!=='none')return; r.style.display='none'; i.style.display=''; i.focus(); i.select(); }
+function beatEdit(cell){ if(_barPickMode)return;   /* 複製模式：小節選取/插入點由 pointer 事件處理 */ if(_locked)return; if(_chordPlaceOn){ placeChordAt(cell); return; }   /* 放和弦模式：點格子填入所選和弦 */ const r=cell.querySelector('.beat-r'), i=cell.querySelector('.beat-i'); if(!i||i.style.display!=='none')return; r.style.display='none'; i.style.display=''; i.focus(); i.select(); }
 function beatSave(id,bar,beat,inp){
   setBeat(id,bar,beat,inp.value);
   const cell=inp.closest('.cbeatcol'), r=cell.querySelector('.beat-r');
@@ -2341,7 +2375,7 @@ function barOneHtml(s,i,beats,repX){
     for(let b=0;b<cellsN;b++){
       const raw=pb[b]||'';
       const bp=Math.floor(b/fac)%4;   // 該拍格線樣式：單/雙/三/虛
-      cols+=`<div class="cbeatcol bl${bp}" onclick="beatEdit(this)"><span class="cbnum">${subdivLabel(b,fac)}</span><span class="beat-r">${renderBeatToken(raw,s)}</span><input class="beat-i" value="${esc(raw)}" style="display:none" onblur="beatSave(${s.id},${i},${b},this)" onkeydown="if(event.key==='Enter'){this.blur();}"></div>`;
+      cols+=`<div class="cbeatcol bl${bp}" data-sid="${s.id}" data-bar="${i}" data-b="${b}" onclick="beatEdit(this)"><span class="cbnum">${subdivLabel(b,fac)}</span><span class="beat-r">${renderBeatToken(raw,s)}</span><input class="beat-i" value="${esc(raw)}" style="display:none" onblur="beatSave(${s.id},${i},${b},this)" onkeydown="if(event.key==='Enter'){this.blur();}"></div>`;
     }
     const m=barMeter(s,i);
     const isLast=(i===bars-1);
@@ -2362,7 +2396,7 @@ function barOneHtml(s,i,beats,repX){
       if(m)badges+=`<span class="cmeter on static">${esc(m)}</span>`;
       if(g){const t=sects.find(x=>x.id===g); badges+=`<span class="${isLast?'cgoto-badge':'cjump'} on static">→ ${t?esc(t.name):''}</span>`;}
     }
-    const _selCls=(_barPickMode&&_barSel&&_barSel.sid===s.id&&i>=Math.min(_barSel.a,_barSel.b)&&i<=Math.max(_barSel.a,_barSel.b))?' barsel':'';
+    const _selCls=barPickCls(s,i,bars);
     return `<div class="cbar2${_selCls}" data-sid="${s.id}" data-bar="${i}">${subSel}${repBadge}<div class="cbadges">${badges}</div><div class="cbeatcols" style="font-size:${fs}em">${cols}</div></div>`;
   }
 }
@@ -2397,52 +2431,107 @@ function pasteSection(id){
   autoSave(); renderSB(); renderAll();
 }
 /* ── 小節／區塊 複製貼上：選範圍→複製→點目標小節插入其後（和弦譜／混合共用） ── */
-let _barPickMode=false, _barSel=null, _barClip=null, _barStage='select';
+let _barPickMode=false, _barSel=null, _barClip=null, _barStage='select', _barInsert=null, _barDragging=false;
 function toggleBarPick(){
   _barPickMode=!_barPickMode;
-  if(!_barPickMode){ _barSel=null; _barStage='select'; }
+  if(!_barPickMode){ _barSel=null; _barStage='select'; _barInsert=null; _barClip=null; _barDragging=false; }
   document.body.classList.toggle('barpick',_barPickMode);
   document.querySelectorAll('.barpick-btn').forEach(b=>b.classList.toggle('on',_barPickMode));
   renderBarPickBar(); renderCharts();
 }
+/* 點擊後備（拖曳以外）：select 階段點小節設起點/延伸；paste 階段點小節設插入點（左半＝前、右半＝後） */
 function barPickClick(sid,bar){
-  if(_barStage==='paste'){ pasteBars(sid,bar); return; }
+  if(_barStage==='paste'){ _barInsert={sid,index:bar+1}; renderCharts(); renderBarPickBar(); return; }
   if(!_barSel||_barSel.sid!==sid||_barSel.done){ _barSel={sid,a:bar,b:bar,done:false}; }
   else { _barSel.b=bar; _barSel.done=true; }
   renderCharts(); renderBarPickBar();
 }
 function barSelCount(){ return _barSel?Math.abs(_barSel.a-_barSel.b)+1:0; }
+/* 小節在複製模式下的附加 class：選取反白(barsel)／已複製閃亮框(barclip)／插入豎線(ins-before/after) */
+function barPickCls(s,i,bars){
+  if(!_barPickMode)return '';
+  let c='';
+  if(_barSel&&_barSel.sid===s.id){ const lo=Math.min(_barSel.a,_barSel.b),hi=Math.max(_barSel.a,_barSel.b); if(i>=lo&&i<=hi)c+=(_barStage==='paste'?' barclip':' barsel'); }
+  if(_barInsert&&_barInsert.sid===s.id){ if(_barInsert.index===i)c+=' ins-before'; if(_barInsert.index===bars&&i===bars-1)c+=' ins-after'; }
+  return c;
+}
+const _BARKBK=['kbUp','kbLo','kbUpD','kbLoD','kbUpSub','kbLoSub'];
 function copyBars(){
   if(!_barSel)return; const s=sects.find(x=>x.id===_barSel.sid); if(!s)return;
+  migrateKBSection(s);                     // 確保 KB 為 v2 格式再複製
   const lo=Math.min(_barSel.a,_barSel.b), hi=Math.max(_barSel.a,_barSel.b), out=[];
-  for(let b=lo;b<=hi;b++){ out.push({ chords:getBeatData(s,b,cellsForBar(s,b)).slice(), meter:barMeter(s,b), rep:repOf(s,b), subdiv:subdivFactor(s,b) }); }
-  _barClip=out; _barStage='paste'; renderBarPickBar();
+  for(let b=lo;b<=hi;b++){
+    const o={ chords:getBeatData(s,b,cellsForBar(s,b)).slice(), meter:barMeter(s,b), rep:repOf(s,b), subdiv:subdivFactor(s,b), kb:{} };
+    _BARKBK.forEach(k=>{ const bar=Array.isArray(s[k])?s[k][b]:undefined; o.kb[k]=(bar!=null)?JSON.parse(JSON.stringify(bar)):null; });
+    out.push(o);
+  }
+  _barClip={sid:s.id, cols:out};
+  _barStage='paste';
+  _barInsert={sid:s.id, index:hi+1};       // 預設插入點：選取區塊之後
+  renderCharts(); renderBarPickBar();
 }
 function _padArr(a,n,v){ a=Array.isArray(a)?a.slice():[]; while(a.length<n)a.push(v); return a; }
 function _insArr(a,at,items){ a=a.slice(); a.splice(at,0,...items); return a; }
-function pasteBars(sid,bar){
-  if(!_barClip||!_barClip.length)return;
+/* 把已複製的小節插入到 index（0＝最前、bars＝最後）；含和弦、拍號、重複、分割、接續、KB 音符 */
+function pasteBarsAt(sid,index){
+  const clip=_barClip&&_barClip.cols; if(!clip||!clip.length)return;
   const s=sects.find(x=>x.id===sid); if(!s)return;
-  const bars=Math.max(1,parseInt(s.bars)||1), at=bar+1, n=_barClip.length;
-  s.chords =_insArr(_padArr(s.chords,bars,''),at,_barClip.map(x=>x.chords.slice()));
-  s.meters =_insArr(_padArr(s.meters,bars,''),at,_barClip.map(x=>x.meter||''));
-  s.rep    =_insArr(_padArr(s.rep,bars,1),at,_barClip.map(x=>x.rep||1));
-  s.subdiv =_insArr(_padArr(s.subdiv,bars,1),at,_barClip.map(x=>x.subdiv||1));
+  migrateKBSection(s);
+  const bars=Math.max(1,parseInt(s.bars)||1), at=Math.max(0,Math.min(bars,index|0)), n=clip.length;
+  s.chords =_insArr(_padArr(s.chords,bars,''),at,clip.map(x=>x.chords.slice()));
+  s.meters =_insArr(_padArr(s.meters,bars,''),at,clip.map(x=>x.meter||''));
+  s.rep    =_insArr(_padArr(s.rep,bars,1),at,clip.map(x=>x.rep||1));
+  s.subdiv =_insArr(_padArr(s.subdiv,bars,1),at,clip.map(x=>x.subdiv||1));
   s.bargoto=_insArr(_padArr(s.bargoto,bars,''),at,new Array(n).fill(''));
+  _BARKBK.forEach(k=>{
+    const anyKB=clip.some(x=>x.kb&&x.kb[k]!=null), existing=Array.isArray(s[k])&&s[k].length;
+    if(!anyKB&&!existing)return;            // 來源與目標都沒有此 KB 資料 → 不動，避免無謂膨脹
+    s[k]=_insArr(_padArr(s[k],bars,undefined),at,clip.map(x=>{const v=x.kb&&x.kb[k]; return v!=null?JSON.parse(JSON.stringify(v)):undefined;}));
+    s._kbv=2;
+  });
   s.bars=bars+n;
+  _barInsert={sid:s.id, index:at+n};        // 貼上後插入點移到新內容之後，方便連續貼
   autoSave(); renderSB(); renderCharts(); renderBarPickBar();
 }
-function copyBarsReselect(){ _barStage='select'; _barSel=null; renderCharts(); renderBarPickBar(); }
+function pasteBars(sid,bar){ pasteBarsAt(sid,bar+1); }   // 相容舊呼叫：插到該小節後面
+function copyBarsReselect(){ _barStage='select'; _barSel=null; _barInsert=null; renderCharts(); renderBarPickBar(); }
+/* ── 複製小節互動：按住小節拖曳選取；paste 階段點小節左/右半設插入點（觸控＋滑鼠共用 pointer 事件） ── */
+function _barElAtPoint(x,y){ const el=document.elementFromPoint(x,y); return el?el.closest('.cbar2[data-bar]'):null; }
+function _barHalf(el,x){ const r=el.getBoundingClientRect(); return (x<r.left+r.width/2)?0:1; }   // 0＝左(插前)、1＝右(插後)
+function onBarPickDown(e){
+  if(!_barPickMode||!e.target||!e.target.closest)return;
+  const el=e.target.closest('.cbar2[data-bar]'); if(!el||el.dataset.sid==null)return;
+  const sid=+el.dataset.sid, bar=+el.dataset.bar;
+  if(_barStage==='paste'){ _barInsert={sid,index:bar+_barHalf(el,e.clientX)}; e.preventDefault(); renderCharts(); renderBarPickBar(); return; }
+  _barSel={sid,a:bar,b:bar,done:false}; _barDragging=true;
+  e.preventDefault(); renderCharts(); renderBarPickBar();
+}
+function onBarPickMove(e){
+  if(!_barDragging||_barStage!=='select'||!_barSel)return;
+  const el=_barElAtPoint(e.clientX,e.clientY); if(!el||el.dataset.sid==null)return;
+  if(+el.dataset.sid!==_barSel.sid)return;      // 只在同段落內延伸
+  const bar=+el.dataset.bar;
+  if(bar!==_barSel.b){ _barSel.b=bar; renderCharts(); renderBarPickBar(); }
+  e.preventDefault();
+}
+function onBarPickUp(){ if(!_barDragging)return; _barDragging=false; if(_barSel)_barSel.done=true; renderCharts(); renderBarPickBar(); }
+document.addEventListener('pointerdown',onBarPickDown,true);
+document.addEventListener('pointermove',onBarPickMove,true);
+document.addEventListener('pointerup',onBarPickUp,true);
+document.addEventListener('pointercancel',onBarPickUp,true);
+function doPasteAtInsert(){ if(_barInsert)pasteBarsAt(_barInsert.sid,_barInsert.index); }
 function renderBarPickBar(){
   const el=document.getElementById('barpick-bar'); if(!el)return;
   if(!_barPickMode){ el.innerHTML=''; return; }
   if(_barStage==='paste'){
-    el.innerHTML=`<span>已複製 ${_barClip?_barClip.length:0} 小節 → 點任一小節：插入到它後面（可連續貼）</span>`
+    const n=(_barClip&&_barClip.cols)?_barClip.cols.length:0, hasIns=!!_barInsert;
+    el.innerHTML=`<span>已複製 ${n} 小節 · ${hasIns?'插入點已定（藍線）':'點目標小節左/右緣，出現藍線'}</span>`
+      +`<button class="btn btna"${hasIns?'':' disabled'} onclick="doPasteAtInsert()">📋 貼上</button>`
       +`<button class="btn" onclick="copyBarsReselect()">重新選取</button>`
-      +`<button class="btn btna" onclick="toggleBarPick()">完成</button>`;
+      +`<button class="btn" onclick="toggleBarPick()">完成</button>`;
   } else {
     const n=barSelCount();
-    el.innerHTML=`<span>${n?('已選 '+n+' 小節'):'點小節選起點，再點終點（單格＝同一格點兩次）'}</span>`
+    el.innerHTML=`<span>${n?('已選 '+n+' 小節'):'按住小節左右拖曳選取範圍'}</span>`
       +`<button class="btn btna"${n?'':' disabled'} onclick="copyBars()">⧉ 複製</button>`
       +`<button class="btn" onclick="toggleBarPick()">取消</button>`;
   }
@@ -2960,11 +3049,11 @@ function kbBarHtml(s,i){
     }
     return `<div class="kbrow" data-row="${row}"><span class="kbrl">${row==='up'?'R':'L'}</span><div class="kbbeats">${beats}</div></div>`;
   };
-  const _sel=(_barPickMode&&_barSel&&_barSel.sid===s.id&&i>=Math.min(_barSel.a,_barSel.b)&&i<=Math.max(_barSel.a,_barSel.b))?' barsel':'';
+  const _sel=barPickCls(s,i,bars);
   return `<div class="cbar2 kbbar${_sel}" data-sid="${s.id}" data-bar="${i}">${repBadge}<div class="cbadges">${badges}</div>${rowHtml('up')}${rowHtml('lo')}</div>`;
 }
 function kbEdit(cell){
-  if(_barPickMode){ const w=cell.closest('.cbar2'); if(w&&w.dataset.sid!=null) barPickClick(+w.dataset.sid,+w.dataset.bar); return; }
+  if(_barPickMode)return;   /* 複製模式：小節選取/插入點由 pointer 事件處理 */
   if(_locked)return;
   _staffSel={sid:+cell.dataset.sid,row:cell.dataset.row,bar:+cell.dataset.bar,c:+cell.dataset.c};
   if(_kbChordOn){
