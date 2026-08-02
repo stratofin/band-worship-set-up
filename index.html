@@ -356,7 +356,7 @@ body.svc-mode .svc-only{display:inline-flex!important;}
 /* 統一小型 select 在各瀏覽器的外觀（Safari/Firefox 原生 select 較大、有箭頭） */
 .cbsub,.cgoto-badge,.cjump{-webkit-appearance:none;-moz-appearance:none;appearance:none;text-align:center;}
 .cbar-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(11em,100%),1fr));padding:0.4em;gap:0.35em;max-width:100%;}
-.cbar2{position:relative;border:1.5px solid var(--border2);border-radius:0.4em;background:rgba(255,255,255,0.015);overflow:hidden;min-height:3.6em;}
+.cbar2{position:relative;border:1.5px solid var(--border2);border-radius:0.4em;background:rgba(255,255,255,0.015);overflow:hidden;min-height:3.6em;display:flex;flex-direction:column;}
 .cbadges{position:absolute;top:0;right:0;display:flex;gap:2px;z-index:3;}
 .cbsub{position:absolute;top:0;left:0;z-index:4;font-size:0.5em;font-family:'Space Mono',monospace;border:none;border-radius:0 0 4px 0;padding:0.16em 0.18em;background:rgba(255,255,255,0.06);color:var(--text3);cursor:pointer;outline:none;line-height:1;}
 .cbsub:hover{color:var(--accent);background:rgba(212,168,67,0.2);}
@@ -369,7 +369,7 @@ body.svc-mode .svc-only{display:inline-flex!important;}
 .cjump{font-size:0.46em;font-family:inherit;border:none;border-radius:0 0 0 3px;padding:0.14em 0.18em;cursor:pointer;background:rgba(255,255,255,0.05);color:var(--text3);outline:none;max-width:5em;}
 .cjump:hover{color:var(--accent);background:rgba(212,168,67,0.18);}
 .cjump.on{background:rgba(212,86,74,0.5);color:#fff;}
-.cbeatcols{display:flex;align-items:stretch;width:100%;padding:0.95em 0.1em 0.45em;}
+.cbeatcols{display:flex;align-items:stretch;width:100%;padding:0.95em 0.1em 0.45em;flex:1 1 auto;}
 .cbeatcol{position:relative;flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;gap:0.12em;border-left:none;padding:0 0.08em;}
 .cbeatcol::before{content:'';position:absolute;left:-1px;top:12%;bottom:12%;width:1px;pointer-events:none;}
 .cbeatcol.bl0::before,.cbeatcol.bl2::before{background:#888;}
