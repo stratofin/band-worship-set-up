@@ -2248,6 +2248,33 @@ function convChord(tok,keySemi,pf){
   if(bass){ const bm=bass.match(/^([#b]?)([1-7])$/); out+='/'+(bm?degToNoteName(keySemi,+bm[2],bm[1],pfFor(bm[1])):bass); }
   return out;
 }
+/* ── 音名和弦 → 級數（相對譜的原始 Key）：只換根音，品質後綴（maj7/maj9/add4/sus…）與轉位低音原樣保留 ── */
+const _NOTE2SEMI={C:0,D:2,E:4,F:5,G:7,A:9,B:11};
+const _SEMI2DEG={0:'1',1:'b2',2:'2',3:'b3',4:'3',5:'4',6:'b5',7:'5',8:'b6',9:'6',10:'b7',11:'7'};
+function noteToDeg(note,keySemi){
+  const m=String(note).match(/^([A-G])([#b]?)/); if(!m)return null;
+  let s=_NOTE2SEMI[m[1]]+(m[2]==='#'?1:m[2]==='b'?-1:0);
+  s=(((s-keySemi)%12)+12)%12;
+  return _SEMI2DEG[s]||null;
+}
+function chordToNum(tok,keySemi){
+  if(keySemi==null)return tok;
+  const m=String(tok).match(/^([A-G][#b]?)(.*)$/); if(!m)return tok;   // 非音名（已是級數或特殊記號）→ 原樣
+  let rest=m[2]||'', bass='';
+  const sl=rest.indexOf('/'); if(sl>=0){ bass=rest.slice(sl+1); rest=rest.slice(0,sl); }
+  const deg=noteToDeg(m[1],keySemi); if(!deg)return tok;              // 無法對應 → 保持原符號，不硬轉
+  let out=deg+rest;
+  if(bass){ const bd=/^[A-G][#b]?$/.test(bass)?noteToDeg(bass,keySemi):null; out+='/'+(bd||bass); }
+  return out;
+}
+/* 譜的原始 Key（男 Key 優先，其次女 Key）供音名→級數換算的基準 */
+function baseKeySemi(s){
+  const mk=(s&&s._dispMode)?(s._dispMode==='female'?'':s._dispKey):gv('s-mkey');
+  const fk=(s&&s._dispMode)?(s._dispMode==='female'?s._dispKey:''):gv('s-fkey');
+  let k=keyRootSemi(mk); if(k==null)k=keyRootSemi(fk); return k;
+}
+/* 任何 token → 級數 token（音名用譜原始 Key 轉；已是級數/特殊記號原樣）。轉換失敗一律保留原符號。 */
+function normToNum(tok,s){ const ks=baseKeySemi(s); return (ks==null)?tok:chordToNum(tok,ks); }
 /* 記號化簡：把音名字母後相鄰的升降記號相抵（D#＋b→D、E#＋b→E）；淨值±1保留單一記號 */
 function foldAcc(s){
   return String(s).replace(/^([A-G])([#b]+)/, (m,L,acc)=>{
@@ -2276,7 +2303,8 @@ function renderBeatToken(tok,s){
   const one=(t)=>{ t=t.trim();
     if(t===''||t==='.')return '<span class="bt-sus">·</span>';
     if(t==='x'||t==='X')return '<span class="bt-rest">✕</span>';
-    const sp=splitChordDisplay(mode==='num'?t:foldChordAcc(convChord(t,keySemi,pf)));
+    const canon=normToNum(t,s);   // 先把音名和弦正規化成級數（後綴/轉位維持），再依模式顯示
+    const sp=splitChordDisplay(mode==='num'?canon:foldChordAcc(convChord(canon,keySemi,pf)));
     // 估算顯示寬度：根音＋轉位低音為全尺寸，後綴為小字(約0.6倍)；太寬就縮字，避免 D/F#、Gmaj7/B 被切掉
     const wide=String(sp.root).length+String(sp.bass).length+String(sp.suf).length*0.6;
     const lc=wide>=6?' bt-xlong':wide>=4?' bt-long':'';
@@ -2374,8 +2402,9 @@ function barOneHtml(s,i,beats,repX){
     const bb=barBeats(s,i);
     let fac=subdivFactor(s,i);
     let pb=getBeatData(s,i,bb*fac);
-    /* 列印/輸出時：把沒用到細分的小節收合，不顯示空的八分/十六分格 */
-    if(window._printMode && fac>1){
+    /* 列印/輸出時，或「控制項關閉」看譜時：把沒用到細分的小節收合，不顯示空的八分/十六分格，
+       讓和弦字維持大、線條長度與四分一致（有實際細分內容的小節照常完整呈現） */
+    if((window._printMode||s.ctrlOff) && fac>1){
       const cf=effSubdivFactor(pb,fac,bb);
       if(cf<fac){ const step=fac/cf, np=[]; for(let j=0;j<bb*cf;j++)np.push(pb[j*step]||''); pb=np; fac=cf; }
     }
