@@ -77,6 +77,10 @@ body.barpick .barpick-bar{display:inline-flex;}
 body.barpick .cbar2,body.barpick .cbeatcol{cursor:pointer!important;}
 body.barpick .cbar2{touch-action:none;overflow:visible;}   /* 拖曳選取不捲動；讓插入豎線可顯示在小節外緣 */
 body.toolbar-collapsed .icon-toolbar{display:none!important;}   /* 收合上方設定工具列 */
+/* 經典A4 字級提示（只在螢幕顯示） */
+.printfs-tip{position:fixed;left:50%;bottom:16px;transform:translateX(-50%) translateY(8px);z-index:3400;background:var(--bg2);border:1px solid var(--accent);color:var(--text);border-radius:0.6em;padding:0.5em 0.9em;font-size:0.85em;box-shadow:0 4px 16px rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;max-width:92vw;text-align:center;}
+.printfs-tip.show{opacity:1;transform:translateX(-50%) translateY(0);}
+@media print{ .printfs-tip{display:none!important;} }
 .cbar2.barsel{outline:2px solid var(--accent);outline-offset:-2px;background:rgba(212,168,67,0.14);border-radius:4px;}
 /* 已複製的來源區塊：持續閃亮的虛線邊框（類似文書軟體的複製選取） */
 @keyframes barclipblink{0%,100%{outline-color:var(--accent);}50%{outline-color:rgba(212,168,67,0.15);}}
@@ -371,9 +375,13 @@ body.svc-mode .svc-only{display:inline-flex!important;}
 .cjump.on{background:rgba(212,86,74,0.5);color:#fff;}
 .cbeatcols{display:flex;align-items:stretch;width:100%;padding:0.95em 0.1em 0.45em;flex:1 1 auto;}
 .cbeatcol{position:relative;flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;gap:0.12em;border-left:none;padding:0 0.08em;}
-.cbeatcol::before{content:'';position:absolute;left:-1px;top:12%;bottom:12%;width:1px;pointer-events:none;}
-.cbeatcol.bl0::before,.cbeatcol.bl2::before{background:#888;}
-.cbeatcol.bl1::before,.cbeatcol.bl3::before{background:repeating-linear-gradient(to bottom,#888 0,#888 2.5px,transparent 2.5px,transparent 5px);}
+/* 小節線：前後為粗實線（小節界線），小節內部一律虛線；拍點虛線較明顯、拍內細分較淡 */
+.cbeatcol::before{content:'';position:absolute;left:-1px;top:12%;bottom:12%;width:1px;pointer-events:none;
+  background:repeating-linear-gradient(to bottom,#888 0,#888 2px,transparent 2px,transparent 5px);opacity:.55;}
+.cbeatcol.beatline::before{background:repeating-linear-gradient(to bottom,#888 0,#888 3px,transparent 3px,transparent 5.5px);opacity:.95;}
+/* 小節起訖的粗實線 */
+.cbeatcol:first-child::before{left:-2px;top:4%;bottom:4%;width:2.5px;background:#bbb;opacity:1;}
+.cbeatcols>.cbeatcol:last-child::after{content:'';position:absolute;right:-2px;top:4%;bottom:4%;width:2.5px;background:#bbb;pointer-events:none;}
 .cbrep{position:absolute;bottom:2px;right:2px;z-index:4;font-size:0.5em;font-family:'Space Mono',monospace;color:var(--text2);cursor:pointer;line-height:1;min-width:1.7em;text-align:center;padding:0.18em 0.15em;border:1px solid var(--border2);border-radius:3px;background:var(--bg3);user-select:none;}
 .cbrep:hover{border-color:var(--accent);color:var(--accent);}
 .cbrep.on{background:#5b9bd5;color:#08121c;border-color:#5b9bd5;font-weight:700;}
@@ -678,6 +686,11 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   body.print-chord .cbchord,body.print-mix .cbchord{color:#111!important;}
   body.print-chord .cbar2,body.print-mix .cbar2{background:#fff!important;border-color:#999!important;}
   body.print-chord .cbeatcol,body.print-mix .cbeatcol{border-color:#bbb!important;}
+  /* 列印：小節內虛線用灰、小節前後粗實線用深灰，白底才看得清楚 */
+  body[class*="print-"] .cbeatcol::before{background:repeating-linear-gradient(to bottom,#9a9a9a 0,#9a9a9a 2px,transparent 2px,transparent 5px)!important;opacity:.8!important;}
+  body[class*="print-"] .cbeatcol.beatline::before{background:repeating-linear-gradient(to bottom,#7a7a7a 0,#7a7a7a 3px,transparent 3px,transparent 5.5px)!important;opacity:1!important;}
+  body[class*="print-"] .cbeatcol:first-child::before{background:#333!important;opacity:1!important;}
+  body[class*="print-"] .cbeatcols>.cbeatcol:last-child::after{background:#333!important;}
   /* 列印：和弦相關內容加深（原本沿用螢幕淺色，白底上太淡） */
   body.print-chord .beat-r,body.print-mix .beat-r,body.print-mixp .beat-r,
   body.print-chord .bt-suf,body.print-mix .bt-suf,body.print-mixp .bt-suf{color:#111!important;}
@@ -742,6 +755,8 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   body.print-fit #vp-staff>.chord-content,
   body.print-fit #vp-mix>.icpages,
   body.print-fit #vp-mixp>.icpages{ zoom:var(--fit-scale,1); }
+  /* 經典A4：套用自動挑選的輸出字級（讓 maj9/add4 這類較長和弦不破格） */
+  body.print-fit .right{ font-size:var(--print-fs,13px)!important; }
   body.print-fit .ccard{page-break-inside:avoid!important;break-inside:avoid!important;-webkit-column-break-inside:avoid!important;}
   /* 每個段落內部的每一排也不要被切開 */
   body[class*="print-"] .arr-rowblock{break-inside:avoid!important;page-break-inside:avoid!important;}
@@ -1823,6 +1838,16 @@ async function printView(name){
 }
 function printIcon(){ return printView('icon'); }   // 相容舊呼叫
 /* 經典 A4：自動縮放，盡量塞進一張 A4 */
+/* 經典A4：告知這次輸出用的字級與合理範圍（螢幕上短暫顯示，不影響列印內容） */
+function showPrintFsTip(fs,min,max,scale){
+  let el=document.getElementById('printfs-tip');
+  if(!el){ el=document.createElement('div'); el.id='printfs-tip'; el.className='printfs-tip'; document.body.appendChild(el); }
+  const sc=(scale<0.999)?('　·　再縮至 '+Math.round(scale*100)+'% 以塞進一頁'):'';
+  el.textContent='經典A4 輸出字級：'+fs+' px（自動挑選，合理範圍 '+min+'–'+max+'）'+sc;
+  el.classList.add('show');
+  clearTimeout(showPrintFsTip._t);
+  showPrintFsTip._t=setTimeout(()=>el.classList.remove('show'),4200);
+}
 async function printFit(view){
   commitEdits();
   const svc = Array.isArray(sects) && sects.some(s=>s&&s._song);   // 聚會模式：維持資料庫原始段落安排，不重排也不收合
@@ -1833,34 +1858,47 @@ async function printFit(view){
   const PH=1040;   // A4 直式可列印高度（約 px @96dpi，已扣邊界）
   const srcId=view==='chord'?'chord-content':view==='mixp'?'mixp-content':view==='staff'?'staff-content':'mix-content';
   const renderView=()=>{ if(view==='chord')renderChord(); else if(view==='mix')renderMix(); else if(view==='mixp')renderMixP(); else if(view==='staff')renderStaff(); };
-  const measureH=()=>{ const src=document.getElementById(srcId); if(!src)return PH;
+  const measureH=(fs)=>{ const src=document.getElementById(srcId); if(!src)return PH;
     const clone=src.cloneNode(true);
     clone.querySelectorAll('.beat-i').forEach(n=>n.remove());
     clone.querySelectorAll('.icpage').forEach(p=>{p.style.minWidth='0';p.style.width='100%';});
-    clone.style.cssText='position:fixed;left:-99999px;top:0;width:720px;display:block;font-size:'+curFont+'px;font-family:\'Noto Sans TC\',sans-serif;';
+    clone.style.cssText='position:fixed;left:-99999px;top:0;width:720px;display:block;font-size:'+(fs||curFont)+'px;font-family:\'Noto Sans TC\',sans-serif;';
     document.body.appendChild(clone); const h=clone.scrollHeight||PH; document.body.removeChild(clone); return h; };
   renderView();
   if(document.fonts&&document.fonts.ready){ try{ await document.fonts.ready; }catch(e){} }
   let scale=1;
+  const FS_MAX=20, FS_MIN=12;
+  const FS_LIST=[20,18,16,15,14,13,12];   // 由大到小：挑塞得下的最大字級（和弦較長時才會往下降）
+  let usedFS=Math.max(curFont,FS_MIN);
   try{
     if(view==='chord' && !svc){
-      // 單首歌：嘗試不同「每排小節數」，由小(字大)到大，挑第一個塞得下一頁的；都塞不下就用最矮版面再縮到一頁
+      // 單首歌：先求「最大字級」，同一字級下再由每排小節數少(字大)到多，挑第一個塞得下一頁的組合
       const cands=[0,2,3,4,5,6,7,8];   // 0 = 各段原設定
-      let chosen, fb={bpr:null,h:Infinity};
-      for(const bpr of cands){
-        const bv=bpr||null;
-        window._printBPR=bv; renderView();
-        const h=measureH();
-        if(h<fb.h) fb={bpr:bv,h};
-        if(h<=PH){ chosen=bv; break; }   // 由小排到大，第一個塞得下（字最大）
+      let chosen, chosenFS, fb={bpr:null,fs:FS_MIN,h:Infinity};
+      outer:
+      for(const fs of FS_LIST){
+        for(const bpr of cands){
+          const bv=bpr||null;
+          window._printBPR=bv; renderView();
+          const h=measureH(fs);
+          if(h<fb.h) fb={bpr:bv,fs,h};
+          if(h<=PH){ chosen=bv; chosenFS=fs; break outer; }
+        }
       }
-      if(chosen!==undefined){ window._printBPR=chosen; scale=1; }
-      else { window._printBPR=fb.bpr; scale=Math.max(0.5, Math.min(1, PH/fb.h)); }   // 塞不下→縮到可讀下限；超過就分頁（段落保持完整）
+      if(chosen!==undefined){ window._printBPR=chosen; usedFS=chosenFS; scale=1; }
+      else { window._printBPR=fb.bpr; usedFS=fb.fs; scale=Math.max(0.5, Math.min(1, PH/fb.h)); }   // 都塞不下→用最矮版面再縮；超過就分頁（段落完整）
       renderView();
     } else {
-      const h=measureH(); scale=Math.max(0.5, Math.min(1, PH/h));   // 聚會/混合：縮到可讀下限；超過就分頁（段落完整）
+      // 聚會/混合/KB：同樣挑塞得下的最大字級，塞不下再縮
+      let picked=null;
+      for(const fs of FS_LIST){ if(measureH(fs)<=PH){ picked=fs; break; } }
+      if(picked!=null){ usedFS=picked; scale=1; }
+      else { usedFS=FS_MIN; scale=Math.max(0.5, Math.min(1, PH/measureH(FS_MIN))); }
     }
   }catch(e){}
+  usedFS=Math.max(FS_MIN,Math.min(FS_MAX,usedFS));
+  document.documentElement.style.setProperty('--print-fs', usedFS+'px');
+  showPrintFsTip(usedFS,FS_MIN,FS_MAX,scale);
   document.documentElement.style.setProperty('--fit-scale', scale.toFixed(3));
   document.body.classList.add(cls,'print-fit');
   window._printCls=cls;
@@ -2446,8 +2484,8 @@ function barOneHtml(s,i,beats,repX){
     let cols='';
     for(let b=0;b<cellsN;b++){
       const raw=pb[b]||'';
-      const bp=Math.floor(b/fac)%4;   // 該拍格線樣式：單/雙/三/虛
-      cols+=`<div class="cbeatcol bl${bp}" data-sid="${s.id}" data-bar="${i}" data-b="${b}" onclick="beatEdit(this)"><span class="cbnum">${subdivLabel(b,fac)}</span><span class="beat-r">${renderBeatToken(raw,s)}</span><input class="beat-i" value="${esc(raw)}" style="display:none" onblur="beatSave(${s.id},${i},${b},this)" onkeydown="if(event.key==='Enter'){this.blur();}"></div>`;
+      const bp=(b%fac===0)?'beatline':'';   // 拍點＝較明顯的虛線；拍內細分＝較淡虛線（小節前後粗實線由 CSS 處理）
+      cols+=`<div class="cbeatcol ${bp}" data-sid="${s.id}" data-bar="${i}" data-b="${b}" onclick="beatEdit(this)"><span class="cbnum">${subdivLabel(b,fac)}</span><span class="beat-r">${renderBeatToken(raw,s)}</span><input class="beat-i" value="${esc(raw)}" style="display:none" onblur="beatSave(${s.id},${i},${b},this)" onkeydown="if(event.key==='Enter'){this.blur();}"></div>`;
     }
     const m=barMeter(s,i);
     const isLast=(i===bars-1);
