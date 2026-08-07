@@ -77,6 +77,26 @@ body.barpick .barpick-bar{display:inline-flex;}
 body.barpick .cbar2,body.barpick .cbeatcol{cursor:pointer!important;}
 body.barpick .cbar2{touch-action:none;overflow:visible;}   /* 拖曳選取不捲動；讓插入豎線可顯示在小節外緣 */
 body.toolbar-collapsed .icon-toolbar{display:none!important;}   /* 收合上方設定工具列 */
+/* ── 極大化輸出：移除每個小節的外框，把空間讓給更大的文字（小節起訖仍有粗線可辨識） ── */
+body.print-maxi .cbar2{border-color:transparent!important;background:transparent!important;border-radius:0!important;min-height:0!important;}
+/* 只縮外圍留白（卡片內距、小節間距），格子內距保留 → 空間讓給更大的文字 */
+body.print-maxi .cbar-grid{gap:0.15em!important;padding:0.08em!important;}
+body.print-maxi .ccard{border-width:1.2px!important;border-radius:0.3em!important;}
+body.print-maxi .ccard-head{padding-top:0.1em!important;padding-bottom:0.1em!important;}
+body.print-maxi .cbar2.kbbar{padding:0.05em 0.04em!important;}
+body.print-maxi .cbeatcol:first-child::before,body.print-maxi .cbeatcols>.cbeatcol:last-child::after{top:0;bottom:0;}
+/* 註：極大化的「和弦字放大」與「輸出字級」只在 @media print 內生效，避免影響螢幕編輯畫面 */
+/* 輸出樣式選擇視窗 */
+.outmode-modal{position:fixed;inset:0;z-index:3500;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:1em;}
+.outmode-box{background:var(--bg2);border:1px solid var(--border2);border-radius:0.8em;padding:1.1em;width:min(420px,94vw);box-shadow:0 12px 40px rgba(0,0,0,.5);}
+.outmode-box h3{margin:0 0 0.7em;font-size:1em;color:var(--text);font-weight:600;}
+.outmode-opt{display:block;width:100%;text-align:left;margin-bottom:0.6em;padding:0.7em 0.8em;border:1.5px solid var(--border2);border-radius:0.55em;background:var(--bg3);color:var(--text);cursor:pointer;font-family:inherit;}
+.outmode-opt:hover{border-color:var(--accent);}
+.outmode-opt.sel{border-color:var(--accent);box-shadow:0 0 0 2px rgba(212,168,67,.25) inset;}
+.outmode-opt b{display:block;font-size:0.95em;margin-bottom:0.2em;}
+.outmode-opt span{display:block;font-size:0.78em;color:var(--text3);line-height:1.45;}
+.outmode-foot{text-align:right;}
+@media print{ .outmode-modal{display:none!important;} }
 /* 經典A4 字級提示（只在螢幕顯示） */
 .printfs-tip{position:fixed;left:50%;bottom:16px;transform:translateX(-50%) translateY(8px);z-index:3400;background:var(--bg2);border:1px solid var(--accent);color:var(--text);border-radius:0.6em;padding:0.5em 0.9em;font-size:0.85em;box-shadow:0 4px 16px rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;max-width:92vw;text-align:center;}
 .printfs-tip.show{opacity:1;transform:translateX(-50%) translateY(0);}
@@ -339,6 +359,7 @@ body.svc-mode .key-step{opacity:.5;}
 .svc-only{display:none!important;}
 body.svc-mode .svc-only{display:inline-flex!important;}
 .svc-pb-btn.on{background:#3a7d44!important;border-color:#3a7d44!important;color:#fff!important;}
+.maxi-btn.on{background:var(--accent)!important;border-color:var(--accent)!important;color:#0d0d0d!important;font-weight:700;}
 .cmeta{font-family:'Space Mono',monospace;font-size:0.76em;opacity:.85;white-space:nowrap;}
 .chead-l{display:inline-flex;align-items:center;gap:0.45em;min-width:0;flex-wrap:wrap;row-gap:0.25em;flex:1 1 auto;}
 .cbpr-sel{background:rgba(0,0,0,0.18);border:1px solid var(--border2);border-radius:0.3em;color:inherit;font-family:inherit;font-size:0.62em;font-weight:400;padding:0.05em 0.25em;outline:none;cursor:pointer;}
@@ -704,6 +725,8 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   body.print-chord .bt-note.bt-xlong,body.print-mix .bt-note.bt-xlong{font-size:0.7em!important;letter-spacing:-0.03em!important;}
   body.print-chord .cbeatcol,body.print-mix .cbeatcol,body.print-mixp .cbeatcol{overflow:visible!important;}
   body.print-chord .cbar2,body.print-mix .cbar2,body.print-mixp .cbar2{overflow:visible!important;}
+  /* 極大化：列印時同樣移除小節外框（優先於各檢視的邊框設定） */
+  body.print-maxi .cbar2{border-color:transparent!important;background:transparent!important;}
   body.print-mixp .bt-note.bt-long{font-size:0.82em!important;letter-spacing:-0.02em!important;}
   body.print-mixp .bt-note.bt-xlong{font-size:0.66em!important;letter-spacing:-0.03em!important;}
   body.print-chord .beat-r,body.print-mix .beat-r{min-height:1.5em!important;}
@@ -755,8 +778,12 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   body.print-fit #vp-staff>.chord-content,
   body.print-fit #vp-mix>.icpages,
   body.print-fit #vp-mixp>.icpages{ zoom:var(--fit-scale,1); }
-  /* 經典A4：套用自動挑選的輸出字級（讓 maj9/add4 這類較長和弦不破格） */
-  body.print-fit .right{ font-size:var(--print-fs,13px)!important; }
+  /* 輸出字級（經典A4／一般列印都套用；讓 maj9/add4 這類較長和弦不破格） */
+  body.print-fit .right,body.print-maxi .right{ font-size:var(--print-fs,13px)!important; }
+  /* 極大化：和弦文字放大（需壓過各檢視的列印字級規則） */
+  body.print-maxi .bt-note{font-size:1.45em!important;}
+  body.print-maxi .bt-note.bt-long{font-size:1.05em!important;}
+  body.print-maxi .bt-note.bt-xlong{font-size:0.86em!important;}
   body.print-fit .ccard{page-break-inside:avoid!important;break-inside:avoid!important;-webkit-column-break-inside:avoid!important;}
   /* 每個段落內部的每一排也不要被切開 */
   body[class*="print-"] .arr-rowblock{break-inside:avoid!important;page-break-inside:avoid!important;}
@@ -1828,16 +1855,55 @@ function bindSwipe(){
 /* ── PRINT ICON SHEET (A4, 4 segments / page) ── */
 async function printView(name){
   commitEdits();
+  const askable=['chord','mixp','staff'].includes(name);
+  if(askable && await askOutputMode()===null)return;   // 讓使用者選 一般／極大化
   window._printMode=true;   /* 收合沒用到的八分/十六分空格 */
   if(name==='icon')renderIcon(); else if(name==='chord')renderChord(); else if(name==='mix')renderMix(); else if(name==='mixp')renderMixP(); else if(name==='staff')renderStaff();
   if(document.fonts&&document.fonts.ready){ try{ await document.fonts.ready; }catch(e){} }
   const cls='print-'+name;
+  const maxi=askable&&_printMaxi;
+  document.body.classList.toggle('print-maxi',maxi);   // 極大化：移除小節外框，內容更大
+  if(maxi){
+    // 一般列印可跨頁 → 直接放大字級（不必塞一頁），維持各段原本的每排設定
+    const fs=Math.max(curFont,22);
+    document.documentElement.style.setProperty('--print-fs',fs+'px');
+    showPrintFsTip(fs,12,26,1);
+  }
   document.body.classList.add(cls);
   window._printCls=cls;
   setTimeout(()=>window.print(),60);
 }
 function printIcon(){ return printView('icon'); }   // 相容舊呼叫
 /* 經典 A4：自動縮放，盡量塞進一張 A4 */
+/* ── 輸出樣式選項：按下「經典A4 / 列印」時詢問 一般 或 極大化（記住上次選擇） ── */
+let _printMaxi=false;
+try{ _printMaxi=localStorage.getItem('arranger_printmaxi')==='1'; }catch(e){}
+function syncMaxiBtns(){}   /* 工具列已無極大化鈕，保留空函式相容舊呼叫 */
+function askOutputMode(){
+  return new Promise(resolve=>{
+    const old=document.getElementById('outmode-modal'); if(old)old.remove();
+    const m=document.createElement('div');
+    m.id='outmode-modal'; m.className='outmode-modal';
+    m.innerHTML=`<div class="outmode-box">
+      <h3>輸出樣式</h3>
+      <button class="outmode-opt${_printMaxi?'':' sel'}" data-v="0">
+        <b>一般</b><span>保留每個小節的外框，版面與畫面一致</span></button>
+      <button class="outmode-opt${_printMaxi?' sel':''}" data-v="1">
+        <b>⛶ 極大化</b><span>移除小節外框，維持你設定的每排小節數，把空間全部讓給更大的小節與和弦文字</span></button>
+      <div class="outmode-foot"><button class="btn" data-v="x">取消</button></div>
+    </div>`;
+    document.body.appendChild(m);
+    const done=(v)=>{ m.remove(); resolve(v); };
+    m.addEventListener('click',e=>{
+      const b=e.target.closest('[data-v]'); if(!b){ if(e.target===m)done(null); return; }
+      const v=b.dataset.v;
+      if(v==='x')return done(null);
+      _printMaxi=(v==='1');
+      try{localStorage.setItem('arranger_printmaxi',_printMaxi?'1':'');}catch(_){}
+      done(_printMaxi?'maxi':'normal');
+    });
+  });
+}
 /* 經典A4：告知這次輸出用的字級與合理範圍（螢幕上短暫顯示，不影響列印內容） */
 function showPrintFsTip(fs,min,max,scale){
   let el=document.getElementById('printfs-tip');
@@ -1850,11 +1916,13 @@ function showPrintFsTip(fs,min,max,scale){
 }
 async function printFit(view){
   commitEdits();
+  if(await askOutputMode()===null)return;   // 讓使用者選 一般／極大化
   const svc = Array.isArray(sects) && sects.some(s=>s&&s._song);   // 聚會模式：維持資料庫原始段落安排，不重排也不收合
   window._printMode=!svc;   /* 收合沒用到的八分/十六分空格（聚會模式關閉，維持原貌） */
   window._printRepeat=!svc; /* 連續相同小節收合成 ×N（聚會模式關閉） */
   window._printSongTitle=(gv('s-title')||'').trim();   /* 段落標題標上歌名（比照聚會模式） */
   const cls='print-'+view;
+  document.body.classList.toggle('print-maxi',_printMaxi);   // 極大化：先套用才量得準
   const PH=1040;   // A4 直式可列印高度（約 px @96dpi，已扣邊界）
   const srcId=view==='chord'?'chord-content':view==='mixp'?'mixp-content':view==='staff'?'staff-content':'mix-content';
   const renderView=()=>{ if(view==='chord')renderChord(); else if(view==='mix')renderMix(); else if(view==='mixp')renderMixP(); else if(view==='staff')renderStaff(); };
@@ -1863,17 +1931,20 @@ async function printFit(view){
     clone.querySelectorAll('.beat-i').forEach(n=>n.remove());
     clone.querySelectorAll('.icpage').forEach(p=>{p.style.minWidth='0';p.style.width='100%';});
     clone.style.cssText='position:fixed;left:-99999px;top:0;width:720px;display:block;font-size:'+(fs||curFont)+'px;font-family:\'Noto Sans TC\',sans-serif;';
+    /* 極大化：和弦放大規則只在列印生效，量測時手動套上，才不會低估高度 */
+    if(_printMaxi){ clone.querySelectorAll('.bt-note').forEach(n=>{ n.style.fontSize=n.classList.contains('bt-xlong')?'0.86em':n.classList.contains('bt-long')?'1.05em':'1.45em'; }); }
     document.body.appendChild(clone); const h=clone.scrollHeight||PH; document.body.removeChild(clone); return h; };
   renderView();
   if(document.fonts&&document.fonts.ready){ try{ await document.fonts.ready; }catch(e){} }
   let scale=1;
-  const FS_MAX=20, FS_MIN=12;
-  const FS_LIST=[20,18,16,15,14,13,12];   // 由大到小：挑塞得下的最大字級（和弦較長時才會往下降）
+  const FS_MAX=_printMaxi?26:20, FS_MIN=12;
+  const FS_LIST=_printMaxi?[26,24,22,20,18,16,15,14,13,12]:[20,18,16,15,14,13,12];   // 由大到小：挑塞得下的最大字級（極大化可再更大）
   let usedFS=Math.max(curFont,FS_MIN);
   try{
     if(view==='chord' && !svc){
       // 單首歌：先求「最大字級」，同一字級下再由每排小節數少(字大)到多，挑第一個塞得下一頁的組合
-      const cands=[0,2,3,4,5,6,7,8];   // 0 = 各段原設定
+      // 極大化：維持各段原本的「每排」設定（不重排），只把字級放到最大
+      const cands=_printMaxi?[0]:[0,2,3,4,5,6,7,8];   // 0 = 各段原設定
       let chosen, chosenFS, fb={bpr:null,fs:FS_MIN,h:Infinity};
       outer:
       for(const fs of FS_LIST){
@@ -1904,7 +1975,7 @@ async function printFit(view){
   window._printCls=cls;
   setTimeout(()=>window.print(),60);
 }
-window.addEventListener('afterprint',()=>{ if(window._printCls){ document.body.classList.remove(window._printCls); } document.body.classList.remove('print-fit'); window._printCls=null; const was=window._printMode||window._printRepeat||window._printBPR||window._printSongTitle; window._printMode=false; window._printRepeat=false; window._printBPR=null; window._printSongTitle=''; if(was){ try{renderCharts();}catch(e){} } });
+window.addEventListener('afterprint',()=>{ if(window._printCls){ document.body.classList.remove(window._printCls); } document.body.classList.remove('print-fit','print-maxi'); window._printCls=null; const was=window._printMode||window._printRepeat||window._printBPR||window._printSongTitle; window._printMode=false; window._printRepeat=false; window._printBPR=null; window._printSongTitle=''; if(was){ try{renderCharts();}catch(e){} } });
 
 /* ── OCR 圖片/PDF 辨識匯入 ── */
 function openOcr(){ document.getElementById('ocr-modal').style.display='flex'; }
@@ -3419,6 +3490,7 @@ initMode();
 syncDispSelects();
 initTopbar();
 applySvcPB();
+syncMaxiBtns();
 applyLang();
 syncTopbarH();
 window.addEventListener('load',syncTopbarH);
