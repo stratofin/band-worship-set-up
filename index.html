@@ -787,6 +787,19 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   body.print-fit .ccard{page-break-inside:avoid!important;break-inside:avoid!important;-webkit-column-break-inside:avoid!important;}
   /* 每個段落內部的每一排也不要被切開 */
   body[class*="print-"] .arr-rowblock{break-inside:avoid!important;page-break-inside:avoid!important;}
+  /* ── 分頁不切到小節：段落太長被迫拆頁時，單一小節仍保持完整（寧可留白換下一頁） ── */
+  body[class*="print-"] .cbar2,
+  body[class*="print-"] .cbar2.kbbar,
+  body[class*="print-"] .cbeatcols,
+  body[class*="print-"] .kbrow,
+  body[class*="print-"] .kbbeat{break-inside:avoid!important;page-break-inside:avoid!important;-webkit-column-break-inside:avoid!important;}
+  /* 標題與備註不要被單獨留在頁尾／頁首 */
+  body[class*="print-"] .ccard-head{break-after:avoid!important;page-break-after:avoid!important;}
+  body[class*="print-"] .ccard-note{break-before:avoid!important;page-break-before:avoid!important;}
+  /* 小節間留一點縱向間距，換頁時的留白才不會貼齊裁切 */
+  body[class*="print-"] .cbar-grid{row-gap:0.4em!important;}
+  /* 卡片原本 overflow:hidden，跨頁會裁掉內容並干擾分頁判斷 → 列印時改為可見 */
+  body[class*="print-"] .ccard{overflow:visible!important;}
 }
 </style>
 </head>
