@@ -80,7 +80,7 @@ body.toolbar-collapsed .icon-toolbar{display:none!important;}   /* 收合上方�
 /* ── 極大化輸出：移除每個小節的外框，把空間讓給更大的文字（小節起訖仍有粗線可辨識） ── */
 body.print-maxi .cbar2{border-color:transparent!important;background:transparent!important;border-radius:0!important;min-height:0!important;}
 /* 只縮外圍留白（卡片內距、小節間距），格子內距保留 → 空間讓給更大的文字 */
-body.print-maxi .cbar-grid{row-gap:0.4em!important;column-gap:0.8em!important;padding:0.08em!important;}
+body.print-maxi .cbar-grid{row-gap:0.4em!important;column-gap:0.3em!important;padding:0.08em!important;}
 body.print-maxi .ccard{border-width:1.2px!important;border-radius:0.3em!important;}
 body.print-maxi .ccard-head{padding-top:0.1em!important;padding-bottom:0.1em!important;}
 body.print-maxi .cbar2.kbbar{padding:0.05em 0.04em!important;}
@@ -780,6 +780,20 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   body.print-maxi .bt-note{font-size:1.3em!important;}
   body.print-maxi .bt-note.bt-long{font-size:0.95em!important;}
   body.print-maxi .bt-note.bt-xlong{font-size:0.72em!important;}
+  /* ── 依小節密度再壓一階：格子越多，和弦字越小，確保每格都容得下、不互相重疊 ── */
+  body[class*="print-"] .cbeatcols.dn-b .bt-note{font-size:1.02em!important;}
+  body[class*="print-"] .cbeatcols.dn-b .bt-note.bt-long{font-size:0.82em!important;}
+  body[class*="print-"] .cbeatcols.dn-b .bt-note.bt-xlong{font-size:0.64em!important;}
+  body[class*="print-"] .cbeatcols.dn-c .bt-note{font-size:0.92em!important;}
+  body[class*="print-"] .cbeatcols.dn-c .bt-note.bt-long{font-size:0.74em!important;}
+  body[class*="print-"] .cbeatcols.dn-c .bt-note.bt-xlong{font-size:0.58em!important;}
+  body[class*="print-"] .cbeatcols.dn-d .bt-note{font-size:0.82em!important;}
+  body[class*="print-"] .cbeatcols.dn-d .bt-note.bt-long{font-size:0.66em!important;}
+  body[class*="print-"] .cbeatcols.dn-d .bt-note.bt-xlong{font-size:0.52em!important;}
+  /* 混合頁：字級改由密度決定，避免 --bfs 讓密集小節的字爆開 */
+  body.print-mixp .mixpage-stack.mixp .cbeatcols.dn-b .beat-r{font-size:min(var(--bfs,1.2em),0.95em)!important;}
+  body.print-mixp .mixpage-stack.mixp .cbeatcols.dn-c .beat-r{font-size:min(var(--bfs,1.2em),0.8em)!important;}
+  body.print-mixp .mixpage-stack.mixp .cbeatcols.dn-d .beat-r{font-size:min(var(--bfs,1.2em),0.7em)!important;}
   body.print-fit .ccard{page-break-inside:avoid!important;break-inside:avoid!important;-webkit-column-break-inside:avoid!important;}
   /* 每個段落內部的每一排也不要被切開 */
   body[class*="print-"] .arr-rowblock{break-inside:avoid!important;page-break-inside:avoid!important;}
@@ -793,7 +807,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   body[class*="print-"] .ccard-head{break-after:avoid!important;page-break-after:avoid!important;}
   body[class*="print-"] .ccard-note{break-before:avoid!important;page-break-before:avoid!important;}
   /* 小節間留一點縱向間距，換頁時的留白才不會貼齊裁切 */
-  body[class*="print-"] .cbar-grid{row-gap:0.4em!important;column-gap:0.8em!important;}
+  body[class*="print-"] .cbar-grid{row-gap:0.4em!important;column-gap:0.3em!important;}
   /* 卡片原本 overflow:hidden，跨頁會裁掉內容並干擾分頁判斷 → 列印時改為可見 */
   body[class*="print-"] .ccard{overflow:visible!important;}
 }
@@ -2537,6 +2551,8 @@ function barOneHtml(s,i,beats,repX){
     }
     const cellsN=bb*fac;
     const fs = cellsN<=4?1 : cellsN<=6?0.82 : cellsN<=8?0.68 : cellsN<=12?0.54 : 0.44;
+    // 密度分級：格子越多，和弦字要再壓一階，才不會溢出到隔壁格（輸出時特別明顯）
+    const dens = cellsN<=4?'dn-a' : cellsN<=8?'dn-b' : cellsN<=12?'dn-c' : 'dn-d';
     let cols='';
     for(let b=0;b<cellsN;b++){
       const raw=pb[b]||'';
@@ -2566,7 +2582,7 @@ function barOneHtml(s,i,beats,repX){
       if(g){const t=sects.find(x=>x.id===g); badges+=`<span class="${isLast?'cgoto-badge':'cjump'} on static">→ ${t?esc(t.name):''}</span>`;}
     }
     const _selCls=barPickCls(s,i,bars);
-    return `<div class="cbar2${_selCls}" data-sid="${s.id}" data-bar="${i}">${subSel}${repBadge}<div class="cbadges">${badges}</div><div class="cbeatcols" style="font-size:${fs}em">${cols}</div></div>`;
+    return `<div class="cbar2${_selCls}" data-sid="${s.id}" data-bar="${i}">${subSel}${repBadge}<div class="cbadges">${badges}</div><div class="cbeatcols ${dens}" style="font-size:${fs}em">${cols}</div></div>`;
   }
 }
 function toggleCtrl(id){ const s=sects.find(x=>x.id===id); if(!s)return; s.ctrlOff=!s.ctrlOff; autoSave(); renderCharts(); }
