@@ -392,6 +392,7 @@ body.svc-mode .svc-only{display:inline-flex!important;}
 .cbeatcol.beatline::before{background:repeating-linear-gradient(to bottom,#888 0,#888 3px,transparent 3px,transparent 5.5px);opacity:.95;}
 /* 小節分界：每個小節「起始」一條粗實線即可（相鄰小節之間只會有一條）；整段最後再補一條收尾線 */
 .cbeatcol:first-child::before{left:-3px;top:2%;bottom:2%;width:3px;background:#bbb;opacity:1;}
+.cbar2.row-end .cbeatcols>.cbeatcol:last-child::after,
 .cbar-grid>.cbar2:last-child .cbeatcols>.cbeatcol:last-child::after{content:'';position:absolute;right:-3px;top:2%;bottom:2%;width:3px;background:#bbb;pointer-events:none;}
 /* 拍點數字（1/2/3/4）比 e&a 更明顯：深色底更亮、淺色底更深 */
 .cbeatcol.beatline>.cbnum{color:var(--text2);font-weight:700;opacity:1;}
@@ -412,6 +413,8 @@ body.svc-mode .svc-only{display:inline-flex!important;}
 .bt-note.bt-long{font-size:0.8em;letter-spacing:-0.02em;}
 .bt-note.bt-xlong{font-size:0.64em;letter-spacing:-0.03em;}
 .bt-suf{font-size:0.48em;vertical-align:0.42em;font-weight:600;letter-spacing:-0.03em;}
+/* 降/升記號用真正的樂譜符號，字體略小、微微上提，省空間也更好辨識 */
+.acc{font-size:0.78em;vertical-align:0.08em;letter-spacing:-0.02em;}
 /* 長和弦壓在自己格內，不溢出到隔壁格造成互相擠壓 */
 .cbeatcol>.beat-r{overflow:hidden;}
 .bt-rest{color:var(--text3);}
@@ -705,6 +708,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   body[class*="print-"] .cbeatcol::before{background:repeating-linear-gradient(to bottom,#9a9a9a 0,#9a9a9a 2px,transparent 2px,transparent 5px)!important;opacity:.8!important;}
   body[class*="print-"] .cbeatcol.beatline::before{background:repeating-linear-gradient(to bottom,#7a7a7a 0,#7a7a7a 3px,transparent 3px,transparent 5.5px)!important;opacity:1!important;}
   body[class*="print-"] .cbeatcol:first-child::before{background:#333!important;opacity:1!important;}
+  body[class*="print-"] .cbar2.row-end .cbeatcols>.cbeatcol:last-child::after,
   body[class*="print-"] .cbeatcols>.cbeatcol:last-child::after{background:#333!important;}
   /* 列印：和弦相關內容加深（原本沿用螢幕淺色，白底上太淡） */
   body.print-chord .beat-r,body.print-mix .beat-r,body.print-mixp .beat-r,
@@ -2376,8 +2380,12 @@ function noteToDeg(note,keySemi){
   const acc=diff===1?'#':diff===2?'##':diff===-1?'b':diff===-2?'bb':'';
   return acc+deg;
 }
+/* 輸入辨識：把樂譜符號 ♭/♯/♮ 正規化成 ASCII（資料一律存 b/#，JSON 與各項解析維持相容） */
+function normSign(tok){ return String(tok||'').replace(/♭/g,'b').replace(/♯/g,'#').replace(/♮/g,''); }
+/* 顯示：把 ASCII 的 b/# 換成真正的降/升記號（♭/♯），字體略小；大寫音名 B 不受影響 */
+function accSym(str){ return String(str).replace(/#/g,'<span class="acc">♯</span>').replace(/b/g,'<span class="acc">♭</span>'); }
 /* 把「前綴升降」搬到音名後：#C→C#、bE→Eb（開頭是 #/b 且接大寫音名才換；級數 b3/#4 不受影響） */
-function normAccPos(tok){ return String(tok).replace(/^([#b])([A-G])/, (m,a,L)=>L+a); }
+function normAccPos(tok){ return String(normSign(tok)).replace(/^([#b])([A-G])/, (m,a,L)=>L+a); }
 function chordToNum(tok,keySemi){
   if(keySemi==null)return tok;
   tok=normAccPos(tok);                                                // #C / bE 也納入辨識
@@ -2447,7 +2455,7 @@ function renderBeatToken(tok,s){
     // 門檻放低，讓 4maj9 / 5add4 這類也會縮字，才不會溢出到隔壁格擠在一起
     const wide=String(sp.root).length+String(sp.bass).length+String(sp.suf).length*0.6;
     const lc=wide>=4.4?' bt-xlong':wide>=2.8?' bt-long':'';
-    return '<span class="bt-note'+lc+'">'+esc(sp.root)+(sp.suf?'<span class="bt-suf">'+esc(sp.suf)+'</span>':'')+(sp.bass?esc(sp.bass):'')+'</span>';
+    return '<span class="bt-note'+lc+'">'+accSym(esc(sp.root))+(sp.suf?'<span class="bt-suf">'+accSym(esc(sp.suf))+'</span>':'')+(sp.bass?accSym(esc(sp.bass)):'')+'</span>';
   };
   if(tok.startsWith('(')){
     const inner=tok.replace(/^\(|\)$/g,'').trim().split(/\s+/).filter(Boolean);
@@ -2465,7 +2473,7 @@ function toggleLock(){
 }
 function beatEdit(cell){ if(_barPickMode)return;   /* 複製模式：小節選取/插入點由 pointer 事件處理 */ if(_locked)return; if(_chordPlaceOn){ placeChordAt(cell); return; }   /* 放和弦模式：點格子填入所選和弦 */ const r=cell.querySelector('.beat-r'), i=cell.querySelector('.beat-i'); if(!i||i.style.display!=='none')return; r.style.display='none'; i.style.display=''; i.focus(); i.select(); }
 function beatSave(id,bar,beat,inp){
-  const v=askEnharmonic(inp.value);   // Cb/Fb/B#/E# → 彈窗選常用或保留
+  const v=askEnharmonic(normSign(inp.value));   // ♭/♯ 轉 ASCII；Cb/Fb/B#/E# → 彈窗選常用或保留
   if(v!==inp.value) inp.value=v;
   setBeat(id,bar,beat,v);
   const cell=inp.closest('.cbeatcol'), r=cell.querySelector('.beat-r');
@@ -2521,22 +2529,24 @@ function barsIdentical(s,a,b){
   for(let k=0;k<na;k++){ if(String(pa[k]||'')!==String(pb[k]||''))return false; }
   return true;
 }
-function barCellsHtml(s,beats){
+function barCellsHtml(s,beats,bprHint){
   const bars=Math.max(1,parseInt(s.bars)||1);
-  let cells='';
+  // 每排小節數（與 barGridStyle 同一套邏輯）：用來標出「每排最後一個小節」補上收尾線，各排線條才一致
+  const bpr=Math.max(1,(window._printBPR||0)||(parseInt(s.barsPerRow)||0)||(bprHint||4));
+  const out=[];                                  // 先收集，最後再依實際排出的順序標 row-end
   if(window._printRepeat){                       // 經典A4：連續相同小節收合成一格 ×N
     let i=0;
     while(i<bars){
       let j=i+1; while(j<bars && barsIdentical(s,i,j)) j++;
-      cells+=barOneHtml(s,i,beats,j-i);
+      out.push([i,j-i]);
       i=j;
     }
   } else {
-    for(let i=0;i<bars;i++) cells+=barOneHtml(s,i,beats);
+    for(let i=0;i<bars;i++) out.push([i,undefined]);
   }
-  return cells;
+  return out.map(([i,rep],k)=>barOneHtml(s,i,beats,rep,((k+1)%bpr===0)||(k===out.length-1))).join('');
 }
-function barOneHtml(s,i,beats,repX){
+function barOneHtml(s,i,beats,repX,rowEnd){
   const bars=Math.max(1,parseInt(s.bars)||1);
   const ctrlsOn=!s.ctrlOff;
   {
@@ -2582,7 +2592,7 @@ function barOneHtml(s,i,beats,repX){
       if(g){const t=sects.find(x=>x.id===g); badges+=`<span class="${isLast?'cgoto-badge':'cjump'} on static">→ ${t?esc(t.name):''}</span>`;}
     }
     const _selCls=barPickCls(s,i,bars);
-    return `<div class="cbar2${_selCls}" data-sid="${s.id}" data-bar="${i}">${subSel}${repBadge}<div class="cbadges">${badges}</div><div class="cbeatcols ${dens}" style="font-size:${fs}em">${cols}</div></div>`;
+    return `<div class="cbar2${_selCls}${rowEnd?' row-end':''}" data-sid="${s.id}" data-bar="${i}">${subSel}${repBadge}<div class="cbadges">${badges}</div><div class="cbeatcols ${dens}" style="font-size:${fs}em">${cols}</div></div>`;
   }
 }
 function toggleCtrl(id){ const s=sects.find(x=>x.id===id); if(!s)return; s.ctrlOff=!s.ctrlOff; autoSave(); renderCharts(); }
@@ -2880,7 +2890,7 @@ function mixCardHtml(s,plus){
       let maxV=-1;
       const laneChips=vis.map(o=>{ const a=o.a; const bs=a._x*bars, be=(a._x+a._w)*bars, cs=Math.max(bs,b0), ce=Math.min(be,b1); if(ce<=cs+1e-9)return ''; if(a._vrow>maxV)maxV=a._vrow; return arrChipHtml(s,a,o.idx,(cs-b0)/bpr*100,(ce-cs)/bpr*100,a._vrow); }).join('');
       const laneH=((maxV>=0?maxV+1:1)*1.95).toFixed(2);
-      let barRow=''; for(let i=b0;i<b1;i++)barRow+=barOneHtml(s,i,beats);
+      let barRow=''; for(let i=b0;i<b1;i++)barRow+=barOneHtml(s,i,beats,undefined,i===b1-1);   // 每排最後一個小節補收尾線
       blocks+=`<div class="arr-rowblock"><div class="arr-lane" data-rf0="${b0/bars}" data-rfw="${rfw}" style="height:${laneH}em">${laneChips}</div><div class="cbar-grid" style="grid-template-columns:repeat(${bpr},minmax(0,1fr))">${barRow}</div></div>`;
     }
     const insStrip=mixInsBody(s,true);   // 可讀的「配器重點」摘要：完整顯示每個樂器彈法（依篩選）
@@ -3294,7 +3304,7 @@ function kbSave(inp){
   const cell=inp.closest('.kbcol'); if(!cell)return;
   const sid=+cell.dataset.sid,row=cell.dataset.row,bar=+cell.dataset.bar,c=+cell.dataset.c;
   const s=sects.find(x=>x.id===sid); if(!s)return;
-  const val=inp.value.trim();
+  const val=normSign(inp.value).trim();   // ♭/♯ 轉 ASCII 再存
   if(val!==kbGet(s,row,bar,c)){ staffPushHistory(); kbSet(s,row,bar,c,val); autoSave(); }
   renderStaff();
 }
