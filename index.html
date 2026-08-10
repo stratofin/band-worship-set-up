@@ -411,7 +411,9 @@ body.svc-mode .svc-only{display:inline-flex!important;}
 /* 較長的和弦（如 D/F#）自動縮字，避免在窄格中被切掉 */
 .bt-note.bt-long{font-size:0.8em;letter-spacing:-0.02em;}
 .bt-note.bt-xlong{font-size:0.64em;letter-spacing:-0.03em;}
-.bt-suf{font-size:0.55em;vertical-align:0.35em;font-weight:600;letter-spacing:-0.02em;}
+.bt-suf{font-size:0.48em;vertical-align:0.42em;font-weight:600;letter-spacing:-0.03em;}
+/* 長和弦壓在自己格內，不溢出到隔壁格造成互相擠壓 */
+.cbeatcol>.beat-r{overflow:hidden;}
 .bt-rest{color:var(--text3);}
 .bt-sus{color:var(--text3);opacity:.5;}
 .beat-sub{display:inline-flex;gap:0.16em;align-items:flex-end;position:relative;padding-bottom:3px;line-height:1;font-size:0.8em;}
@@ -775,9 +777,9 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   /* 輸出字級（經典A4／一般列印都套用；讓 maj9/add4 這類較長和弦不破格） */
   body.print-fit .right,body.print-maxi .right{ font-size:var(--print-fs,13px)!important; }
   /* 極大化：和弦文字放大（需壓過各檢視的列印字級規則） */
-  body.print-maxi .bt-note{font-size:1.45em!important;}
-  body.print-maxi .bt-note.bt-long{font-size:1.05em!important;}
-  body.print-maxi .bt-note.bt-xlong{font-size:0.86em!important;}
+  body.print-maxi .bt-note{font-size:1.3em!important;}
+  body.print-maxi .bt-note.bt-long{font-size:0.95em!important;}
+  body.print-maxi .bt-note.bt-xlong{font-size:0.72em!important;}
   body.print-fit .ccard{page-break-inside:avoid!important;break-inside:avoid!important;-webkit-column-break-inside:avoid!important;}
   /* 每個段落內部的每一排也不要被切開 */
   body[class*="print-"] .arr-rowblock{break-inside:avoid!important;page-break-inside:avoid!important;}
@@ -2427,9 +2429,10 @@ function renderBeatToken(tok,s){
     else if(/^(Cb|Fb|B#|E#)/.test(_NA) && keySemi===baseKeySemi(s)) disp=foldChordAcc(_NA);   // 同名調下保留 Cb/Fb 等拼法
     else disp=foldChordAcc(convChord(canon,keySemi,pf));
     const sp=splitChordDisplay(disp);
-    // 估算顯示寬度：根音＋轉位低音為全尺寸，後綴為小字(約0.6倍)；太寬就縮字，避免 D/F#、Gmaj7/B 被切掉
+    // 估算顯示寬度：根音＋轉位低音為全尺寸，後綴為小字(約0.6倍)；太寬就縮字
+    // 門檻放低，讓 4maj9 / 5add4 這類也會縮字，才不會溢出到隔壁格擠在一起
     const wide=String(sp.root).length+String(sp.bass).length+String(sp.suf).length*0.6;
-    const lc=wide>=6?' bt-xlong':wide>=4?' bt-long':'';
+    const lc=wide>=4.4?' bt-xlong':wide>=2.8?' bt-long':'';
     return '<span class="bt-note'+lc+'">'+esc(sp.root)+(sp.suf?'<span class="bt-suf">'+esc(sp.suf)+'</span>':'')+(sp.bass?esc(sp.bass):'')+'</span>';
   };
   if(tok.startsWith('(')){
