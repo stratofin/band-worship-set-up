@@ -80,23 +80,12 @@ body.toolbar-collapsed .icon-toolbar{display:none!important;}   /* 收合上方�
 /* ── 極大化輸出：移除每個小節的外框，把空間讓給更大的文字（小節起訖仍有粗線可辨識） ── */
 body.print-maxi .cbar2{border-color:transparent!important;background:transparent!important;border-radius:0!important;min-height:0!important;}
 /* 只縮外圍留白（卡片內距、小節間距），格子內距保留 → 空間讓給更大的文字 */
-body.print-maxi .cbar-grid{gap:0.15em!important;padding:0.08em!important;}
+body.print-maxi .cbar-grid{row-gap:0.4em!important;column-gap:0.8em!important;padding:0.08em!important;}
 body.print-maxi .ccard{border-width:1.2px!important;border-radius:0.3em!important;}
 body.print-maxi .ccard-head{padding-top:0.1em!important;padding-bottom:0.1em!important;}
 body.print-maxi .cbar2.kbbar{padding:0.05em 0.04em!important;}
 body.print-maxi .cbeatcol:first-child::before,body.print-maxi .cbeatcols>.cbeatcol:last-child::after{top:0;bottom:0;}
 /* 註：極大化的「和弦字放大」與「輸出字級」只在 @media print 內生效，避免影響螢幕編輯畫面 */
-/* 輸出樣式選擇視窗 */
-.outmode-modal{position:fixed;inset:0;z-index:3500;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:1em;}
-.outmode-box{background:var(--bg2);border:1px solid var(--border2);border-radius:0.8em;padding:1.1em;width:min(420px,94vw);box-shadow:0 12px 40px rgba(0,0,0,.5);}
-.outmode-box h3{margin:0 0 0.7em;font-size:1em;color:var(--text);font-weight:600;}
-.outmode-opt{display:block;width:100%;text-align:left;margin-bottom:0.6em;padding:0.7em 0.8em;border:1.5px solid var(--border2);border-radius:0.55em;background:var(--bg3);color:var(--text);cursor:pointer;font-family:inherit;}
-.outmode-opt:hover{border-color:var(--accent);}
-.outmode-opt.sel{border-color:var(--accent);box-shadow:0 0 0 2px rgba(212,168,67,.25) inset;}
-.outmode-opt b{display:block;font-size:0.95em;margin-bottom:0.2em;}
-.outmode-opt span{display:block;font-size:0.78em;color:var(--text3);line-height:1.45;}
-.outmode-foot{text-align:right;}
-@media print{ .outmode-modal{display:none!important;} }
 /* 經典A4 字級提示（只在螢幕顯示） */
 .printfs-tip{position:fixed;left:50%;bottom:16px;transform:translateX(-50%) translateY(8px);z-index:3400;background:var(--bg2);border:1px solid var(--accent);color:var(--text);border-radius:0.6em;padding:0.5em 0.9em;font-size:0.85em;box-shadow:0 4px 16px rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;max-width:92vw;text-align:center;}
 .printfs-tip.show{opacity:1;transform:translateX(-50%) translateY(0);}
@@ -380,7 +369,7 @@ body.svc-mode .svc-only{display:inline-flex!important;}
 .cbsub.static,.cbrep.static,.cmeter.static,.cgoto-badge.static,.cjump.static{pointer-events:none;cursor:default;}
 /* 統一小型 select 在各瀏覽器的外觀（Safari/Firefox 原生 select 較大、有箭頭） */
 .cbsub,.cgoto-badge,.cjump{-webkit-appearance:none;-moz-appearance:none;appearance:none;text-align:center;}
-.cbar-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(11em,100%),1fr));padding:0.4em;gap:0.35em;max-width:100%;}
+.cbar-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(11em,100%),1fr));padding:0.4em;gap:0.35em;column-gap:0.85em;max-width:100%;}
 .cbar2{position:relative;border:1.5px solid var(--border2);border-radius:0.4em;background:rgba(255,255,255,0.015);overflow:hidden;min-height:3.6em;display:flex;flex-direction:column;}
 .cbadges{position:absolute;top:0;right:0;display:flex;gap:2px;z-index:3;}
 .cbsub{position:absolute;top:0;left:0;z-index:4;font-size:0.5em;font-family:'Space Mono',monospace;border:none;border-radius:0 0 4px 0;padding:0.16em 0.18em;background:rgba(255,255,255,0.06);color:var(--text3);cursor:pointer;outline:none;line-height:1;}
@@ -400,9 +389,15 @@ body.svc-mode .svc-only{display:inline-flex!important;}
 .cbeatcol::before{content:'';position:absolute;left:-1px;top:12%;bottom:12%;width:1px;pointer-events:none;
   background:repeating-linear-gradient(to bottom,#888 0,#888 2px,transparent 2px,transparent 5px);opacity:.55;}
 .cbeatcol.beatline::before{background:repeating-linear-gradient(to bottom,#888 0,#888 3px,transparent 3px,transparent 5.5px);opacity:.95;}
-/* 小節起訖的粗實線 */
-.cbeatcol:first-child::before{left:-2px;top:4%;bottom:4%;width:2.5px;background:#bbb;opacity:1;}
-.cbeatcols>.cbeatcol:last-child::after{content:'';position:absolute;right:-2px;top:4%;bottom:4%;width:2.5px;background:#bbb;pointer-events:none;}
+/* 小節分界：每個小節「起始」一條粗實線即可（相鄰小節之間只會有一條）；整段最後再補一條收尾線 */
+.cbeatcol:first-child::before{left:-3px;top:2%;bottom:2%;width:3px;background:#bbb;opacity:1;}
+.cbar-grid>.cbar2:last-child .cbeatcols>.cbeatcol:last-child::after{content:'';position:absolute;right:-3px;top:2%;bottom:2%;width:3px;background:#bbb;pointer-events:none;}
+/* 拍點數字（1/2/3/4）比 e&a 更明顯：深色底更亮、淺色底更深 */
+.cbeatcol.beatline>.cbnum{color:var(--text2);font-weight:700;opacity:1;}
+/* 簡譜時值底線：八分一條、十六分兩條（畫在和弦下方） */
+.cbeatcol.u1>.beat-r,.cbeatcol.u2>.beat-r{position:relative;padding-bottom:0.28em;}
+.cbeatcol.u1>.beat-r::after,.cbeatcol.u2>.beat-r::after{content:'';position:absolute;left:8%;right:8%;bottom:0.06em;height:0;border-top:0.09em solid currentColor;}
+.cbeatcol.u2>.beat-r::after{box-shadow:0 0.16em 0 0 currentColor;}
 .cbrep{position:absolute;bottom:2px;right:2px;z-index:4;font-size:0.5em;font-family:'Space Mono',monospace;color:var(--text2);cursor:pointer;line-height:1;min-width:1.7em;text-align:center;padding:0.18em 0.15em;border:1px solid var(--border2);border-radius:3px;background:var(--bg3);user-select:none;}
 .cbrep:hover{border-color:var(--accent);color:var(--accent);}
 .cbrep.on{background:#5b9bd5;color:#08121c;border-color:#5b9bd5;font-weight:700;}
@@ -718,6 +713,8 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   body.print-chord .bt-rest,body.print-mix .bt-rest,body.print-mixp .bt-rest{color:#222!important;}
   body.print-chord .bt-sus,body.print-mix .bt-sus,body.print-mixp .bt-sus{color:#b3b3b3!important;opacity:1!important;font-size:0.78em!important;}
   body.print-chord .cbnum,body.print-mix .cbnum,body.print-mixp .cbnum{color:#c4c4c4!important;opacity:1!important;font-size:0.42em!important;}
+  /* 列印：拍點數字(1/2/3/4)加深，e&a 維持淺灰 */
+  body[class*="print-"] .cbeatcol.beatline>.cbnum{color:#555!important;font-weight:700!important;}
   /* 和弦符號放大加黑，讓譜面好辨識（和弦譜／混合列印） */
   body.print-chord .bt-note,body.print-mix .bt-note{font-size:1.22em!important;font-weight:800!important;}
   /* 列印：長和弦（D/F# 等）縮字，並允許溢出到同小節空拍，避免被切掉 */
@@ -797,7 +794,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   body[class*="print-"] .ccard-head{break-after:avoid!important;page-break-after:avoid!important;}
   body[class*="print-"] .ccard-note{break-before:avoid!important;page-break-before:avoid!important;}
   /* 小節間留一點縱向間距，換頁時的留白才不會貼齊裁切 */
-  body[class*="print-"] .cbar-grid{row-gap:0.4em!important;}
+  body[class*="print-"] .cbar-grid{row-gap:0.4em!important;column-gap:0.8em!important;}
   /* 卡片原本 overflow:hidden，跨頁會裁掉內容並干擾分頁判斷 → 列印時改為可見 */
   body[class*="print-"] .ccard{overflow:visible!important;}
 }
@@ -1869,7 +1866,7 @@ function bindSwipe(){
 async function printView(name){
   commitEdits();
   const askable=['chord','mixp','staff'].includes(name);
-  if(askable && await askOutputMode()===null)return;   // 讓使用者選 一般／極大化
+  if(askable)_printMaxi=true;   // 輸出一律採極大化樣式
   window._printMode=true;   /* 收合沒用到的八分/十六分空格 */
   if(name==='icon')renderIcon(); else if(name==='chord')renderChord(); else if(name==='mix')renderMix(); else if(name==='mixp')renderMixP(); else if(name==='staff')renderStaff();
   if(document.fonts&&document.fonts.ready){ try{ await document.fonts.ready; }catch(e){} }
@@ -1892,31 +1889,6 @@ function printIcon(){ return printView('icon'); }   // 相容舊呼叫
 let _printMaxi=false;
 try{ _printMaxi=localStorage.getItem('arranger_printmaxi')==='1'; }catch(e){}
 function syncMaxiBtns(){}   /* 工具列已無極大化鈕，保留空函式相容舊呼叫 */
-function askOutputMode(){
-  return new Promise(resolve=>{
-    const old=document.getElementById('outmode-modal'); if(old)old.remove();
-    const m=document.createElement('div');
-    m.id='outmode-modal'; m.className='outmode-modal';
-    m.innerHTML=`<div class="outmode-box">
-      <h3>輸出樣式</h3>
-      <button class="outmode-opt${_printMaxi?'':' sel'}" data-v="0">
-        <b>一般</b><span>保留每個小節的外框，版面與畫面一致</span></button>
-      <button class="outmode-opt${_printMaxi?' sel':''}" data-v="1">
-        <b>⛶ 極大化</b><span>移除小節外框，維持你設定的每排小節數，把空間全部讓給更大的小節與和弦文字</span></button>
-      <div class="outmode-foot"><button class="btn" data-v="x">取消</button></div>
-    </div>`;
-    document.body.appendChild(m);
-    const done=(v)=>{ m.remove(); resolve(v); };
-    m.addEventListener('click',e=>{
-      const b=e.target.closest('[data-v]'); if(!b){ if(e.target===m)done(null); return; }
-      const v=b.dataset.v;
-      if(v==='x')return done(null);
-      _printMaxi=(v==='1');
-      try{localStorage.setItem('arranger_printmaxi',_printMaxi?'1':'');}catch(_){}
-      done(_printMaxi?'maxi':'normal');
-    });
-  });
-}
 /* 經典A4：告知這次輸出用的字級與合理範圍（螢幕上短暫顯示，不影響列印內容） */
 function showPrintFsTip(fs,min,max,scale){
   let el=document.getElementById('printfs-tip');
@@ -1929,7 +1901,7 @@ function showPrintFsTip(fs,min,max,scale){
 }
 async function printFit(view){
   commitEdits();
-  if(await askOutputMode()===null)return;   // 讓使用者選 一般／極大化
+  _printMaxi=true;   // 輸出一律採極大化樣式
   const svc = Array.isArray(sects) && sects.some(s=>s&&s._song);   // 聚會模式：維持資料庫原始段落安排，不重排也不收合
   window._printMode=!svc;   /* 收合沒用到的八分/十六分空格（聚會模式關閉，維持原貌） */
   window._printRepeat=!svc; /* 連續相同小節收合成 ×N（聚會模式關閉） */
@@ -2569,7 +2541,13 @@ function barOneHtml(s,i,beats,repX){
     for(let b=0;b<cellsN;b++){
       const raw=pb[b]||'';
       const bp=(b%fac===0)?'beatline':'';   // 拍點＝較明顯的虛線；拍內細分＝較淡虛線（小節前後粗實線由 CSS 處理）
-      cols+=`<div class="cbeatcol ${bp}" data-sid="${s.id}" data-bar="${i}" data-b="${b}" onclick="beatEdit(this)"><span class="cbnum">${subdivLabel(b,fac)}</span><span class="beat-r">${renderBeatToken(raw,s)}</span><input class="beat-i" value="${esc(raw)}" style="display:none" onblur="beatSave(${s.id},${i},${b},this)" onkeydown="if(event.key==='Enter'){this.blur();}"></div>`;
+      // 連續的「0」只顯示第一個（後面重複的 0 留白，看譜更乾淨）；編輯輸入框仍保留原值
+      const _isZero=(v)=>String(v||'').trim()==='0';
+      const dup0=_isZero(raw)&&b>0&&_isZero(pb[b-1]);
+      // 簡譜時值底線：八分一條、十六分兩條；只標在「有和弦」的格子（空白/0 不畫）
+      const hasChord=String(raw||'').trim()!=='' && !_isZero(raw) && raw!=='.' ;
+      const ul=(fac>1&&hasChord)?(fac===4?' u2':' u1'):'';
+      cols+=`<div class="cbeatcol ${bp}${ul}" data-sid="${s.id}" data-bar="${i}" data-b="${b}" onclick="beatEdit(this)"><span class="cbnum">${subdivLabel(b,fac)}</span><span class="beat-r">${dup0?'':renderBeatToken(raw,s)}</span><input class="beat-i" value="${esc(raw)}" style="display:none" onblur="beatSave(${s.id},${i},${b},this)" onkeydown="if(event.key==='Enter'){this.blur();}"></div>`;
     }
     const m=barMeter(s,i);
     const isLast=(i===bars-1);
