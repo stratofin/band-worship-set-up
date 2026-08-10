@@ -394,10 +394,6 @@ body.svc-mode .svc-only{display:inline-flex!important;}
 .cbar-grid>.cbar2:last-child .cbeatcols>.cbeatcol:last-child::after{content:'';position:absolute;right:-3px;top:2%;bottom:2%;width:3px;background:#bbb;pointer-events:none;}
 /* 拍點數字（1/2/3/4）比 e&a 更明顯：深色底更亮、淺色底更深 */
 .cbeatcol.beatline>.cbnum{color:var(--text2);font-weight:700;opacity:1;}
-/* 簡譜時值底線：八分一條、十六分兩條（畫在和弦下方） */
-.cbeatcol.u1>.beat-r,.cbeatcol.u2>.beat-r{position:relative;padding-bottom:0.28em;}
-.cbeatcol.u1>.beat-r::after,.cbeatcol.u2>.beat-r::after{content:'';position:absolute;left:8%;right:8%;bottom:0.06em;height:0;border-top:0.09em solid currentColor;}
-.cbeatcol.u2>.beat-r::after{box-shadow:0 0.16em 0 0 currentColor;}
 .cbrep{position:absolute;bottom:2px;right:2px;z-index:4;font-size:0.5em;font-family:'Space Mono',monospace;color:var(--text2);cursor:pointer;line-height:1;min-width:1.7em;text-align:center;padding:0.18em 0.15em;border:1px solid var(--border2);border-radius:3px;background:var(--bg3);user-select:none;}
 .cbrep:hover{border-color:var(--accent);color:var(--accent);}
 .cbrep.on{background:#5b9bd5;color:#08121c;border-color:#5b9bd5;font-weight:700;}
@@ -2544,10 +2540,7 @@ function barOneHtml(s,i,beats,repX){
       // 連續的「0」只顯示第一個（後面重複的 0 留白，看譜更乾淨）；編輯輸入框仍保留原值
       const _isZero=(v)=>String(v||'').trim()==='0';
       const dup0=_isZero(raw)&&b>0&&_isZero(pb[b-1]);
-      // 簡譜時值底線：八分一條、十六分兩條；只標在「有和弦」的格子（空白/0 不畫）
-      const hasChord=String(raw||'').trim()!=='' && !_isZero(raw) && raw!=='.' ;
-      const ul=(fac>1&&hasChord)?(fac===4?' u2':' u1'):'';
-      cols+=`<div class="cbeatcol ${bp}${ul}" data-sid="${s.id}" data-bar="${i}" data-b="${b}" onclick="beatEdit(this)"><span class="cbnum">${subdivLabel(b,fac)}</span><span class="beat-r">${dup0?'':renderBeatToken(raw,s)}</span><input class="beat-i" value="${esc(raw)}" style="display:none" onblur="beatSave(${s.id},${i},${b},this)" onkeydown="if(event.key==='Enter'){this.blur();}"></div>`;
+      cols+=`<div class="cbeatcol ${bp}" data-sid="${s.id}" data-bar="${i}" data-b="${b}" onclick="beatEdit(this)"><span class="cbnum">${subdivLabel(b,fac)}</span><span class="beat-r">${dup0?'':renderBeatToken(raw,s)}</span><input class="beat-i" value="${esc(raw)}" style="display:none" onblur="beatSave(${s.id},${i},${b},this)" onkeydown="if(event.key==='Enter'){this.blur();}"></div>`;
     }
     const m=barMeter(s,i);
     const isLast=(i===bars-1);
