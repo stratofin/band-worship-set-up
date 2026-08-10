@@ -383,8 +383,9 @@ body.svc-mode .svc-only{display:inline-flex!important;}
 .cjump{font-size:0.46em;font-family:inherit;border:none;border-radius:0 0 0 3px;padding:0.14em 0.18em;cursor:pointer;background:rgba(255,255,255,0.05);color:var(--text3);outline:none;max-width:5em;}
 .cjump:hover{color:var(--accent);background:rgba(212,168,67,0.18);}
 .cjump.on{background:rgba(212,86,74,0.5);color:#fff;}
-.cbeatcols{display:flex;align-items:stretch;width:100%;padding:0.95em 0.1em 0.45em;flex:1 1 auto;}
-.cbeatcol{position:relative;flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;gap:0.12em;border-left:none;padding:0 0.08em;}
+/* 用 grid 讓每一拍格「絕對等寬」：和弦字再長也不會把其他格擠掉、右邊不留空 */
+.cbeatcols{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;align-items:stretch;width:100%;padding:0.95em 0.1em 0.45em;flex:1 1 auto;}
+.cbeatcol{position:relative;min-width:0;display:flex;flex-direction:column;align-items:center;gap:0.12em;border-left:none;padding:0 0.08em;}
 /* 小節線：前後為粗實線（小節界線），小節內部一律虛線；拍點虛線較明顯、拍內細分較淡 */
 .cbeatcol::before{content:'';position:absolute;left:-1px;top:12%;bottom:12%;width:1px;pointer-events:none;
   background:repeating-linear-gradient(to bottom,#888 0,#888 2px,transparent 2px,transparent 5px);opacity:.55;}
@@ -404,7 +405,7 @@ body.svc-mode .svc-only{display:inline-flex!important;}
 .cbeatcol:focus-within{background:rgba(212,168,67,0.08);}
 /* Nashville 記號顯示 / 編輯 */
 .cbeatcol{cursor:text;}
-.beat-r{display:inline-flex;align-items:center;justify-content:center;min-height:1.25em;color:var(--text);font-weight:700;white-space:nowrap;}
+.beat-r{display:inline-flex;align-items:center;justify-content:center;min-height:1.25em;color:var(--text);font-weight:700;white-space:nowrap;max-width:100%;}
 .beat-i{width:100%;min-width:0;text-align:center;background:rgba(212,168,67,0.12);border:none;outline:none;color:var(--text);font-family:inherit;font-size:0.95em;font-weight:700;padding:0;border-radius:2px;}
 .bt-note{font-weight:700;white-space:nowrap;}
 /* 較長的和弦（如 D/F#）自動縮字，避免在窄格中被切掉 */
