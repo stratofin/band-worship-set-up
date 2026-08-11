@@ -84,7 +84,6 @@ body.print-maxi .cbar-grid{row-gap:0.4em!important;column-gap:0!important;paddin
 body.print-maxi .ccard{border-width:1.2px!important;border-radius:0.3em!important;}
 body.print-maxi .ccard-head{padding-top:0.1em!important;padding-bottom:0.1em!important;}
 body.print-maxi .cbar2.kbbar{padding:0.05em 0.04em!important;}
-body.print-maxi .cbeatcol:first-child::before,body.print-maxi .cbeatcols>.cbeatcol:last-child::after{top:0;bottom:0;}
 /* 註：極大化的「和弦字放大」與「輸出字級」只在 @media print 內生效，避免影響螢幕編輯畫面 */
 /* 經典A4 字級提示（只在螢幕顯示） */
 .printfs-tip{position:fixed;left:50%;bottom:16px;transform:translateX(-50%) translateY(8px);z-index:3400;background:var(--bg2);border:1px solid var(--accent);color:var(--text);border-radius:0.6em;padding:0.5em 0.9em;font-size:0.85em;box-shadow:0 4px 16px rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;max-width:92vw;text-align:center;}
@@ -374,7 +373,7 @@ body.svc-mode .svc-only{display:inline-flex!important;}
 /* 小節線直接畫在小節邊框上：每個小節左邊一條粗線、右邊保留同寬的透明邊（盒模型一致）；
    每排最後一個小節右邊補收尾線。這樣線一定落在小節邊界上，左右內距對稱、間距完全一致。 */
 .cbar2{position:relative;box-sizing:border-box;border-top:1.5px solid var(--border2);border-bottom:1.5px solid var(--border2);
-  border-left:3px solid #bbb;border-right:3px solid transparent;border-radius:0;
+  border-left:2px solid #bbb;border-right:2px solid transparent;border-radius:0;
   background:rgba(255,255,255,0.015);overflow:hidden;min-height:3.6em;display:flex;flex-direction:column;}
 .cbar2.row-end{border-right-color:#bbb;}
 .cbadges{position:absolute;top:0;right:0;display:flex;gap:2px;z-index:3;}
@@ -711,7 +710,6 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   /* 列印：小節內虛線用灰、小節前後粗實線用深灰，白底才看得清楚 */
   body[class*="print-"] .cbeatcol::before{background:repeating-linear-gradient(to bottom,#9a9a9a 0,#9a9a9a 2px,transparent 2px,transparent 5px)!important;opacity:.8!important;}
   body[class*="print-"] .cbeatcol.beatline::before{background:repeating-linear-gradient(to bottom,#7a7a7a 0,#7a7a7a 3px,transparent 3px,transparent 5.5px)!important;opacity:1!important;}
-  body[class*="print-"] .cbeatcol:first-child::before{background:#333!important;opacity:1!important;}
   /* 每排最後一個小節的收尾線（三頁共用，極大化也保留） */
   body[class*="print-"] .cbar2.row-end{border-right-color:#333!important;}
   /* 列印：和弦相關內容加深（原本沿用螢幕淺色，白底上太淡） */
@@ -731,6 +729,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   body.print-chord .cbar2,body.print-mix .cbar2,body.print-mixp .cbar2{overflow:visible!important;}
   /* 極大化：列印時同樣移除小節外框（優先於各檢視的邊框設定） */
   body.print-maxi .cbar2{border-top-color:transparent!important;border-bottom-color:transparent!important;background:transparent!important;border-left-color:#333!important;border-right-color:transparent!important;}
+  body.print-maxi .cbar2.row-end{border-right-color:#333!important;}   /* 極大化時每排收尾線仍保留 */
   body.print-mixp .bt-note.bt-long{font-size:0.82em!important;letter-spacing:-0.02em!important;}
   body.print-mixp .bt-note.bt-xlong{font-size:0.66em!important;letter-spacing:-0.03em!important;}
   body.print-chord .beat-r,body.print-mix .beat-r{min-height:1.5em!important;}
