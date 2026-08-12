@@ -653,6 +653,11 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   body[class*="print-"] .cjump{font-size:6px!important;}
   *{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
   @page{size:A4 portrait;margin:11mm;}
+  /* ── 跨平台輸出一致：列印時一律採用電腦版規格，中和手機/平板專屬的版面設定 ── */
+  body.mode-phone .mixpage-stack.mixp,body.mode-tablet .mixpage-stack.mixp{--barw:14em!important;}
+  body[class*="print-"] .icpage-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;}
+  body[class*="print-"] .right{padding:0!important;width:auto!important;max-width:none!important;}
+  body[class*="print-"]{-webkit-text-size-adjust:100%!important;text-size-adjust:100%!important;}
   /* 列印時把主題變數還原成預設，確保任何配色主題都印出白底原樣 */
   body,body.theme-light,body.theme-pink{
     --bg:#fff;--bg2:#fff;--bg3:#fff;--bg4:#fff;
@@ -1887,6 +1892,7 @@ async function printView(name){
   commitEdits();
   const askable=['chord','mixp','staff'].includes(name);
   if(askable)_printMaxi=true;   // 輸出一律採極大化樣式
+  forceDesktopForPrint();   // 跨平台一致：以電腦版規格輸出
   window._printMode=true;   /* 收合沒用到的八分/十六分空格 */
   if(name==='icon')renderIcon(); else if(name==='chord')renderChord(); else if(name==='mix')renderMix(); else if(name==='mixp')renderMixP(); else if(name==='staff')renderStaff();
   if(document.fonts&&document.fonts.ready){ try{ await document.fonts.ready; }catch(e){} }
@@ -1895,7 +1901,7 @@ async function printView(name){
   document.body.classList.toggle('print-maxi',maxi);   // 極大化：移除小節外框，內容更大
   if(maxi){
     // 一般列印可跨頁 → 直接放大字級（不必塞一頁），維持各段原本的每排設定
-    const fs=Math.max(curFont,22);
+    const fs=22;   // 固定值：確保手機與電腦輸出一致（不受各裝置畫面字級影響）
     document.documentElement.style.setProperty('--print-fs',fs+'px');
     showPrintFsTip(fs,12,26,1);
   }
@@ -1909,6 +1915,16 @@ function printIcon(){ return printView('icon'); }   // 相容舊呼叫
 let _printMaxi=false;
 try{ _printMaxi=localStorage.getItem('arranger_printmaxi')==='1'; }catch(e){}
 function syncMaxiBtns(){}   /* 工具列已無極大化鈕，保留空函式相容舊呼叫 */
+/* 輸出期間一律以「電腦版」規格渲染：暫時移除手機/平板模式 class，列印後還原 */
+let _savedModeCls=null;
+function forceDesktopForPrint(){
+  const b=document.body; _savedModeCls=[];
+  ['mode-phone','mode-tablet'].forEach(c=>{ if(b.classList.contains(c)){ _savedModeCls.push(c); b.classList.remove(c); } });
+}
+function restoreModeAfterPrint(){
+  if(!_savedModeCls)return; const b=document.body;
+  _savedModeCls.forEach(c=>b.classList.add(c)); _savedModeCls=null;
+}
 /* 經典A4：告知這次輸出用的字級與合理範圍（螢幕上短暫顯示，不影響列印內容） */
 function showPrintFsTip(fs,min,max,scale){
   let el=document.getElementById('printfs-tip');
@@ -1922,6 +1938,7 @@ function showPrintFsTip(fs,min,max,scale){
 async function printFit(view){
   commitEdits();
   _printMaxi=true;   // 輸出一律採極大化樣式
+  forceDesktopForPrint();   // 跨平台一致：以電腦版規格量測與輸出
   const svc = Array.isArray(sects) && sects.some(s=>s&&s._song);   // 聚會模式：維持資料庫原始段落安排，不重排也不收合
   window._printMode=!svc;   /* 收合沒用到的八分/十六分空格（聚會模式關閉，維持原貌） */
   window._printRepeat=!svc; /* 連續相同小節收合成 ×N（聚會模式關閉） */
@@ -1980,7 +1997,7 @@ async function printFit(view){
   window._printCls=cls;
   setTimeout(()=>window.print(),60);
 }
-window.addEventListener('afterprint',()=>{ if(window._printCls){ document.body.classList.remove(window._printCls); } document.body.classList.remove('print-fit','print-maxi'); window._printCls=null; const was=window._printMode||window._printRepeat||window._printBPR||window._printSongTitle; window._printMode=false; window._printRepeat=false; window._printBPR=null; window._printSongTitle=''; if(was){ try{renderCharts();}catch(e){} } });
+window.addEventListener('afterprint',()=>{ restoreModeAfterPrint(); if(window._printCls){ document.body.classList.remove(window._printCls); } document.body.classList.remove('print-fit','print-maxi'); window._printCls=null; const was=window._printMode||window._printRepeat||window._printBPR||window._printSongTitle; window._printMode=false; window._printRepeat=false; window._printBPR=null; window._printSongTitle=''; if(was){ try{renderCharts();}catch(e){} } });
 
 /* ── OCR 圖片/PDF 辨識匯入 ── */
 function openOcr(){ document.getElementById('ocr-modal').style.display='flex'; }
