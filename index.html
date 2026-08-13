@@ -416,6 +416,13 @@ body.svc-mode .svc-only{display:inline-flex!important;}
 .bt-note.bt-long{font-size:0.8em;letter-spacing:-0.02em;}
 .bt-note.bt-xlong{font-size:0.64em;letter-spacing:-0.03em;}
 .bt-suf{font-size:0.48em;vertical-align:0.42em;font-weight:600;letter-spacing:-0.03em;}
+/* 和弦頁／混合頁：後綴（maj9/add4/m7…）改疊在數字正上方 → 不佔橫向空間，字可以放大好讀 */
+.beat-r{padding-top:0.78em;}
+.beat-r .bt-note{position:relative;}
+.beat-r .bt-suf{position:absolute;left:50%;bottom:100%;transform:translateX(-50%);margin-bottom:0.04em;
+  font-size:0.6em;line-height:1;font-weight:700;letter-spacing:0;vertical-align:baseline;white-space:nowrap;}
+/* KB 頁維持原本的右上標（該頁格子小、上方空間有限） */
+.kbstk .bt-suf{position:static;transform:none;font-size:0.48em;vertical-align:0.42em;}
 /* 降/升記號用真正的樂譜符號，字體略小、微微上提，省空間也更好辨識 */
 .acc{font-size:0.78em;vertical-align:0.08em;letter-spacing:-0.02em;}
 /* 長和弦壓在自己格內，不溢出到隔壁格造成互相擠壓 */
@@ -2471,9 +2478,9 @@ function renderBeatToken(tok,s){
     else if(/^(Cb|Fb|B#|E#)/.test(_NA) && keySemi===baseKeySemi(s)) disp=foldChordAcc(_NA);   // 同名調下保留 Cb/Fb 等拼法
     else disp=foldChordAcc(convChord(canon,keySemi,pf));
     const sp=splitChordDisplay(disp);
-    // 估算顯示寬度：根音＋轉位低音為全尺寸，後綴為小字(約0.6倍)；太寬就縮字
-    // 門檻放低，讓 4maj9 / 5add4 這類也會縮字，才不會溢出到隔壁格擠在一起
-    const wide=String(sp.root).length+String(sp.bass).length+String(sp.suf).length*0.6;
+    // 估算顯示寬度：後綴已疊到數字正上方、不佔橫向空間，所以以「根音＋轉位低音」為主，
+    // 只有當後綴本身比數字還寬時才納入（後綴約 0.6em、每字約 0.57 個數字寬）
+    const wide=Math.max(String(sp.root).length+String(sp.bass).length, String(sp.suf).length*0.57);
     const lc=wide>=4.4?' bt-xlong':wide>=2.8?' bt-long':'';
     return '<span class="bt-note'+lc+'">'+accSym(esc(sp.root))+(sp.suf?'<span class="bt-suf">'+accSym(esc(sp.suf))+'</span>':'')+(sp.bass?accSym(esc(sp.bass)):'')+'</span>';
   };
