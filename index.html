@@ -414,6 +414,422 @@ body.svc-mode .svc-only{display:inline-flex!important;}
 .bt-note{font-weight:700;white-space:nowrap;}
 /* 較長的和弦（如 D/F#）自動縮字，避免在窄格中被切掉 */
 .bt-note.bt-long{font-size:0.8em;letter-spacing:-0.02em;}
+.bt-note.bt-xlong{font-size:0.64em;letter-spacing:-0.03em;}<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Worship Arranger v3.5</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyBpZD0iX+WcluWxpF8xIiBkYXRhLW5hbWU9IuWcluWxpCAxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDI0IDEwMjQiPgogIDxkZWZzPgogICAgPHN0eWxlPgogICAgICAuY2xzLTEgewogICAgICAgIGZpbGw6ICNmY2M5MTg7CiAgICAgIH0KICAgIDwvc3R5bGU+CiAgPC9kZWZzPgogIDxnIGlkPSJf55Sf5oiQ5byP54mp5Lu2IiBkYXRhLW5hbWU9IueUn+aIkOW8j+eJqeS7tiI+CiAgICA8cGF0aCBjbGFzcz0iY2xzLTEiIGQ9Ik00ODQuMDgsMzUxLjY2bC0yLjcyLDkxLjg1LTQuMjcsMTEzLjYtNC4wNywxMDIuNDctMy40LDEwMS4wMmMtLjUsMTQuODUtNC4zMywyNy45NC05Ljg5LDQxLjQxLTkuODIsMjMuNzktMjQuMjIsNDMuNDktNDIuNjMsNjEuNDQtNTUuMDYsNTMuNjktMTMyLjQ1LDc4Ljk1LTIwOC45NCw3Mi45Ny0zOS45NS0zLjEyLTgzLjE5LTIxLjAxLTEwMi41Ni01Ni44LTYuODctMTIuNy0xMS40Ny0yNy4zNC0xMS4yMS00Mi4xLDEuNTgtODYuNjEsOTcuMTEtMTU1LjM2LDE3NS4xOS0xNzYuODksNDIuNjMtMTEuODEsODYuNDYtMTQuMzQsMTMxLjMtM2wtNi45NC0yMDMuNjItMi42OS04MS4xOS05My4yNSwyNC4xLTg5LjMyLDIzLjk2LTYuMjMtMTMxLjA2LDkyLjUxLTIyLjYxLDkyLjY4LTIxLjU2LTUuMzctMTMxLjk4LDExNC4wOS0yNi45Ni03LjMyLDEzNy4zMyw4My42Ny0xNy45Miw4NS4xNi0xNy45MSwxNTguMDctMjYuNjksNjQuNDQtOC4xOS0zLjM2LDYxLjk3LTcuODcsMTYyLjY2LTEwLjc4LDI1MC4yMy00LjA5LDU4LjcyYy0xLjQ1LDIwLjc0LTExLjA5LDM5LjA5LTIyLjk0LDU2LjAyLTE4LjAyLDI1Ljc2LTQyLjAxLDQ1LjI3LTY5LjQ1LDYwLjM4LTI5LjQ0LDE2LjIxLTYwLjQ3LDI1LjQ0LTkzLjkxLDI4LjQ1LTIxLjg5LDEuOTctNDIuODgsMi4xNS02NC4zNS0zLjAyLTQzLjk4LTEwLjYtNzcuNTMtNDQuMzMtNzQuMi05MS4yMywzLjk1LTU1LjYsNTEuNjMtOTkuMTgsOTguNzYtMTI0LjEyLDQ0LjIyLTIzLjQsOTkuNDQtMzMuNjgsMTQ4LjE1LTIyLjYxbC4xLTQ4LjkzLS4wNi0yMTEuNzguMjUtMzguMTYtMTAzLjcsMTkuNzctNzEuOTMsMTQuNzUtMTE2Ljg2LDI1LjI1WiIvPgogIDwvZz4KPC9zdmc+">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Space+Mono:wght@400;700&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#0d0d0d; --bg2:#151515; --bg3:#1c1c1c; --bg4:#242424;
+  --border:rgba(255,255,255,0.07); --border2:rgba(255,255,255,0.13);
+  --text:#e6e4dd; --text2:#928f88; --text3:#4e4d4a;
+  --accent:#d4a843;
+  --topbar-h:5.4em;
+  --c-black-stroke:#888; --c-black-fill:rgba(136,136,136,0.1);
+  --c-blue-stroke:#5b9bd5;  --c-blue-fill:rgba(91,155,213,0.1);
+  --c-red-stroke:#d4564a;   --c-red-fill:rgba(212,86,74,0.1);
+  --c-purple-stroke:#9b72cf;--c-purple-fill:rgba(155,114,207,0.1);
+}
+/* ── 介面配色主題（只影響螢幕；列印一律白底原樣，見 @media print） ── */
+body.theme-light{
+  --bg:#f5f4ef; --bg2:#ffffff; --bg3:#ecebe4; --bg4:#e0ded4;
+  --border:rgba(0,0,0,0.10); --border2:rgba(0,0,0,0.20);
+  --text:#1f1d18; --text2:#6b675e; --text3:#a6a299;
+  --accent:#b8860b;
+}
+body.theme-pink{
+  --bg:#fff0f6; --bg2:#ffe3ef; --bg3:#ffd6e7; --bg4:#ffc6dc;
+  --border:rgba(120,30,70,0.12); --border2:rgba(120,30,70,0.22);
+  --text:#4a1230; --text2:#9c4a6f; --text3:#cf8fae;
+  --accent:#e0479b;
+}
+html{font-size:13px;-webkit-text-size-adjust:100%;text-size-adjust:100%;}   /* iOS：禁止自動放大字體造成版面錯位 */
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-serif;min-height:100vh;min-height:100dvh;}
+
+/* ── TOP BAR ── */
+.topbar{
+  position:sticky;top:0;z-index:50;
+  background:var(--bg2);border-bottom:1px solid var(--border);
+  display:flex;flex-direction:column;gap:0.45em;padding:0.5em 1.5em;
+}
+.topbar-row{display:flex;align-items:center;gap:0.75em;}
+.topbar-row-1{justify-content:space-between;}
+.topbar-row-2{flex-wrap:wrap;}
+.tb-toggle{background:var(--bg3);border:1px solid var(--border2);color:var(--text2);border-radius:0.4em;padding:0.25em 0.7em;cursor:pointer;font-size:0.82em;font-family:inherit;line-height:1;white-space:nowrap;flex-shrink:0;}
+.tb-toggle:hover{background:var(--bg4);color:var(--text);border-color:var(--accent);}
+body.tb-collapsed .topbar-row-2{display:none;}
+.logo{font-family:'Space Mono',monospace;font-size:0.85em;color:var(--accent);letter-spacing:1.5px;white-space:nowrap;display:inline-flex;align-items:center;}
+.logo-note{height:1.7em;width:1.7em;margin:-0.2em 0 -0.2em 0.4em;flex:0 0 auto;}
+.byline{color:#c8ccd2;font-size:0.82em;font-weight:700;letter-spacing:0.5px;margin-left:0.3em;text-shadow:0 1px 1px rgba(0,0,0,0.5);}
+.pills{display:flex;gap:0.4em;flex:1;flex-wrap:wrap;}
+.pill{background:var(--bg3);border:1px solid var(--border);border-radius:99px;padding:0.22em 0.75em;font-size:0.85em;display:flex;align-items:center;gap:0.3em;}
+.pill label{color:var(--text3);font-size:0.8em;}
+.pill input{background:none;border:none;outline:none;color:var(--text);font-size:1em;font-family:inherit;}
+.tbar-r{display:flex;gap:0.4em;flex-shrink:0;flex-wrap:wrap;}
+.btn{padding:0.35em 0.9em;border-radius:0.45em;font-size:0.85em;cursor:pointer;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-family:inherit;transition:background .13s;white-space:nowrap;}
+.btn:hover{background:var(--bg4);}
+.btna{background:var(--accent);border-color:var(--accent);color:#0d0d0d;font-weight:700;}
+.tpl-sel{appearance:none;-webkit-appearance:none;-moz-appearance:none;cursor:pointer;max-width:9em;text-overflow:ellipsis;}
+/* 鎖定（看譜模式）：關閉所有編輯互動，保留滑頁與看譜 */
+body.locked .cbsub,body.locked .kbsub,body.locked .cbrep,body.locked .cmeter,body.locked .cgoto-badge,body.locked .cjump,body.locked .cbpr-sel,body.locked .ctrl-toggle,body.locked .arr-grip,body.locked .arr-x,body.locked .arr-resize,body.locked .arr-ins,body.locked .arr-txt,body.locked .beat-i{pointer-events:none!important;}
+body.locked .arr-add{display:none!important;}
+body.locked .cbeatcol{cursor:default!important;}
+body.locked .left input,body.locked .left select,body.locked .left textarea,body.locked .left button,body.locked .eordbtn,body.locked .dbtn{pointer-events:none!important;opacity:.55;}
+body.locked .pills input,body.locked .pills select{pointer-events:none!important;}
+.lock-btn.btna{background:#d4564a!important;border-color:#d4564a!important;color:#fff!important;}
+.lock-banner{display:none;position:fixed;top:8px;left:50%;transform:translateX(-50%);z-index:3000;background:#d4564a;color:#fff;padding:0.42em 1em;border-radius:999px;font-size:0.92em;font-weight:600;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.28);border:none;align-items:center;gap:0.45em;}
+.lock-banner:hover{background:#c0473c;}
+body.locked .lock-banner{display:inline-flex;}
+.barpick-bar{display:none;position:fixed;left:50%;bottom:12px;transform:translateX(-50%);z-index:3200;background:var(--bg2);border:1px solid var(--accent);border-radius:0.6em;box-shadow:0 4px 16px rgba(0,0,0,.35);padding:0.45em 0.75em;gap:0.55em;align-items:center;font-size:0.9em;color:var(--text);max-width:94vw;flex-wrap:wrap;justify-content:center;}
+body.barpick .barpick-bar{display:inline-flex;}
+.barpick-bar .btn{font-size:0.85em;padding:0.28em 0.7em;}
+.barpick-btn.on{background:var(--accent)!important;border-color:var(--accent)!important;color:#0d0d0d!important;}
+body.barpick .cbar2,body.barpick .cbeatcol{cursor:pointer!important;}
+body.barpick .cbar2{touch-action:none;overflow:visible;}   /* 拖曳選取不捲動；讓插入豎線可顯示在小節外緣 */
+body.toolbar-collapsed .icon-toolbar{display:none!important;}   /* 收合上方設定工具列 */
+/* ── 極大化輸出：移除每個小節的外框，把空間讓給更大的文字（小節起訖仍有粗線可辨識） ── */
+body.print-maxi .cbar2{border-top-color:transparent!important;border-bottom-color:transparent!important;background:transparent!important;border-radius:0!important;min-height:0!important;}
+/* 只縮外圍留白（卡片內距、小節間距），格子內距保留 → 空間讓給更大的文字 */
+body.print-maxi .cbar-grid{row-gap:0.4em!important;column-gap:0!important;padding:0.08em!important;}
+body.print-maxi .ccard{border-width:1.2px!important;border-radius:0.3em!important;}
+body.print-maxi .ccard-head{padding-top:0.1em!important;padding-bottom:0.1em!important;}
+body.print-maxi .cbar2.kbbar{padding:0.05em 0.04em!important;}
+/* 註：極大化的「和弦字放大」與「輸出字級」只在 @media print 內生效，避免影響螢幕編輯畫面 */
+/* 經典A4 字級提示（只在螢幕顯示） */
+.printfs-tip{position:fixed;left:50%;bottom:16px;transform:translateX(-50%) translateY(8px);z-index:3400;background:var(--bg2);border:1px solid var(--accent);color:var(--text);border-radius:0.6em;padding:0.5em 0.9em;font-size:0.85em;box-shadow:0 4px 16px rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;max-width:92vw;text-align:center;}
+.printfs-tip.show{opacity:1;transform:translateX(-50%) translateY(0);}
+@media print{ .printfs-tip{display:none!important;} }
+.cbar2.barsel{outline:2px solid var(--accent);outline-offset:-2px;background:rgba(212,168,67,0.14);border-radius:4px;}
+/* 已複製的來源區塊：持續閃亮的虛線邊框（類似文書軟體的複製選取） */
+@keyframes barclipblink{0%,100%{outline-color:var(--accent);}50%{outline-color:rgba(212,168,67,0.15);}}
+.cbar2.barclip{outline:2px dashed var(--accent);outline-offset:-2px;border-radius:4px;background:rgba(212,168,67,0.10);animation:barclipblink .7s ease-in-out infinite;}
+/* 貼上插入點：小節邊界的閃亮豎線 */
+@keyframes insblink{0%,100%{opacity:1;}50%{opacity:.18;}}
+.cbar2.ins-before::before,.cbar2.ins-after::after{content:'';position:absolute;top:-1px;bottom:-1px;width:3px;background:#5b9bd5;border-radius:2px;z-index:8;pointer-events:none;box-shadow:0 0 5px #5b9bd5;animation:insblink .6s ease-in-out infinite;}
+.cbar2.ins-before::before{left:-3px;}
+.cbar2.ins-after::after{right:-3px;}
+/* KB 數字譜 */
+.stbtn{border:1px solid var(--border2);background:var(--bg3);color:var(--text);border-radius:0.35em;padding:0.22em 0.55em;cursor:pointer;font-family:inherit;font-size:0.85em;line-height:1;white-space:nowrap;}
+.stbtn:hover{border-color:var(--accent);}
+.stbtn:disabled{opacity:.4;cursor:default;}
+.stbtn.on{background:var(--accent);border-color:var(--accent);color:#0d0d0d;font-weight:700;}
+.cbar2.kbbar{display:flex;flex-direction:column;min-height:0;padding:0.15em 0.1em 0.1em;overflow:visible;}
+.kbrow{display:flex;align-items:stretch;position:relative;border-top:1px dashed var(--border2);}
+/* KB 小節分界沿用 .cbar2 的左右邊框（與和弦／混合頁同一套） */
+.kbrow:first-of-type{border-top:none;}
+/* 右手/左手 標記：縮小放在該列左上角，不再佔用整欄空間 */
+.kbrl{position:absolute;top:0;left:0.1em;z-index:3;font-size:0.5em;line-height:1;font-weight:700;color:var(--text3);pointer-events:none;}
+.kbbeats{display:flex;flex:1 1 0;min-width:0;}
+/* 每一拍固定等寬（撐滿一個四分音符的空間），切分只在這一拍內部發生，不會讓整排縮小 */
+.kbbeat{flex:1 1 0;min-width:0;display:flex;flex-direction:column;border-left:1px solid #666;position:relative;}
+.kbbeat:first-child{border-left:none;}
+/* 切分鈕改用絕對定位疊在該拍左下角，不再佔用填寫空間（音符格撐滿整拍） */
+.kbbeat>.kbsub{position:absolute;left:0.12em;bottom:0.12em;z-index:5;margin:0;}
+.kbsub{font-size:1em;font-family:'Space Mono',monospace;border:none;border-radius:4px;padding:0.12em 0.14em;background:rgba(255,255,255,0.06);color:var(--text3);cursor:pointer;outline:none;line-height:1;-webkit-appearance:none;-moz-appearance:none;appearance:none;text-align:center;}
+.kbsub:hover{color:var(--accent);background:rgba(212,168,67,0.2);}
+.kbsub.static{background:transparent;pointer-events:none;}
+.kbsubcells{display:flex;flex:1 1 0;min-width:0;}
+.kbcol{position:relative;flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;gap:0.05em;padding:0.3em 0.04em 0.58em;cursor:text;}
+.kbsubcells .kbcol+.kbcol{border-left:1px dashed #666;}
+/* 切得越細，格內字略縮，但該拍整體空間不變 */
+.kbbeat.s2 .kbn{font-size:0.86em;}
+.kbbeat.s4 .kbn{font-size:0.7em;}
+.kbbeat.s2 .cbnum,.kbbeat.s4 .cbnum{font-size:0.44em;}
+.kbstk{display:inline-flex;flex-direction:column;align-items:center;line-height:1.05;font-weight:700;color:var(--text);}
+.kbstk .kbn{display:block;}
+.kbstk .kbempty{color:var(--text3);opacity:.35;font-weight:400;}
+.kbunder{position:absolute;left:50%;transform:translateX(-50%);bottom:0.3em;width:0.6em;height:0;pointer-events:none;color:var(--text);}
+.kbunder.d1{border-top:0.08em solid currentColor;}
+.kbunder.d2{border-top:0.08em solid currentColor;box-shadow:0 0.14em 0 0 currentColor;}
+.kb-i{width:100%;min-width:2.2em;background:var(--bg4);border:1px solid var(--accent);color:var(--text);font-family:inherit;font-size:1em;text-align:center;outline:none;border-radius:3px;padding:0.05em 0;}
+.kbdur{position:absolute;right:0;bottom:-0.15em;font-size:0.62em;line-height:1;padding:0 1px;border:none;background:transparent;color:var(--text3);cursor:pointer;}
+.kbdur:hover{color:var(--accent);}
+body.locked .kbcol{cursor:default;}
+body.print-staff .kbbeat{border-left-color:#999;}
+body.print-staff .kbsubcells .kbcol+.kbcol{border-left-color:#bbb;}
+body.print-staff .kbdur{display:none!important;}
+.btna:hover{opacity:.88;}
+.mob-only{display:none;}
+.fbtn{width:1.7em;height:1.7em;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--border2);background:var(--bg3);color:var(--text);border-radius:0.35em;cursor:pointer;font-size:0.95em;line-height:1;font-family:inherit;padding:0;}
+/* 桌機 / 平板：標題列 pill 緊湊化，讓「字級」擠回第二行（手機不動） */
+body:not(.mode-phone) .pills{gap:0.26em;}
+body:not(.mode-phone) .pill{padding:0.18em 0.5em;font-size:0.82em;}
+body:not(.mode-phone) .pill label{font-size:0.78em;}
+body:not(.mode-phone) #s-title{width:82px!important;}
+body:not(.mode-phone) #s-artist{width:62px!important;}
+body:not(.mode-phone) #s-bpm{width:30px!important;}
+body:not(.mode-phone) #s-time{width:30px!important;}
+body:not(.mode-phone) #s-mkey,body:not(.mode-phone) #s-fkey{width:24px!important;}
+body:not(.mode-phone) .fbtn{width:1.5em;height:1.5em;}
+.fbtn:hover{background:var(--bg4);border-color:var(--accent);color:var(--accent);}
+#font-size-label{font-family:'Space Mono',monospace;color:var(--text);min-width:22px;text-align:center;}
+
+/* ── PAGE LAYOUT ── */
+.page{display:grid;grid-template-columns:18em minmax(0,1fr);gap:0;min-height:calc(100vh - var(--topbar-h));min-height:calc(100dvh - var(--topbar-h));}
+
+/* ── LEFT PANEL (edit) ── */
+.left{background:var(--bg2);border-right:1px solid var(--border);padding:1em 0.75em;overflow-y:auto;position:sticky;top:var(--topbar-h);height:calc(100vh - var(--topbar-h));height:calc(100dvh - var(--topbar-h));}
+.lhd{font-size:0.68em;font-weight:700;letter-spacing:1.5px;color:var(--text3);padding:0.3em 0.45em 0.6em;text-transform:uppercase;}
+.ecard{border:1px solid var(--border);border-radius:0.6em;overflow:hidden;margin-bottom:0.38em;}
+.etop{display:flex;align-items:center;gap:0.5em;padding:0.54em 0.7em;background:var(--bg3);cursor:pointer;user-select:none;}
+.edot{width:0.6em;height:0.6em;border-radius:50%;border:1.5px solid;flex-shrink:0;}
+.ename{background:none;border:none;outline:none;color:var(--text);font-size:0.85em;font-weight:500;font-family:inherit;flex:1;min-width:0;cursor:text;}
+.ebars{font-size:0.77em;color:var(--text3);font-family:'Space Mono',monospace;}
+.eord{display:flex;flex-direction:column;gap:1px;flex-shrink:0;}
+.eordbtn{font-size:0.6em;line-height:1;padding:1px 3px;border:1px solid var(--border);border-radius:3px;background:var(--bg2);color:var(--text3);cursor:pointer;}
+.eordbtn:hover{border-color:var(--accent);color:var(--accent);}
+.earr{font-size:0.92em;color:var(--text3);transition:transform .18s;}
+.earr.o{transform:rotate(90deg);}
+.ebody{display:none;padding:0.6em;background:var(--bg2);border-top:1px solid var(--border);}
+.ebody.o{display:block;}
+.erow{display:flex;align-items:center;gap:0.45em;margin-bottom:0.5em;flex-wrap:wrap;}
+.erow label{font-size:0.69em;color:var(--text3);}
+.mi{background:var(--bg3);border:1px solid var(--border);border-radius:0.38em;padding:0.22em 0.45em;font-size:0.77em;color:var(--text);font-family:inherit;outline:none;}
+.mi:focus{border-color:var(--accent);}
+.ms{background:var(--bg3);border:1px solid var(--border);border-radius:0.38em;padding:0.22em 0.45em;font-size:0.77em;color:var(--text);font-family:inherit;outline:none;cursor:pointer;}
+.igrid2{display:grid;grid-template-columns:1fr 1fr;gap:0.23em;margin-top:0.38em;}
+.iitem{display:flex;flex-direction:column;gap:0.08em;}
+.ilbl{font-size:0.62em;color:var(--text3);font-weight:700;letter-spacing:.5px;text-transform:uppercase;}
+.iinp{background:var(--bg3);border:1px solid var(--border);border-radius:0.3em;padding:0.15em 0.38em;font-size:0.77em;color:var(--text);font-family:inherit;outline:none;width:100%;}
+.iinp:focus{border-color:var(--accent);}
+.iinp::placeholder{color:var(--text3);}
+.lyhd{font-size:0.62em;color:var(--text3);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin:0.46em 0 0.23em;display:flex;align-items:center;justify-content:space-between;}
+.lyblk{background:var(--bg3);border:1px solid var(--border);border-radius:0.46em;padding:0.38em;margin-bottom:0.3em;}
+.ladd{font-size:0.69em;padding:0.08em 0.46em;border:1px solid var(--border);border-radius:99px;background:none;color:var(--text3);cursor:pointer;}
+.ladd:hover{border-color:var(--accent);color:var(--accent);}
+.dbtn{font-size:0.69em;padding:0.08em 0.38em;border:1px solid transparent;border-radius:99px;background:none;color:var(--text3);cursor:pointer;}
+.dbtn:hover{border-color:#d4564a;color:#d4564a;}
+.dupbtn{font-size:0.69em;padding:0.08em 0.46em;border:1px solid var(--border);border-radius:99px;background:none;color:var(--text3);cursor:pointer;}
+.dupbtn:hover{border-color:var(--accent);color:var(--accent);}
+.ntxt{width:100%;margin-top:0.38em;background:var(--bg3);border:1px solid var(--border);border-radius:0.38em;padding:0.23em 0.46em;font-size:0.77em;color:var(--text);font-family:inherit;outline:none;resize:none;}
+.ntxt:focus{border-color:var(--accent);}
+.asect{width:100%;padding:0.6em;font-size:0.78em;font-weight:600;letter-spacing:0.5px;border:1px dashed var(--border2);border-radius:0.5em;background:none;color:var(--text2);cursor:pointer;margin-top:0.6em;font-family:inherit;transition:all .13s;}
+.asect:hover{border-color:var(--accent);border-style:solid;color:var(--accent);background:rgba(212,168,67,0.07);}
+.asect:hover{border-color:var(--accent);color:var(--accent);}
+.ltag{display:inline-flex;align-items:center;gap:0.23em;font-size:0.69em;padding:0.08em 0.46em;border-radius:99px;border:1px solid;font-weight:500;}
+
+/* ── RIGHT PANEL (view) ── */
+.right{padding:1.5em;overflow-y:auto;}
+
+/* VIEW TABS */
+.vtabs{display:flex;gap:0.15em;margin-bottom:1.3em;border-bottom:1px solid var(--border);padding-bottom:0;overflow-x:auto;}
+.vtab{padding:0.6em 1em;font-size:0.85em;cursor:pointer;color:var(--text3);border-bottom:2px solid transparent;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit;transition:all .13s;white-space:nowrap;}
+.vtab.a{color:var(--accent);border-bottom-color:var(--accent);font-weight:500;}
+
+/* meta summary strip */
+.summary{display:flex;gap:1.2em;flex-wrap:wrap;font-size:0.8em;color:var(--text2);margin:-0.6em 0 1.1em;font-family:'Space Mono',monospace;}
+.summary b{color:var(--accent);font-weight:700;}
+.meta-chip{display:inline-block;font-family:'Noto Sans TC',sans-serif;font-size:0.95em;border-radius:99px;padding:0.12em 0.75em;font-weight:600;margin-left:0.35em;}
+.chip-usage,.chip-m{background:rgba(91,155,213,0.18);color:#8fc0ef;border:1px solid rgba(91,155,213,0.4);}
+.chip-f{background:rgba(212,86,74,0.16);color:#e89a90;border:1px solid rgba(212,86,74,0.4);}
+
+/* ── FLOW VIEW ── */
+.flow{display:flex;flex-direction:column;gap:0;}
+.srow{display:flex;align-items:stretch;gap:0;position:relative;}
+.srow:not(:last-child)::after{
+  content:'';position:absolute;left:4.6em;top:100%;
+  width:2px;height:1.5em;background:rgba(255,255,255,0.08);z-index:1;
+}
+.srow-gap{height:1.5em;display:flex;align-items:center;padding-left:4em;flex-shrink:0;}
+.arrow-down{width:1.4em;height:1.4em;display:flex;flex-direction:column;align-items:center;gap:0;opacity:.3;}
+.arrow-down::before{content:'';flex:1;width:1.5px;background:var(--text3);}
+.arrow-down::after{content:'▼';font-size:0.6em;color:var(--text3);line-height:1;}
+
+.seg-badge{
+  flex-shrink:0;width:9.2em;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:1.2em 0.6em;gap:0.38em;
+}
+.seg-circle{
+  position:relative;
+  width:6.15em;height:6.15em;border-radius:50%;
+  border:2.5px solid;
+  display:flex;align-items:center;justify-content:center;flex-direction:column;
+  background:rgba(0,0,0,0.3);
+}
+.seg-circle-inner{position:absolute;border-radius:50%;border:1.5px solid;pointer-events:none;}
+/* 展開示意圖：可點圓圈列 + 展開說明 */
+.flow-hint{color:var(--text3);font-size:0.9em;margin:0.2em 0 1em;}
+.flow-top{display:flex;align-items:flex-start;gap:1.2em;margin-bottom:1.4em;flex-wrap:wrap;}
+.flow-panel{flex:1 1 16em;min-width:0;}
+.flow-panel-hd{font-weight:700;font-size:1.05em;margin-bottom:0.6em;letter-spacing:0.5px;}
+.flow-row{display:flex;flex-wrap:wrap;gap:0.9em 1em;align-items:flex-start;}
+.seg-circle-btn{background:none;border:none;cursor:pointer;padding:0;font-family:inherit;display:inline-flex;flex-direction:column;align-items:center;gap:0.25em;transition:transform .12s;}
+.seg-circle-btn:hover{transform:translateY(-3px);}
+.seg-circle-btn.sel .seg-circle{box-shadow:0 0 0 3px var(--accent),0 6px 18px rgba(0,0,0,0.45);}
+.seg-name{font-size:0.92em;font-weight:700;text-align:center;line-height:1.2;}
+.seg-bar{font-size:0.77em;font-family:'Space Mono',monospace;opacity:.6;}
+.seg-db-badge{
+  font-size:0.62em;font-family:'Space Mono',monospace;
+  background:rgba(40,40,40,0.9);border:1px solid #555;
+  border-radius:0.23em;padding:0.08em 0.38em;color:#888;margin-top:0.15em;
+}
+
+.seg-instrs{
+  flex:1;border:1px solid;border-radius:0.92em;
+  padding:1.08em 1.23em;margin:0.77em 0;
+  display:flex;flex-direction:column;gap:0.6em;
+}
+.instr-layer{display:flex;flex-direction:column;gap:0.38em;}
+.layer-hd{font-size:0.69em;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:0.15em;display:flex;align-items:center;gap:0.46em;opacity:.6;}
+.layer-hd::after{content:'';flex:1;height:1px;background:currentColor;opacity:.2;}
+.instr-row-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(10em,100%),1fr));gap:0.38em;}
+.irow{
+  display:flex;align-items:baseline;gap:0.46em;
+  background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);
+  border-radius:0.46em;padding:0.38em 0.69em;
+}
+.irow.rhythm{border-radius:0.3em;background:rgba(255,255,255,0.02);}
+.iname{font-size:0.69em;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);white-space:nowrap;min-width:2.3em;}
+.ival{font-size:0.85em;color:var(--text);line-height:1.3;}
+.empty{color:var(--text3);}
+.seg-note{
+  font-size:0.77em;color:#9b72cf;
+  display:flex;align-items:center;gap:0.38em;
+  padding:0.3em 0 0;border-top:1px solid rgba(155,114,207,0.15);margin-top:0.15em;
+}
+
+/* ── BLOCK VIEW ── */
+.block-scroll{overflow-x:auto;padding-bottom:0.6em;}
+.block-track{display:flex;align-items:stretch;gap:0;min-width:max-content;padding:0.6em 0 0.3em;}
+.bseg{display:flex;flex-direction:column;border:1.5px solid;border-radius:0.6em;overflow:hidden;flex-shrink:0;min-width:7.7em;}
+.bseg-head{padding:0.54em 0.77em;font-size:0.85em;font-weight:700;text-align:center;border-bottom:1px solid rgba(255,255,255,0.08);}
+.bseg-bar{font-size:0.69em;font-family:'Space Mono',monospace;opacity:.6;display:block;}
+.bseg-body{padding:0.54em 0.6em;flex:1;display:flex;flex-direction:column;gap:0.23em;}
+.b-irow{display:flex;gap:0.3em;font-size:0.77em;align-items:baseline;}
+.b-iname{font-size:0.85em;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);min-width:2.2em;}
+.b-ival{color:var(--text);line-height:1.3;}
+.b-dbrow{padding:0.3em 0.6em;text-align:center;font-size:0.69em;font-family:'Space Mono',monospace;color:#666;border-top:1px solid rgba(255,255,255,0.06);}
+.bconn{width:1.54em;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.bconn-line{width:100%;height:1.5px;background:rgba(255,255,255,0.1);}
+.blayer-tag{font-size:0.62em;padding:0.08em 0.38em;border-radius:0.23em;border:1px solid;margin:0.15em 0;display:inline-block;font-weight:600;}
+
+/* ── ICON SHEET VIEW (圖示譜) ── */
+.icon-toolbar{display:flex;align-items:center;gap:0.6em;flex-wrap:wrap;margin-bottom:1em;}
+.ic-pageind{font-family:'Space Mono',monospace;font-size:0.9em;color:var(--text);min-width:3em;text-align:center;}
+.ic-navbtn{width:2.2em;height:2.2em;display:flex;align-items:center;justify-content:center;border-radius:0.45em;border:1px solid var(--border2);background:var(--bg3);color:var(--text);cursor:pointer;font-size:1em;}
+.ic-navbtn:hover{background:var(--bg4);}
+.ic-navbtn:disabled{opacity:.3;cursor:default;}
+.ic-spacer{flex:1;}
+.ic-hint{font-size:0.72em;color:var(--text3);}
+.key-step{display:inline-flex;align-items:center;gap:0.25em;background:var(--bg3);border:1px solid var(--border2);border-radius:0.45em;padding:0.12em 0.35em;}
+.key-step>label{font-size:0.72em;color:var(--text3);}
+.key-step .keystep-lbl{font-family:'Space Mono',monospace;font-weight:700;color:var(--accent);min-width:2.6em;text-align:center;font-size:0.9em;}
+.key-step button{width:1.7em;height:1.7em;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--border2);background:var(--bg2);color:var(--text);border-radius:0.35em;cursor:pointer;font-size:0.85em;line-height:1;padding:0;}
+.key-step button:hover{border-color:var(--accent);color:var(--accent);}
+.key-step button:disabled{opacity:.35;cursor:not-allowed;}
+body.svc-mode .key-step{opacity:.5;}
+.ic-sel:disabled{opacity:.5;cursor:not-allowed;}
+
+.icpages{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;align-items:flex-start;scrollbar-width:thin;overscroll-behavior-x:contain;touch-action:pan-x pan-y;}
+.icpages::-webkit-scrollbar{height:5px;}
+.icpage{flex:0 0 100%;min-width:100%;scroll-snap-align:start;}
+.icpage-grid{display:grid;grid-template-columns:repeat(var(--ic-cols,3),minmax(0,1fr));align-items:start;gap:0.7em;}
+.ic-legend{display:flex;flex-wrap:wrap;gap:0.3em;margin-bottom:0.85em;align-items:center;}
+.ic-legitem{font-size:0.66em;font-family:'Space Mono',monospace;border:1.5px solid var(--border2);border-radius:99px;padding:0.16em 0.62em;display:inline-flex;align-items:center;gap:0.25em;cursor:pointer;background:var(--bg3);color:var(--text3);font-weight:600;transition:all .12s;}
+.ic-legitem:hover{filter:brightness(1.25);}
+.ic-legitem:not(.on){opacity:0.45;}
+.ic-legall{border-color:#ffffff;color:#ffffff;background:none;}
+.ic-legall.on{background:#ffffff;color:#0d0d0d;opacity:1;}
+.ic-leghint{font-size:0.6em;color:var(--text3);margin-left:0.2em;}
+.ic-sel{background:var(--bg3);border:1px solid var(--border2);border-radius:0.4em;color:var(--text);font-family:inherit;font-size:0.85em;padding:0.2em 0.4em;outline:none;cursor:pointer;}
+.iccard{border:2.5px solid;border-radius:0.7em;overflow:hidden;display:flex;flex-direction:column;background:var(--bg2);}
+.iccard-head{display:flex;align-items:center;justify-content:space-between;gap:0.5em;padding:0.45em 0.7em;font-weight:700;}
+.ic-name{font-size:1.02em;line-height:1.15;}
+.ic-bars{font-family:'Space Mono',monospace;font-size:0.76em;opacity:.85;background:rgba(0,0,0,0.25);border-radius:99px;padding:0.1em 0.55em;white-space:nowrap;}
+.iccard-body{padding:0.45em;display:flex;flex-direction:column;gap:0.3em;}
+.icchip-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.3em;}
+.icchip{display:flex;align-items:center;gap:0.4em;border:1px solid;border-left-width:5px;border-radius:0.42em;padding:0.24em 0.45em;background:rgba(255,255,255,0.02);min-width:0;}
+.ic-emoji{font-size:1.05em;line-height:1;width:1.2em;text-align:center;flex-shrink:0;}
+.ic-code{font-family:'Space Mono',monospace;font-size:0.62em;font-weight:700;letter-spacing:.3px;flex-shrink:0;}
+.ic-val{font-size:0.8em;color:var(--text);line-height:1.2;min-width:0;word-break:break-word;}
+.ic-rhythm-div{font-size:0.58em;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;margin-top:0.2em;padding-top:0.28em;border-top:1px dashed var(--border2);}
+.iccard-note{font-size:0.74em;color:#b08fde;padding:0.35em 0.65em;border-top:1px solid rgba(155,114,207,0.2);background:rgba(155,114,207,0.05);}
+.ic-empty{color:var(--text3);text-align:center;padding:0.5em;font-size:0.85em;}
+.icpage-foot{display:none;}
+
+/* ── CHORD CHART VIEW (和弦譜) ── */
+.chord-hint{font-size:0.72em;color:var(--text3);margin-bottom:0.9em;}
+.chord-content{display:flex;flex-direction:column;gap:0.7em;}
+.ccard{border:2.5px solid;border-radius:0.7em;overflow:hidden;background:var(--bg2);}
+.ccard-head{display:flex;align-items:center;justify-content:space-between;gap:0.5em;padding:0.45em 0.7em;font-weight:700;flex-wrap:wrap;}
+.cname{font-size:1.02em;line-height:1.15;}
+.csong{font-size:0.82em;font-weight:700;padding:0.08em 0.5em;border-radius:99px;background:rgba(0,0,0,0.28);border:1px solid currentColor;white-space:nowrap;flex:0 0 auto;opacity:0.95;}
+.svc-only{display:none!important;}
+body.svc-mode .svc-only{display:inline-flex!important;}
+.svc-pb-btn.on{background:#3a7d44!important;border-color:#3a7d44!important;color:#fff!important;}
+.maxi-btn.on{background:var(--accent)!important;border-color:var(--accent)!important;color:#0d0d0d!important;font-weight:700;}
+.cmeta{font-family:'Space Mono',monospace;font-size:0.76em;opacity:.85;white-space:nowrap;}
+.chead-l{display:inline-flex;align-items:center;gap:0.45em;min-width:0;flex-wrap:wrap;row-gap:0.25em;flex:1 1 auto;}
+.cbpr-sel{background:rgba(0,0,0,0.18);border:1px solid var(--border2);border-radius:0.3em;color:inherit;font-family:inherit;font-size:0.62em;font-weight:400;padding:0.05em 0.25em;outline:none;cursor:pointer;}
+.ctrl-toggle{font-size:0.6em;font-weight:400;border:1px solid var(--border2);background:rgba(0,0,0,0.18);color:inherit;border-radius:0.3em;padding:0.08em 0.4em;cursor:pointer;font-family:inherit;white-space:nowrap;}
+.ctrl-toggle:hover{border-color:var(--accent);}
+.ctrl-toggle.paste{border-color:#5b9bd5;color:#cfe6ff;background:rgba(91,155,213,0.18);}
+.clear-btn{font-size:0.82em;border:1px solid var(--border2);background:var(--bg3);color:var(--text);border-radius:0.4em;padding:0.3em 0.7em;cursor:pointer;font-family:inherit;white-space:nowrap;}
+/* 工具列上排(.btn/鎖定)＋下排(icon-toolbar) 所有控制項統一成同一高度：用固定 height＋border-box
+   徹底消除 button 與 <select> 的原生盒模型差異，讓整排看起來一致舒適。標準高度＝原「鎖定 關」約 1.85rem */
+.view-print .btn,.icon-toolbar .stbtn,.icon-toolbar .clear-btn,.icon-toolbar .ic-sel{height:1.85rem;box-sizing:border-box;font-size:0.85rem;border-radius:0.45em;}
+.view-print .btn,.icon-toolbar .stbtn,.icon-toolbar .clear-btn{display:inline-flex;align-items:center;justify-content:center;padding:0 0.85em;line-height:1;}
+.icon-toolbar .ic-sel{padding:0 0.5em;line-height:1;}
+.icon-toolbar .key-step{height:1.85rem;box-sizing:border-box;padding:0 0.4em;border-radius:0.45em;}
+.icon-toolbar .key-step button{width:1.45rem;height:1.45rem;}
+.icon-toolbar .ic-navbtn{height:1.85rem;width:1.85rem;box-sizing:border-box;font-size:1rem;border-radius:0.45em;}   /* 混合頁換頁 ‹ › 也對齊統一高度 */
+.clear-btn:hover{border-color:#d4564a;color:#d4564a;}
+.clear-btn.on{background:var(--accent);color:#0d0d0d;border-color:var(--accent);}
+.cbsub.static,.cbrep.static,.cmeter.static,.cgoto-badge.static,.cjump.static{pointer-events:none;cursor:default;}
+/* 統一小型 select 在各瀏覽器的外觀（Safari/Firefox 原生 select 較大、有箭頭） */
+.cbsub,.cgoto-badge,.cjump{-webkit-appearance:none;-moz-appearance:none;appearance:none;text-align:center;}
+.cbar-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(11em,100%),1fr));padding:0.4em;gap:0.35em;column-gap:0;max-width:100%;}
+/* 小節線直接畫在小節邊框上：每個小節左邊一條粗線、右邊保留同寬的透明邊（盒模型一致）；
+   每排最後一個小節右邊補收尾線。這樣線一定落在小節邊界上，左右內距對稱、間距完全一致。 */
+.cbar2{position:relative;box-sizing:border-box;border-top:1.5px solid var(--border2);border-bottom:1.5px solid var(--border2);
+  border-left:1.5px solid transparent;border-right:1.5px solid #bbb;border-radius:0;
+  background:rgba(255,255,255,0.015);overflow:hidden;min-height:3.6em;display:flex;flex-direction:column;}
+.cbar2.row-start{border-left-color:#bbb;}   /* 每排第一個小節補起始線；其餘邊界一律由左邊小節的右邊線負責 */
+.cbadges{position:absolute;top:0;right:0;display:flex;gap:2px;z-index:3;}
+.cbsub{position:absolute;top:0;left:0;z-index:4;font-size:0.5em;font-family:'Space Mono',monospace;border:none;border-radius:0 0 4px 0;padding:0.16em 0.18em;background:rgba(255,255,255,0.06);color:var(--text3);cursor:pointer;outline:none;line-height:1;}
+.cbsub:hover{color:var(--accent);background:rgba(212,168,67,0.2);}
+.cmeter{font-size:0.5em;font-family:'Space Mono',monospace;border:none;border-radius:0 0 0 4px;padding:0.18em 0.4em;cursor:pointer;line-height:1.2;}
+.cmeter.on{background:#d4a843;color:#1a1a1a;font-weight:700;}
+.cmeter.off{background:rgba(255,255,255,0.05);color:var(--text3);}
+.cmeter.off:hover{color:var(--accent);background:rgba(212,168,67,0.18);}
+.cgoto-badge{font-size:0.5em;font-family:inherit;border:none;border-radius:0 0 0 4px;padding:0.16em 0.3em;cursor:pointer;background:rgba(255,255,255,0.06);color:var(--text3);max-width:8em;outline:none;}
+.cgoto-badge.on{background:#d4564a;color:#fff;font-weight:700;}
+.cjump{font-size:0.46em;font-family:inherit;border:none;border-radius:0 0 0 3px;padding:0.14em 0.18em;cursor:pointer;background:rgba(255,255,255,0.05);color:var(--text3);outline:none;max-width:5em;}
+.cjump:hover{color:var(--accent);background:rgba(212,168,67,0.18);}
+.cjump.on{background:rgba(212,86,74,0.5);color:#fff;}
+/* 用 grid 讓每一拍格「絕對等寬」：和弦字再長也不會把其他格擠掉、右邊不留空 */
+.cbeatcols{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;align-items:stretch;width:100%;padding:0.95em 0.1em 0.45em;flex:1 1 auto;}
+.cbeatcol{position:relative;min-width:0;display:flex;flex-direction:column;align-items:center;gap:0.12em;border-left:none;padding:0 0.08em;}
+/* 小節線：前後為粗實線（小節界線），小節內部一律虛線；拍點虛線較明顯、拍內細分較淡 */
+.cbeatcol::before{content:'';position:absolute;left:-1px;top:12%;bottom:12%;width:1px;pointer-events:none;
+  background:repeating-linear-gradient(to bottom,#888 0,#888 2px,transparent 2px,transparent 5px);opacity:.55;}
+.cbeatcol.beatline::before{background:repeating-linear-gradient(to bottom,#888 0,#888 3px,transparent 3px,transparent 5.5px);opacity:.95;}
+/* 小節界線已改由 .cbar2 的左右邊框負責，第一格不再另外畫線（避免重複） */
+.cbeatcol:first-child::before{display:none;}
+/* 拍點數字（1/2/3/4）比 e&a 更明顯：深色底更亮、淺色底更深 */
+.cbeatcol.beatline>.cbnum{color:var(--text2);font-weight:700;opacity:1;}
+.cbrep{position:absolute;bottom:2px;right:2px;z-index:4;font-size:0.5em;font-family:'Space Mono',monospace;color:var(--text2);cursor:pointer;line-height:1;min-width:1.7em;text-align:center;padding:0.18em 0.15em;border:1px solid var(--border2);border-radius:3px;background:var(--bg3);user-select:none;}
+.cbrep:hover{border-color:var(--accent);color:var(--accent);}
+.cbrep.on{background:#5b9bd5;color:#08121c;border-color:#5b9bd5;font-weight:700;}
+.cbeatcol:first-child{border-left:none;}
+.cbnum{font-size:0.5em;color:var(--text3);font-family:'Space Mono',monospace;line-height:1;opacity:.7;}
+.cbchord{width:100%;min-width:0;text-align:center;background:none;border:none;outline:none;color:var(--text);font-family:inherit;font-size:1em;font-weight:700;padding:0;}
+.cbchord::placeholder{color:var(--text3);opacity:.45;font-weight:400;}
+.cbeatcol:focus-within{background:rgba(212,168,67,0.08);}
+/* Nashville 記號顯示 / 編輯 */
+.cbeatcol{cursor:text;}
+.beat-r{display:inline-flex;align-items:center;justify-content:center;min-height:1.25em;color:var(--text);font-weight:700;white-space:nowrap;max-width:100%;}
+.beat-i{width:100%;min-width:0;text-align:center;background:rgba(212,168,67,0.12);border:none;outline:none;color:var(--text);font-family:inherit;font-size:0.95em;font-weight:700;padding:0;border-radius:2px;}
+.bt-note{font-weight:700;white-space:nowrap;}
+/* 較長的和弦（如 D/F#）自動縮字，避免在窄格中被切掉 */
+.bt-note.bt-long{font-size:0.8em;letter-spacing:-0.02em;}
 .bt-note.bt-xlong{font-size:0.64em;letter-spacing:-0.03em;}
 .bt-suf{font-size:0.48em;vertical-align:0.42em;font-weight:600;letter-spacing:-0.03em;}
 /* 和弦頁／混合頁：只有「較長」的後綴（maj9/add4/sus4/dim…）疊在數字正上方省橫向空間；
@@ -833,6 +1249,10 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   body[class*="print-"] .ccard-note{break-before:avoid!important;page-break-before:avoid!important;}
   /* 小節間留一點縱向間距，換頁時的留白才不會貼齊裁切 */
   body[class*="print-"] .cbar-grid{row-gap:0.4em!important;column-gap:0!important;}
+  /* ── 段落卡片不被切開：列印時容器改為 block（flex 子元素的 break-inside:avoid 在 Safari 不可靠）── */
+  body[class*="print-"] .chord-content{display:block!important;}
+  body[class*="print-"] .chord-content>.ccard{margin-bottom:0.7em!important;}
+  body[class*="print-"] .mixpage-stack{display:block!important;}
   /* ── 列印時小節改用 inline-block（原子元素，瀏覽器不可能把它切成兩半）──
      iOS Safari 常忽略 grid 子元素的 break-inside:avoid，改用這個排版可徹底避免小節被分頁切斷 */
   body[class*="print-"] .cbar-grid{display:block!important;padding:0!important;}
@@ -954,7 +1374,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
     <!-- CHORD CHART VIEW -->
     <div id="vp-chord" style="display:none">
       <div class="print-head"></div>
-      <div class="view-print"><button class="btn tbcollapse-btn" onclick="toggleToolbar()" title="收合/展開上方設定工具列">▾ 工具列</button><button class="btn lock-btn" onclick="toggleLock()" title="鎖定：開＝只能看譜與左右滑頁、禁止任何編輯；關＝可編輯">🔓 鎖定 關</button><button class="btn svc-only svc-pb-btn" onclick="toggleSvcPB(this)" title="聚會服事列印：開＝每首歌各自從新頁開始；關＝段落連續接著印">📄 聚會分頁 關</button><button class="btn" onclick="openOcr()">🔍 辨識匯入</button><button class="btn" onclick="printFit('chord')" title="自動縮放，盡量塞進一張 A4">📄 經典A4</button><button class="btn btna" onclick="printView('chord')">🖨 列印 / 存 PDF</button></div>
+      <div class="view-print"><button class="btn tbcollapse-btn" onclick="toggleToolbar()" title="收合/展開上方設定工具列">▾ 工具列</button><button class="btn lock-btn" onclick="toggleLock()" title="鎖定：開＝只能看譜與左右滑頁、禁止任何編輯；關＝可編輯">🔓 鎖定 關</button><button class="btn svc-only svc-pb-btn" onclick="toggleSvcPB(this)" title="聚會服事列印：開＝每首歌各自從新頁開始；關＝段落連續接著印">📄 聚會分頁 關</button><button class="btn" onclick="openOcr()">🔍 辨識匯入</button><label class="ic-hint" style="display:inline-flex;align-items:center;gap:0.25em">輸出大小<select class="ic-sel psize-sel" onchange="setPrintSize(this.value)" title="輸出時的小節大小：緊湊或最小可讓一頁容納更多小節"><option value="std">標準</option><option value="cmp">緊湊</option><option value="min">最小</option></select></label><button class="btn" onclick="printFit('chord')" title="自動縮放，盡量塞進一張 A4">📄 經典A4</button><button class="btn btna" onclick="printView('chord')">🖨 列印 / 存 PDF</button></div>
       <div class="icon-toolbar">
         <label class="ic-hint">拍號 <select class="ic-sel" id="chord-timesig" onchange="setTimeSig(this.value)"></select></label>
         <label class="ic-hint">顯示 <select class="ic-sel" id="chord-disp" onchange="setChordDisp(this.value)"><option value="num">級數</option><option value="male">和弦名(男Key)</option><option value="female">和弦名(女Key)</option></select></label>
@@ -970,7 +1390,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
     <!-- MIX+ VIEW (大格 + 樂器指令在控制區) -->
     <div id="vp-mixp" style="display:none">
       <div class="print-head"></div>
-      <div class="view-print"><button class="btn tbcollapse-btn" onclick="toggleToolbar()" title="收合/展開上方設定工具列">▾ 工具列</button><button class="btn lock-btn" onclick="toggleLock()" title="鎖定：開＝只能看譜與左右滑頁、禁止任何編輯；關＝可編輯">🔓 鎖定 關</button><button class="btn svc-only svc-pb-btn" onclick="toggleSvcPB(this)" title="聚會服事列印：開＝每首歌各自從新頁開始；關＝段落連續接著印">📄 聚會分頁 關</button><button class="btn" onclick="openOcr()">🔍 辨識匯入</button><button class="btn" onclick="printFit('mixp')" title="自動縮放，盡量塞進一張 A4">📄 經典A4</button><button class="btn btna" onclick="printView('mixp')">🖨 列印 / 存 PDF</button></div>
+      <div class="view-print"><button class="btn tbcollapse-btn" onclick="toggleToolbar()" title="收合/展開上方設定工具列">▾ 工具列</button><button class="btn lock-btn" onclick="toggleLock()" title="鎖定：開＝只能看譜與左右滑頁、禁止任何編輯；關＝可編輯">🔓 鎖定 關</button><button class="btn svc-only svc-pb-btn" onclick="toggleSvcPB(this)" title="聚會服事列印：開＝每首歌各自從新頁開始；關＝段落連續接著印">📄 聚會分頁 關</button><button class="btn" onclick="openOcr()">🔍 辨識匯入</button><label class="ic-hint" style="display:inline-flex;align-items:center;gap:0.25em">輸出大小<select class="ic-sel psize-sel" onchange="setPrintSize(this.value)" title="輸出時的小節大小：緊湊或最小可讓一頁容納更多小節"><option value="std">標準</option><option value="cmp">緊湊</option><option value="min">最小</option></select></label><button class="btn" onclick="printFit('mixp')" title="自動縮放，盡量塞進一張 A4">📄 經典A4</button><button class="btn btna" onclick="printView('mixp')">🖨 列印 / 存 PDF</button></div>
       <div class="icon-toolbar">
         <button class="ic-navbtn" id="mixp-prev" onclick="mixpNav(-1)" title="上一頁">‹</button>
         <span class="ic-pageind" id="mixp-pageind">1 / 1</span>
@@ -993,7 +1413,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
     <!-- STAFF (五線譜) VIEW -->
     <div id="vp-staff" style="display:none">
       <div class="print-head"></div>
-      <div class="view-print"><button class="btn tbcollapse-btn" onclick="toggleToolbar()" title="收合/展開上方設定工具列">▾ 工具列</button><button class="btn lock-btn" onclick="toggleLock()" title="鎖定：開＝只能看譜與左右滑頁、禁止任何編輯；關＝可編輯">🔓 鎖定 關</button><button class="btn svc-only svc-pb-btn" onclick="toggleSvcPB(this)" title="聚會服事列印：開＝每首歌各自從新頁開始；關＝段落連續接著印">📄 聚會分頁 關</button><button class="btn" onclick="printFit('staff')" title="自動縮放，盡量塞進一張 A4">📄 經典A4</button><button class="btn btna" onclick="printView('staff')">🖨 列印 / 存 PDF</button></div>
+      <div class="view-print"><button class="btn tbcollapse-btn" onclick="toggleToolbar()" title="收合/展開上方設定工具列">▾ 工具列</button><button class="btn lock-btn" onclick="toggleLock()" title="鎖定：開＝只能看譜與左右滑頁、禁止任何編輯；關＝可編輯">🔓 鎖定 關</button><button class="btn svc-only svc-pb-btn" onclick="toggleSvcPB(this)" title="聚會服事列印：開＝每首歌各自從新頁開始；關＝段落連續接著印">📄 聚會分頁 關</button><label class="ic-hint" style="display:inline-flex;align-items:center;gap:0.25em">輸出大小<select class="ic-sel psize-sel" onchange="setPrintSize(this.value)" title="輸出時的小節大小：緊湊或最小可讓一頁容納更多小節"><option value="std">標準</option><option value="cmp">緊湊</option><option value="min">最小</option></select></label><button class="btn" onclick="printFit('staff')" title="自動縮放，盡量塞進一張 A4">📄 經典A4</button><button class="btn btna" onclick="printView('staff')">🖨 列印 / 存 PDF</button></div>
       <div class="icon-toolbar">
         <label class="ic-hint">顯示 <select class="ic-sel" id="staff-disp" onchange="setChordDisp(this.value)"><option value="num">級數</option><option value="male">和弦名(男Key)</option><option value="female">和弦名(女Key)</option></select></label>
         <span class="key-step" title="半音微調 Key"><label>微調Key</label><button onclick="transposeKey(1)" title="升半音">▲</button><b class="keystep-lbl">—</b><button onclick="transposeKey(-1)" title="降半音">▼</button></span>
@@ -1919,9 +2339,9 @@ async function printView(name){
   document.body.classList.toggle('print-maxi',maxi);   // 極大化：移除小節外框，內容更大
   if(maxi){
     // 一般列印可跨頁 → 直接放大字級（不必塞一頁），維持各段原本的每排設定
-    const fs=22;   // 固定值：確保手機與電腦輸出一致（不受各裝置畫面字級影響）
+    const fs=printFsList()[0];   // 依「輸出大小」：標準 26／緊湊 18／最小 14（固定值，確保各平台一致）
     document.documentElement.style.setProperty('--print-fs',fs+'px');
-    showPrintFsTip(fs,12,26,1);
+    showPrintFsTip(fs,printFsList()[printFsList().length-1],printFsList()[0],1);
   }
   document.body.classList.add(cls);
   window._printCls=cls;
@@ -1933,6 +2353,20 @@ function printIcon(){ return printView('icon'); }   // 相容舊呼叫
 let _printMaxi=false;
 try{ _printMaxi=localStorage.getItem('arranger_printmaxi')==='1'; }catch(e){}
 function syncMaxiBtns(){}   /* 工具列已無極大化鈕，保留空函式相容舊呼叫 */
+/* 輸出小節大小：標準／緊湊／最小（緊湊與最小會壓低字級上限，一頁就能容納更多小節） */
+let _printSize='std';
+try{ const v=localStorage.getItem('arranger_printsize'); if(['std','cmp','min'].includes(v))_printSize=v; }catch(e){}
+function setPrintSize(v){
+  _printSize=['std','cmp','min'].includes(v)?v:'std';
+  try{localStorage.setItem('arranger_printsize',_printSize);}catch(e){}
+  syncPrintSizeSel();
+}
+function syncPrintSizeSel(){ document.querySelectorAll('.psize-sel').forEach(s=>s.value=_printSize); }
+function printFsList(){
+  return _printSize==='min' ? [14,13,12,11,10,9]
+       : _printSize==='cmp' ? [18,16,15,14,13,12,11,10]
+       : [26,24,22,20,18,16,15,14,13,12];
+}
 /* 輸出期間一律以「電腦版」規格渲染：暫時移除手機/平板模式 class，列印後還原 */
 let _savedModeCls=null;
 function forceDesktopForPrint(){
@@ -1977,8 +2411,8 @@ async function printFit(view){
   renderView();
   if(document.fonts&&document.fonts.ready){ try{ await document.fonts.ready; }catch(e){} }
   let scale=1;
-  const FS_MAX=_printMaxi?26:20, FS_MIN=12;
-  const FS_LIST=_printMaxi?[26,24,22,20,18,16,15,14,13,12]:[20,18,16,15,14,13,12];   // 由大到小：挑塞得下的最大字級（極大化可再更大）
+  const FS_LIST=printFsList();                       // 由大到小：挑塞得下的最大字級（依「輸出大小」設定）
+  const FS_MAX=FS_LIST[0], FS_MIN=FS_LIST[FS_LIST.length-1];
   let usedFS=Math.max(curFont,FS_MIN);
   try{
     if(view==='chord' && !svc){
@@ -3561,6 +3995,7 @@ syncDispSelects();
 initTopbar();
 applySvcPB();
 syncMaxiBtns();
+syncPrintSizeSel();
 applyLang();
 syncTopbarH();
 window.addEventListener('load',syncTopbarH);
