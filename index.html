@@ -833,6 +833,11 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   body[class*="print-"] .ccard-note{break-before:avoid!important;page-break-before:avoid!important;}
   /* 小節間留一點縱向間距，換頁時的留白才不會貼齊裁切 */
   body[class*="print-"] .cbar-grid{row-gap:0.4em!important;column-gap:0!important;}
+  /* ── 列印時小節改用 inline-block（原子元素，瀏覽器不可能把它切成兩半）──
+     iOS Safari 常忽略 grid 子元素的 break-inside:avoid，改用這個排版可徹底避免小節被分頁切斷 */
+  body[class*="print-"] .cbar-grid{display:block!important;padding:0!important;}
+  body[class*="print-"] .cbar-grid>.cbar2{display:inline-block!important;vertical-align:top;
+    width:var(--bw,25%)!important;margin:0 0 0.4em 0!important;}
   /* 卡片原本 overflow:hidden，跨頁會裁掉內容並干擾分頁判斷 → 列印時改為可見 */
   body[class*="print-"] .ccard{overflow:visible!important;}
 }
@@ -1992,14 +1997,14 @@ async function printFit(view){
         }
       }
       if(chosen!==undefined){ window._printBPR=chosen; usedFS=chosenFS; scale=1; }
-      else { window._printBPR=fb.bpr; usedFS=fb.fs; scale=Math.max(0.5, Math.min(1, PH/fb.h)); }   // 都塞不下→用最矮版面再縮；超過就分頁（段落完整）
+      else { window._printBPR=fb.bpr; usedFS=fb.fs; scale=1; }   // 都塞不下→不縮放，直接分頁（縮放會讓 iOS Safari 把小節切開）
       renderView();
     } else {
       // 聚會/混合/KB：同樣挑塞得下的最大字級，塞不下再縮
       let picked=null;
       for(const fs of FS_LIST){ if(measureH(fs)<=PH){ picked=fs; break; } }
       if(picked!=null){ usedFS=picked; scale=1; }
-      else { usedFS=FS_MIN; scale=Math.max(0.5, Math.min(1, PH/measureH(FS_MIN))); }
+      else { usedFS=FS_MIN; scale=1; }   // 同上：不縮放，交給分頁
     }
   }catch(e){}
   usedFS=Math.max(FS_MIN,Math.min(FS_MAX,usedFS));
@@ -2338,7 +2343,7 @@ function bprSelect(s){
     BPR_LIST.map(v=>`<option value="${v}"${cur===v?' selected':''}>${v===''?'每排:自動':'每排:'+v}</option>`).join('')+`</select>`;
 }
 /* def＝該檢視的每排預設值（使用者手動設「每排」或列印自動欄數時仍優先採用）；未給 def 則維持自動排版 */
-function barGridStyle(s,def){ const n=(window._printBPR||0)||(parseInt(s.barsPerRow)||0)||(def||0); return n>0?`style="grid-template-columns:repeat(${n},minmax(0,1fr))"`:''; }
+function barGridStyle(s,def){ const n=(window._printBPR||0)||(parseInt(s.barsPerRow)||0)||(def||0); return n>0?`style="grid-template-columns:repeat(${n},minmax(0,1fr));--bw:${(100/n).toFixed(4)}%"`:''; }
 /* KB 檢視專用：每排預設 2 個小節（讓填寫空間更大） */
 function kbBarGridStyle(s){ return barGridStyle(s,2); }
 function setSecBPR(id,v){ const s=sects.find(x=>x.id===id); if(!s)return; s.barsPerRow= v?parseInt(v):''; autoSave(); renderCharts(); }
@@ -2927,7 +2932,7 @@ function mixCardHtml(s,plus){
       const laneChips=vis.map(o=>{ const a=o.a; const bs=a._x*bars, be=(a._x+a._w)*bars, cs=Math.max(bs,b0), ce=Math.min(be,b1); if(ce<=cs+1e-9)return ''; if(a._vrow>maxV)maxV=a._vrow; return arrChipHtml(s,a,o.idx,(cs-b0)/bpr*100,(ce-cs)/bpr*100,a._vrow); }).join('');
       const laneH=((maxV>=0?maxV+1:1)*1.95).toFixed(2);
       let barRow=''; for(let i=b0;i<b1;i++)barRow+=barOneHtml(s,i,beats,undefined,i===b0);   // 每排第一個小節補起始線
-      blocks+=`<div class="arr-rowblock"><div class="arr-lane" data-rf0="${b0/bars}" data-rfw="${rfw}" style="height:${laneH}em">${laneChips}</div><div class="cbar-grid" style="grid-template-columns:repeat(${bpr},minmax(0,1fr))">${barRow}</div></div>`;
+      blocks+=`<div class="arr-rowblock"><div class="arr-lane" data-rf0="${b0/bars}" data-rfw="${rfw}" style="height:${laneH}em">${laneChips}</div><div class="cbar-grid" style="grid-template-columns:repeat(${bpr},minmax(0,1fr));--bw:${(100/bpr).toFixed(4)}%">${barRow}</div></div>`;
     }
     const insStrip=mixInsBody(s,true);   // 可讀的「配器重點」摘要：完整顯示每個樂器彈法（依篩選）
     return `<div class="ccard${ssc}" style="border-color:${col.stroke};--bfs:${fsEm}em">${head}
