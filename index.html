@@ -1647,6 +1647,7 @@ function jsonChordCell(tok,s){
   if(!t)return null;
   if(t==='.')return {type:'sustain'};
   if(t==='x'||t==='X')return {type:'rest'};
+  if(t==='0')return {type:'none', raw:'0'};   // 使用者標記的空拍（不換和弦），不是和弦名
   const canon=normToNum(normAccPos(t),s);
   const nameFor=(key)=>{ const ks=keyRootSemi(key); return (ks==null)?null:foldChordAcc(convChord(canon,ks,preferFlatForKey(key))); };
   const sp=splitChordDisplay(canon);
@@ -1701,7 +1702,8 @@ function buildExportJSON(){
     generator:{name:'Worship Arranger', url:'https://band-worship-set-up.vercel.app/'},
     spec:{
       chordSystem:'Nashville 級數（1–7，可加 b/# 前綴）。degree 為原始儲存值；chordMaleKey / chordFemaleKey 為已依該 Key 換算好的實際和弦名，可直接使用。',
-      slotTypes:{chord:'和弦', sustain:'延續（原始符號 .）', rest:'休止（原始符號 x）'},
+      slotTypes:{chord:'和弦', sustain:'延續（原始符號 .）', rest:'休止（原始符號 x）', none:'空拍／不換和弦（原始符號 0）'},
+      important:'請直接使用 chordMaleKey / chordFemaleKey，不要自行解析 degree。degree 的根音固定只取「一位數字」（1–7，可有 b/# 前綴），其餘全部是品質，例如 113 = 根音1 + 品質13（不是十一度加三度）。',
       subdivision:'1=四分（每拍 1 格）、2=八分（每拍 2 格）、4=十六分（每拍 4 格）；cellsPerBar = beats × subdivision',
       slotIndex:'slots[].index 為該小節內的格號（0 起算）；beat 為第幾拍；positionLabel 為 1 / e / & / a',
       emptySlots:'沒有內容的格子不會輸出，缺號即代表空白',
