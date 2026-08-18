@@ -85,6 +85,23 @@ body.print-maxi .ccard{border-width:1.2px!important;border-radius:0.3em!importan
 body.print-maxi .ccard-head{padding-top:0.1em!important;padding-bottom:0.1em!important;}
 body.print-maxi .cbar2.kbbar{padding:0.05em 0.04em!important;}
 /* 註：極大化的「和弦字放大」與「輸出字級」只在 @media print 內生效，避免影響螢幕編輯畫面 */
+/* 經典A4：選擇輸出段落 */
+.secpick-modal{position:fixed;inset:0;z-index:3500;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:1em;}
+.secpick-box{background:var(--bg2);border:1px solid var(--border2);border-radius:0.8em;padding:1.1em;width:min(420px,94vw);box-shadow:0 12px 40px rgba(0,0,0,.5);display:flex;flex-direction:column;max-height:86vh;}
+.secpick-box h3{margin:0 0 0.6em;font-size:1em;color:var(--text);font-weight:600;}
+.secpick-acts{display:flex;gap:0.4em;align-items:center;margin-bottom:0.6em;}
+.secpick-acts .btn{font-size:0.8em;padding:0.25em 0.6em;}
+.secpick-count{margin-left:auto;font-size:0.8em;color:var(--text3);}
+.secpick-list{overflow-y:auto;flex:1 1 auto;border:1px solid var(--border2);border-radius:0.5em;padding:0.3em;}
+.secpick-row{display:flex;align-items:center;gap:0.5em;padding:0.4em 0.5em;border-radius:0.35em;cursor:pointer;}
+.secpick-row:hover{background:rgba(255,255,255,0.05);}
+.secpick-row input{width:1.05em;height:1.05em;accent-color:var(--accent);cursor:pointer;}
+.secpick-dot{width:0.65em;height:0.65em;border-radius:50%;flex:0 0 auto;}
+.secpick-name{flex:1 1 auto;color:var(--text);font-size:0.9em;}
+.secpick-bars{font-family:'Space Mono',monospace;font-size:0.72em;color:var(--text3);}
+.secpick-foot{display:flex;justify-content:flex-end;gap:0.5em;margin-top:0.8em;}
+.secpick-foot .btn:disabled{opacity:.4;cursor:default;}
+@media print{ .secpick-modal{display:none!important;} }
 /* 經典A4 字級提示（只在螢幕顯示） */
 .printfs-tip{position:fixed;left:50%;bottom:16px;transform:translateX(-50%) translateY(8px);z-index:3400;background:var(--bg2);border:1px solid var(--accent);color:var(--text);border-radius:0.6em;padding:0.5em 0.9em;font-size:0.85em;box-shadow:0 4px 16px rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;max-width:92vw;text-align:center;}
 .printfs-tip.show{opacity:1;transform:translateX(-50%) translateY(0);}
@@ -2017,6 +2034,55 @@ function printIcon(){ return printView('icon'); }   // 相容舊呼叫
 let _printMaxi=false;
 try{ _printMaxi=localStorage.getItem('arranger_printmaxi')==='1'; }catch(e){}
 function syncMaxiBtns(){}   /* 工具列已無極大化鈕，保留空函式相容舊呼叫 */
+/* ── 經典A4：選擇要輸出哪些段落（每次預設全選；只影響輸出，不動原始資料） ── */
+let _printPick=null;   // null = 全部；否則為要輸出的段落 id 陣列
+function askSectionPick(){
+  return new Promise(resolve=>{
+    const old=document.getElementById('secpick-modal'); if(old)old.remove();
+    const m=document.createElement('div'); m.id='secpick-modal'; m.className='secpick-modal';
+    const rows=sects.map(s=>{
+      const col=(COL[s.color]||{}).stroke||'#888';
+      return `<label class="secpick-row"><input type="checkbox" value="${s.id}" checked>
+        <span class="secpick-dot" style="background:${col}"></span>
+        <span class="secpick-name">${esc(s.name)}</span>
+        <span class="secpick-bars">${Math.max(1,parseInt(s.bars)||1)} Bar</span></label>`;
+    }).join('');
+    m.innerHTML=`<div class="secpick-box">
+      <h3>選擇要輸出的段落</h3>
+      <div class="secpick-acts"><button class="btn" data-a="all">全選</button><button class="btn" data-a="none">全不選</button>
+        <span class="secpick-count"></span></div>
+      <div class="secpick-list">${rows}</div>
+      <div class="secpick-foot"><button class="btn" data-a="cancel">取消</button><button class="btn btna" data-a="ok">輸出</button></div>
+    </div>`;
+    document.body.appendChild(m);
+    const boxes=()=>[...m.querySelectorAll('.secpick-list input')];
+    const upd=()=>{ const n=boxes().filter(b=>b.checked).length;
+      m.querySelector('.secpick-count').textContent='已選 '+n+' / '+boxes().length+' 段';
+      m.querySelector('[data-a="ok"]').disabled=(n===0); };
+    upd();
+    m.addEventListener('change',upd);
+    m.addEventListener('click',e=>{
+      const b=e.target.closest('[data-a]'); if(!b){ if(e.target===m){m.remove();resolve(null);} return; }
+      const a=b.dataset.a;
+      if(a==='all'){ boxes().forEach(x=>x.checked=true); upd(); return; }
+      if(a==='none'){ boxes().forEach(x=>x.checked=false); upd(); return; }
+      if(a==='cancel'){ m.remove(); resolve(null); return; }
+      const ids=boxes().filter(x=>x.checked).map(x=>+x.value);
+      m.remove(); resolve(ids);
+    });
+  });
+}
+/* 輸出期間只保留勾選的段落；輸出結束會還原 */
+let _sectsBackup=null;
+function applyPrintPick(ids){
+  if(!ids||ids.length===sects.length){ _printPick=null; return; }
+  _sectsBackup=sects; _printPick=ids;
+  sects=sects.filter(s=>ids.includes(s.id));
+}
+function restorePrintPick(){
+  if(_sectsBackup){ sects=_sectsBackup; _sectsBackup=null; }
+  _printPick=null;
+}
 /* 輸出小節大小：標準／緊湊／最小（緊湊與最小會壓低字級上限，一頁就能容納更多小節） */
 let _printSize='std';
 try{ const v=localStorage.getItem('arranger_printsize'); if(['std','cmp','min'].includes(v))_printSize=v; }catch(e){}
@@ -2053,6 +2119,9 @@ function showPrintFsTip(fs,min,max,scale){
 }
 async function printFit(view){
   commitEdits();
+  const pick=await askSectionPick();          // 選擇要輸出的段落（取消則不輸出）
+  if(pick===null)return;
+  applyPrintPick(pick);
   _printMaxi=true;   // 輸出一律採極大化樣式
   forceDesktopForPrint();   // 跨平台一致：以電腦版規格量測與輸出
   const svc = Array.isArray(sects) && sects.some(s=>s&&s._song);   // 聚會模式：維持資料庫原始段落安排，不重排也不收合
@@ -2113,7 +2182,7 @@ async function printFit(view){
   window._printCls=cls;
   setTimeout(()=>window.print(),60);
 }
-window.addEventListener('afterprint',()=>{ restoreModeAfterPrint(); if(window._printCls){ document.body.classList.remove(window._printCls); } document.body.classList.remove('print-fit','print-maxi'); window._printCls=null; const was=window._printMode||window._printRepeat||window._printBPR||window._printSongTitle; window._printMode=false; window._printRepeat=false; window._printBPR=null; window._printSongTitle=''; if(was){ try{renderCharts();}catch(e){} } });
+window.addEventListener('afterprint',()=>{ restorePrintPick(); restoreModeAfterPrint(); if(window._printCls){ document.body.classList.remove(window._printCls); } document.body.classList.remove('print-fit','print-maxi'); window._printCls=null; const was=window._printMode||window._printRepeat||window._printBPR||window._printSongTitle; window._printMode=false; window._printRepeat=false; window._printBPR=null; window._printSongTitle=''; if(was){ try{renderCharts();}catch(e){} } });
 
 /* ── OCR 圖片/PDF 辨識匯入 ── */
 function openOcr(){ document.getElementById('ocr-modal').style.display='flex'; }
