@@ -299,6 +299,66 @@ body:not(.mode-phone) .fbtn{width:1.5em;height:1.5em;}
 /* ── BLOCK VIEW ── */
 .block-scroll{overflow-x:auto;padding-bottom:0.6em;}
 .block-track{display:flex;align-items:stretch;gap:0;min-width:max-content;padding:0.6em 0 0.3em;}
+/* ── 段落流程圖（直向） ── */
+.seg-flow{display:flex;flex-direction:column;align-items:stretch;max-width:820px;}
+.seg-item{display:flex;flex-direction:column;}
+.seg-box{border:1.5px solid;border-radius:0.6em;overflow:hidden;cursor:pointer;transition:box-shadow .12s,transform .12s;}
+.seg-box:hover{box-shadow:0 2px 10px rgba(0,0,0,.25);}
+.seg-item.open .seg-box{box-shadow:0 0 0 2px var(--accent) inset;}
+.seg-head{display:flex;align-items:center;gap:0.6em;padding:0.5em 0.8em;font-weight:700;font-size:0.95em;}
+.seg-ord{font-family:'Space Mono',monospace;font-size:0.7em;opacity:.6;min-width:1.4em;}
+.seg-name{flex:1 1 auto;}
+.seg-bars{font-family:'Space Mono',monospace;font-size:0.72em;opacity:.75;padding:0.1em 0.5em;border:1px solid currentColor;border-radius:99px;}
+.seg-move{display:flex;gap:0.15em;}
+.seg-body{padding:0.45em 0.8em;display:flex;flex-direction:column;gap:0.22em;border-top:1px solid rgba(128,128,128,0.18);}
+.seg-chords{font-family:'Space Mono',monospace;font-size:0.8em;color:var(--text);line-height:1.6;word-break:break-all;}
+.seg-empty{font-size:0.78em;color:var(--text3);}
+.seg-note{padding:0.3em 0.8em;font-size:0.78em;color:var(--text2);border-top:1px solid rgba(128,128,128,0.14);}
+.seg-conn{height:1.1em;width:2px;background:var(--border2);margin:0 auto;}
+/* 空清單時的大「＋」 */
+.seg-add{display:flex;align-items:center;justify-content:center;gap:0.5em;padding:0.18em 0;}
+.seg-addbtn{width:2em;height:2em;display:inline-flex;align-items:center;justify-content:center;
+  border:1.5px dashed var(--border2);border-radius:0.5em;background:transparent;color:var(--text3);
+  font-size:1.05em;line-height:1;cursor:pointer;font-family:inherit;transition:all .12s;}
+.seg-addbtn:hover{border-color:#4caf72;color:#4caf72;background:rgba(76,175,114,.12);transform:scale(1.08);}
+.seg-add-first{padding:2em 0;flex-direction:column;gap:0.6em;}
+.seg-add-first .seg-addbtn{width:3.2em;height:3.2em;font-size:1.5em;}
+.seg-addhint{font-size:0.82em;color:var(--text3);}
+/* 左滑＝紅色刪除、右滑＝綠色新增 */
+.seg-swipe{position:relative;overflow:hidden;border-radius:0.6em;}
+.seg-swipe-del,.seg-swipe-add{position:absolute;top:0;bottom:0;width:72px;border:none;color:#fff;
+  font-size:1.6em;font-weight:700;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit;}
+.seg-swipe-del{right:0;background:#d4564a;}
+.seg-swipe-del:hover{background:#c04437;}
+.seg-swipe-add{left:0;background:#4caf72;}
+.seg-swipe-add:hover{background:#3d9c60;}
+.seg-swipe .seg-box{position:relative;transition:transform .18s;touch-action:pan-y;}
+.seg-box.swiped{transform:translateX(-72px);}
+.seg-box.swiped-r{transform:translateX(72px);}
+/* 樂器鈕拖曳到段落上 */
+.seg-box.drop-hint{outline:2px dashed var(--accent);outline-offset:-2px;}
+.ins-ghost{position:fixed;z-index:4000;pointer-events:none;padding:0.25em 0.6em;border-radius:99px;
+  font-size:0.8em;font-weight:700;background:var(--bg3);border:1.5px solid var(--accent);color:var(--text);
+  box-shadow:0 4px 14px rgba(0,0,0,.4);transform:translate(-50%,-140%);}
+/* 刪除模式：段落名稱旁的 ✕ */
+.seg-x{width:1.5em;height:1.5em;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;
+  border:1px solid #d4564a;border-radius:50%;background:rgba(212,86,74,.15);color:#d4564a;
+  font-size:0.72em;line-height:1;cursor:pointer;font-family:inherit;padding:0;}
+.seg-x:hover{background:#d4564a;color:#fff;}
+.segdel-btn.on{background:#d4564a;border-color:#d4564a;color:#fff;font-weight:700;}
+.seg-edit{display:flex;flex-wrap:wrap;gap:0.5em;align-items:center;padding:0.7em 0.8em;margin-top:-0.2em;
+  border:1px solid var(--border2);border-top:none;border-radius:0 0 0.6em 0.6em;background:var(--bg2);}
+.seg-edit label{display:inline-flex;align-items:center;gap:0.35em;font-size:0.78em;color:var(--text3);}
+.seg-edit .seg-wide{flex:1 1 100%;}
+.seg-in{background:var(--bg3);border:1px solid var(--border2);border-radius:0.35em;color:var(--text);
+  font-family:inherit;font-size:0.95em;padding:0.25em 0.45em;outline:none;}
+.seg-edit .seg-wide .seg-in{flex:1 1 auto;width:100%;}
+.seg-num{width:4.5em;}
+.seg-editacts{display:flex;gap:0.5em;margin-left:auto;}
+.seg-del{border-color:#d4564a;color:#d4564a;}
+.seg-del:hover{background:rgba(212,86,74,.15);}
+.seg-tip{color:var(--text3);}
+@media print{ .seg-edit,.seg-move,.seg-tip{display:none!important;} .seg-box{break-inside:avoid;page-break-inside:avoid;} }
 .bseg{display:flex;flex-direction:column;border:1.5px solid;border-radius:0.6em;overflow:hidden;flex-shrink:0;min-width:7.7em;}
 .bseg-head{padding:0.54em 0.77em;font-size:0.85em;font-weight:700;text-align:center;border-bottom:1px solid rgba(255,255,255,0.08);}
 .bseg-bar{font-size:0.69em;font-family:'Space Mono',monospace;opacity:.6;display:block;}
@@ -336,6 +396,12 @@ body.svc-mode .key-step{opacity:.5;}
 .ic-legitem{font-size:0.66em;font-family:'Space Mono',monospace;border:1.5px solid var(--border2);border-radius:99px;padding:0.16em 0.62em;display:inline-flex;align-items:center;gap:0.25em;cursor:pointer;background:var(--bg3);color:var(--text3);font-weight:600;transition:all .12s;}
 .ic-legitem:hover{filter:brightness(1.25);}
 .ic-legitem:not(.on){opacity:0.45;}
+.ic-legadd,.ic-legdel{opacity:1!important;font-weight:700;font-size:0.78em;min-width:2.1em;justify-content:center;}
+.ic-legadd{border-color:#4caf72;color:#4caf72;}
+.ic-legadd:hover{background:rgba(76,175,114,.18);}
+.ic-legdel{border-color:#d4564a;color:#d4564a;}
+.ic-legdel:hover{background:rgba(212,86,74,.18);}
+#seg-legend .ic-legitem{touch-action:none;}
 .ic-legall{border-color:#ffffff;color:#ffffff;background:none;}
 .ic-legall.on{background:#ffffff;color:#0d0d0d;opacity:1;}
 .ic-leghint{font-size:0.6em;color:var(--text3);margin-left:0.2em;}
@@ -711,6 +777,8 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   body[class*="print-"] #vp-text,
   body[class*="print-"] #vp-export{display:none!important;}
   body.print-icon #vp-icon{display:block!important;}
+  body.print-seg #vp-seg{display:block!important;}
+  body.print-seg .seg-flow{max-width:none!important;}
   body.print-chord #vp-chord{display:block!important;}
   body.print-mix #vp-mix{display:block!important;}
   body.print-mixp #vp-mixp{display:block!important;}
@@ -899,7 +967,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
       <div class="pill" style="gap:3px"><label>主題</label><select id="theme-sel" onchange="setTheme(this.value)" title="介面配色（只影響螢幕，列印仍為白底原樣）" style="background:none;border:none;color:var(--text);font-family:inherit;font-size:1em;outline:none;cursor:pointer"><option value="dark">🌑 黑</option><option value="light">🌕 白</option><option value="pink">🌸 粉</option></select></div>
     </div>
     <div class="tbar-r">
-      <button class="btn" onclick="openSaveMenu()" title="儲存：可選存到瀏覽器本機，或另存成 .json 到資料夾">💾 存檔</button>
+      <button class="btn" onclick="newChart()" title="開新檔案：清空目前內容，開一份全新的譜">📄 開新檔案</button><button class="btn" onclick="openSaveMenu()" title="儲存：可選存到瀏覽器本機，或另存成 .json 到資料夾">💾 存檔</button>
       <select class="btn tpl-sel" id="tpl-sel" onchange="loadTemplate(this.value)" title="範本"><option value="">範本</option></select>
       <button class="btn" id="cloud-btn" onclick="openCloud()" title="使用者登入 / 雲端歌庫" style="display:none">👤 使用者</button>
       <button class="btn" onclick="expJSON()" title="匯出 JSON 備份">↓ JSON</button>
@@ -908,8 +976,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
       <button class="btn more-toggle" id="more-toggle" onclick="toggleMore()" title="展開更多功能">⋯ 更多</button>
       <div class="more-actions" id="more-actions">
         <button class="btn" onclick="expCSV()">↓ CSV</button>
-        <button class="btn" id="png-flow-btn" onclick="expPNG('flow')">↓ PNG 示意圖</button>
-        <button class="btn" id="png-block-btn" onclick="expPNG('block')">↓ PNG 方塊圖</button>
+        <button class="btn" id="png-seg-btn" onclick="expPNG('seg')">↓ PNG 段落圖</button>
         <button class="btn" onclick="printIcon()" title="列印圖示譜（每頁4段，A4）">🖨 圖示譜PDF</button>
       </div>
     </div>
@@ -927,9 +994,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   <!-- RIGHT: views -->
   <section class="right">
     <div class="vtabs">
-      <button class="vtab a" onclick="sw('flow',this)">展開示意圖</button>
-      <button class="vtab" onclick="sw('block',this)">方塊流程圖</button>
-      <button class="vtab" onclick="sw('icon',this)">圖示譜</button>
+      <button class="vtab a" onclick="sw('seg',this)">段落流程圖</button>
       <button class="vtab" onclick="sw('chord',this)">和弦譜</button>
       <button class="vtab" onclick="sw('mixp',this)">混合</button>
       <button class="vtab" onclick="sw('staff',this)">KB</button>
@@ -940,39 +1005,19 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
     <div class="summary" id="summary"></div>
 
     <!-- FLOW VIEW -->
-    <div id="vp-flow">
-      <div class="flow" id="flow-content"></div>
-    </div>
-
-    <!-- BLOCK VIEW -->
-    <div id="vp-block" style="display:none">
-      <div class="block-scroll">
-        <div class="block-track" id="block-content"></div>
-      </div>
-    </div>
-
-    <!-- ICON SHEET VIEW -->
-    <div id="vp-icon" style="display:none">
-      <div class="print-head"></div>
+    <!-- SEG VIEW（段落流程圖：直向段落方塊 ＋ 段落編輯 ＋ 樂器配置） -->
+    <div id="vp-seg">
+      <div class="view-print"><button class="btn tbcollapse-btn" onclick="toggleToolbar()" title="收合/展開上方設定工具列">▾ 工具列</button><button class="btn lock-btn" onclick="toggleLock()" title="鎖定：開＝只能看譜、禁止編輯；關＝可編輯">🔓 鎖定 關</button><button class="btn" onclick="openOcr()">🔍 辨識匯入</button><button class="btn btna" onclick="printView('seg')">🖨 列印 / 存 PDF</button></div>
       <div class="icon-toolbar">
-        <button class="ic-navbtn" id="ic-prev" onclick="icNav(-1)" title="上一頁">‹</button>
-        <span class="ic-pageind" id="ic-pageind">1 / 1</span>
-        <button class="ic-navbtn" id="ic-next" onclick="icNav(1)" title="下一頁">›</button>
-        <label class="ic-hint">每頁
-          <select class="ic-sel" id="ic-perpage" onchange="setPerPage(this.value)">
-            <option value="4">4</option>
-            <option value="6" selected>6</option>
-            <option value="8">8</option>
-          </select>
-        段 · 手機可左右滑動翻頁</label>
-        <span class="ic-spacer"></span>
-        <button class="btn btna" onclick="printIcon()">🖨 列印 / 存 PDF</button>
+        <label class="ic-hint">顯示 <select class="ic-sel seg-disp" onchange="setSegDisp(this.value)" title="段落方塊要顯示什麼"><option value="ins">樂器配置</option><option value="chord">和弦摘要</option><option value="none">只看段落</option></select></label>
+        <button class="stbtn" onclick="addSect()" title="在最後新增一個段落">＋ 新增段落</button>
+        <button class="stbtn segdel-btn" onclick="toggleSegDelMode()" title="刪除模式：開啟後每個段落名稱旁會出現 ✕，按下即刪除">－ 刪除段落</button>
+        <span class="ic-hint seg-tip">點段落展開編輯 · 右滑＝新增 · 左滑＝刪除 · 樂器鈕可拖到段落上</span>
       </div>
-      <div class="ic-legend" id="ic-legend"></div>
-      <div class="icpages" id="icon-pages"></div>
+      <div class="ic-legend" id="seg-legend"></div>
+      <div class="seg-flow" id="seg-content"></div>
     </div>
 
-    <!-- CHORD CHART VIEW -->
     <div id="vp-chord" style="display:none">
       <div class="print-head"></div>
       <div class="view-print"><button class="btn tbcollapse-btn" onclick="toggleToolbar()" title="收合/展開上方設定工具列">▾ 工具列</button><button class="btn lock-btn" onclick="toggleLock()" title="鎖定：開＝只能看譜與左右滑頁、禁止任何編輯；關＝可編輯">🔓 鎖定 關</button><button class="btn svc-only svc-pb-btn" onclick="toggleSvcPB(this)" title="聚會服事列印：開＝每首歌各自從新頁開始；關＝段落連續接著印">📄 聚會分頁 關</button><button class="btn" onclick="openOcr()">🔍 辨識匯入</button><label class="ic-hint" style="display:inline-flex;align-items:center;gap:0.25em">輸出大小<select class="ic-sel psize-sel" onchange="setPrintSize(this.value)" title="輸出時的小節大小：緊湊或最小可讓一頁容納更多小節"><option value="std">標準</option><option value="cmp">緊湊</option><option value="min">最小</option></select></label><button class="btn" onclick="printFit('chord')" title="自動縮放，盡量塞進一張 A4">📄 經典A4</button><button class="btn btna" onclick="printView('chord')">🖨 列印 / 存 PDF</button></div>
@@ -1044,11 +1089,9 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
     <div id="vp-export" style="display:none">
       <div class="egrid">
         <div class="ecard2"><h3>🔍 圖片 / PDF 辨識匯入</h3><p>上傳和弦譜圖片或 PDF，瀏覽器內 OCR 辨識並自動拆成段落／和弦（實驗性，通常需人工修正；可選依男/女 Key 轉級數）</p><button class="btn btna" onclick="openOcr()">🔍 辨識匯入</button></div>
-        <div class="ecard2"><h3>🎼 圖示譜 PDF</h3><p>純圖示／色塊呈現，A4 直式、每頁段數依目前設定（電腦/平板 3–15、手機 4–14），適合發給團員或現場看譜</p><button class="btn btna" onclick="printView('icon')">🖨 列印 / 存 PDF</button></div>
+        <div class="ecard2"><h3>🗂 段落流程圖 PDF</h3><p>段落順序、Bar 數與各段樂器配置一頁看完，適合團員快速掌握全曲架構</p><button class="btn btna" onclick="printView('seg')">🖨 列印 / 存 PDF</button></div>
         <div class="ecard2"><h3>🎵 和弦譜 PDF</h3><p>每段小節攤開、依拍號顯示拍點，A4 直式列印，適合主領 / 樂手看和弦進行</p><button class="btn btna" onclick="printView('chord')">🖨 列印 / 存 PDF</button></div>
         <div class="ecard2"><h3>🎼 混合 PDF（和弦＋樂器）</h3><p>同一頁同時呈現和弦小節與各樂器部位，最完整的樂團總表</p><button class="btn btna" onclick="printView('mixp')">🖨 列印 / 存 PDF</button></div>
-        <div class="ecard2"><h3>🖼 PNG 展開示意圖</h3><p>將「展開示意圖」整頁輸出為高解析 PNG，包含所有段落與樂器標註</p><button class="btn btna" onclick="expPNG('flow')">↓ PNG 展開示意圖</button></div>
-        <div class="ecard2"><h3>📦 PNG 方塊流程圖</h3><p>將「方塊流程圖」橫向輸出為高解析 PNG</p><button class="btn btna" onclick="expPNG('block')">↓ PNG 方塊流程圖</button></div>
         <div class="ecard2"><h3>📊 CSV 樂器備註表</h3><p>包含所有段落、Bar 數、顏色、樂器備註</p><button class="btn" onclick="expCSV()">↓ Download CSV</button></div>
         <div class="ecard2"><h3>📋 文字清單</h3><p>純文字格式，可貼入 Notion / 筆記 App</p><button class="btn" onclick="sw('text',null);copyTL(this)">複製文字清單</button></div>
         <div class="ecard2"><h3>↓ JSON 備份</h3><p>完整存檔，可日後匯入繼續編輯</p><button class="btn" onclick="expJSON()">↓ Download JSON</button></div>
@@ -1276,9 +1319,10 @@ const COL={
   red:   {stroke:'#d4564a',fill:'rgba(212,86,74,0.1)',    text:'#d4564a', label:'紅（高潮）'},
   purple:{stroke:'#9b72cf',fill:'rgba(155,114,207,0.1)',  text:'#9b72cf', label:'紫（特效）'},
 };
-const INS=['Vocal','KB','Pad','AG','EG1','EG2','Bass','Drum'];
+const INS_BUILTIN=['Vocal','KB','Pad','AG','EG1','EG2','Bass','Drum','Loop'];   // 預設樂器（不可刪除）
+let INS=INS_BUILTIN.slice();                                                     // 目前全部樂器（含自定義）
 const RHYTHM=['Bass','Drum'];
-const ICON={Vocal:'🎤',KB:'🎹',Pad:'🌫️',AG:'🎸',EG1:'⚡',EG2:'⚡',Bass:'⬇️',Drum:'🥁'};
+const ICON={Vocal:'🎤',KB:'🎹',Pad:'🌫️',AG:'🎸',EG1:'⚡',EG2:'⚡',Bass:'⬇️',Drum:'🥁',Loop:'🔁'};
 /* 每個樂器一種固定外框顏色（圖示譜用） */
 const INSCOL={
   Vocal:{stroke:'#e0883c',fill:'rgba(224,136,60,0.13)'},   /* 橘 */
@@ -1287,6 +1331,7 @@ const INSCOL={
   AG:   {stroke:'#5fb37a',fill:'rgba(95,179,122,0.13)'},   /* 綠 */
   EG1:  {stroke:'#5b9bd5',fill:'rgba(91,155,213,0.13)'},   /* 藍 */
   EG2:  {stroke:'#4bb6c2',fill:'rgba(75,182,194,0.13)'},   /* 青 */
+  Loop: {stroke:'#48b0c4',fill:'rgba(72,176,196,0.13)'},  /* 青 */
   Bass: {stroke:'#d4564a',fill:'rgba(212,86,74,0.13)'},    /* 紅 */
   Drum: {stroke:'#cf7fa8',fill:'rgba(207,127,168,0.13)'},  /* 粉 */
 };
@@ -1405,7 +1450,7 @@ function refreshSvcMode(){
 /* ── SAVE / LOAD ── */
 function getProjectData(){
   return {
-    meta:{title:gv('s-title'),artist:gv('s-artist'),time:gv('s-time'),bpm:gv('s-bpm'),usage:gv('s-usage'),mkey:gv('s-mkey'),fkey:gv('s-fkey'),fontSize:curFont},
+    meta:{title:gv('s-title'),artist:gv('s-artist'),time:gv('s-time'),bpm:gv('s-bpm'),usage:gv('s-usage'),mkey:gv('s-mkey'),fkey:gv('s-fkey'),fontSize:curFont,customIns:JSON.parse(JSON.stringify(customIns))},
     sects:JSON.parse(JSON.stringify(sects)).map(pruneSectionData),
     nid
   };
@@ -1432,6 +1477,8 @@ function applyProjectData(data){
   document.getElementById('s-mkey').value=data.meta?.mkey||'';
   document.getElementById('s-fkey').value=data.meta?.fkey||'';
   if(data.meta?.fontSize) setFontSize(data.meta.fontSize);
+  customIns=Array.isArray(data.meta&&data.meta.customIns)?data.meta.customIns:[];
+  rebuildINS();
   sects=data.sects;
   sects.forEach(pruneSectionData);   /* 載入舊檔時順手清掉殘留小節，之後再存就乾淨 */
   nid=data.nid||sects.length+1;
@@ -1840,7 +1887,7 @@ function flowPanel(s){
   const empty=(!layerHtml&&!noteHtml)?'<div class="seg-note" style="color:var(--text3)">（此段尚未填樂器配置）</div>':'';
   return `<div class="seg-instrs flow-panel" style="border-color:${col.stroke}55;background:${col.fill}"><div class="flow-panel-hd" style="color:${col.stroke}">${esc(s.name)} · ${s.bars} Bar</div>${layerHtml}${noteHtml}${empty}</div>`;
 }
-function renderFlow(){
+function renderFlow(){ if(!document.getElementById('flow-content'))return;
   const root=document.getElementById('flow-content'); if(!root)return;
   if(_flowSel>=sects.length)_flowSel=-1;
   let html='';
@@ -1856,7 +1903,182 @@ function renderFlow(){
 }
 
 /* ── RENDER BLOCK VIEW ── */
-function renderBlock(){
+/* ── 段落流程圖：直向排列的段落方塊，整合段落編輯 / 新增移除 / 樂器配置 ── */
+let _segDisp='ins';   // ins=樂器配置 / chord=和弦摘要 / none=只看段落
+let _segOpen=null;    // 目前展開編輯的段落 id
+function setSegDisp(v){ _segDisp=v; renderSeg(); }
+function toggleSegEdit(id){ _segOpen=(_segOpen===id)?null:id; renderSeg(); }
+function renderSeg(){
+  const root=document.getElementById('seg-content'); if(!root)return;
+  computeSongStarts();
+  root.innerHTML=sects.map((s,i)=>{
+    const col=COL[s.color]||COL.black;
+    const bars=Math.max(1,parseInt(s.bars)||1);
+    // 依樂器篩選鈕挑要顯示的樂器（與圖示譜共用同一組篩選）
+    const rows=[];
+    (s.layers||[]).forEach((l,li)=>INS.forEach(k=>{
+      if(!insFilter.has(k))return;
+      const v=l&&l.ins&&l.ins[k]; if(!v||!String(v).trim())return;
+      rows.push({k, v:String(v), li, lc:COL[l.color]||COL.black});
+    }));
+    const mel=rows.filter(x=>!RHYTHM.includes(x.k)), rhy=rows.filter(x=>RHYTHM.includes(x.k));
+    let bodyHtml='';
+    if(_segDisp==='ins'){
+      bodyHtml = mel.map(x=>`<div class="b-irow"><span class="b-iname" style="color:${x.li===0?'var(--text3)':x.lc.stroke}">${ICON[x.k]||''} ${x.k}</span><span class="b-ival">${esc(x.v)}</span></div>`).join('')
+        || `<div class="seg-empty">（尚未填樂器配置）</div>`;
+      if(rhy.length) bodyHtml+=`<div class="b-dbrow">D+B: ${rhy.map(x=>esc(x.v)).filter(Boolean).join(' / ')}</div>`;
+    } else if(_segDisp==='chord'){
+      const cs=chordSummary(s);
+      bodyHtml = cs?`<div class="seg-chords">${esc(cs)}</div>`:`<div class="seg-empty">（尚未填和弦）</div>`;
+    }
+    const open=(_segOpen===s.id);
+    const edit = open?`<div class="seg-edit" onclick="event.stopPropagation()">
+        <label>名稱 <input class="seg-in" value="${esc(s.name)}" oninput="setSN(${s.id},this.value);segSyncName(${s.id},this.value)"></label>
+        <label>小節 <input class="seg-in seg-num" type="number" min="1" value="${bars}" onchange="setBars(${s.id},this.value);renderSeg()"></label>
+        <label>顏色 <select class="seg-in" onchange="setC(${s.id},this.value);renderSeg()">${Object.keys(COL).map(k=>`<option value="${k}"${s.color===k?' selected':''}>${COL[k].label}</option>`).join('')}</select></label>
+        <label class="seg-wide">備註 <input class="seg-in" value="${esc(s.notes||'')}" oninput="setNotes(${s.id},this.value)"></label>
+        <div class="seg-editacts">
+          <button class="stbtn" onclick="addSectAfter(${s.id})">＋ 在此後新增</button>
+          <button class="stbtn seg-del" onclick="delSect(${s.id})">🗑 移除此段</button>
+        </div>
+      </div>`:'';
+    return `<div class="seg-item${open?' open':''}">
+      <div class="seg-swipe">
+        <button class="seg-swipe-add" title="在此後新增段落" onclick="event.stopPropagation();addSectAfter(${s.id})">＋</button>
+        <button class="seg-swipe-del" title="刪除此段落" onclick="event.stopPropagation();delSect(${s.id})">−</button>
+        <div class="seg-box" data-sid="${s.id}" style="border-color:${col.stroke};background:linear-gradient(${col.fill},${col.fill}),var(--bg2)" onclick="segBoxClick(event,${s.id})">
+          <div class="seg-head" style="color:${col.text}">
+            <span class="seg-ord">${i+1}</span>
+            ${_segDelMode?`<button class="seg-x" title="刪除此段落" onclick="event.stopPropagation();delSect(${s.id})">✕</button>`:''}
+            <span class="seg-name">${esc(s.name)}</span>
+            <span class="seg-bars">${bars} Bar</span>
+            <span class="seg-move">
+              <button class="eordbtn" title="上移" onclick="event.stopPropagation();moveS(${s.id},-1);renderSeg()"${i===0?' disabled':''}>▲</button>
+              <button class="eordbtn" title="下移" onclick="event.stopPropagation();moveS(${s.id},1);renderSeg()"${i===sects.length-1?' disabled':''}>▼</button>
+            </span>
+          </div>
+          ${bodyHtml?`<div class="seg-body">${bodyHtml}</div>`:''}
+          ${s.notes?`<div class="seg-note">⚑ ${esc(s.notes)}</div>`:''}
+        </div>
+      </div>
+      ${edit}
+      ${i<sects.length-1?'<div class="seg-conn"></div>':''}
+    </div>`;
+  }).join('') || `<div class="seg-add seg-add-first"><button class="seg-addbtn" title="新增第一個段落" onclick="addSect()">＋</button><span class="seg-addhint">新增段落</span></div>`;
+  renderLegend();
+}
+/* 點段落方塊：剛滑動過就不觸發展開編輯 */
+function segBoxClick(e,id){ if(_segSwiped)return; toggleSegEdit(id); }
+/* 刪除模式：在每個段落名稱旁顯示 ✕ */
+let _segDelMode=false;
+function toggleSegDelMode(){
+  _segDelMode=!_segDelMode;
+  document.querySelectorAll('.segdel-btn').forEach(b=>b.classList.toggle('on',_segDelMode));
+  renderSeg();
+}
+/* ── 左滑段落露出紅色刪除鈕（觸控與滑鼠共用） ── */
+let _segSw=null, _segSwiped=false;
+function segSwipeDown(e){
+  if(_insDrag)return;
+  const box=e.target&&e.target.closest?e.target.closest('.seg-box'):null;
+  if(!box)return;
+  if(e.target.closest('button'))return;                 // 按在按鈕上不啟動滑動
+  _segSw={box, x:e.clientX, y:e.clientY, dx:0};
+  _segSwiped=false;
+}
+function segSwipeMove(e){
+  if(_insDrag){ _segSw=null; return; }
+  if(!_segSw)return;
+  const dx=e.clientX-_segSw.x, dy=e.clientY-_segSw.y;
+  if(Math.abs(dy)>Math.abs(dx))return;                  // 垂直捲動優先
+  _segSw.dx=Math.max(-72,Math.min(72,dx));              // 左滑＝刪除、右滑＝新增
+  if(Math.abs(dx)>6){ _segSwiped=true; e.preventDefault(); }
+  _segSw.box.style.transform='translateX('+_segSw.dx+'px)';
+}
+function segCloseSwipe(except){
+  document.querySelectorAll('.seg-box.swiped,.seg-box.swiped-r').forEach(b=>{
+    if(b!==except){ b.classList.remove('swiped','swiped-r'); b.style.transform=''; }
+  });
+}
+function segSwipeUp(){
+  if(!_segSw)return;
+  const del=_segSw.dx<-36, add=_segSw.dx>36;            // 滑超過一半才停在開啟位置
+  segCloseSwipe(_segSw.box);
+  _segSw.box.classList.toggle('swiped',del);
+  _segSw.box.classList.toggle('swiped-r',add);
+  _segSw.box.style.transform=del?'translateX(-72px)':(add?'translateX(72px)':'');
+  _segSw=null;
+  setTimeout(()=>{_segSwiped=false;},60);               // 稍後才解除，避免放開瞬間觸發點擊
+}
+/* ── 拖曳樂器鈕到段落上設定該段的樂器配置 ── */
+let _insDrag=null;
+function insDragDown(e){
+  const btn=e.target&&e.target.closest?e.target.closest('#seg-legend .ic-legitem'):null;
+  if(!btn||btn.classList.contains('ic-legall')||btn.classList.contains('ic-legadd')||btn.classList.contains('ic-legdel'))return;
+  const name=(btn.textContent||'').trim().split(/\s+/).pop();
+  if(!INS.includes(name))return;
+  _insDrag={name, x:e.clientX, y:e.clientY, moved:false, ghost:null};
+}
+function insDragMove(e){
+  if(!_insDrag)return;
+  const dx=e.clientX-_insDrag.x, dy=e.clientY-_insDrag.y;
+  if(!_insDrag.moved && Math.abs(dx)+Math.abs(dy)<8)return;
+  if(!_insDrag.moved){
+    _insDrag.moved=true;
+    const g=document.createElement('div'); g.className='ins-ghost';
+    g.textContent=(ICON[_insDrag.name]||'🎵')+' '+_insDrag.name;
+    document.body.appendChild(g); _insDrag.ghost=g;
+  }
+  e.preventDefault();
+  _insDrag.ghost.style.left=e.clientX+'px'; _insDrag.ghost.style.top=e.clientY+'px';
+  document.querySelectorAll('.seg-box.drop-hint').forEach(b=>b.classList.remove('drop-hint'));
+  const el=document.elementFromPoint(e.clientX,e.clientY);
+  const box=el&&el.closest?el.closest('.seg-box'):null;
+  if(box)box.classList.add('drop-hint');
+}
+function insDragUp(e){
+  if(!_insDrag)return;
+  const d=_insDrag; _insDrag=null;
+  if(d.ghost)d.ghost.remove();
+  document.querySelectorAll('.seg-box.drop-hint').forEach(b=>b.classList.remove('drop-hint'));
+  if(!d.moved)return;                                   // 沒拖動＝一般點擊（切換篩選）
+  const el=document.elementFromPoint(e.clientX,e.clientY);
+  const box=el&&el.closest?el.closest('.seg-box'):null;
+  if(!box||box.dataset.sid==null)return;
+  const s=sects.find(x=>x.id===+box.dataset.sid); if(!s)return;
+  if(!s.layers||!s.layers[0])s.layers=[{color:'black',ins:{}}];
+  const cur=s.layers[0].ins[d.name]||'';
+  const v=prompt(`「${s.name}」的 ${d.name} 要怎麼彈？`, cur);
+  if(v===null)return;                                   // 取消
+  if(String(v).trim())s.layers[0].ins[d.name]=String(v).trim();
+  else delete s.layers[0].ins[d.name];                  // 清空＝移除該樂器
+  autoSave(); renderSB(); renderSeg(); schedRender();
+}
+document.addEventListener('pointerdown',insDragDown,true);
+document.addEventListener('pointermove',insDragMove,true);
+document.addEventListener('pointerup',insDragUp,true);
+document.addEventListener('pointercancel',()=>{ if(_insDrag&&_insDrag.ghost)_insDrag.ghost.remove(); _insDrag=null;
+  document.querySelectorAll('.seg-box.drop-hint').forEach(b=>b.classList.remove('drop-hint')); },true);
+document.addEventListener('pointerdown',segSwipeDown,true);
+document.addEventListener('pointermove',segSwipeMove,true);
+document.addEventListener('pointerup',segSwipeUp,true);
+document.addEventListener('pointercancel',segSwipeUp,true);
+function segSyncName(id,v){ const el=document.querySelector('.seg-item.open .seg-name'); if(el)el.textContent=v; renderSB(); }
+function setNotes(id,v){ const s=sects.find(x=>x.id===id); if(!s)return; s.notes=v; autoSave(); renderSB(); }
+function addSectAfter(id){
+  const i=sects.findIndex(s=>s.id===id); if(i<0)return;
+  const ns={id:nid++,name:'新段落',bars:4,color:'black',layers:[{color:'black',ins:{}}],notes:''};
+  sects.splice(i+1,0,ns); _segOpen=ns.id;
+  renderSB(); renderSeg(); schedRender();
+}
+function delSect(id){
+  const s=sects.find(x=>x.id===id); if(!s)return;
+  if(!confirm(`確定移除段落「${s.name}」？`))return;
+  sects=sects.filter(x=>x.id!==id);
+  if(_segOpen===id)_segOpen=null;
+  renderSB(); renderSeg(); schedRender();
+}
+function renderBlock(){ if(!document.getElementById('block-content'))return;
   const root=document.getElementById('block-content');
   root.innerHTML=sects.map((s,i)=>{
     const col=COL[s.color];
@@ -1915,7 +2137,47 @@ function toggleAllIns(){
 }
 function toggleIns(k){
   if(insFilter.has(k))insFilter.delete(k); else insFilter.add(k);
+  if(currentView==='seg')renderSeg();
   renderIcon();renderMix();renderMixP();if(currentView==='staff')renderStaff();
+}
+/* ── 自定義樂器：可新增／刪除（預設樂器不會被刪掉），會隨檔案一起存檔 ── */
+let customIns=[];
+const CUSTOM_COLORS=['#c47ab0','#7a9ec4','#c4a55f','#6fb8a0','#b07a7a','#8f7ac4'];
+function isCustomIns(k){ return !INS_BUILTIN.includes(k); }
+function rebuildINS(){
+  INS=INS_BUILTIN.concat(customIns.map(c=>c.name));
+  customIns.forEach((c,i)=>{
+    ICON[c.name]=c.icon||'🎵';
+    const col=c.color||CUSTOM_COLORS[i%CUSTOM_COLORS.length];
+    INSCOL[c.name]={stroke:col, fill:col.replace('#','rgba(').length?hexFill(col):'rgba(150,150,150,0.13)'};
+    if(!insFilter.has(c.name))insFilter.add(c.name);
+  });
+}
+function hexFill(hex){
+  const m=/^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(hex);
+  if(!m)return 'rgba(150,150,150,0.13)';
+  return `rgba(${parseInt(m[1],16)},${parseInt(m[2],16)},${parseInt(m[3],16)},0.13)`;
+}
+function addCustomIns(){
+  const name=(prompt('新增自定義樂器／聲部名稱：\n（例如 Synth、Cello、Choir、Click）')||'').trim();
+  if(!name)return;
+  if(INS.includes(name)){ alert('「'+name+'」已經存在了'); return; }
+  if(name.length>10){ alert('名稱請控制在 10 個字以內'); return; }
+  customIns.push({name, icon:'🎵', color:CUSTOM_COLORS[customIns.length%CUSTOM_COLORS.length]});
+  rebuildINS(); autoSave(); renderSB(); renderLegend(); if(currentView==='seg')renderSeg();
+}
+function delCustomIns(){
+  if(!customIns.length){ alert('目前沒有自定義樂器。\n（預設的 Vocal / KB / Pad / AG / EG1 / EG2 / Bass / Drum / Loop 不能刪除）'); return; }
+  const names=customIns.map(c=>c.name);
+  const pick=(prompt('要刪除哪一個自定義樂器？\n\n目前有：'+names.join('、')+'\n\n請輸入名稱：')||'').trim();
+  if(!pick)return;
+  if(!names.includes(pick)){ alert('找不到自定義樂器「'+pick+'」\n（預設樂器不能刪除）'); return; }
+  if(!confirm('確定刪除「'+pick+'」？各段落中這個樂器的內容也會一併移除。'))return;
+  customIns=customIns.filter(c=>c.name!==pick);
+  sects.forEach(s=>(s.layers||[]).forEach(l=>{ if(l&&l.ins)delete l.ins[pick]; }));
+  sects.forEach(s=>{ if(Array.isArray(s.arr))s.arr=s.arr.filter(a=>a.ins!==pick); });
+  insFilter.delete(pick); delete ICON[pick]; delete INSCOL[pick];
+  rebuildINS(); autoSave(); renderSB(); renderLegend(); renderAll();
 }
 function renderLegend(){
   const allOn=insFilter.size===INS.length;
@@ -1925,11 +2187,13 @@ function renderLegend(){
     const style=on?`border-color:${c.stroke};color:${c.stroke};background:${c.fill}`:'';
     return `<button class="ic-legitem${on?' on':''}" style="${style}" onclick="toggleIns('${k}')" title="切換 ${k}">${ICON[k]} ${k}</button>`;
   }).join('');
-  html+=`<span class="ic-leghint">點樂器挑要看的部位</span>`;
-  ['ic-legend','mix-legend','mixp-legend','staff-legend'].forEach(id=>{const el=document.getElementById(id); if(el)el.innerHTML=html;});
+  html+=`<button class="ic-legitem ic-legadd" onclick="addCustomIns()" title="新增自定義樂器／聲部">＋</button>`;
+  html+=`<button class="ic-legitem ic-legdel" onclick="delCustomIns()" title="刪除自定義樂器（預設樂器不會被刪除）">－</button>`;
+  html+=`<span class="ic-leghint">點樂器挑要看的部位 · 可拖到段落上設定</span>`;
+  ['seg-legend','ic-legend','mix-legend','mixp-legend','staff-legend'].forEach(id=>{const el=document.getElementById(id); if(el)el.innerHTML=html;});
 }
 
-function renderIcon(){
+function renderIcon(){ if(!document.getElementById('icon-pages'))return;
   const root=document.getElementById('icon-pages');
   const pages=chunk(sects,SEG_PER_PAGE);
   const total=Math.max(1,pages.length);
@@ -3298,6 +3562,19 @@ function moveS(id,dir){
   renderSB();schedRender();
 }
 function addSect(){sects.push({id:nid++,name:'新段落',bars:4,color:'black',layers:[{color:'black',ins:{}}],notes:''});renderSB();schedRender();}
+/* 開新檔案：清空成一份全新乾淨的譜（會先確認） */
+function newChart(){
+  if(!confirm('開新檔案會清空目前所有內容，確定嗎？\n（若還沒存檔，請先按「💾 存檔」或「↓ JSON」備份）'))return;
+  applyProjectData({
+    meta:{title:'',artist:'',time:'4/4',bpm:'',usage:'',mkey:'',fkey:'',fontSize:curFont},
+    sects:[{id:1,name:'Intro',bars:4,color:'black',layers:[{color:'black',ins:{}}],notes:''}],
+    nid:2
+  });
+  _secClip=null; _barClip=null;
+  try{ localStorage.removeItem('arranger_project'); }catch(e){}   // 清掉自動存檔，重開不會又載回舊譜
+  renderSB(); renderAll();
+  const t=document.getElementById('s-title'); if(t)t.focus();
+}
 function addL(id){sects.find(s=>s.id===id).layers.push({color:'blue',ins:{}});renderSB();}
 function delL(id,li){sects.find(s=>s.id===id).layers.splice(li,1);renderSB();schedRender();}
 
@@ -3351,7 +3628,7 @@ function updatePrintHead(){
   const html=`<div class="ph-l"><span class="ph-title">${esc(gv('s-title')||'(未命名)')}</span>${artist?`<span class="ph-sub">${esc(artist)}</span>`:''}</div><span class="ph-meta">${metaParts.join('　｜　')}</span>`;
   document.querySelectorAll('.print-head').forEach(el=>el.innerHTML=html);
 }
-let currentView='flow';
+let currentView='seg';
 /* ── 五線譜檢視：同拍多音（和弦）、升降記號、附點、連結線；每段沿用 bar 結構＋配器重點 ── */
 const STAFF_MIN=-6, STAFF_MAX=16;   // 音高索引（index 2=E4 底線、10=F5 頂線；0=C4 中央C）
 const STAFF_S=9, STAFF_YTOP=16;
@@ -3564,9 +3841,7 @@ function clearStaff(){
   sects.forEach(s=>{ KB_KEYS.forEach(k=>delete s[k]); }); autoSave(); renderStaff();
 }
 function renderCurrent(){
-  if(currentView==='flow')renderFlow();
-  else if(currentView==='block')renderBlock();
-  else if(currentView==='icon')renderIcon();
+  if(currentView==='seg')renderSeg();
   else if(currentView==='chord')renderChord();
   else if(currentView==='mix')renderMix();
   else if(currentView==='mixp')renderMixP();
@@ -3609,20 +3884,20 @@ function expCSV(){
 
 async function expPNG(view){
   commitEdits();
-  const panel = view==='block' ? 'block' : 'flow';
+  const panel = view==='seg' ? 'seg' : (view==='block' ? 'block' : 'flow');
   sw(panel, null);
   document.querySelectorAll('.vtab').forEach(t=>{
     t.classList.toggle('a', t.textContent.includes(view==='block'?'方塊':'展開'));
   });
 
-  const btnId = view==='block' ? 'png-block-btn' : 'png-flow-btn';
+  const btnId = view==='seg' ? 'png-seg-btn' : (view==='block' ? 'png-block-btn' : 'png-flow-btn');
   const btn = document.getElementById(btnId);
   const origText = btn.textContent;
   btn.textContent = '產生中…'; btn.disabled = true;
 
   await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
 
-  const targetEl = document.getElementById(view==='block' ? 'block-content' : 'flow-content');
+  const targetEl = document.getElementById(view==='seg' ? 'seg-content' : (view==='block' ? 'block-content' : 'flow-content'));
   const title = gv('s-title')||'arrangement';
 
   // 等網頁字型載入完成，輸出字體才會跟畫面一致（否則 html2canvas 會用系統預設字體）
@@ -3681,13 +3956,13 @@ async function expPNG(view){
 }
 
 /* ── TABS ── */
-const PANELS=['flow','block','icon','chord','mixp','staff','text','export'];
+const PANELS=['seg','chord','mixp','staff','text','export'];
 function sw(name,btn){
   currentView=name;
   document.querySelectorAll('.vtab').forEach(t=>t.classList.remove('a'));
-  PANELS.forEach(p=>document.getElementById('vp-'+p).style.display='none');
+  PANELS.forEach(p=>{const e=document.getElementById('vp-'+p); if(e)e.style.display='none';});
   if(btn)btn.classList.add('a');
-  document.getElementById('vp-'+name).style.display='';
+  {const e=document.getElementById('vp-'+name); if(e)e.style.display='';}
   renderCurrent();   // 切到該檢視才渲染
   i18nMaybe();
 }
