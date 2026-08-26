@@ -43,7 +43,9 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
   display:flex;flex-direction:column;gap:0.45em;padding:0.5em 1.5em;
 }
 .topbar-row{display:flex;align-items:center;gap:0.75em;}
-.topbar-row-1{justify-content:space-between;}
+.topbar-row-1{justify-content:flex-start;}
+/* 標題與「工具列」收合鈕同一組，鈕緊接在 Stratofin.Lai 右邊 */
+.logo-wrap{display:inline-flex;align-items:center;gap:0.6em;min-width:0;flex-wrap:wrap;}
 .topbar-row-2{flex-wrap:wrap;}
 .tb-toggle{background:var(--bg3);border:1px solid var(--border2);color:var(--text2);border-radius:0.4em;padding:0.25em 0.7em;cursor:pointer;font-size:0.82em;font-family:inherit;line-height:1;white-space:nowrap;flex-shrink:0;}
 .tb-toggle:hover{background:var(--bg4);color:var(--text);border-color:var(--accent);}
@@ -64,7 +66,9 @@ body.tb-collapsed .topbar-row-2{display:none;}
 body.locked .cbsub,body.locked .kbsub,body.locked .cbrep,body.locked .cmeter,body.locked .cgoto-badge,body.locked .cjump,body.locked .cbpr-sel,body.locked .ctrl-toggle,body.locked .arr-grip,body.locked .arr-x,body.locked .arr-resize,body.locked .arr-ins,body.locked .arr-txt,body.locked .beat-i{pointer-events:none!important;}
 body.locked .arr-add{display:none!important;}
 body.locked .cbeatcol{cursor:default!important;}
-body.locked .left input,body.locked .left select,body.locked .left textarea,body.locked .left button,body.locked .eordbtn,body.locked .dbtn{pointer-events:none!important;opacity:.55;}
+body.locked .seg-edit input,body.locked .seg-edit select,body.locked .seg-edit textarea,body.locked .seg-edit button,body.locked .eordbtn,body.locked .dbtn{pointer-events:none!important;opacity:.55;}
+body.locked .seg-swipe-add,body.locked .seg-swipe-del,body.locked .seg-x,body.locked .ic-legadd,body.locked .ic-legdel{pointer-events:none!important;opacity:.4;}
+body.locked .seg-box{cursor:default!important;}
 body.locked .pills input,body.locked .pills select{pointer-events:none!important;}
 .lock-btn.btna{background:#d4564a!important;border-color:#d4564a!important;color:#fff!important;}
 .lock-banner{display:none;position:fixed;top:8px;left:50%;transform:translateX(-50%);z-index:3000;background:#d4564a;color:#fff;padding:0.42em 1em;border-radius:999px;font-size:0.92em;font-weight:600;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.28);border:none;align-items:center;gap:0.45em;}
@@ -172,11 +176,9 @@ body:not(.mode-phone) .fbtn{width:1.5em;height:1.5em;}
 #font-size-label{font-family:'Space Mono',monospace;color:var(--text);min-width:22px;text-align:center;}
 
 /* ── PAGE LAYOUT ── */
-.page{display:grid;grid-template-columns:18em minmax(0,1fr);gap:0;min-height:calc(100vh - var(--topbar-h));min-height:calc(100dvh - var(--topbar-h));}
+.page{display:grid;grid-template-columns:minmax(0,1fr);gap:0;min-height:calc(100vh - var(--topbar-h));min-height:calc(100dvh - var(--topbar-h));}
 
 /* ── LEFT PANEL (edit) ── */
-.left{background:var(--bg2);border-right:1px solid var(--border);padding:1em 0.75em;overflow-y:auto;position:sticky;top:var(--topbar-h);height:calc(100vh - var(--topbar-h));height:calc(100dvh - var(--topbar-h));}
-.lhd{font-size:0.68em;font-weight:700;letter-spacing:1.5px;color:var(--text3);padding:0.3em 0.45em 0.6em;text-transform:uppercase;}
 .ecard{border:1px solid var(--border);border-radius:0.6em;overflow:hidden;margin-bottom:0.38em;}
 .etop{display:flex;align-items:center;gap:0.5em;padding:0.54em 0.7em;background:var(--bg3);cursor:pointer;user-select:none;}
 .edot{width:0.6em;height:0.6em;border-radius:50%;border:1.5px solid;flex-shrink:0;}
@@ -210,9 +212,6 @@ body:not(.mode-phone) .fbtn{width:1.5em;height:1.5em;}
 .dupbtn:hover{border-color:var(--accent);color:var(--accent);}
 .ntxt{width:100%;margin-top:0.38em;background:var(--bg3);border:1px solid var(--border);border-radius:0.38em;padding:0.23em 0.46em;font-size:0.77em;color:var(--text);font-family:inherit;outline:none;resize:none;}
 .ntxt:focus{border-color:var(--accent);}
-.asect{width:100%;padding:0.6em;font-size:0.78em;font-weight:600;letter-spacing:0.5px;border:1px dashed var(--border2);border-radius:0.5em;background:none;color:var(--text2);cursor:pointer;margin-top:0.6em;font-family:inherit;transition:all .13s;}
-.asect:hover{border-color:var(--accent);border-style:solid;color:var(--accent);background:rgba(212,168,67,0.07);}
-.asect:hover{border-color:var(--accent);color:var(--accent);}
 .ltag{display:inline-flex;align-items:center;gap:0.23em;font-size:0.69em;padding:0.08em 0.46em;border-radius:99px;border:1px solid;font-weight:500;}
 
 /* ── RIGHT PANEL (view) ── */
@@ -354,7 +353,18 @@ body:not(.mode-phone) .fbtn{width:1.5em;height:1.5em;}
   font-family:inherit;font-size:0.95em;padding:0.25em 0.45em;outline:none;}
 .seg-edit .seg-wide .seg-in{flex:1 1 auto;width:100%;}
 .seg-num{width:4.5em;}
-.seg-editacts{display:flex;gap:0.5em;margin-left:auto;}
+.seg-editacts{display:flex;gap:0.5em;margin-left:auto;flex-wrap:wrap;}
+/* 段落編輯裡的樂器配置格（取代原左側欄） */
+.seg-insedit{border-top:1px dashed var(--border2);padding-top:0.55em;margin-top:0.15em;}
+.seg-lyhd{display:flex;align-items:center;gap:0.5em;margin:0 0 0.4em;}
+.seg-lycap{font-size:0.72em;font-weight:700;letter-spacing:1px;color:var(--text3);}
+.seg-lytag{font-size:0.66em;font-weight:700;padding:0.1em 0.45em;border:1px solid;border-radius:0.3em;}
+.seg-igrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(9.5em,1fr));gap:0.35em 0.5em;}
+.seg-iitem{display:flex;align-items:center;gap:0.35em;min-width:0;}
+.seg-ilbl{font-size:0.7em;color:var(--text3);white-space:nowrap;flex:0 0 4.6em;overflow:hidden;text-overflow:ellipsis;}
+.seg-iinp{flex:1 1 auto;min-width:0;width:100%;}
+.seg-lyblk{border:1px solid var(--border2);border-radius:0.45em;padding:0.5em 0.6em;margin-top:0.5em;background:var(--bg3);}
+@media (max-width:640px){ .seg-igrid{grid-template-columns:repeat(auto-fill,minmax(8em,1fr));} .seg-ilbl{flex-basis:4em;} }
 .seg-del{border-color:#d4564a;color:#d4564a;}
 .seg-del:hover{background:rgba(212,86,74,.15);}
 .seg-tip{color:var(--text3);}
@@ -614,7 +624,15 @@ body.mode-phone .mixpage-stack.mixp{--barw:8.5em;}
 .arr-resize{position:absolute;right:0;top:0;bottom:0;width:8px;cursor:ew-resize;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.12));touch-action:none;}
 .arr-add{display:flex;align-items:center;gap:0.6em;padding:0.15em 0.7em 0.45em;}
 .arr-tip{font-size:0.7em;color:var(--text3);}
-.view-print{display:flex;justify-content:flex-end;gap:0.5em;margin-bottom:0.7em;flex-wrap:wrap;}   /* 窄螢幕換行，不再把按鈕擠出畫面外 */
+.view-print{display:flex;align-items:center;justify-content:flex-end;gap:0.5em 0.45em;margin-bottom:0.7em;flex-wrap:wrap;}   /* 窄螢幕換行，不再把按鈕擠出畫面外 */
+/* 中間工具列格式對齊：收合鈕自成一組靠左，其餘輸出功能靠右，所有元件同高、垂直置中 */
+.view-print .tbcollapse-btn{margin-right:auto;}
+.view-print>*{flex:0 0 auto;}
+.view-print .btn,.view-print .ic-sel{height:1.85rem;box-sizing:border-box;font-size:0.85rem;border-radius:0.45em;}
+.view-print .btn{display:inline-flex;align-items:center;justify-content:center;padding:0 0.85em;line-height:1;}
+.view-print .ic-sel{padding:0 0.5em;line-height:1;}
+.view-print .ic-hint{display:inline-flex!important;align-items:center;gap:0.35em;height:1.85rem;font-size:0.8rem;white-space:nowrap;}
+@media (max-width:900px){ .view-print{justify-content:flex-start;} .view-print .tbcollapse-btn{margin-right:0;} }
 /* OCR 辨識匯入視窗 */
 .ocr-modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:200;display:none;align-items:center;justify-content:center;padding:1em;}
 .ocr-box{background:var(--bg2);border:1px solid var(--border2);border-radius:0.8em;width:min(560px,95vw);max-height:90vh;overflow:auto;}
@@ -665,7 +683,6 @@ body.mode-tablet .tbar-r,body.mode-phone .tbar-r{width:100%;flex-wrap:wrap;}
 body.mode-tablet .tbar-r .btn,body.mode-phone .tbar-r .btn{font-size:0.8em;padding:0.3em 0.55em;}
 /* 平板：編輯區移到上方、檢視全寬、圖示譜3欄 */
 body.mode-tablet .page{grid-template-columns:1fr;}
-body.mode-tablet .left{position:static;height:auto;max-height:55vh;border-right:none;border-bottom:1px solid var(--border);}
 body.mode-tablet .icpage-grid{grid-template-columns:repeat(3,minmax(0,1fr));}
 /* 手機：隱藏編輯區、圖示譜2欄 */
 body.mode-phone .page{grid-template-columns:minmax(0,1fr);}
@@ -674,7 +691,6 @@ body.mode-phone .ctrl-toggle{font-size:0.55em;padding:0.06em 0.32em;}
 body.mode-phone .cbpr-sel{font-size:0.55em;}
 body.mode-phone .cmeta{font-size:0.68em;flex:0 0 auto;margin-left:auto;}
 body.mode-phone .view-print .btn{font-size:0.78em;padding:0.3em 0.5em;}
-body.mode-phone .left{display:none;}
 body.mode-phone .icpage-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
 /* 手機版圖示方塊：圖示縮小放上面、彈法文字整行放下面（避免文字被擠成直排） */
 body.mode-phone .icchip-grid{grid-template-columns:1fr;}
@@ -693,8 +709,6 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   .topbar-row-1{flex-wrap:wrap;}
   .pills{width:100%;}
   .page{grid-template-columns:1fr;min-height:auto;}
-  .left{position:static;height:auto;max-height:60vh;border-right:none;border-bottom:1px solid var(--border);}
-  .left.left-hidden{display:none;}
   .right{padding:1em;}
   .seg-badge{width:7em;}
   .seg-circle{width:5em;height:5em;}
@@ -764,7 +778,6 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   .topbar,.vtabs,.icon-toolbar,.summary,.chord-hint,.view-print,.ic-legend,.cbpr-sel,.cbsub,.kbsub,.ctrl-toggle,.lock-banner{display:none!important;}
   body[class*="print-"] .cbrep:not(.on){display:none!important;}
   body[class*="print-"] .cbrep.on{color:#1a3a5a!important;background:#cfe0f3!important;}
-  .left{display:none!important;}
   .page{display:block;}
   .right{padding:0;overflow:visible;}
   /* 只顯示正在列印的檢視 */
@@ -939,8 +952,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
 <!-- TOP BAR -->
 <header class="topbar">
   <div class="topbar-row topbar-row-1">
-    <div class="logo">ARRANGER<svg class="logo-note" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill="#fcc918" d="M484.08,351.66l-2.72,91.85-4.27,113.6-4.07,102.47-3.4,101.02c-.5,14.85-4.33,27.94-9.89,41.41-9.82,23.79-24.22,43.49-42.63,61.44-55.06,53.69-132.45,78.95-208.94,72.97-39.95-3.12-83.19-21.01-102.56-56.8-6.87-12.7-11.47-27.34-11.21-42.1,1.58-86.61,97.11-155.36,175.19-176.89,42.63-11.81,86.46-14.34,131.3-3l-6.94-203.62-2.69-81.19-93.25,24.1-89.32,23.96-6.23-131.06,92.51-22.61,92.68-21.56-5.37-131.98,114.09-26.96-7.32,137.33,83.67-17.92,85.16-17.91,158.07-26.69,64.44-8.19-3.36,61.97-7.87,162.66-10.78,250.23-4.09,58.72c-1.45,20.74-11.09,39.09-22.94,56.02-18.02,25.76-42.01,45.27-69.45,60.38-29.44,16.21-60.47,25.44-93.91,28.45-21.89,1.97-42.88,2.15-64.35-3.02-43.98-10.6-77.53-44.33-74.2-91.23,3.95-55.6,51.63-99.18,98.76-124.12,44.22-23.4,99.44-33.68,148.15-22.61l.1-48.93-.06-211.78.25-38.16-103.7,19.77-71.93,14.75-116.86,25.25Z"/></svg> <span class="byline">by Alex.Syu &amp; Stratofin.Lai</span></div>
-    <button class="tb-toggle" id="tb-toggle" onclick="toggleTopbar()" title="收合 / 展開工具列">▲ 工具列</button>
+    <div class="logo-wrap"><div class="logo">ARRANGER<svg class="logo-note" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill="#fcc918" d="M484.08,351.66l-2.72,91.85-4.27,113.6-4.07,102.47-3.4,101.02c-.5,14.85-4.33,27.94-9.89,41.41-9.82,23.79-24.22,43.49-42.63,61.44-55.06,53.69-132.45,78.95-208.94,72.97-39.95-3.12-83.19-21.01-102.56-56.8-6.87-12.7-11.47-27.34-11.21-42.1,1.58-86.61,97.11-155.36,175.19-176.89,42.63-11.81,86.46-14.34,131.3-3l-6.94-203.62-2.69-81.19-93.25,24.1-89.32,23.96-6.23-131.06,92.51-22.61,92.68-21.56-5.37-131.98,114.09-26.96-7.32,137.33,83.67-17.92,85.16-17.91,158.07-26.69,64.44-8.19-3.36,61.97-7.87,162.66-10.78,250.23-4.09,58.72c-1.45,20.74-11.09,39.09-22.94,56.02-18.02,25.76-42.01,45.27-69.45,60.38-29.44,16.21-60.47,25.44-93.91,28.45-21.89,1.97-42.88,2.15-64.35-3.02-43.98-10.6-77.53-44.33-74.2-91.23,3.95-55.6,51.63-99.18,98.76-124.12,44.22-23.4,99.44-33.68,148.15-22.61l.1-48.93-.06-211.78.25-38.16-103.7,19.77-71.93,14.75-116.86,25.25Z"/></svg> <span class="byline">by Alex.Syu &amp; Stratofin.Lai</span></div><button class="tb-toggle" id="tb-toggle" onclick="toggleTopbar()" title="收合 / 展開工具列">▲ 工具列</button></div>
   </div>
   <div class="topbar-row topbar-row-2">
     <span class="seg" title="切換版面：電腦 / 平板 / 手機">
@@ -985,11 +997,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
 
 <div class="page">
   <!-- LEFT: editor -->
-  <aside class="left" id="left-panel">
-    <div class="lhd">段落編輯</div>
-    <div id="slist"></div>
-    <button class="asect" onclick="addSect()">＋ 新增段落</button>
-  </aside>
+  <!-- 舊的左側「段落編輯」欄已移除，段落編輯全部移到「段落流程圖」分頁 -->
 
   <!-- RIGHT: views -->
   <section class="right">
@@ -1907,6 +1915,26 @@ function renderFlow(){ if(!document.getElementById('flow-content'))return;
 let _segDisp='ins';   // ins=樂器配置 / chord=和弦摘要 / none=只看段落
 let _segOpen=null;    // 目前展開編輯的段落 id
 function setSegDisp(v){ _segDisp=v; renderSeg(); }
+/* 段落展開編輯裡的「樂器配置 ＋ 內層」（取代原本左側段落編輯欄的功能） */
+function segLayersHtml(s){
+  const grid=(li,ins)=>`<div class="seg-igrid">${INS.map(k=>`<div class="seg-iitem"><span class="seg-ilbl">${ICON[k]||''} ${k}</span><input class="seg-in seg-iinp" value="${esc((ins&&ins[k])||'')}" placeholder="—" onchange="setI(${s.id},${li},'${k}',this.value)"></div>`).join('')}</div>`;
+  const inner=(s.layers||[]).slice(1).map((l,li)=>{
+    const lc=COL[l.color]||COL.black;
+    return `<div class="seg-lyblk">
+      <div class="seg-lyhd">
+        <span class="seg-lytag" style="color:${lc.text};border-color:${lc.stroke};background:${lc.fill}">${lc.label}</span>
+        <select class="seg-in" onchange="setLC(${s.id},${li+1},this.value)">${Object.keys(COL).map(k=>`<option value="${k}"${l.color===k?' selected':''}>${COL[k].label}</option>`).join('')}</select>
+        <button class="stbtn seg-del" title="刪除這個內層" onclick="delL(${s.id},${li+1})">刪內層</button>
+      </div>
+      ${grid(li+1,l.ins)}
+    </div>`;
+  }).join('');
+  return `<div class="seg-wide seg-insedit">
+    <div class="seg-lyhd"><span class="seg-lycap">樂器配置（基底）</span><button class="stbtn" title="新增一個內層（同段不同顏色的疊加配器）" onclick="addL(${s.id});renderSeg()">＋ 內層</button></div>
+    ${grid(0,(s.layers&&s.layers[0])?s.layers[0].ins:{})}
+    ${inner}
+  </div>`;
+}
 function toggleSegEdit(id){ _segOpen=(_segOpen===id)?null:id; renderSeg(); }
 function renderSeg(){
   const root=document.getElementById('seg-content'); if(!root)return;
@@ -1937,8 +1965,10 @@ function renderSeg(){
         <label>小節 <input class="seg-in seg-num" type="number" min="1" value="${bars}" onchange="setBars(${s.id},this.value);renderSeg()"></label>
         <label>顏色 <select class="seg-in" onchange="setC(${s.id},this.value);renderSeg()">${Object.keys(COL).map(k=>`<option value="${k}"${s.color===k?' selected':''}>${COL[k].label}</option>`).join('')}</select></label>
         <label class="seg-wide">備註 <input class="seg-in" value="${esc(s.notes||'')}" oninput="setNotes(${s.id},this.value)"></label>
+        ${segLayersHtml(s)}
         <div class="seg-editacts">
           <button class="stbtn" onclick="addSectAfter(${s.id})">＋ 在此後新增</button>
+          <button class="stbtn" onclick="dupS(${s.id});renderSeg()" title="複製這個段落（含和弦與樂器配置）">⎘ 複製此段</button>
           <button class="stbtn seg-del" onclick="delSect(${s.id})">🗑 移除此段</button>
         </div>
       </div>`:'';
@@ -3490,7 +3520,10 @@ function renderCharts(){ renderChord(); renderMix(); renderMixP(); if(currentVie
 
 /* ── RENDER SIDEBAR ── */
 function renderSB(){
-  document.getElementById('slist').innerHTML=sects.map((s,idx)=>{
+  const _sl=document.getElementById('slist');
+  // 左側段落編輯欄已移除 → 改由「段落流程圖」承接（保留此函式，舊呼叫點不需改動）
+  if(!_sl){ if(currentView==='seg')renderSeg(); return; }
+  _sl.innerHTML=sects.map((s,idx)=>{
     const col=COL[s.color];
     const ihtml=INS.map(k=>`<div class="iitem"><div class="ilbl">${k}</div><input class="iinp" value="${esc(s.layers[0]?.ins[k]||'')}" placeholder="—" onchange="setI(${s.id},0,'${k}',this.value)"></div>`).join('');
     const lhtml=s.layers.slice(1).map((l,li)=>{
@@ -3531,8 +3564,8 @@ function renderSB(){
   }).join('');
 }
 
-function togE(id){const b=document.getElementById('ebo-'+id),a=document.getElementById('ea-'+id),o=b.classList.toggle('o');a.classList.toggle('o',o);}
-function setSN(id,v){sects.find(s=>s.id===id).name=v;schedRender();}
+function togE(id){const b=document.getElementById('ebo-'+id),a=document.getElementById('ea-'+id);if(!b||!a)return;const o=b.classList.toggle('o');a.classList.toggle('o',o);}
+function setSN(id,v){const s=sects.find(s=>s.id===id);if(!s)return;s.name=v;schedRender();}
 /* 清掉超出目前 Bar 數的殘留小節資料（避免刪掉的格子還寫進 JSON、之後又跑出來） */
 function pruneSectionData(s){
   if(!s)return s;
@@ -3542,11 +3575,11 @@ function pruneSectionData(s){
   });
   return s;
 }
-function setBars(id,v){const s=sects.find(s=>s.id===id);s.bars=Math.max(1,parseInt(v)||1);pruneSectionData(s);document.getElementById('eb-'+id).textContent=s.bars+'B';schedRender();}
-function setC(id,v){sects.find(s=>s.id===id).color=v;renderSB();schedRender();}
+function setBars(id,v){const s=sects.find(s=>s.id===id);if(!s)return;s.bars=Math.max(1,parseInt(v)||1);pruneSectionData(s);const _eb=document.getElementById('eb-'+id);if(_eb)_eb.textContent=s.bars+'B';schedRender();}
+function setC(id,v){const s=sects.find(s=>s.id===id);if(!s)return;s.color=v;renderSB();schedRender();}
 function setI(id,li,k,v){const s=sects.find(s=>s.id===id);if(!s.layers[li])s.layers[li]={color:'black',ins:{}};s.layers[li].ins[k]=v;schedRender();}
 function setLC(id,li,v){sects.find(s=>s.id===id).layers[li].color=v;renderSB();schedRender();}
-function setN(id,v){sects.find(s=>s.id===id).notes=v;schedRender();}
+function setN(id,v){const s=sects.find(s=>s.id===id);if(!s)return;s.notes=v;schedRender();}
 function delS(id){if(!confirm('確定刪除這個段落？'))return;sects=sects.filter(s=>s.id!==id);renderSB();schedRender();}
 function dupS(id){
   const i=sects.findIndex(s=>s.id===id);if(i<0)return;
