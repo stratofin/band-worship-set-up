@@ -663,15 +663,13 @@ body.mode-phone .mixpage-stack.mixp{--barw:8.5em;}
 .arr-resize{position:absolute;right:0;top:0;bottom:0;width:8px;cursor:ew-resize;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.12));touch-action:none;}
 .arr-add{display:flex;align-items:center;gap:0.6em;padding:0.15em 0.7em 0.45em;}
 .arr-tip{font-size:0.7em;color:var(--text3);}
-.view-print{display:flex;align-items:center;justify-content:flex-end;gap:0.5em 0.45em;margin-bottom:0.7em;flex-wrap:wrap;}   /* 窄螢幕換行，不再把按鈕擠出畫面外 */
-/* 中間工具列格式對齊：收合鈕自成一組靠左，其餘輸出功能靠右，所有元件同高、垂直置中 */
-.view-print .tbcollapse-btn{margin-right:auto;}
+.view-print{display:flex;align-items:center;justify-content:flex-start;gap:0.5em 0.45em;margin-bottom:0.7em;flex-wrap:wrap;}   /* 靠左連成一列，窄螢幕自動換行 */
+/* 中間工具列：所有按鈕緊接在「▾ 工具列」右邊，同高、垂直置中 */
 .view-print>*{flex:0 0 auto;}
 .view-print .btn,.view-print .ic-sel{height:1.85rem;box-sizing:border-box;font-size:0.85rem;border-radius:0.45em;}
 .view-print .btn{display:inline-flex;align-items:center;justify-content:center;padding:0 0.85em;line-height:1;}
 .view-print .ic-sel{padding:0 0.5em;line-height:1;}
 .view-print .ic-hint{display:inline-flex!important;align-items:center;gap:0.35em;height:1.85rem;font-size:0.8rem;white-space:nowrap;}
-@media (max-width:900px){ .view-print{justify-content:flex-start;} .view-print .tbcollapse-btn{margin-right:0;} }
 /* OCR 辨識匯入視窗 */
 .ocr-modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:200;display:none;align-items:center;justify-content:center;padding:1em;}
 .ocr-box{background:var(--bg2);border:1px solid var(--border2);border-radius:0.8em;width:min(560px,95vw);max-height:90vh;overflow:auto;}
