@@ -112,6 +112,7 @@ body.print-maxi .cbar2.kbbar{padding:0.05em 0.04em!important;}
 /* 經典A4 字級提示（只在螢幕顯示） */
 .printfs-tip{position:fixed;left:50%;bottom:16px;transform:translateX(-50%) translateY(8px);z-index:3400;background:var(--bg2);border:1px solid var(--accent);color:var(--text);border-radius:0.6em;padding:0.5em 0.9em;font-size:0.85em;box-shadow:0 4px 16px rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;max-width:92vw;text-align:center;}
 .printfs-tip.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.printfs-tip.warn{border-color:#d4a33a;max-width:min(92vw,42em);line-height:1.45;text-align:center;}
 @media print{ .printfs-tip{display:none!important;} }
 .cbar2.barsel{outline:2px solid var(--accent);outline-offset:-2px;background:rgba(212,168,67,0.14);border-radius:4px;}
 /* 已複製的來源區塊：持續閃亮的虛線邊框（類似文書軟體的複製選取） */
@@ -357,6 +358,18 @@ body:not(.mode-phone) .fbtn{width:1.5em;height:1.5em;}
 .seg-edit .seg-wide .seg-in{flex:1 1 auto;width:100%;}
 .seg-num{width:4.5em;}
 .seg-editacts{display:flex;gap:0.5em;margin-left:auto;flex-wrap:wrap;}
+/* 段落序號右邊的歌名 */
+.seg-song{font-size:0.78em;font-weight:700;color:var(--accent);max-width:14em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:0 1 auto;}
+/* 聚會模式：一首一頁、可左右滑 */
+.seg-pager{display:flex;align-items:center;justify-content:center;gap:0.6em;margin:-0.3em 0 0.8em;}
+.seg-pager .ic-pageind{font-size:0.85em;color:var(--text2);min-width:9em;text-align:center;}
+.seg-flow.seg-pages{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;align-items:flex-start;scrollbar-width:thin;overscroll-behavior-x:contain;touch-action:pan-x pan-y;}
+.seg-flow.seg-pages::-webkit-scrollbar{height:5px;}
+.seg-page{flex:0 0 100%;min-width:100%;scroll-snap-align:start;padding-right:0.1em;}
+.seg-songhd{font-size:0.95em;font-weight:700;color:var(--accent);padding:0.2em 0 0.7em;letter-spacing:0.5px;}
+@media print{ .seg-pager{display:none!important;}
+  .seg-flow.seg-pages{display:block!important;overflow:visible!important;}
+  .seg-page{min-width:0!important;} }
 /* 段落編輯裡的樂器配置格（取代原左側欄） */
 .seg-insedit{border-top:1px dashed var(--border2);padding-top:0.55em;margin-top:0.15em;}
 .seg-lyhd{display:flex;align-items:center;gap:0.5em;margin:0 0 0.4em;}
@@ -938,6 +951,18 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   body.print-maxi .bt-note{font-size:1.3em!important;}
   body.print-maxi .bt-note.bt-long{font-size:0.95em!important;}
   body.print-maxi .bt-note.bt-xlong{font-size:0.72em!important;}
+  /* 自動縮到小字級時：連留白一起收緊，讓一頁真的塞得下 */
+  body.print-tight .ccard{margin-bottom:0.28em!important;}
+  body.print-tight .ccard-head{padding:0.02em 0.35em!important;line-height:1.12!important;}
+  body.print-tight .cbar-grid{row-gap:0.2em!important;padding:0.03em!important;}
+  body.print-tight .cbar2{padding:0.06em 0.05em!important;}
+  body.print-tight .ccard-note{padding:0.05em 0.35em!important;line-height:1.15!important;}
+  body.print-tight .print-head{margin-bottom:0.3em!important;}
+  body.print-xtight .ccard{margin-bottom:0.16em!important;}
+  body.print-xtight .ccard-head{padding:0!important;line-height:1.06!important;}
+  body.print-xtight .cbar-grid{row-gap:0.1em!important;padding:0!important;}
+  body.print-xtight .cbar2{padding:0.02em 0.03em!important;}
+  body.print-xtight .cbnum{font-size:0.62em!important;}
   /* ── 依小節密度再壓一階：格子越多，和弦字越小，確保每格都容得下、不互相重疊 ── */
   body[class*="print-"] .cbeatcols.dn-b .bt-note{font-size:1.02em!important;}
   body[class*="print-"] .cbeatcols.dn-b .bt-note.bt-long{font-size:0.82em!important;}
@@ -1051,6 +1076,11 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
         <span class="ic-hint seg-tip">點段落展開編輯 · 右滑＝新增 · 左滑＝刪除 · 樂器鈕可拖到段落上</span>
       </div>
       <div class="ic-legend" id="seg-legend"></div>
+      <div class="seg-pager" id="seg-pager" style="display:none">
+        <button class="ic-navbtn" id="seg-prev" onclick="segGo(-1)" title="上一首">‹</button>
+        <span class="ic-pageind" id="seg-pageind">1 / 1</span>
+        <button class="ic-navbtn" id="seg-next" onclick="segGo(1)" title="下一首">›</button>
+      </div>
       <div class="seg-flow" id="seg-content"></div>
     </div>
 
@@ -1543,6 +1573,7 @@ const I18N={
  "本小節重複次數（點擊循環 ·/×2/×4/×8）":"Repeat count for this bar (tap to cycle ·/×2/×4/×8)",
  "本小節拍號":"Bar meter",
  "(未命名)":"(Untitled)",
+ "上一首":"Previous song","下一首":"Next song",
  "📂 讀檔":"📂 Open","📂 讀取譜":"📂 Load Chart","請選擇讀取方式：":"Choose how to load:",
  "💾 從瀏覽器本機讀取":"💾 Load from this browser","載入這台裝置上次存的譜":"Loads the chart last saved on this device",
  "📁 從 .json 檔載入":"📁 Load from a .json file","選一個譜檔或 JSON 備份載入":"Pick a chart file or JSON backup",
@@ -1868,6 +1899,7 @@ const I18N_JA={
  "本小節重複次數（點擊循環 ·/×2/×4/×8）":"この小節のリピート回数（タップで ·/×2/×4/×8 と切替）",
  "本小節拍號":"この小節の拍子",
  "(未命名)":"(無題)",
+ "上一首":"前の曲","下一首":"次の曲",
  "📂 讀檔":"📂 開く","📂 讀取譜":"📂 楽譜を読み込む","請選擇讀取方式：":"読み込み方法を選んでください：",
  "💾 從瀏覽器本機讀取":"💾 このブラウザから読み込む","載入這台裝置上次存的譜":"この端末に最後に保存した楽譜を読み込みます",
  "📁 從 .json 檔載入":"📁 .json ファイルから読み込む","選一個譜檔或 JSON 備份載入":"楽譜ファイルかJSONバックアップを選んでください",
@@ -2459,13 +2491,47 @@ function segLayersHtml(s){
   </div>`;
 }
 function toggleSegEdit(id){ _segOpen=(_segOpen===id)?null:id; renderSeg(); }
+/* 聚會模式：把段落依歌曲分組（一首一頁，可左右滑） */
+function segSongGroups(){
+  const gs=[]; let cur=null;
+  sects.forEach((s,i)=>{
+    const t=s._song||'';
+    if(!cur||cur.song!==t){ cur={song:t, items:[]}; gs.push(cur); }
+    cur.items.push({s,i});
+  });
+  return gs;
+}
+function segIsSetlist(){ return Array.isArray(sects)&&sects.some(x=>x&&x._song); }
+let segPage=0;
+function segPageCount(){ return segIsSetlist()?Math.max(1,segSongGroups().length):1; }
+function segUpdateInd(){
+  const total=segPageCount(), pi=document.getElementById('seg-pageind');
+  const bar=document.getElementById('seg-pager'); if(bar)bar.style.display=segIsSetlist()?'':'none';
+  if(!pi)return;
+  const gs=segSongGroups(), g=gs[Math.min(segPage,gs.length-1)];
+  pi.textContent=(g&&g.song? g.song+'　' : '')+`${total?segPage+1:1} / ${total}`;
+  const pv=document.getElementById('seg-prev'), nx=document.getElementById('seg-next');
+  if(pv)pv.disabled=segPage<=0;
+  if(nx)nx.disabled=segPage>=total-1;
+}
+function segGo(d){
+  const total=segPageCount(); segPage=Math.max(0,Math.min(total-1,segPage+d));
+  const root=document.getElementById('seg-content'); if(root)root.scrollLeft=segPage*root.clientWidth;
+  segUpdateInd();
+}
+let _segChartTitle='';
 function renderSeg(){
   const root=document.getElementById('seg-content'); if(!root)return;
   if(_imeOn||editGuard('.seg-edit')){ _imePending=true; return; }   // 正在欄位裡打字（含注音／假名組字），先別重建 DOM
   computeSongStarts();
-  root.innerHTML=sects.map((s,i)=>{
+  const setlist=segIsSetlist();
+  _segChartTitle=setlist?'':((gv('s-title')||'').trim());
+  root.classList.toggle('seg-pages',setlist);
+  const cardHtml=(s,i)=>{
     const col=COL[s.color]||COL.black;
     const bars=Math.max(1,parseInt(s.bars)||1);
+    /* 段落序號右邊的歌名：聚會模式用該段自己的歌，一般模式用上方「曲目」 */
+    const songTitle=(s._song||_segChartTitle||'');
     // 依樂器篩選鈕挑要顯示的樂器（與圖示譜共用同一組篩選）
     const rows=[];
     (s.layers||[]).forEach((l,li)=>INS.forEach(k=>{
@@ -2503,6 +2569,7 @@ function renderSeg(){
         <div class="seg-box" data-sid="${s.id}" style="border-color:${col.stroke};background:linear-gradient(${col.fill},${col.fill}),var(--bg2)" onclick="segBoxClick(event,${s.id})">
           <div class="seg-head" style="color:${col.text}">
             <span class="seg-ord">${i+1}</span>
+            ${songTitle?`<span class="seg-song" title="${esc(songTitle)}">${esc(songTitle)}</span>`:''}
             ${_segDelMode?`<button class="seg-x" title="刪除此段落" onclick="event.stopPropagation();delSect(${s.id})">✕</button>`:''}
             <span class="seg-name">${esc(s.name)}</span>
             <span class="seg-bars">${bars} Bar</span>
@@ -2518,7 +2585,19 @@ function renderSeg(){
       ${edit}
       ${i<sects.length-1?'<div class="seg-conn"></div>':''}
     </div>`;
-  }).join('') || `<div class="seg-add seg-add-first"><button class="seg-addbtn" title="新增第一個段落" onclick="addSect()">＋</button><span class="seg-addhint">新增段落</span></div>`;
+  };
+  let html;
+  if(setlist){
+    const gs=segSongGroups();
+    if(segPage>=gs.length)segPage=Math.max(0,gs.length-1);
+    html=gs.map(g=>`<div class="seg-page"><div class="seg-songhd">🎵 ${esc(g.song||'')}</div>`
+      +g.items.map(({s,i})=>cardHtml(s,i)).join('')+`</div>`).join('');
+  }else{
+    html=sects.map((s,i)=>cardHtml(s,i)).join('');
+  }
+  root.innerHTML=html || `<div class="seg-add seg-add-first"><button class="seg-addbtn" title="新增第一個段落" onclick="addSect()">＋</button><span class="seg-addhint">新增段落</span></div>`;
+  if(setlist)root.scrollLeft=segPage*root.clientWidth;
+  segUpdateInd();
   renderLegend();
 }
 /* 點段落方塊：剛滑動過就不觸發展開編輯 */
@@ -2892,6 +2971,7 @@ function bindSwipe(){
   bindCarousel('icon-pages',pageCount,(p)=>{iconPage=p;},icUpdateInd,()=>iconPage);
   bindCarousel('mix-content',mixPageCount,(p)=>{mixPage=p;},mixUpdateInd,()=>mixPage);
   bindCarousel('mixp-content',mixpPageCount,(p)=>{mixpPage=p;},mixpUpdateInd,()=>mixpPage);
+  bindCarousel('seg-content',segPageCount,(p)=>{segPage=p;},segUpdateInd,()=>segPage);   // 段落流程圖：聚會模式左右滑換歌
 }
 
 /* ── PRINT ICON SHEET (A4, 4 segments / page) ── */
@@ -2908,9 +2988,9 @@ async function printView(name){
   document.body.classList.toggle('print-maxi',maxi);   // 極大化：移除小節外框，內容更大
   if(maxi){
     // 一般列印可跨頁 → 直接放大字級（不必塞一頁），維持各段原本的每排設定
-    const fs=printFsList()[0];   // 依「輸出大小」：標準 26／緊湊 18／最小 14（固定值，確保各平台一致）
-    document.documentElement.style.setProperty('--print-fs',fs+'px');
-    showPrintFsTip(fs,printFsList()[printFsList().length-1],printFsList()[0],1);
+    const r=printFsRange();      // 依「輸出大小」取上限（固定值，確保各平台一致）
+    document.documentElement.style.setProperty('--print-fs',r.max+'px');
+    showPrintFsTip(r.max,r.min,r.max,1,true,view);
   }
   document.body.classList.add(cls);
   window._printCls=cls;
@@ -2980,10 +3060,17 @@ function setPrintSize(v){
   syncPrintSizeSel();
 }
 function syncPrintSizeSel(){ document.querySelectorAll('.psize-sel').forEach(s=>s.value=_printSize); }
+/* 經典A4 自動字級的搜尋範圍（由大到小逐 px 找「還塞得下」的最大字級）。
+   下限是實際印出來仍看得清楚的大小，不會為了塞一頁把字縮到不能讀。 */
+function printFsRange(){
+  return _printSize==='min' ? {max:15, min:7}
+       : _printSize==='cmp' ? {max:19, min:8}
+       : {max:26, min:10};
+}
 function printFsList(){
-  return _printSize==='min' ? [14,13,12,11,10,9]
-       : _printSize==='cmp' ? [18,16,15,14,13,12,11,10]
-       : [26,24,22,20,18,16,15,14,13,12];
+  const r=printFsRange(), out=[];
+  for(let f=r.max;f>=r.min;f--)out.push(f);
+  return out;
 }
 /* 輸出期間一律以「電腦版」規格渲染：暫時移除手機/平板模式 class，列印後還原 */
 let _savedModeCls=null;
@@ -2996,14 +3083,21 @@ function restoreModeAfterPrint(){
   _savedModeCls.forEach(c=>b.classList.add(c)); _savedModeCls=null;
 }
 /* 經典A4：告知這次輸出用的字級與合理範圍（螢幕上短暫顯示，不影響列印內容） */
-function showPrintFsTip(fs,min,max,scale){
+function showPrintFsTip(fs,min,max,scale,fitOnePage,view){
   let el=document.getElementById('printfs-tip');
   if(!el){ el=document.createElement('div'); el.id='printfs-tip'; el.className='printfs-tip'; document.body.appendChild(el); }
-  const sc=(scale<0.999)?('　·　再縮至 '+Math.round(scale*100)+'% 以塞進一頁'):'';
-  el.textContent='經典A4 輸出字級：'+fs+' px（自動挑選，合理範圍 '+min+'–'+max+'）'+sc;
+  const base=Lf('經典A4 輸出字級：','Fit-A4 font size: ','A4出力の文字サイズ：')+fs+'px'
+    +Lf('（自動挑選，範圍 ','  (auto, range ','（自動選択・範囲 ')+min+'–'+max
+    +Lf('）',')','）');
+  const okTxt=Lf('　·　已塞進 1 頁','  ·  fits on 1 page','　·　1ページに収まりました');
+  const noTxt=Lf('　·　字級已到最小仍需分頁，可用「📄 經典A4」的段落勾選只輸出需要的段落，或把「輸出大小」改成緊湊／最小',
+                 '  ·  still needs more than one page at the smallest size — pick fewer sections in the Fit-A4 dialog, or set Output size to Compact / Smallest',
+                 '　·　最小サイズでも1ページに収まりません。「📄 A4に収める」でセクションを絞るか、「出力サイズ」をコンパクト／最小にしてください');
+  el.textContent=base+(fitOnePage?okTxt:noTxt);
+  el.classList.toggle('warn',!fitOnePage);
   el.classList.add('show');
   clearTimeout(showPrintFsTip._t);
-  showPrintFsTip._t=setTimeout(()=>el.classList.remove('show'),4200);
+  showPrintFsTip._t=setTimeout(()=>el.classList.remove('show'),fitOnePage?4200:9000);
 }
 async function printFit(view){
   commitEdits();
@@ -3032,45 +3126,51 @@ async function printFit(view){
   renderView();
   if(document.fonts&&document.fonts.ready){ try{ await document.fonts.ready; }catch(e){} }
   let scale=1;
-  const FS_LIST=printFsList();                       // 由大到小：挑塞得下的最大字級（依「輸出大小」設定）
-  const FS_MAX=FS_LIST[0], FS_MIN=FS_LIST[FS_LIST.length-1];
-  let usedFS=Math.max(curFont,FS_MIN);
+  const FS_R=printFsRange();
+  const FS_MAX=FS_R.max, FS_MIN=FS_R.min;
+  let usedFS=FS_MIN, fitOnePage=false;
+  /* 二分搜尋：高度隨字級遞增，找出「還塞得進一頁」的最大字級（精度 1px） */
+  const bestFS=(fits)=>{
+    let lo=FS_MIN, hi=FS_MAX, best=null;
+    if(fits(FS_MAX))return FS_MAX;
+    while(lo<=hi){ const mid=(lo+hi)>>1;
+      if(fits(mid)){ best=mid; lo=mid+1; } else { hi=mid-1; }
+    }
+    return best;
+  };
   try{
     if(view==='chord' && !svc){
-      // 單首歌：先求「最大字級」，同一字級下再由每排小節數少(字大)到多，挑第一個塞得下一頁的組合
-      // 極大化：維持各段原本的「每排」設定（不重排），只把字級放到最大
-      const cands=_printMaxi?[0]:[0,2,3,4,5,6,7,8];   // 0 = 各段原設定
-      let chosen, chosenFS, fb={bpr:null,fs:FS_MIN,h:Infinity};
-      outer:
-      for(const fs of FS_LIST){
-        for(const bpr of cands){
-          const bv=bpr||null;
-          window._printBPR=bv; renderView();
-          const h=measureH(fs);
-          if(h<fb.h) fb={bpr:bv,fs,h};
-          if(h<=PH){ chosen=bv; chosenFS=fs; break outer; }
-        }
+      // 單首歌：極大化維持各段原本的「每排」設定（不重排），只把字級壓到剛好塞進一頁
+      const cands=_printMaxi?[null]:[null,2,3,4,5,6,7,8];   // null = 各段原設定
+      let chosen=null, chosenFS=null;
+      for(const bv of cands){
+        window._printBPR=bv; renderView();
+        const f=bestFS(fs=>measureH(fs)<=PH);
+        if(f!=null && (chosenFS==null || f>chosenFS)){ chosen=bv; chosenFS=f; }
+        if(chosenFS===FS_MAX)break;                       // 已經是最大字級，不用再試
       }
-      if(chosen!==undefined){ window._printBPR=chosen; usedFS=chosenFS; scale=1; }
-      else { window._printBPR=fb.bpr; usedFS=fb.fs; scale=1; }   // 都塞不下→不縮放，直接分頁（縮放會讓 iOS Safari 把小節切開）
+      if(chosenFS!=null){ window._printBPR=chosen; usedFS=chosenFS; fitOnePage=true; }
+      else { window._printBPR=_printMaxi?null:null; usedFS=FS_MIN; }   // 最小字級仍塞不下→分頁（不縮放，避免 iOS Safari 切開小節）
       renderView();
     } else {
-      // 聚會/混合/KB：同樣挑塞得下的最大字級，塞不下再縮
-      let picked=null;
-      for(const fs of FS_LIST){ if(measureH(fs)<=PH){ picked=fs; break; } }
-      if(picked!=null){ usedFS=picked; scale=1; }
-      else { usedFS=FS_MIN; scale=1; }   // 同上：不縮放，交給分頁
+      // 聚會 / 混合 / KB：同樣二分找塞得下的最大字級
+      const f=bestFS(fs=>measureH(fs)<=PH);
+      if(f!=null){ usedFS=f; fitOnePage=true; }
+      else usedFS=FS_MIN;
     }
   }catch(e){}
   usedFS=Math.max(FS_MIN,Math.min(FS_MAX,usedFS));
   document.documentElement.style.setProperty('--print-fs', usedFS+'px');
-  showPrintFsTip(usedFS,FS_MIN,FS_MAX,scale);
+  /* 字級壓得很小時，段落標題與小節間距也一起收緊，空間才不會白白浪費 */
+  document.body.classList.toggle('print-tight', usedFS<=12);
+  document.body.classList.toggle('print-xtight', usedFS<=9);
+  showPrintFsTip(usedFS,FS_MIN,FS_MAX,scale,fitOnePage,view);
   document.documentElement.style.setProperty('--fit-scale', scale.toFixed(3));
   document.body.classList.add(cls,'print-fit');
   window._printCls=cls;
   setTimeout(()=>window.print(),60);
 }
-window.addEventListener('afterprint',()=>{ restorePrintPick(); restoreModeAfterPrint(); if(window._printCls){ document.body.classList.remove(window._printCls); } document.body.classList.remove('print-fit','print-maxi'); window._printCls=null; const was=window._printMode||window._printRepeat||window._printBPR||window._printSongTitle; window._printMode=false; window._printRepeat=false; window._printBPR=null; window._printSongTitle=''; if(was){ try{renderCharts();}catch(e){} } });
+window.addEventListener('afterprint',()=>{ restorePrintPick(); restoreModeAfterPrint(); document.body.classList.remove('print-tight','print-xtight'); if(window._printCls){ document.body.classList.remove(window._printCls); } document.body.classList.remove('print-fit','print-maxi'); window._printCls=null; const was=window._printMode||window._printRepeat||window._printBPR||window._printSongTitle; window._printMode=false; window._printRepeat=false; window._printBPR=null; window._printSongTitle=''; if(was){ try{renderCharts();}catch(e){} } });
 
 /* ── OCR 圖片/PDF 辨識匯入 ── */
 function openOcr(){ document.getElementById('ocr-modal').style.display='flex'; }
