@@ -229,9 +229,6 @@ body:not(.mode-phone) .fbtn{width:1.5em;height:1.5em;}
 /* meta summary strip */
 .summary{display:flex;gap:1.2em;flex-wrap:wrap;font-size:0.8em;color:var(--text2);margin:-0.6em 0 1.1em;font-family:'Space Mono',monospace;}
 .summary b{color:var(--accent);font-weight:700;}
-.meta-chip{display:inline-block;font-family:'Noto Sans TC',sans-serif;font-size:0.95em;border-radius:99px;padding:0.12em 0.75em;font-weight:600;margin-left:0.35em;}
-.chip-usage,.chip-m{background:rgba(91,155,213,0.18);color:#8fc0ef;border:1px solid rgba(91,155,213,0.4);}
-.chip-f{background:rgba(212,86,74,0.16);color:#e89a90;border:1px solid rgba(212,86,74,0.4);}
 
 /* ── FLOW VIEW ── */
 .flow{display:flex;flex-direction:column;gap:0;}
@@ -1573,6 +1570,7 @@ const I18N={
  "本小節重複次數（點擊循環 ·/×2/×4/×8）":"Repeat count for this bar (tap to cycle ·/×2/×4/×8)",
  "本小節拍號":"Bar meter",
  "(未命名)":"(Untitled)",
+ "預估長度":"Est. length","頁數(圖示譜)":"Pages (icon chart)",
  "上一首":"Previous song","下一首":"Next song",
  "📂 讀檔":"📂 Open","📂 讀取譜":"📂 Load Chart","請選擇讀取方式：":"Choose how to load:",
  "💾 從瀏覽器本機讀取":"💾 Load from this browser","載入這台裝置上次存的譜":"Loads the chart last saved on this device",
@@ -1899,6 +1897,7 @@ const I18N_JA={
  "本小節重複次數（點擊循環 ·/×2/×4/×8）":"この小節のリピート回数（タップで ·/×2/×4/×8 と切替）",
  "本小節拍號":"この小節の拍子",
  "(未命名)":"(無題)",
+ "預估長度":"推定の長さ","頁數(圖示譜)":"ページ数（アイコン譜）",
  "上一首":"前の曲","下一首":"次の曲",
  "📂 讀檔":"📂 開く","📂 讀取譜":"📂 楽譜を読み込む","請選擇讀取方式：":"読み込み方法を選んでください：",
  "💾 從瀏覽器本機讀取":"💾 このブラウザから読み込む","載入這台裝置上次存的譜":"この端末に最後に保存した楽譜を読み込みます",
@@ -2409,13 +2408,9 @@ function renderSummary(){
     const sec=Math.round(totalBars*beatsPerBar/bpm*60);
     dur=Math.floor(sec/60)+':'+String(sec%60).padStart(2,'0');
   }
-  const usage=gv('s-usage'),mkey=gv('s-mkey'),fkey=gv('s-fkey');
-  let chips='';
-  if(usage)chips+=`<span class="meta-chip chip-usage">${esc(usage)}</span>`;
-  if(mkey)chips+=`<span class="meta-chip chip-m">${Lf('男','M','男')} ${esc(mkey)}</span>`;
-  if(fkey)chips+=`<span class="meta-chip chip-f">${Lf('女','F','女')} ${esc(fkey)}</span>`;
+  /* 用途／男Key／女Key 的圓角徽章已移除（上方工具列本來就看得到），這裡只留數據 */
   document.getElementById('summary').innerHTML=
-    `段落 <b>${sects.length}</b>　總小節 <b>${totalBars}</b> Bar　預估長度 <b>${dur}</b>　頁數(圖示譜) <b>${pageCount()}</b>${chips}`;
+    `段落 <b>${sects.length}</b>　總小節 <b>${totalBars} Bar</b>　預估長度 <b>${dur}</b>　頁數(圖示譜) <b>${pageCount()}</b>`;
 }
 
 /* ── RENDER FLOW VIEW ── */
