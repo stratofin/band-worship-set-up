@@ -1324,6 +1324,16 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
     <div class="cl-body">
       <p class="cl-ver">開發時間軸：2026-06-17 ～ 2026-08-30（依使用回饋持續優化）</p>
 
+      <h4>範本選單內建兩首 <span class="cl-date">2026-08-30</span></h4>
+      <ul><li>「範本」下拉新增兩個內建範本：個人使用者範本「小星星」、敬拜使用者範本「You are good」</li>
+      <li>範本直接寫在程式裡，離線或本機開啟也能載入；名稱會跟著介面語言切換</li></ul>
+
+      <h4>個人使用者改用「我的歌庫」 <span class="cl-date">2026-08-30</span></h4>
+      <ul><li>個人使用者不再看到雲端歌庫，改成自己的「我的歌庫」：只存在這台裝置，與敬拜使用者／管理者完全分開</li>
+      <li>「＋ 收藏目前這份」把正在編輯的譜存進歌庫；列表可直接載入或刪除，同名會問要不要覆蓋</li>
+      <li>「🎵 演奏模式」改從我的歌庫挑歌（最多 10 首），全程不連雲端</li>
+      <li>範本歌曲更新為「小星星」</li></ul>
+
       <h4>清單擴充到 10 首 ＋ 演奏模式 ＋ 管理者可自訂分類 <span class="cl-date">2026-08-30</span></h4>
       <ul><li>「⛪ 聚會服事」可選的歌曲從 6 首增加到 10 首</li>
       <li>個人使用者新增「🎵 演奏模式」：同樣可從歌庫挑最多 10 首排成一份，往右滑一頁一頁接著彈</li>
@@ -1620,10 +1630,17 @@ function detectLang(){
 }
 let _lang='zh'; try{ const sv=localStorage.getItem('arranger_lang'); _lang=(sv&&LANGS.indexOf(sv)>=0)?sv:detectLang(); }catch(e){ _lang=detectLang(); }
 const I18N={
+ "個人使用者範本：小星星":"Personal template: Twinkle Twinkle Little Star",
+ "敬拜使用者範本：You are good":"Worship template: You are good",
+ "我的歌庫":"My Library",
+ "＋ 收藏目前這份":"＋ Save current to library",
+ "我的歌庫還是空的，按「＋ 收藏目前這份」把現在編輯的譜存進來。":"My Library is empty — use “＋ Save current to library” to add the chart you are editing.",
+ "個人使用者不使用雲端歌庫，歌曲只存在這台裝置上。":"Personal users do not use the cloud library — songs stay on this device.",
+ "🎧 個人使用者 · 我的歌庫":"🎧 Personal user · My Library",
+ "「用途」下拉最後有「＋ 新增分類…／－ 移除分類…」可自訂分類；「🎵 演奏模式」可從我的歌庫挑最多 10 首排成一份。":"The Use dropdown ends with “＋ Add category… / － Remove category…”; “🎵 Practice Set” builds a set of up to 10 songs from My Library.",
  "演奏模式":"Practice Set",
  "清單（最多 10 首，可排序）":" list (up to 10, sortable)",
  "🎵 演奏模式":"🎵 Practice Set",
- "「🎵 演奏模式」可從歌庫挑最多 10 首排成一份，往右滑一頁一頁接著彈。":"“🎵 Practice Set” lets you pick up to 10 songs from the library into one set and swipe through them page by page.",
  "⛪ 敬拜使用者：瀏覽歌譜":"⛪ Worship user: browse",
  "🎧 個人使用者：自訂分類":"🎧 Personal user: custom categories",
  "⛪ 敬拜使用者 · 瀏覽歌譜":"⛪ Worship user · browse",
@@ -1632,7 +1649,6 @@ const I18N={
  "－ 移除分類…":"－ Remove category…",
  "用途分類（可自行新增／移除）":"Category (you can add or remove your own)",
  "用途分類（敬拜使用者固定為短歌／讚美／敬拜）":"Category (fixed for worship users: Short / Praise / Worship)",
- "「用途」欄位已切換成自訂模式：下拉選單最後有「＋ 新增分類…」與「－ 移除分類…」，可以建立你自己的分類。":"The Use field is now in custom mode: the dropdown ends with “＋ Add category…” and “－ Remove category…” so you can build your own list.",
  "▲ 工具列":"▲ Toolbar","▼ 工具列":"▼ Toolbar","🖥 電腦":"🖥 Desktop","▦ 平板":"▦ Tablet","📱 手機":"📱 Phone","📝 更新日誌":"📝 Changelog",
  "曲目":"Title","演唱者":"Artist","拍號":"Time","BPM":"BPM","用途":"Use","男":"M","女":"F","字級":"Font","主題":"Theme","微調Key":"Tune Key",
  "黑":"Dark","白":"Light","粉":"Pink",
@@ -1768,11 +1784,18 @@ const I18N={
 };
 /* ── 日本語（中文 → ja）── */
 const I18N_JA={
+ "個人使用者範本：小星星":"個人ユーザー用テンプレート：きらきら星",
+ "敬拜使用者範本：You are good":"礼拝ユーザー用テンプレート：You are good",
+ "我的歌庫":"マイライブラリ",
+ "＋ 收藏目前這份":"＋ 今の譜を保存",
+ "我的歌庫還是空的，按「＋ 收藏目前這份」把現在編輯的譜存進來。":"マイライブラリは空です。「＋ 今の譜を保存」で編集中の譜を追加してください。",
+ "個人使用者不使用雲端歌庫，歌曲只存在這台裝置上。":"個人ユーザーはクラウドライブラリを使いません。曲はこの端末にだけ保存されます。",
+ "🎧 個人使用者 · 我的歌庫":"🎧 個人ユーザー · マイライブラリ",
+ "「用途」下拉最後有「＋ 新增分類…／－ 移除分類…」可自訂分類；「🎵 演奏模式」可從我的歌庫挑最多 10 首排成一份。":"「用途」のプルダウン最後に「＋ カテゴリ追加…／－ カテゴリ削除…」があります。「🎵 演奏モード」ではマイライブラリから最大10曲を選んで1つにまとめられます。",
  "演奏モード":"演奏モード",
  "演奏模式":"演奏モード",
  "清單（最多 10 首，可排序）":"リスト（最大10曲・並べ替え可）",
  "🎵 演奏模式":"🎵 演奏モード",
- "「🎵 演奏模式」可從歌庫挑最多 10 首排成一份，往右滑一頁一頁接著彈。":"「🎵 演奏モード」ではライブラリから最大10曲を選んで1つにまとめ、右へスワイプして続けて弾けます。",
  "⛪ 敬拜使用者：瀏覽歌譜":"⛪ 礼拝ユーザー：閲覧",
  "🎧 個人使用者：自訂分類":"🎧 個人ユーザー：カテゴリ自由",
  "⛪ 敬拜使用者 · 瀏覽歌譜":"⛪ 礼拝ユーザー · 閲覧",
@@ -1781,7 +1804,6 @@ const I18N_JA={
  "－ 移除分類…":"－ カテゴリ削除…",
  "用途分類（可自行新增／移除）":"用途カテゴリ（自由に追加・削除できます）",
  "用途分類（敬拜使用者固定為短歌／讚美／敬拜）":"用途カテゴリ（礼拝ユーザーは短歌／賛美／礼拝で固定）",
- "「用途」欄位已切換成自訂模式：下拉選單最後有「＋ 新增分類…」與「－ 移除分類…」，可以建立你自己的分類。":"「用途」欄がカスタムモードになりました。プルダウンの最後に「＋ カテゴリ追加…」「－ カテゴリ削除…」があり、自分のカテゴリを作れます。",
  "▲ 工具列":"▲ ツールバー",
  "▼ 工具列":"▼ ツールバー",
  "🖥 電腦":"🖥 PC",
@@ -2108,10 +2130,17 @@ const I18N_JA={
 
 /* ── 한국어（中文 → ko）── */
 const I18N_KO={
+ "個人使用者範本：小星星":"개인 사용자 템플릿: 반짝반짝 작은 별",
+ "敬拜使用者範本：You are good":"예배 사용자 템플릿: You are good",
+ "我的歌庫":"내 라이브러리",
+ "＋ 收藏目前這份":"＋ 현재 악보 저장",
+ "我的歌庫還是空的，按「＋ 收藏目前這份」把現在編輯的譜存進來。":"내 라이브러리가 비어 있습니다. 「＋ 현재 악보 저장」으로 편집 중인 악보를 추가하세요.",
+ "個人使用者不使用雲端歌庫，歌曲只存在這台裝置上。":"개인 사용자는 클라우드 라이브러리를 사용하지 않습니다. 곡은 이 기기에만 저장됩니다.",
+ "🎧 個人使用者 · 我的歌庫":"🎧 개인 사용자 · 내 라이브러리",
+ "「用途」下拉最後有「＋ 新增分類…／－ 移除分類…」可自訂分類；「🎵 演奏模式」可從我的歌庫挑最多 10 首排成一份。":"「용도」 드롭다운 맨 아래에 「＋ 카테고리 추가…／－ 카테고리 삭제…」가 있습니다. 「🎵 연주 모드」에서는 내 라이브러리에서 최대 10곡을 골라 하나로 묶을 수 있습니다.",
  "演奏模式":"연주 모드",
  "清單（最多 10 首，可排序）":" 목록 (최대 10곡, 순서 변경 가능)",
  "🎵 演奏模式":"🎵 연주 모드",
- "「🎵 演奏模式」可從歌庫挑最多 10 首排成一份，往右滑一頁一頁接著彈。":"「🎵 연주 모드」에서는 라이브러리에서 최대 10곡을 골라 하나로 묶고, 오른쪽으로 넘기며 이어서 연주할 수 있습니다.",
  "⛪ 敬拜使用者：瀏覽歌譜":"⛪ 예배 사용자: 열람",
  "🎧 個人使用者：自訂分類":"🎧 개인 사용자: 카테고리 자유",
  "⛪ 敬拜使用者 · 瀏覽歌譜":"⛪ 예배 사용자 · 열람",
@@ -2120,7 +2149,6 @@ const I18N_KO={
  "－ 移除分類…":"－ 카테고리 삭제…",
  "用途分類（可自行新增／移除）":"용도 카테고리 (직접 추가·삭제 가능)",
  "用途分類（敬拜使用者固定為短歌／讚美／敬拜）":"용도 카테고리 (예배 사용자는 짧은 찬양／찬양／경배로 고정)",
- "「用途」欄位已切換成自訂模式：下拉選單最後有「＋ 新增分類…」與「－ 移除分類…」，可以建立你自己的分類。":"「용도」 항목이 사용자 모드로 바뀌었습니다. 드롭다운 맨 아래의 「＋ 카테고리 추가…」와 「－ 카테고리 삭제…」로 나만의 카테고리를 만들 수 있습니다.",
  "▲ 工具列":"▲ 도구 모음",
  "▼ 工具列":"▼ 도구 모음",
  "🖥 電腦":"🖥 PC",
@@ -2506,7 +2534,7 @@ function applyLang(){ const b=document.getElementById('lang-btn');
   if(b){ b.textContent=LANG_BTN[_lang]||'EN'; b.title=LANG_TITLE[_lang]||''; }
   document.documentElement.lang={ja:'ja',ko:'ko',en:'en'}[_lang]||'zh-Hant';
   i18nApply(); }
-function toggleLang(){ _lang=LANGS[(LANGS.indexOf(_lang)+1)%LANGS.length];   /* 中文 → English → 日本語 → 中文 */ try{localStorage.setItem('arranger_lang',_lang);}catch(e){} try{renderSB();renderAll();updatePrintHead();updateKeyStepLabels();}catch(e){} applyLang(); }
+function toggleLang(){ _lang=LANGS[(LANGS.indexOf(_lang)+1)%LANGS.length];   /* 中文 → English → 日本語 → 中文 */ try{localStorage.setItem('arranger_lang',_lang);}catch(e){} try{renderSB();renderAll();updatePrintHead();updateKeyStepLabels();initTemplates();}catch(e){} applyLang(); }
 /* 聚會服事列印分頁：開＝每首歌分頁、關＝連續 */
 let _svcPB=false; try{_svcPB=localStorage.getItem('arranger_svcpb')==='1';}catch(e){}
 function applySvcPB(){ document.body.classList.toggle('svc-pagebreak',_svcPB);
@@ -2583,25 +2611,47 @@ function loadProject(){
     }
   }catch(e){alert('載入失敗：'+e.message);}
 }
+/* ── 內建範本（直接寫在檔案裡，離線也能載入；名稱走 i18n 字典自動翻譯） ── */
+const BUILTIN_TEMPLATES=[
+  {key:"personal", name:"個人使用者範本：小星星", data:{"meta":{"title":"小星星","artist":"","time":"4/4","bpm":"","usage":"範本","mkey":"C","fkey":"","fontSize":18,"customIns":[]},"sects":[{"id":1,"bars":8,"name":"Verse","color":"black","notes":"一閃一閃亮晶晶 滿天都是小星星 放在天上放光明 好像許多小眼睛","chords":[["C",".","G","."],["F7",".","C","."],["F7",".","C","."],["G",".","C","."],["C",".","F7","."],["C",".","G","."],["C",".","F7","."],["C",".","G","."]],"layers":[{"ins":{},"color":"black"}]},{"id":2,"bars":4,"name":"Tag","color":"black","notes":"一閃一閃亮晶晶 滿天都是小星星","chords":[["C",".","G","."],["F7",".","C","."],["F7",".","C","."],["G",".","C","."]],"layers":[{"ins":{},"color":"black"}]}],"nid":3}},
+  {key:"worship",  name:"敬拜使用者範本：You are good", data:{"meta":{"title":"You are good","artist":"Israel & New Breed","time":"4/4","bpm":"131","usage":"讚美","mkey":"E","fkey":"E","fontSize":15},"sects":[{"id":23,"name":"Intro","bars":4,"color":"black","layers":[{"color":"black","ins":{"EG1":"funky style"}},{"color":"blue","ins":{"EG1":"","Bass":"melody (high)","Drum":"fill in"}},{"color":"red","ins":{"Bass":"O","Drum":"O","EG1":"O","Pad":"O","KB":"O","EG2":"O","AG":"O"}}],"notes":"X\n1-4 bar EG only/\n5-8 bar bass + drum fill in/\n9-16 full in","chords":[["1","","",""],["1maj","","",""],["17","","",""],["4/1","","",""]],"barsPerRow":4},{"id":24,"name":"Verse","bars":8,"color":"black","layers":[{"color":"black","ins":{"Vocal":"O","KB":"On beat sync","AG":"On beat sync","Drum":"On beat sync","Bass":"On beat sync","EG2":"On beat sync"}},{"color":"blue","ins":{"EG1":"Lick"}}],"notes":"more energy","chords":[["1","","",""],["1maj","","",""],["17","","",""],["4/1","","",""],["1","","",""],["1maj","","",""],["17","","",""],["4/1","","",""]],"barsPerRow":4},{"id":25,"name":"Pre Chorus","bars":4,"color":"blue","layers":[{"color":"black","ins":{"Vocal":"O","KB":"O","AG":"O","EG2":"O","EG1":"O","Bass":"O","Drum":"O","Pad":"O"}}],"notes":"bar 4 builing","chords":[["4","","",""],["5/4","","",""],["6b/4","","",""],["7b/4","","",""]],"barsPerRow":4},{"id":26,"name":"Chorus","bars":16,"color":"red","layers":[{"color":"black","ins":{"KB":"O","EG2":"O","Drum":"O","Bass":"O","EG1":"O","AG":"O","Vocal":"O","Pad":"O"}}],"notes":"Lock in groove","chords":[["1","","",""],["5","","",""],["7b","","",""],["4","","",""],["1","","",""],["5","","",""],["7b","","",""],["4","","",""],["1","","",""],["5","","",""],["7b","","",""],["4","","",""],["1/3","","",""],["5m","","",""],["6b","","",""],["7b","","",""]],"barsPerRow":4},{"id":27,"name":"Interlude","bars":8,"color":"purple","layers":[{"color":"black","ins":{"Bass":"slap","Drum":"O","EG1":"funky style","KB":"O","AG":"O","EG2":"O","Pad":"O"}}],"notes":"Lock in groove","chords":[["1m","","",""],["1m","","",""],["1m","","",""],["1m","","",""],["1m","","",""],["1m","","",""],["1m","","",""],["1m","","",""]],"barsPerRow":4},{"id":29,"name":"Spirit","bars":8,"color":"red","layers":[{"color":"black","ins":{"Vocal":"O","KB":"O","EG2":"O","AG":"O","Drum":"O","Bass":"O","EG1":"O","Pad":"O"}}],"notes":"Lock in groove","barsPerRow":4,"chords":[["1m","","3b","4"],null,["1m","","7b","4/6"],["4/6","","",""],["1m","","3b","4"],null,["1m","","7b","4/6"],["4/6","","6b","5m"]]},{"id":28,"name":"Bridge","bars":4,"color":"purple","layers":[{"color":"black","ins":{"Vocal":"O","Pad":"O","EG1":"O","Bass":"O","Drum":"O","EG2":"O","AG":"O","KB":"O"}}],"notes":"X4 Lock in groove\nto little verse","chords":[["1m","","3b","4"],null,["1m","","7b","4/6"],["4/6","","6b","5m"]],"barsPerRow":4,"bargoto":[null,null,null,24]},{"id":30,"name":"Tag","bars":2,"color":"purple","layers":[{"color":"black","ins":{"Vocal":"O","Pad":"O","EG1":"O","Bass":"O","Drum":"O","EG2":"O","AG":"O","KB":"O"}}],"notes":"","chords":[["6b","","",""],["7b","","",""]],"barsPerRow":4},{"id":31,"name":"End","bars":1,"color":"black","layers":[{"color":"black","ins":{"Vocal":"O","Pad":"O","EG1":"O","Bass":"O","Drum":"O","EG2":"O","AG":"O","KB":"O"}}],"notes":"","barsPerRow":4,"chords":[["1m","","",""]]}],"nid":32}}
+];
 /* ── 範本：讀取資料夾/GitHub 內的 templates.json 清單，選一首載入 ── */
+function builtinTplHtml(){
+  return '<option value="">'+L('範本')+'</option>'
+    +BUILTIN_TEMPLATES.map(t=>`<option value="builtin:${t.key}">${esc(L(t.name))}</option>`).join('');
+}
 function initTemplates(){
   const sel=document.getElementById('tpl-sel'); if(!sel)return;
-  if(typeof fetch!=='function'){ sel.innerHTML='<option value="">範本</option>'; return; }
+  sel.innerHTML=builtinTplHtml();
+  if(typeof fetch!=='function')return;
   fetch('templates.json',{cache:'no-store'})
     .then(r=>{ if(!r.ok)throw 0; return r.json(); })
     .then(list=>{
       if(!Array.isArray(list)||!list.length)throw 0;
-      sel.innerHTML='<option value="">範本</option>'+list.map(t=>{
+      sel.innerHTML=builtinTplHtml()+list.map(t=>{
         const file=(typeof t==='string')?t:t.file;
         const name=(typeof t==='string')?file.replace(/\.json$/i,''):(t.name||file);
         return `<option value="${esc(file)}">${esc(name)}</option>`;
       }).join('');
     })
-    .catch(()=>{ sel.innerHTML='<option value="">範本</option>'; });
+    .catch(()=>{});
 }
 function loadTemplate(file){
   const sel=document.getElementById('tpl-sel');
   if(!file){ return; }
+  if(/^builtin:/.test(file)){                       // 內建範本：不需連網
+    const t=BUILTIN_TEMPLATES.find(x=>('builtin:'+x.key)===file);
+    if(sel)sel.value='';
+    if(!t)return;
+    const nm=L(t.name);
+    if(!confirm(Lf('載入範本「'+nm+'」會覆蓋目前內容（未存檔會遺失）。確定？',
+                   'Loading the template "'+nm+'" will replace the current chart (unsaved work is lost). Continue?',
+                   'テンプレート「'+nm+'」を読み込むと現在の内容が置き換わります（未保存の内容は失われます）。よろしいですか？',
+                   '템플릿 「'+nm+'」을(를) 불러오면 현재 내용이 덮어써집니다 (저장하지 않은 작업은 사라집니다). 계속할까요?')))return;
+    if(applyProjectData(JSON.parse(JSON.stringify(t.data)))){ renderSB(); renderAll(); }
+    return;
+  }
   if(typeof fetch!=='function'){ alert('此環境無法讀取範本，請用「↑ JSON」匯入。'); if(sel)sel.value=''; return; }
   fetch(file,{cache:'no-store'})
     .then(r=>{ if(!r.ok)throw new Error('讀取失敗 '+r.status); return r.json(); })
@@ -2669,11 +2719,13 @@ function cloudRenderModal(){
   } else if(_cloudMode==='adminlogin'){   // 管理者登入表單
     body.innerHTML=`<div class="cl-libhd">管理者登入</div><button class="btn cl-google" onclick="cloudSignInGoogle()"><svg class="g-ico" viewBox="0 0 48 48" aria-hidden="true"><path fill="#4285F4" d="M45.1 24.5c0-1.6-.1-2.7-.4-3.9H24v7.1h12.1c-.2 1.8-1.6 4.6-4.5 6.4l-.1.3 6.5 5 .5.1c4.1-3.8 6.6-9.4 6.6-15z"/><path fill="#34A853" d="M24 46c5.9 0 10.9-1.9 14.5-5.3l-6.9-5.3c-1.8 1.3-4.3 2.2-7.6 2.2-5.8 0-10.7-3.8-12.5-9l-.3.1-6.7 5.2-.1.3C8 41.1 15.4 46 24 46z"/><path fill="#FBBC05" d="M11.5 28.6c-.5-1.4-.7-2.9-.7-4.6s.3-3.2.7-4.6v-.3l-6.8-5.3-.2.1A22 22 0 0 0 2 24c0 3.5.9 6.9 2.5 9.9l7-5.3z"/><path fill="#EA4335" d="M24 9.5c4.1 0 6.9 1.8 8.5 3.3l6.2-6C34.9 3.4 29.9 1 24 1 15.4 1 8 6 4.5 14.1l7 5.3C13.3 13.3 18.2 9.5 24 9.5z"/></svg>Google 帳號登入</button><div class="cl-or">或用 email 登入</div><div class="cl-form"><input id="cl-email" type="email" placeholder="email" autocomplete="username"><input id="cl-pw" type="password" placeholder="密碼（至少6碼）" autocomplete="current-password"><div class="cl-actions"><button class="btn btna" onclick="cloudSignIn()">登入</button><button class="btn" onclick="cloudSignUp()">註冊</button><button class="btn" onclick="cloudMode('choose')">返回</button></div></div>`;
     lib.style.display='none';
-  } else if(_cloudMode==='personal'){   // 個人使用者：用途留白、可自訂分類、可用演奏模式
+  } else if(_cloudMode==='personal'){   // 個人使用者：完全獨立，不使用雲端歌庫
     setUserKind('personal'); setSvcKind('perform');
-    body.innerHTML=`<div class="cl-userline"><span class="cl-role">🎧 個人使用者 · 自訂分類</span><button class="btn" onclick="cloudMode('choose')">返回</button></div>`
-      +`<div class="cl-hint">「用途」欄位已切換成自訂模式：下拉選單最後有「＋ 新增分類…」與「－ 移除分類…」，可以建立你自己的分類。<br>「🎵 演奏模式」可從歌庫挑最多 10 首排成一份，往右滑一頁一頁接著彈。</div>`;
-    lib.style.display=''; cloudList(); renderSetlist();
+    body.innerHTML=`<div class="cl-userline"><span class="cl-role">🎧 個人使用者 · 我的歌庫</span><button class="btn" onclick="cloudMode('choose')">返回</button></div>`
+      +`<div class="cl-hint">個人使用者不使用雲端歌庫，歌曲只存在這台裝置上。<br>「用途」下拉最後有「＋ 新增分類…／－ 移除分類…」可自訂分類；「🎵 演奏模式」可從我的歌庫挑最多 10 首排成一份。</div>`
+      +myLibHtml();
+    lib.style.display='none';
+    renderSetlist();
   } else if(_cloudMode==='browse'){   // 敬拜使用者瀏覽（免登入）
     setUserKind('worship'); setSvcKind('service');
     body.innerHTML=`<div class="cl-userline"><span class="cl-role">⛪ 敬拜使用者 · 瀏覽歌譜</span><button class="btn" onclick="cloudMode('adminlogin')">🔑 管理者登入</button><button class="btn" onclick="cloudMode('choose')">返回</button></div>`;
@@ -2766,6 +2818,49 @@ async function cloudList(){
       : `<button class="btn" onclick="cloudLoad('${s.id}')">載入</button>`
   }${_supaAdmin?`<select class="btn cl-catsel" onchange="cloudReclass('${s.id}',this.value)" title="歸類"><option value="">歸類</option><option value="短歌">短歌</option><option value="讚美">讚美</option><option value="敬拜">敬拜</option></select><button class="btn cl-del" onclick="cloudDelete('${s.id}',this)">刪除</button>`:''}</span></div>`).join('');
 }
+/* ── 我的歌庫（個人使用者專用，只存在這台裝置，不進雲端） ── */
+let myLib=[]; try{ myLib=JSON.parse(localStorage.getItem('arranger_mylib')||'[]')||[]; }catch(e){ myLib=[]; }
+function saveMyLib(){ try{ localStorage.setItem('arranger_mylib',JSON.stringify(myLib)); }catch(e){ alert(Lf('本機空間不足，儲存失敗。','Out of local storage space.','ローカル容量が足りず保存できません。','로컬 저장 공간이 부족합니다.')); } }
+function myLibHtml(){
+  const rows=myLib.length
+    ? myLib.map((r,i)=>`<div class="cl-row"><span class="cl-title">${esc(r.title||L('未命名'))}</span>`
+        +`<span class="cl-usage">${esc(r.usage||'')}</span>`
+        +`<span class="cl-rowacts">`
+        +(_serviceMode?`<button class="btn" onclick="setlistAdd('${r.id}')"${_setlist.some(x=>x.id===r.id)?' disabled':''}>${L('＋ 加入')}</button>`
+                      :`<button class="btn" onclick="myLibLoad('${r.id}')">${L('載入')}</button>`)
+        +`<button class="btn" onclick="myLibDel('${r.id}')">${L('刪除')}</button></span></div>`).join('')
+    : `<div class="cl-empty">${L('我的歌庫還是空的，按「＋ 收藏目前這份」把現在編輯的譜存進來。')}</div>`;
+  return `<div class="cl-libtop"><span class="cl-libhd">${L('我的歌庫')}</span>`
+    +`<button class="btn cl-svc-btn${_serviceMode?' on':''}" id="cl-svc-btn" onclick="toggleService()">🎵 ${L('演奏模式')}</button></div>`
+    +`<div class="cl-actions"><button class="btn btna" onclick="myLibAdd()">${L('＋ 收藏目前這份')}</button></div>`
+    +`<div id="cl-setlist" class="cl-setlist"></div>`
+    +`<div class="cl-list">${rows}</div>`;
+}
+function myLibRefresh(){ if(_cloudMode==='personal'){ cloudRenderModal(); } }
+function myLibAdd(){
+  commitEdits();
+  const title=(gv('s-title')||L('未命名')).trim()||L('未命名');
+  const data=getProjectData();
+  const i=myLib.findIndex(r=>r.title===title);
+  if(i>=0){
+    if(!confirm(Lf('「'+title+'」已在歌庫裡，要覆蓋嗎？','"'+title+'" is already saved. Overwrite?','「'+title+'」はすでにあります。上書きしますか？','「'+title+'」이(가) 이미 있습니다. 덮어쓸까요?')))return;
+    myLib[i]={...myLib[i],title,usage:gv('s-usage')||'',data};
+  } else {
+    myLib.push({id:'my'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),title,usage:gv('s-usage')||'',data});
+  }
+  saveMyLib(); myLibRefresh();
+}
+function myLibLoad(id){
+  const r=myLib.find(x=>x.id===id); if(!r)return;
+  if(applyProjectData(JSON.parse(JSON.stringify(r.data)))){ renderSB(); renderAll(); closeCloud(); }
+}
+function myLibDel(id){
+  const r=myLib.find(x=>x.id===id); if(!r)return;
+  if(!confirm(Lf('從我的歌庫移除「'+r.title+'」？','Remove "'+r.title+'" from My Library?','マイライブラリから「'+r.title+'」を削除しますか？','내 라이브러리에서 「'+r.title+'」을(를) 삭제할까요?')))return;
+  myLib=myLib.filter(x=>x.id!==id);
+  _setlist=_setlist.filter(x=>x.id!==id);
+  saveMyLib(); myLibRefresh();
+}
 /* ── 清單模式：敬拜使用者＝聚會服事、個人使用者＝演奏模式；最多 10 首，排序後依序串成一份 ── */
 const SETLIST_MAX=10;
 let _serviceMode=false, _setlist=[], _svcKind='service';   // service＝聚會服事 / perform＝演奏模式
@@ -2776,9 +2871,16 @@ function setSvcKind(k){
   if(b){ b.textContent=(k==='perform'?'🎵 ':'⛪ ')+svcLabel(); b.classList.toggle('on',_serviceMode); }
   renderSetlist();
 }
-function toggleService(){ _serviceMode=!_serviceMode; const b=document.getElementById('cl-svc-btn'); if(b){ b.textContent=(_svcKind==='perform'?'🎵 ':'⛪ ')+svcLabel(); b.classList.toggle('on',_serviceMode); } const p=document.getElementById('cl-setlist'); if(p)p.style.display=_serviceMode?'':'none'; renderSetlist(); cloudList(); }
+function toggleService(){ _serviceMode=!_serviceMode; if(_svcKind==='perform'){ myLibRefresh(); return; } const b=document.getElementById('cl-svc-btn'); if(b){ b.textContent=(_svcKind==='perform'?'🎵 ':'⛪ ')+svcLabel(); b.classList.toggle('on',_serviceMode); } const p=document.getElementById('cl-setlist'); if(p)p.style.display=_serviceMode?'':'none'; renderSetlist(); cloudList(); }
 async function setlistAdd(id){
   if(_setlist.some(x=>x.id===id))return;
+  if(_svcKind==='perform'){                      // 演奏模式：從我的歌庫（本機）取
+    if(_setlist.length>=SETLIST_MAX){ alert(Lf(svcLabel()+'最多 '+SETLIST_MAX+' 首。',svcLabel()+': up to '+SETLIST_MAX+' songs.',svcLabel()+'は最大 '+SETLIST_MAX+' 曲までです。',svcLabel()+'는 최대 '+SETLIST_MAX+'곡까지입니다.')); return; }
+    const r=myLib.find(x=>x.id===id); if(!r)return;
+    const m=(r.data&&r.data.meta)||{};
+    const item={id,title:r.title||L('未命名'),mode:m.mkey?'male':(m.fkey?'female':'num'),key:m.mkey||m.fkey||''};
+    _setlist.push(item); myLibRefresh(); return;
+  }
   if(_setlist.length>=SETLIST_MAX){ alert(Lf(svcLabel()+'最多 '+SETLIST_MAX+' 首。',svcLabel()+': up to '+SETLIST_MAX+' songs.',svcLabel()+'は最大 '+SETLIST_MAX+' 曲までです。',svcLabel()+'는 최대 '+SETLIST_MAX+'곡까지입니다.')); return; }
   const s=_cloudSongs.find(x=>x.id===id);
   const item={id,title:(s&&s.title)||'未命名',mode:'male',key:''};
@@ -2789,7 +2891,7 @@ async function setlistAdd(id){
     if(m){ if(m.mkey){item.key=m.mkey;item.mode='male';} else if(m.fkey){item.key=m.fkey;item.mode='female';} renderSetlist(); }
   }catch(e){}
 }
-function setlistRemove(i){ _setlist.splice(i,1); renderSetlist(); cloudList(); }
+function setlistRemove(i){ _setlist.splice(i,1); if(_svcKind==='perform'){ myLibRefresh(); } else { renderSetlist(); cloudList(); } }
 function setlistMove(i,d){ const j=i+d; if(j<0||j>=_setlist.length)return; const t=_setlist[i]; _setlist[i]=_setlist[j]; _setlist[j]=t; renderSetlist(); }
 function setlistMode(i,v){ const it=_setlist[i]; if(it){ it.mode=v; renderSetlist(); } }
 /* 每首半音微調 Key（級數模式按下會自動切到男 Key 和弦名） */
@@ -2813,10 +2915,15 @@ function renderSetlist(){
 }
 async function startService(){
   if(!_setlist.length)return; cloudMsg(L('載入服事清單…'));
-  const ids=_setlist.map(s=>s.id);
-  const {data,error}=await _supa.from('songs').select('id,title,data').in('id',ids);
-  if(error){ cloudMsg('載入失敗：'+error.message); return; }
-  const byId={}; (data||[]).forEach(r=>byId[r.id]=r);
+  const byId={};
+  if(_svcKind==='perform'){                      // 演奏模式：全部來自本機歌庫
+    myLib.forEach(r=>{ byId[r.id]={id:r.id,title:r.title,data:r.data}; });
+  } else {
+    const ids=_setlist.map(s=>s.id);
+    const {data,error}=await _supa.from('songs').select('id,title,data').in('id',ids);
+    if(error){ cloudMsg('載入失敗：'+error.message); return; }
+    (data||[]).forEach(r=>byId[r.id]=r);
+  }
   let sects=[], nid=1, firstMeta=null;
   _setlist.forEach((it,si)=>{
     const r=byId[it.id]; if(!r||!r.data||!Array.isArray(r.data.sects))return;
@@ -5396,7 +5503,7 @@ try{const pp=parseInt(localStorage.getItem('arranger_perpage'));if(pp>=3&&pp<=16
 try{const mp=parseInt(localStorage.getItem('arranger_mixperpage'));if(mp>=1&&mp<=8)MIX_PER_PAGE=mp;}catch(e){}
 try{const mpp=parseInt(localStorage.getItem('arranger_mixpperpage'));if(mpp>=1&&mpp<=12)MIXP_PER_PAGE=mpp;}catch(e){}
 /* 預設開啟內容（範本）：Awesome God */
-const DEFAULT_PROJECT={"meta":{"title":"You are good","artist":"Israel & New Breed","time":"4/4","bpm":"131","usage":"讚美","mkey":"E","fkey":"E","fontSize":15},"sects":[{"id":23,"name":"Intro","bars":4,"color":"black","layers":[{"color":"black","ins":{"EG1":"funky style"}},{"color":"blue","ins":{"EG1":"","Bass":"melody (high)","Drum":"fill in"}},{"color":"red","ins":{"Bass":"O","Drum":"O","EG1":"O","Pad":"O","KB":"O","EG2":"O","AG":"O"}}],"notes":"X\n1-4 bar EG only/\n5-8 bar bass + drum fill in/\n9-16 full in","chords":[["1","","",""],["1maj","","",""],["17","","",""],["4/1","","",""]],"barsPerRow":4},{"id":24,"name":"Verse","bars":8,"color":"black","layers":[{"color":"black","ins":{"Vocal":"O","KB":"On beat sync","AG":"On beat sync","Drum":"On beat sync","Bass":"On beat sync","EG2":"On beat sync"}},{"color":"blue","ins":{"EG1":"Lick"}}],"notes":"more energy","chords":[["1","","",""],["1maj","","",""],["17","","",""],["4/1","","",""],["1","","",""],["1maj","","",""],["17","","",""],["4/1","","",""]],"barsPerRow":4},{"id":25,"name":"Pre Chorus","bars":4,"color":"blue","layers":[{"color":"black","ins":{"Vocal":"O","KB":"O","AG":"O","EG2":"O","EG1":"O","Bass":"O","Drum":"O","Pad":"O"}}],"notes":"bar 4 builing","chords":[["4","","",""],["5/4","","",""],["6b/4","","",""],["7b/4","","",""]],"barsPerRow":4},{"id":26,"name":"Chorus","bars":16,"color":"red","layers":[{"color":"black","ins":{"KB":"O","EG2":"O","Drum":"O","Bass":"O","EG1":"O","AG":"O","Vocal":"O","Pad":"O"}}],"notes":"Lock in groove","chords":[["1","","",""],["5","","",""],["7b","","",""],["4","","",""],["1","","",""],["5","","",""],["7b","","",""],["4","","",""],["1","","",""],["5","","",""],["7b","","",""],["4","","",""],["1/3","","",""],["5m","","",""],["6b","","",""],["7b","","",""]],"barsPerRow":4},{"id":27,"name":"Interlude","bars":8,"color":"purple","layers":[{"color":"black","ins":{"Bass":"slap","Drum":"O","EG1":"funky style","KB":"O","AG":"O","EG2":"O","Pad":"O"}}],"notes":"Lock in groove","chords":[["1m","","",""],["1m","","",""],["1m","","",""],["1m","","",""],["1m","","",""],["1m","","",""],["1m","","",""],["1m","","",""]],"barsPerRow":4},{"id":29,"name":"Spirit","bars":8,"color":"red","layers":[{"color":"black","ins":{"Vocal":"O","KB":"O","EG2":"O","AG":"O","Drum":"O","Bass":"O","EG1":"O","Pad":"O"}}],"notes":"Lock in groove","barsPerRow":4,"chords":[["1m","","3b","4"],null,["1m","","7b","4/6"],["4/6","","",""],["1m","","3b","4"],null,["1m","","7b","4/6"],["4/6","","6b","5m"]]},{"id":28,"name":"Bridge","bars":4,"color":"purple","layers":[{"color":"black","ins":{"Vocal":"O","Pad":"O","EG1":"O","Bass":"O","Drum":"O","EG2":"O","AG":"O","KB":"O"}}],"notes":"X4 Lock in groove\nto little verse","chords":[["1m","","3b","4"],null,["1m","","7b","4/6"],["4/6","","6b","5m"]],"barsPerRow":4,"bargoto":[null,null,null,24]},{"id":30,"name":"Tag","bars":2,"color":"purple","layers":[{"color":"black","ins":{"Vocal":"O","Pad":"O","EG1":"O","Bass":"O","Drum":"O","EG2":"O","AG":"O","KB":"O"}}],"notes":"","chords":[["6b","","",""],["7b","","",""]],"barsPerRow":4},{"id":31,"name":"End","bars":1,"color":"black","layers":[{"color":"black","ins":{"Vocal":"O","Pad":"O","EG1":"O","Bass":"O","Drum":"O","EG2":"O","AG":"O","KB":"O"}}],"notes":"","barsPerRow":4,"chords":[["1m","","",""]]}],"nid":32};
+const DEFAULT_PROJECT={"meta":{"title":"小星星","artist":"","time":"4/4","bpm":"","usage":"範本","mkey":"C","fkey":"","fontSize":18,"customIns":[]},"sects":[{"id":1,"bars":8,"name":"Verse","color":"black","notes":"一閃一閃亮晶晶 滿天都是小星星 放在天上放光明 好像許多小眼睛","chords":[["C",".","G","."],["F7",".","C","."],["F7",".","C","."],["G",".","C","."],["C",".","F7","."],["C",".","G","."],["C",".","F7","."],["C",".","G","."]],"layers":[{"ins":{},"color":"black"}]},{"id":2,"bars":4,"name":"Tag","color":"black","notes":"一閃一閃亮晶晶 滿天都是小星星","chords":[["C",".","G","."],["F7",".","C","."],["F7",".","C","."],["G",".","C","."]],"layers":[{"ins":{},"color":"black"}]}],"nid":3};
 try{ applyProjectData(DEFAULT_PROJECT); }catch(e){}
 renderSB();
 renderAll();
