@@ -43,17 +43,18 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
   display:flex;flex-direction:column;gap:0.45em;padding:0.5em 1.5em;
 }
 .topbar-row{display:flex;align-items:center;gap:0.75em;}
-.topbar-row-1{justify-content:flex-start;}
+.topbar-row-1{justify-content:flex-start;min-width:0;}
+.topbar,.topbar-row{max-width:100%;box-sizing:border-box;overflow-x:hidden;}
 /* 標題與「工具列」收合鈕同一組，鈕緊接在 Stratofin.Lai 右邊 */
-.logo-wrap{display:inline-flex;align-items:center;gap:0.6em;min-width:0;flex-wrap:wrap;}
+.logo-wrap{display:inline-flex;align-items:center;gap:0.6em;min-width:0;max-width:100%;flex:0 1 auto;flex-wrap:wrap;}
 .topbar-row-2{flex-wrap:wrap;}
 .tb-toggle{background:var(--bg3);border:1px solid var(--border2);color:var(--text2);border-radius:0.4em;padding:0.25em 0.7em;cursor:pointer;font-size:0.82em;font-family:inherit;line-height:1;white-space:nowrap;flex-shrink:0;}
 .tb-toggle:hover{background:var(--bg4);color:var(--text);border-color:var(--accent);}
 body.tb-collapsed .topbar-row-2{display:none;}
-.logo-side{display:inline-flex;align-items:center;gap:0.5em;min-width:0;flex-wrap:wrap;}
-.logo{display:inline-flex;align-items:center;flex:0 0 auto;}
+.logo-side{display:inline-flex;align-items:center;gap:0.5em;min-width:0;flex:0 1 auto;flex-wrap:wrap;}
+.logo{display:inline-flex;align-items:center;flex:0 1 auto;min-width:0;}
 .logo-img{height:2em;width:auto;max-width:min(52vw,22em);object-fit:contain;object-position:left center;display:block;flex:0 1 auto;user-select:none;-webkit-user-drag:none;}
-.byline{color:#c8ccd2;font-size:0.82em;font-weight:700;letter-spacing:0.5px;margin-left:0.3em;text-shadow:0 1px 1px rgba(0,0,0,0.5);}
+.byline{color:#c8ccd2;font-size:0.82em;font-weight:700;letter-spacing:0.5px;margin-left:0.3em;text-shadow:0 1px 1px rgba(0,0,0,0.5);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .pills{display:flex;gap:0.4em;flex:1;flex-wrap:wrap;}
 .pill{background:var(--bg3);border:1px solid var(--border);border-radius:99px;padding:0.22em 0.75em;font-size:0.85em;display:flex;align-items:center;gap:0.3em;}
 .pill label{color:var(--text3);font-size:0.8em;}
@@ -724,7 +725,7 @@ body.mode-tablet .tbar-r .btn,body.mode-phone .tbar-r .btn{font-size:0.8em;paddi
    最後：開新檔案（整排）→ 存檔｜讀檔 → 範本｜使用者（四顆等寬） */
 body.mode-phone .topbar-row-2{align-items:flex-start;}
 body.mode-phone .seg,body.mode-phone #lang-btn,body.mode-phone .cl-btn{order:1;}
-body.mode-phone .tbar-r{order:2;display:grid;grid-template-columns:1fr 1fr;gap:0.4em;width:100%;margin-top:0.15em;}
+body.mode-phone .tbar-r{order:2;display:grid;grid-template-columns:1fr 1fr;gap:0.4em;width:100%;max-width:100%;box-sizing:border-box;margin-top:0.15em;}
 body.mode-phone .pills{flex:1 0 100%;order:3;margin-top:0.15em;}
 body.mode-phone .tbar-r>*{width:100%;min-width:0;justify-content:center;}
 body.mode-phone .tbar-r>*:first-child{grid-column:1 / -1;}   /* 開新檔案獨佔一排 */
@@ -736,9 +737,9 @@ body.mode-phone .tbar-r #json-import{display:none;}
 /* 手機版標題列：by… 縮小放在 logo 右邊，「▲ 工具列」收在它下面 */
 body.mode-phone .topbar-row-1{align-items:center;gap:0.5em;}
 body.mode-phone .logo-wrap{gap:0.5em;flex-wrap:nowrap;}
-body.mode-phone .logo-img{height:1.85em;}
+body.mode-phone .logo-img{height:1.7em;max-width:calc(100vw - 9.5em);}
 body.mode-phone .logo-side{flex-direction:column;align-items:flex-start;gap:0.2em;flex-wrap:nowrap;}
-body.mode-phone .byline{font-size:0.6em;margin-left:0;letter-spacing:0;line-height:1.1;}
+body.mode-phone .byline{font-size:0.55em;margin-left:0;letter-spacing:0;line-height:1.1;max-width:9em;}
 body.mode-phone .tb-toggle{font-size:0.66em;padding:0.18em 0.5em;}
 /* 第一排：電腦/平板/手機 ＋ EN ＋ 更新日誌 全部收在一排 */
 body.mode-phone .segbtn{padding:0.28em 0.45em;font-size:0.72em;}
@@ -761,10 +762,10 @@ body.mode-phone .segbtn.cl-btn{
 body.mode-phone .segbtn.cl-btn:hover{background:var(--bg4);color:var(--text);}
 body.mode-phone .seg{align-self:stretch;}
 /* ② 曲目／演唱者各佔半排，寬度對齊下方「範本｜使用者」兩顆按鈕 */
-body.mode-phone .pills{display:flex;flex-wrap:wrap;gap:0.4em;}
+body.mode-phone .pills{display:flex;flex-wrap:wrap;gap:0.4em;width:100%;max-width:100%;box-sizing:border-box;}
 /* 第 1 排：曲目｜演唱者 各半排（對齊下方「範本｜使用者」） */
 body.mode-phone .pills>.pill:nth-child(1),
-body.mode-phone .pills>.pill:nth-child(2){flex:0 0 calc(50% - 0.2em);box-sizing:border-box;min-width:0;overflow:hidden;
+body.mode-phone .pills>.pill:nth-child(2){flex:1 1 calc(50% - 0.25em);max-width:calc(50% - 0.2em);box-sizing:border-box;min-width:0;overflow:hidden;
   padding-left:0.5em;padding-right:0.5em;gap:0.3em;}
 body.mode-phone .pills>.pill:nth-child(1) label,
 body.mode-phone .pills>.pill:nth-child(2) label{flex:0 0 auto;font-size:0.7em;}
@@ -775,11 +776,11 @@ body.mode-phone .pills>.pill:nth-child(3),
 body.mode-phone .pills>.pill:nth-child(4),
 body.mode-phone .pills>.pill:nth-child(5),
 body.mode-phone .pills>.pill:nth-child(6),
-body.mode-phone .pills>.pill:nth-child(7){flex:0 0 calc(25% - 0.3em);box-sizing:border-box;min-width:0;
+body.mode-phone .pills>.pill:nth-child(7){flex:1 1 calc(25% - 0.35em);max-width:calc(25% - 0.3em);box-sizing:border-box;min-width:0;
   padding-left:0.4em;padding-right:0.4em;gap:0.25em;overflow:hidden;}
 /* 第 3 排：字級 25%｜男 12.5%｜女 12.5% */
 body.mode-phone .pills>.pill:nth-child(8),
-body.mode-phone .pills>.pill:nth-child(9){flex:0 0 calc(12.5% - 0.35em);box-sizing:border-box;min-width:0;
+body.mode-phone .pills>.pill:nth-child(9){flex:1 1 calc(12.5% - 0.4em);max-width:calc(12.5% - 0.35em);box-sizing:border-box;min-width:0;
   padding-left:0.3em;padding-right:0.3em;gap:0.15em;overflow:hidden;justify-content:center;}
 body.mode-phone .pills>.pill:nth-child(n+3) label{flex:0 0 auto;font-size:0.7em;}
 body.mode-phone .pills>.pill:nth-child(n+8) label{font-size:0.66em;}
