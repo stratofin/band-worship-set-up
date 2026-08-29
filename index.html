@@ -171,7 +171,7 @@ body:not(.mode-phone) .pill label{font-size:0.78em;}
 body:not(.mode-phone) #s-title{width:82px!important;}
 body:not(.mode-phone) #s-artist{width:62px!important;}
 body:not(.mode-phone) #s-bpm{width:30px!important;}
-body:not(.mode-phone) #s-time{width:30px!important;}
+body:not(.mode-phone) #s-time{width:auto!important;}
 body:not(.mode-phone) #s-mkey,body:not(.mode-phone) #s-fkey{width:24px!important;}
 body:not(.mode-phone) .fbtn{width:1.5em;height:1.5em;}
 .fbtn:hover{background:var(--bg4);border-color:var(--accent);color:var(--accent);}
@@ -750,11 +750,47 @@ body.mode-phone .pill{padding:0.16em 0.6em;font-size:0.8em;}
 body.mode-phone .pill label{font-size:0.78em;}
 body.mode-phone #s-title{width:8.5em!important;}
 body.mode-phone #s-artist{width:5.5em!important;}
-body.mode-phone #s-time{width:2.2em!important;}
+body.mode-phone #s-time{width:auto!important;}
 body.mode-phone #s-bpm{width:2.4em!important;}
-body.mode-phone #s-mkey,body.mode-phone #s-fkey{width:1.8em!important;}
 body.mode-phone .fbtn{width:1.35em;height:1.35em;font-size:0.9em;}
 body.mode-phone #font-size-label{min-width:16px;}
+/* ① EN／更新日誌：外框比照左邊的「電腦｜平板｜手機」那組 */
+body.mode-phone .segbtn.cl-btn{
+  border:1px solid var(--border2);border-radius:0.45em;margin-left:0;
+  background:var(--bg3);color:var(--text2);}
+body.mode-phone .segbtn.cl-btn:hover{background:var(--bg4);color:var(--text);}
+body.mode-phone .seg{align-self:stretch;}
+/* ② 曲目／演唱者各佔半排，寬度對齊下方「範本｜使用者」兩顆按鈕 */
+body.mode-phone .pills{display:flex;flex-wrap:wrap;gap:0.4em;}
+/* 第 1 排：曲目｜演唱者 各半排（對齊下方「範本｜使用者」） */
+body.mode-phone .pills>.pill:nth-child(1),
+body.mode-phone .pills>.pill:nth-child(2){flex:0 0 calc(50% - 0.2em);box-sizing:border-box;}
+body.mode-phone .pills>.pill:nth-child(1) input,
+body.mode-phone .pills>.pill:nth-child(2) input{flex:1 1 auto;width:100%!important;min-width:0;}
+/* 第 2 排：拍號｜BPM｜用途｜主題 各 25%（拍號＋BPM 合起來＝上方「曲目」寬） */
+body.mode-phone .pills>.pill:nth-child(3),
+body.mode-phone .pills>.pill:nth-child(4),
+body.mode-phone .pills>.pill:nth-child(5),
+body.mode-phone .pills>.pill:nth-child(6),
+body.mode-phone .pills>.pill:nth-child(7){flex:0 0 calc(25% - 0.3em);box-sizing:border-box;min-width:0;
+  padding-left:0.4em;padding-right:0.4em;gap:0.25em;overflow:hidden;}
+/* 第 3 排：字級 25%｜男 12.5%｜女 12.5% */
+body.mode-phone .pills>.pill:nth-child(8),
+body.mode-phone .pills>.pill:nth-child(9){flex:0 0 calc(12.5% - 0.35em);box-sizing:border-box;min-width:0;
+  padding-left:0.3em;padding-right:0.3em;gap:0.15em;overflow:hidden;justify-content:center;}
+body.mode-phone .pills>.pill:nth-child(n+3) label{flex:0 0 auto;font-size:0.7em;}
+body.mode-phone .pills>.pill:nth-child(n+8) label{font-size:0.66em;}
+body.mode-phone .pills>.pill:nth-child(3) select,
+body.mode-phone .pills>.pill:nth-child(4) input,
+body.mode-phone .pills>.pill:nth-child(5) select,
+body.mode-phone .pills>.pill:nth-child(6) select,
+body.mode-phone .pills>.pill:nth-child(8) input,
+body.mode-phone .pills>.pill:nth-child(9) input{flex:1 1 auto;width:100%!important;min-width:0;text-overflow:ellipsis;}
+/* 字級：− 18 ＋ 三個元件塞進 25% */
+body.mode-phone .pills>.pill:nth-child(7){justify-content:center;}
+body.mode-phone .pills>.pill:nth-child(7) .fbtn{flex:0 0 auto;width:1.25em;height:1.25em;font-size:0.85em;}
+body.mode-phone #font-size-label{min-width:14px;font-size:0.85em;}
+body.mode-phone .pill{box-sizing:border-box;}
 /* 平板：編輯區移到上方、檢視全寬、圖示譜3欄 */
 body.mode-tablet .page{grid-template-columns:1fr;}
 body.mode-tablet .icpage-grid{grid-template-columns:repeat(3,minmax(0,1fr));}
@@ -764,7 +800,14 @@ body.mode-phone .ccard-head{padding:0.4em 0.55em;}
 body.mode-phone .ctrl-toggle{font-size:0.55em;padding:0.06em 0.32em;}
 body.mode-phone .cbpr-sel{font-size:0.55em;}
 body.mode-phone .cmeta{font-size:0.68em;flex:0 0 auto;margin-left:auto;}
-body.mode-phone .view-print .btn{font-size:0.78em;padding:0.3em 0.5em;}
+/* 手機版中間工具列：縮小到能把「輸出大小｜📄 經典A4｜🖨 列印/存 PDF」排在同一行 */
+body.mode-phone .view-print{gap:0.3rem 0.26rem;}
+body.mode-phone .view-print .btn{font-size:0.7rem!important;padding:0 0.45rem!important;height:1.7rem!important;}
+body.mode-phone .view-print .ic-sel{font-size:0.7rem!important;padding:0 0.2rem!important;height:1.7rem!important;max-width:4.6rem;}
+body.mode-phone .view-print .ic-hint{font-size:0.66rem!important;gap:0.2rem;height:1.7rem;}
+/* 手機版：讓「輸出大小｜📄 經典A4｜🖨 列印/存 PDF」固定排在同一行（自成一列） */
+.vp-break{display:none;}
+body.mode-phone .view-print .vp-break{display:block;flex:0 0 100%;height:0;margin:0;}
 body.mode-phone .icpage-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
 /* 手機版圖示方塊：圖示縮小放上面、彈法文字整行放下面（避免文字被擠成直排） */
 body.mode-phone .icchip-grid{grid-template-columns:1fr;}
@@ -1055,18 +1098,19 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
     <div class="pills">
       <div class="pill"><label>曲目</label><input id="s-title" value="King Of Kings" oninput="schedRender()" style="width:100px"></div>
       <div class="pill"><label>演唱者</label><input id="s-artist" value="" placeholder="—" oninput="schedRender()" style="width:90px"></div>
-      <div class="pill"><label>拍號</label><input id="s-time" value="4/4" oninput="schedRender()" style="width:34px"></div>
+      <div class="pill"><label>拍號</label><select id="s-time" onchange="this.dataset.val=this.value;schedRender()" title="全曲拍號（各小節可再單獨設定）" style="background:none;border:none;color:var(--text);font-family:inherit;font-size:1em;outline:none;cursor:pointer"><option value="4/4">4/4</option></select></div>
       <div class="pill"><label>BPM</label><input id="s-bpm" value="71" maxlength="3" inputmode="numeric" oninput="schedRender()" style="width:2.4em"></div>
       <div class="pill"><label>用途</label><select id="s-usage" onchange="schedRender()" style="background:none;border:none;color:var(--text);font-family:inherit;font-size:1em;outline:none;cursor:pointer"><option value="">—</option><option>短歌</option><option>讚美</option><option>敬拜</option></select></div>
       <div class="pill" style="gap:3px"><label>主題</label><select id="theme-sel" onchange="setTheme(this.value)" title="介面配色（只影響螢幕，列印仍為白底原樣）" style="background:none;border:none;color:var(--text);font-family:inherit;font-size:1em;outline:none;cursor:pointer"><option value="dark">黑</option><option value="light">白</option><option value="pink">粉</option></select></div>
-      <div class="pill"><label>男</label><input id="s-mkey" value="" placeholder="—" oninput="schedRender()" style="width:30px"></div>
-      <div class="pill"><label>女</label><input id="s-fkey" value="" placeholder="—" oninput="schedRender()" style="width:30px"></div>
       <div class="pill" style="gap:3px">
         <label>字級</label>
         <button class="fbtn" onclick="bumpFont(-2)" title="縮小檢視字級">−</button>
         <span id="font-size-label">13</span>
         <button class="fbtn" onclick="bumpFont(2)" title="放大檢視字級">＋</button>
       </div>
+      <div class="pill"><label>男</label><input id="s-mkey" value="" placeholder="—" oninput="schedRender()" style="width:30px"></div>
+      <div class="pill"><label>女</label><input id="s-fkey" value="" placeholder="—" oninput="schedRender()" style="width:30px"></div>
+      
       
     </div>
     <div class="tbar-r">
@@ -1099,9 +1143,8 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
     <!-- FLOW VIEW -->
     <!-- SEG VIEW（段落流程圖：直向段落方塊 ＋ 段落編輯 ＋ 樂器配置） -->
     <div id="vp-seg">
-      <div class="view-print"><button class="btn tbcollapse-btn" onclick="toggleToolbar()" title="收合/展開上方設定工具列">▾ 工具列</button><button class="btn lock-btn" onclick="toggleLock()" title="鎖定：開＝只能看譜、禁止編輯；關＝可編輯">🔓 鎖定 關</button><button class="btn" onclick="openOcr()">🔍 辨識匯入</button><button class="btn btna" onclick="printView('seg')">🖨 列印 / 存 PDF</button></div>
+      <div class="view-print"><button class="btn tbcollapse-btn" onclick="toggleToolbar()" title="收合/展開上方設定工具列">▾ 工具列</button><button class="btn lock-btn" onclick="toggleLock()" title="鎖定：開＝只能看譜、禁止編輯；關＝可編輯">🔓 鎖定 關</button><button class="btn" onclick="openOcr()">🔍 辨識匯入</button><button class="btn btna" onclick="printView('seg')">🖨 列印 / 存 PDF</button><label class="ic-hint">顯示 <select class="ic-sel seg-disp" onchange="setSegDisp(this.value)" title="段落方塊要顯示什麼"><option value="ins">樂器配置</option><option value="chord">和弦摘要</option><option value="none">只看段落</option></select></label></div>
       <div class="icon-toolbar">
-        <label class="ic-hint">顯示 <select class="ic-sel seg-disp" onchange="setSegDisp(this.value)" title="段落方塊要顯示什麼"><option value="ins">樂器配置</option><option value="chord">和弦摘要</option><option value="none">只看段落</option></select></label>
         <button class="stbtn" onclick="addSect()" title="在最後新增一個段落">＋ 新增段落</button>
         <button class="stbtn segdel-btn" onclick="toggleSegDelMode()" title="刪除模式：開啟後每個段落名稱旁會出現 ✕，按下即刪除">－ 刪除段落</button>
         <span class="ic-hint seg-tip">點段落展開編輯 · 右滑＝新增 · 左滑＝刪除 · 樂器鈕可拖到段落上</span>
@@ -1117,7 +1160,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
 
     <div id="vp-chord" style="display:none">
       <div class="print-head"></div>
-      <div class="view-print"><button class="btn tbcollapse-btn" onclick="toggleToolbar()" title="收合/展開上方設定工具列">▾ 工具列</button><button class="btn lock-btn" onclick="toggleLock()" title="鎖定：開＝只能看譜與左右滑頁、禁止任何編輯；關＝可編輯">🔓 鎖定 關</button><button class="btn svc-only svc-pb-btn" onclick="toggleSvcPB(this)" title="聚會服事列印：開＝每首歌各自從新頁開始；關＝段落連續接著印">📄 聚會分頁 關</button><button class="btn" onclick="openOcr()">🔍 辨識匯入</button><label class="ic-hint" style="display:inline-flex;align-items:center;gap:0.25em">輸出大小<select class="ic-sel psize-sel" onchange="setPrintSize(this.value)" title="輸出時的小節大小：緊湊或最小可讓一頁容納更多小節"><option value="std">標準</option><option value="cmp">緊湊</option><option value="min">最小</option></select></label><button class="btn" onclick="printFit('chord')" title="自動縮放，盡量塞進一張 A4">📄 經典A4</button><button class="btn btna" onclick="printView('chord')">🖨 列印 / 存 PDF</button></div>
+      <div class="view-print"><button class="btn tbcollapse-btn" onclick="toggleToolbar()" title="收合/展開上方設定工具列">▾ 工具列</button><button class="btn lock-btn" onclick="toggleLock()" title="鎖定：開＝只能看譜與左右滑頁、禁止任何編輯；關＝可編輯">🔓 鎖定 關</button><button class="btn svc-only svc-pb-btn" onclick="toggleSvcPB(this)" title="聚會服事列印：開＝每首歌各自從新頁開始；關＝段落連續接著印">📄 聚會分頁 關</button><button class="btn" onclick="openOcr()">🔍 辨識匯入</button><span class="vp-break"></span><label class="ic-hint" style="display:inline-flex;align-items:center;gap:0.25em">輸出大小<select class="ic-sel psize-sel" onchange="setPrintSize(this.value)" title="輸出時的小節大小：緊湊或最小可讓一頁容納更多小節"><option value="std">標準</option><option value="cmp">緊湊</option><option value="min">最小</option></select></label><button class="btn" onclick="printFit('chord')" title="自動縮放，盡量塞進一張 A4">📄 經典A4</button><button class="btn btna" onclick="printView('chord')">🖨 列印 / 存 PDF</button></div>
       <div class="icon-toolbar">
         <label class="ic-hint">拍號 <select class="ic-sel" id="chord-timesig" onchange="setTimeSig(this.value)"></select></label>
         <label class="ic-hint">顯示 <select class="ic-sel" id="chord-disp" onchange="setChordDisp(this.value)"><option value="num">級數</option><option value="male">和弦名(男Key)</option><option value="female">和弦名(女Key)</option></select></label>
@@ -1133,7 +1176,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
     <!-- MIX+ VIEW (大格 + 樂器指令在控制區) -->
     <div id="vp-mixp" style="display:none">
       <div class="print-head"></div>
-      <div class="view-print"><button class="btn tbcollapse-btn" onclick="toggleToolbar()" title="收合/展開上方設定工具列">▾ 工具列</button><button class="btn lock-btn" onclick="toggleLock()" title="鎖定：開＝只能看譜與左右滑頁、禁止任何編輯；關＝可編輯">🔓 鎖定 關</button><button class="btn svc-only svc-pb-btn" onclick="toggleSvcPB(this)" title="聚會服事列印：開＝每首歌各自從新頁開始；關＝段落連續接著印">📄 聚會分頁 關</button><button class="btn" onclick="openOcr()">🔍 辨識匯入</button><label class="ic-hint" style="display:inline-flex;align-items:center;gap:0.25em">輸出大小<select class="ic-sel psize-sel" onchange="setPrintSize(this.value)" title="輸出時的小節大小：緊湊或最小可讓一頁容納更多小節"><option value="std">標準</option><option value="cmp">緊湊</option><option value="min">最小</option></select></label><button class="btn" onclick="printFit('mixp')" title="自動縮放，盡量塞進一張 A4">📄 經典A4</button><button class="btn btna" onclick="printView('mixp')">🖨 列印 / 存 PDF</button></div>
+      <div class="view-print"><button class="btn tbcollapse-btn" onclick="toggleToolbar()" title="收合/展開上方設定工具列">▾ 工具列</button><button class="btn lock-btn" onclick="toggleLock()" title="鎖定：開＝只能看譜與左右滑頁、禁止任何編輯；關＝可編輯">🔓 鎖定 關</button><button class="btn svc-only svc-pb-btn" onclick="toggleSvcPB(this)" title="聚會服事列印：開＝每首歌各自從新頁開始；關＝段落連續接著印">📄 聚會分頁 關</button><button class="btn" onclick="openOcr()">🔍 辨識匯入</button><span class="vp-break"></span><label class="ic-hint" style="display:inline-flex;align-items:center;gap:0.25em">輸出大小<select class="ic-sel psize-sel" onchange="setPrintSize(this.value)" title="輸出時的小節大小：緊湊或最小可讓一頁容納更多小節"><option value="std">標準</option><option value="cmp">緊湊</option><option value="min">最小</option></select></label><button class="btn" onclick="printFit('mixp')" title="自動縮放，盡量塞進一張 A4">📄 經典A4</button><button class="btn btna" onclick="printView('mixp')">🖨 列印 / 存 PDF</button></div>
       <div class="icon-toolbar">
         <button class="ic-navbtn" id="mixp-prev" onclick="mixpNav(-1)" title="上一頁">‹</button>
         <span class="ic-pageind" id="mixp-pageind">1 / 1</span>
@@ -1156,7 +1199,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
     <!-- STAFF (五線譜) VIEW -->
     <div id="vp-staff" style="display:none">
       <div class="print-head"></div>
-      <div class="view-print"><button class="btn tbcollapse-btn" onclick="toggleToolbar()" title="收合/展開上方設定工具列">▾ 工具列</button><button class="btn lock-btn" onclick="toggleLock()" title="鎖定：開＝只能看譜與左右滑頁、禁止任何編輯；關＝可編輯">🔓 鎖定 關</button><button class="btn svc-only svc-pb-btn" onclick="toggleSvcPB(this)" title="聚會服事列印：開＝每首歌各自從新頁開始；關＝段落連續接著印">📄 聚會分頁 關</button><label class="ic-hint" style="display:inline-flex;align-items:center;gap:0.25em">輸出大小<select class="ic-sel psize-sel" onchange="setPrintSize(this.value)" title="輸出時的小節大小：緊湊或最小可讓一頁容納更多小節"><option value="std">標準</option><option value="cmp">緊湊</option><option value="min">最小</option></select></label><button class="btn" onclick="printFit('staff')" title="自動縮放，盡量塞進一張 A4">📄 經典A4</button><button class="btn btna" onclick="printView('staff')">🖨 列印 / 存 PDF</button></div>
+      <div class="view-print"><button class="btn tbcollapse-btn" onclick="toggleToolbar()" title="收合/展開上方設定工具列">▾ 工具列</button><button class="btn lock-btn" onclick="toggleLock()" title="鎖定：開＝只能看譜與左右滑頁、禁止任何編輯；關＝可編輯">🔓 鎖定 關</button><button class="btn svc-only svc-pb-btn" onclick="toggleSvcPB(this)" title="聚會服事列印：開＝每首歌各自從新頁開始；關＝段落連續接著印">📄 聚會分頁 關</button><span class="vp-break"></span><label class="ic-hint" style="display:inline-flex;align-items:center;gap:0.25em">輸出大小<select class="ic-sel psize-sel" onchange="setPrintSize(this.value)" title="輸出時的小節大小：緊湊或最小可讓一頁容納更多小節"><option value="std">標準</option><option value="cmp">緊湊</option><option value="min">最小</option></select></label><button class="btn" onclick="printFit('staff')" title="自動縮放，盡量塞進一張 A4">📄 經典A4</button><button class="btn btna" onclick="printView('staff')">🖨 列印 / 存 PDF</button></div>
       <div class="icon-toolbar">
         <label class="ic-hint">顯示 <select class="ic-sel" id="staff-disp" onchange="setChordDisp(this.value)"><option value="num">級數</option><option value="male">和弦名(男Key)</option><option value="female">和弦名(女Key)</option></select></label>
         <span class="key-step" title="半音微調 Key"><label>微調Key</label><button onclick="transposeKey(1)" title="升半音">▲</button><b class="keystep-lbl">—</b><button onclick="transposeKey(-1)" title="降半音">▼</button></span>
@@ -2039,7 +2082,8 @@ function applyProjectData(data){
   _secClearBk={};                      // 換譜就丟掉各段的「清除前備份」，避免復原到別首歌的內容
   document.getElementById('s-title').value=data.meta?.title||'';
   document.getElementById('s-artist').value=data.meta?.artist||'';
-  document.getElementById('s-time').value=data.meta?.time||'';
+  const _tm=document.getElementById('s-time');
+  if(_tm){ const v=data.meta?.time||'4/4'; _tm.dataset.val=v; _tm.value=v; syncTimeSelect(); }
   document.getElementById('s-bpm').value=data.meta?.bpm||'';
   document.getElementById('s-usage').value=data.meta?.usage||'';
   document.getElementById('s-mkey').value=data.meta?.mkey||'';
@@ -3445,10 +3489,20 @@ function beatsPerBar(){
 }
 /* 拍號選單（和弦譜 / 混合）— 改動同步全域拍號，所有檢視與輸出一起更新 */
 function setTimeSig(v){
-  const el=document.getElementById('s-time'); if(el)el.value=v;
+  const el=document.getElementById('s-time'); if(el){ el.dataset.val=v; el.value=v; syncTimeSelect(); }
   renderAll();
 }
+const TIME_LIST=['4/4','3/4','2/4','6/8','12/8','2/2','5/4','7/8','9/8'];
+/* 頂部「拍號」下拉：把檔案裡的自訂拍號也一起放進選項，避免載入後選不到 */
+function syncTimeSelect(){
+  const el=document.getElementById('s-time'); if(!el||el.tagName!=='SELECT')return;
+  const cur=(el.dataset.val||el.value||'4/4');
+  const opts=TIME_LIST.includes(cur)?TIME_LIST:[cur,...TIME_LIST];
+  el.innerHTML=opts.map(o=>`<option value="${o}"${o===cur?' selected':''}>${o}</option>`).join('');
+  el.value=cur; el.dataset.val=cur;
+}
 function renderTimeSelects(){
+  syncTimeSelect();
   const cur=gv('s-time')||'4/4';
   const base=['4/4','3/4','6/8','12/8'];
   const opts=base.includes(cur)?base:[cur,...base];
