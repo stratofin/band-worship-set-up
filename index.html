@@ -764,7 +764,10 @@ body.mode-phone .seg{align-self:stretch;}
 body.mode-phone .pills{display:flex;flex-wrap:wrap;gap:0.4em;}
 /* 第 1 排：曲目｜演唱者 各半排（對齊下方「範本｜使用者」） */
 body.mode-phone .pills>.pill:nth-child(1),
-body.mode-phone .pills>.pill:nth-child(2){flex:0 0 calc(50% - 0.2em);box-sizing:border-box;}
+body.mode-phone .pills>.pill:nth-child(2){flex:0 0 calc(50% - 0.2em);box-sizing:border-box;min-width:0;overflow:hidden;
+  padding-left:0.5em;padding-right:0.5em;gap:0.3em;}
+body.mode-phone .pills>.pill:nth-child(1) label,
+body.mode-phone .pills>.pill:nth-child(2) label{flex:0 0 auto;font-size:0.7em;}
 body.mode-phone .pills>.pill:nth-child(1) input,
 body.mode-phone .pills>.pill:nth-child(2) input{flex:1 1 auto;width:100%!important;min-width:0;}
 /* 第 2 排：拍號｜BPM｜用途｜主題 各 25%（拍號＋BPM 合起來＝上方「曲目」寬） */
@@ -3581,16 +3584,20 @@ function bprSelect(s){
     BPR_LIST.map(v=>`<option value="${v}"${cur===v?' selected':''}>${v===''?'每排:自動':'每排:'+v}</option>`).join('')+`</select>`;
 }
 /* def＝該檢視的每排預設值（使用者手動設「每排」或列印自動欄數時仍優先採用）；未給 def 則維持自動排版 */
-function barGridStyle(s,def){ const n=(window._printBPR||0)||(parseInt(s.barsPerRow)||0)||(def||0); return n>0?`style="grid-template-columns:repeat(${n},minmax(0,1fr));--bw:${(100/n).toFixed(4)}%"`:''; }
-/* KB 檢視專用：每排預設 2 個小節（讓填寫空間更大） */
-function kbPerRow(s){
-  const forced=(window._printBPR||0);
-  if(forced)return forced;                                   // 列印時照列印設定
-  let n=(parseInt(s&&s.barsPerRow)||0)||2;                   // KB 預設每排 2 個
-  const printing=/\bprint-/.test(document.body.className);
-  if(!printing && document.body.classList.contains('mode-phone')) n=Math.min(2,n);   // 手機版最多 2 個，填寫空間才夠
+/* 每排幾個小節：手機版一律最多 2 個（列印／經典A4 不受影響） */
+function barsPerRowOf(s,def){
+  let n=(window._printBPR||0)||(parseInt(s&&s.barsPerRow)||0)||(def||4);
+  const printing=/\bprint-/.test(document.body.className)||!!window._printBPR;
+  if(!printing && document.body.classList.contains('mode-phone')) n=Math.min(2,n);
   return Math.max(1,n);
 }
+function barGridStyle(s,def){
+  if(!def && !(window._printBPR||0) && !(parseInt(s&&s.barsPerRow)||0))return '';
+  const n=barsPerRowOf(s,def);
+  return `style="grid-template-columns:repeat(${n},minmax(0,1fr));--bw:${(100/n).toFixed(4)}%"`;
+}
+/* KB 檢視專用：每排預設 2 個小節（讓填寫空間更大） */
+function kbPerRow(s){ return barsPerRowOf(s,2); }   // KB 預設每排 2 個
 function kbBarGridStyle(s){ const n=kbPerRow(s); return `style="grid-template-columns:repeat(${n},minmax(0,1fr));--bw:${(100/n).toFixed(4)}%"`; }
 function setSecBPR(id,v){ const s=sects.find(x=>x.id===id); if(!s)return; s.barsPerRow= v?parseInt(v):''; autoSave(); renderCharts(); }
 /* 一次套用所有段落 */
@@ -3819,7 +3826,7 @@ function barsIdentical(s,a,b){
 function barCellsHtml(s,beats,bprHint){
   const bars=Math.max(1,parseInt(s.bars)||1);
   // 每排小節數（與 barGridStyle 同一套邏輯）：用來標出「每排第一個小節」補上起始線，各排線條位置才一致
-  const bpr=Math.max(1,(window._printBPR||0)||(parseInt(s.barsPerRow)||0)||(bprHint||4));
+  const bpr=barsPerRowOf(s,bprHint||4);
   const out=[];                                  // 先收集，最後再依實際排出的順序標 row-end
   if(window._printRepeat){                       // 經典A4：連續相同小節收合成一格 ×N
     let i=0;
@@ -4185,7 +4192,7 @@ function mixCardHtml(s,plus){
     const packed=[];
     vis.forEach(o=>{ const a=o.a; a._x=Math.max(0,Math.min(1,a.x||0)); a._w=Math.max(0.02,Math.min(1-a._x,a.w||(1/bars))); let r=0; for(;;){ const row=packed[r]||(packed[r]=[]); if(!row.some(p=>!(a._x+a._w<=p.x||a._x>=p.x+p.w))){ row.push({x:a._x,w:a._w}); a._vrow=r; break; } r++; } });
     // 預設一排 4 小節（和弦頁一致）；每排固定 bpr 欄（不足的排不拉滿）；配器軸逐排對齊
-    const bpr=Math.max(1,(s.barsPerRow&&parseInt(s.barsPerRow)>0)?parseInt(s.barsPerRow):4);
+    const bpr=barsPerRowOf(s,4);
     const nRows=Math.ceil(bars/bpr), rfw=bpr/bars;
     const fsEm=Math.max(0.8,Math.min(2.6,4.8/bpr)).toFixed(2);   // 每排越少字越大，撐滿整行
     let blocks='';
