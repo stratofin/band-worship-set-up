@@ -229,6 +229,28 @@ body:not(.mode-phone) .fbtn{width:1.5em;height:1.5em;}
 .vtab{padding:0.6em 1em;font-size:0.85em;cursor:pointer;color:var(--text3);border-bottom:2px solid transparent;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit;transition:all .13s;white-space:nowrap;}
 .vtab.a{color:var(--accent);border-bottom-color:var(--accent);font-weight:500;}
 
+/* ── 四語版面一致化 ──
+   中／英譯文較短、日／韓較長，元件寬度會忽大忽小。
+   ① 給主要按鈕與分頁一個共同下限，短標籤自動補齊寬度
+   ② 日／韓字距收緊一點（CJK 全形字視覺較重），四語看起來接近 */
+body:not(.mode-phone) .vtab{min-width:6.4em;text-align:center;}
+body:not(.mode-phone) .view-print .btn{min-width:6.6em;}
+body:not(.mode-phone) .tbar-r .btn{min-width:6.2em;}
+body:not(.mode-phone) .icon-toolbar .stbtn{min-width:7.2em;}
+body:not(.mode-phone) .segbtn{min-width:4.6em;text-align:center;}
+body:not(.mode-phone) .seg-editacts .stbtn{min-width:7.6em;}
+html[lang="ja"] .vtab,html[lang="ko"] .vtab,
+html[lang="ja"] .btn,html[lang="ko"] .btn,
+html[lang="ja"] .stbtn,html[lang="ko"] .stbtn,
+html[lang="ja"] .segbtn,html[lang="ko"] .segbtn,
+html[lang="ja"] .ic-hint,html[lang="ko"] .ic-hint,
+html[lang="ja"] .ic-sel,html[lang="ko"] .ic-sel,
+html[lang="ja"] .pill,html[lang="ko"] .pill{letter-spacing:-0.02em;}
+html[lang="ja"] .vtab,html[lang="ko"] .vtab{font-size:0.82em;}
+/* 中／英把字距稍微放開，視覺重量跟上 */
+html[lang="zh-Hant"] .vtab,html[lang="en"] .vtab{letter-spacing:0.04em;}
+html[lang="en"] .btn,html[lang="en"] .stbtn{letter-spacing:0.01em;}
+
 /* meta summary strip */
 .summary{display:flex;gap:1.2em;flex-wrap:wrap;font-size:0.8em;color:var(--text2);margin:-0.6em 0 1.1em;font-family:'Space Mono',monospace;}
 .summary b{color:var(--accent);font-weight:700;}
@@ -1112,7 +1134,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
       <div class="pill"><label>演唱者</label><input id="s-artist" value="" placeholder="—" oninput="schedRender()" style="width:90px"></div>
       <div class="pill"><label>拍號</label><select id="s-time" onchange="this.dataset.val=this.value;schedRender()" title="全曲拍號（各小節可再單獨設定）" style="background:none;border:none;color:var(--text);font-family:inherit;font-size:1em;outline:none;cursor:pointer"><option value="4/4">4/4</option></select></div>
       <div class="pill"><label>BPM</label><input id="s-bpm" value="71" maxlength="3" inputmode="numeric" oninput="schedRender()" style="width:2.4em"></div>
-      <div class="pill"><label>用途</label><select id="s-usage" onchange="schedRender()" style="background:none;border:none;color:var(--text);font-family:inherit;font-size:1em;outline:none;cursor:pointer"><option value="">—</option><option>短歌</option><option>讚美</option><option>敬拜</option></select></div>
+      <div class="pill"><label>用途</label><select id="s-usage" onchange="onUsageChange(this)" style="background:none;border:none;color:var(--text);font-family:inherit;font-size:1em;outline:none;cursor:pointer"><option value="">—</option></select></div>
       <div class="pill" style="gap:3px"><label>主題</label><select id="theme-sel" onchange="setTheme(this.value)" title="介面配色（只影響螢幕，列印仍為白底原樣）" style="background:none;border:none;color:var(--text);font-family:inherit;font-size:1em;outline:none;cursor:pointer"><option value="dark">黑</option><option value="light">白</option><option value="pink">粉</option></select></div>
       <div class="pill" style="gap:3px">
         <label>字級</label>
@@ -1300,7 +1322,60 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   <div class="cl-box">
     <div class="cl-head"><span>📝 更新日誌 · Worship Arranger</span><button class="btn" onclick="hideChangelog()">✕</button></div>
     <div class="cl-body">
-      <p class="cl-ver">開發時間軸：2026-06-17 ～ 2026-06-28（依使用回饋持續優化）</p>
+      <p class="cl-ver">開發時間軸：2026-06-17 ～ 2026-08-30（依使用回饋持續優化）</p>
+
+      <h4>預設範例歌曲更換 <span class="cl-date">2026-08-30</span></h4>
+      <ul><li>第一次開啟時載入的範例改為「You are good ／ Israel &amp; New Breed」（4/4・131 BPM・Key E），共 9 段 55 小節</li></ul>
+
+      <h4>使用者身分與用途分類 <span class="cl-date">2026-08-30</span></h4>
+      <ul><li>身分分成「⛪ 敬拜使用者」（用途固定 短歌／讚美／敬拜）與「🎧 個人使用者」（用途留白、可自訂）</li>
+      <li>個人使用者的「用途」下拉最後多出「＋ 新增分類…／－ 移除分類…」，可自行建立分類並記住</li>
+      <li>載入的譜若帶有清單外的用途會自動保留，不會被清掉</li></ul>
+
+      <h4>四語介面：中文 / English / 日本語 / 한국어 <span class="cl-date">2026-08-27 ～ 08-30</span></h4>
+      <ul><li>語言鈕改為四段循環，按鈕永遠顯示「按下去會變成的語言」：中文 [EN] → English [JP] → 日本語 [KR] → 한국어 [中]</li>
+      <li>首次開啟依瀏覽器／系統語言自動選擇（韓 → 日 → 中 → 其他一律英文），手動選過就記住</li>
+      <li>介面文字、按鈕、選單、提示與確認視窗全面翻譯；四語的按鈕寬度與字距也做了一致化</li></ul>
+
+      <h4>段落流程圖（取代展開示意圖／方塊流程圖／圖示譜） <span class="cl-date">2026-08-27</span></h4>
+      <ul><li>三個舊分頁整合成一個「段落流程圖」：直向段落方塊，點一下就地展開編輯（名稱／小節／顏色／備註／樂器配置／內層／複製／刪除）</li>
+      <li>左側的「段落編輯」欄整個移除，畫面改為單欄全寬，譜面空間變大</li>
+      <li>每個段落序號右邊顯示歌名；聚會模式改成一首一頁，可左右滑動換歌</li>
+      <li>樂器列新增「🔁 Loop」與自訂樂器的新增／刪除，樂器鈕可直接拖到段落上配置</li></ul>
+
+      <h4>段落操作：滑動增刪 ＋ 段落清除 <span class="cl-date">2026-08-27</span></h4>
+      <ul><li>段落流程圖與和弦譜／混合／KB 的段落標題列，往右滑＝新增段落、往左滑＝刪除段落（平常隱藏，滑動才出現）</li>
+      <li>段落標題列新增「🧹 清除」：只清這一段的和弦與 KB 數字，小節數／分割／拍號／重複／接續等格式全部保留，可再按一次復原</li></ul>
+
+      <h4>檔案與帳號 <span class="cl-date">2026-08-27</span></h4>
+      <ul><li>新增「📄 開新檔案」；頂部整併成「💾 存檔／📂 讀檔」兩顆，JSON 下載與匯入都收進選單</li>
+      <li>使用者登入新增「Google 帳號登入」，登入後顯示頭像與名稱</li>
+      <li>左上角換上新的 ARRANGER 標題圖</li></ul>
+
+      <h4>手機版介面重整 <span class="cl-date">2026-08-27</span></h4>
+      <ul><li>頂部改為：模式／語言／更新日誌一排 → 開新檔案 → 存檔｜讀檔 → 範本｜使用者 → 曲目等欄位</li>
+      <li>欄位排成格線：曲目｜演唱者 各半排；拍號｜BPM｜用途｜主題 各 1/4；字級 1/4、男｜女 各 1/8</li>
+      <li>拍號改為下拉選單；和弦譜／混合／KB 在手機上固定每排 2 個小節，字大好認</li>
+      <li>修正整個工具列會超出畫面右緣的問題</li></ul>
+
+      <h4>經典A4：盡量把整首歌壓進一張 <span class="cl-date">2026-08-18 ～ 08-27</span></h4>
+      <ul><li>輸出前可勾選要輸出哪些段落（含「全部輸出」）</li>
+      <li>新增「輸出大小」：標準／緊湊／最小</li>
+      <li>字級改為逐 px 二分搜尋找出剛好塞得下的最大值；字級壓小時留白也一起收緊，結果會直接告訴你有沒有塞進一頁</li></ul>
+
+      <h4>JSON 改為「自我描述」完整格式 <span class="cl-date">2026-08-18</span></h4>
+      <ul><li>匯出的 JSON 內含格式版本、視覺設計、版面設定與已解析的和弦名，其他平台不需猜規則就能正確重現</li></ul>
+
+      <h4>和弦系統強化 <span class="cl-date">2026-08-14</span></h4>
+      <ul><li>補齊 9／11／13 系列（maj7／maj9／maj13 各自獨立，不再被降級）</li>
+      <li>sus 一律視為 sus4，輸入 sus 或 sus4 都顯示 sus</li>
+      <li>長後綴（maj9／add4 等）改疊在級數正上方並自動縮放，短的（m／m7）維持右上角，不會再被切掉</li>
+      <li>升降記號輸出改用樂譜符號 ♭ ♯</li></ul>
+
+      <h4>列印與版面一致化 <span class="cl-date">2026-07-26 ～ 08-15</span></h4>
+      <ul><li>手機／平板輸出一律以電腦版規格計算，各裝置結果一致</li>
+      <li>分頁不再切到小節，段落卡片也不會被切成兩半</li>
+      <li>小節寬度、小節線位置與粗細（1.5px）全面統一，每一拍格絕對等寬</li></ul>
 
       <h4>五線譜改為 KB 數字譜 <span class="cl-date">2026-07-01</span></h4>
       <ul><li>「KB」分頁：每小節上排(右手)/下排(左手)，每格級數、空白分隔可疊 1–3 音；時值用簡譜底線（四/八/十六分），每格可單獨改；沿用小節分割/重複/拍號/接續/每排/複製小節/列印/上一步下一步</li></ul>
@@ -1526,11 +1601,12 @@ function setTheme(name){
 }
 (function initTheme(){ let t='dark'; try{t=localStorage.getItem('arranger_theme')||'dark';}catch(e){} setTheme(t); })();
 /* ── 介面語言：中文(預設) / English；字典逐字串對應，渲染後重套，可還原 ── */
-const LANGS=['zh','en','ja'];   // 語言循環順序：中文 → English → 日本語
+const LANGS=['zh','en','ja','ko'];   // 語言循環順序：中文 → English → 日本語 → 한국어
 /* 語言：使用者手動選過就用他選的；否則依登入者的瀏覽器 / 系統語言自動挑最合適的 */
 function detectLang(){
   const ls=[]; try{ if(navigator.languages)ls.push(...navigator.languages); if(navigator.language)ls.push(navigator.language); }catch(e){}
   for(const raw of ls){ const n=String(raw||'').toLowerCase();
+    if(n.startsWith('ko'))return 'ko';
     if(n.startsWith('ja'))return 'ja';
     if(n.startsWith('zh'))return 'zh';
     if(n.startsWith('en'))return 'en';
@@ -1539,19 +1615,28 @@ function detectLang(){
 }
 let _lang='zh'; try{ const sv=localStorage.getItem('arranger_lang'); _lang=(sv&&LANGS.indexOf(sv)>=0)?sv:detectLang(); }catch(e){ _lang=detectLang(); }
 const I18N={
+ "⛪ 敬拜使用者：瀏覽歌譜":"⛪ Worship user: browse",
+ "🎧 個人使用者：自訂分類":"🎧 Personal user: custom categories",
+ "⛪ 敬拜使用者 · 瀏覽歌譜":"⛪ Worship user · browse",
+ "🎧 個人使用者 · 自訂分類":"🎧 Personal user · custom categories",
+ "＋ 新增分類…":"＋ Add category…",
+ "－ 移除分類…":"－ Remove category…",
+ "用途分類（可自行新增／移除）":"Category (you can add or remove your own)",
+ "用途分類（敬拜使用者固定為短歌／讚美／敬拜）":"Category (fixed for worship users: Short / Praise / Worship)",
+ "「用途」欄位已切換成自訂模式：下拉選單最後有「＋ 新增分類…」與「－ 移除分類…」，可以建立你自己的分類。":"The Use field is now in custom mode: the dropdown ends with “＋ Add category…” and “－ Remove category…” so you can build your own list.",
  "▲ 工具列":"▲ Toolbar","▼ 工具列":"▼ Toolbar","🖥 電腦":"🖥 Desktop","▦ 平板":"▦ Tablet","📱 手機":"📱 Phone","📝 更新日誌":"📝 Changelog",
  "曲目":"Title","演唱者":"Artist","拍號":"Time","BPM":"BPM","用途":"Use","男":"M","女":"F","字級":"Font","主題":"Theme","微調Key":"Tune Key",
  "黑":"Dark","白":"Light","粉":"Pink",
  "💾 存檔":"💾 Save","範本":"Template","👤 使用者":"👤 User","⋯ 更多":"⋯ More","↓ CSV":"↓ CSV","↓ PNG 示意圖":"↓ PNG Flow","↓ PNG 方塊圖":"↓ PNG Blocks","🖨 圖示譜PDF":"🖨 Icon PDF",
- "段落編輯":"Sections","＋ 新增段落":"＋ Add Section","刪":"Del",
+ "＋ 新增段落":"＋ Add sec.","刪":"Del",
  "展開示意圖":"Flow Map","方塊流程圖":"Block Flow","圖示譜":"Icon Chart","和弦譜":"Chord Chart","混合":"Mix","五線譜":"Staff","文字清單":"Text List","匯出":"Export","🗑 清除音符":"🗑 Clear notes","↩ 上一步":"↩ Undo","↪ 下一步":"↪ Redo","🎹 放和弦":"🎹 Place chord",
  "顯示":"Show","級數":"Degrees","和弦名(男Key)":"Chord (M Key)","和弦名(女Key)":"Chord (F Key)","男Key":"M Key","女Key":"F Key",
  "全部每排":"All / row","套用…":"Apply…","自動":"Auto",
  "🗑 全部清除":"🗑 Clear All","↩ 復原":"↩ Undo",
  "🔓 鎖定 關":"🔓 Lock Off","🔒 鎖定 開":"🔒 Lock On","🔒 鎖定中 — 點此解鎖編輯":"🔒 Locked — tap to unlock editing",
- "📄 聚會分頁 關":"📄 Per-song page Off","📄 聚會分頁 開":"📄 Per-song page On",
+ "📄 聚會分頁 關":"📄 Per-song Off","📄 聚會分頁 開":"📄 Per-song On",
  "🔍 辨識匯入":"🔍 OCR Import","📄 經典A4":"📄 Fit A4","🖨 列印 / 存 PDF":"🖨 Print / PDF",
- "控制項 開":"Controls On","控制項 關":"Controls Off","⧉ 複製":"⧉ Copy","▾ 收合":"▾ Collapse","▸ 展開":"▸ Expand","📋 貼上":"📋 Paste","＋ 加配器":"＋ Add part",
+ "控制項 開":"Controls On","控制項 關":"Controls Off","⧉ 複製":"⧉ Copy","▾ 收合":"▾ Fold","▸ 展開":"▸ Open","📋 貼上":"📋 Paste","＋ 加配器":"＋ Add part",
  "每排:自動":"Per-row:Auto","每排:2":"Per-row:2","每排:3":"Per-row:3","每排:4":"Per-row:4","每排:5":"Per-row:5","每排:6":"Per-row:6","每排:7":"Per-row:7","每排:8":"Per-row:8",
  "每頁":"Per page","段":"secs",
  "短歌":"Short","讚美":"Praise","敬拜":"Worship",
@@ -1571,8 +1656,8 @@ const I18N={
  "① 複製轉譜指令":"① Copy prompt","② 匯入 AI 轉譜結果":"② Import AI result","解析成段落 / 和弦":"Parse to sections / chords","🤖 AI 轉譜（最準・免費・免 API key）":"🤖 AI transcribe (best · free · no API key)",
 
  /* ── 段落流程圖 ── */
- "段落流程圖":"Section Flow","樂器配置":"Parts","和弦摘要":"Chord summary","只看段落":"Sections only",
- "－ 刪除段落":"－ Delete Section","段落方塊要顯示什麼":"What to show in each block",
+ "段落流程圖":"Section Flow","樂器配置":"Parts","和弦摘要":"Chord list","只看段落":"Section only",
+ "－ 刪除段落":"－ Delete","段落方塊要顯示什麼":"What to show in each block",
  "點段落展開編輯 · 右滑＝新增 · 左滑＝刪除 · 樂器鈕可拖到段落上":"Tap a section to edit · swipe right = add · swipe left = delete · drag an instrument onto a section",
  "名稱":"Name","小節":"Bars","顏色":"Color","備註":"Note",
  "＋ 在此後新增":"＋ Add after","⎘ 複製此段":"⎘ Duplicate","🗑 移除此段":"🗑 Remove",
@@ -1590,7 +1675,7 @@ const I18N={
  "▾ 工具列":"▾ Toolbar","▸ 工具列":"▸ Toolbar","收合/展開上方設定工具列":"Collapse / expand the settings toolbar",
  "收合 / 展開工具列":"Collapse / expand toolbar",
  "📄 開新檔案":"📄 New Chart","開新檔案：清空目前內容，開一份全新的譜":"New chart: clear everything and start fresh",
- "輸出大小":"Output size","標準":"Standard","緊湊":"Compact","最小":"Smallest",
+ "輸出大小":"Output","標準":"Standard","緊湊":"Compact","最小":"Smallest",
  "輸出時的小節大小：緊湊或最小可讓一頁容納更多小節":"Bar size when printing: Compact or Smallest fits more bars per page",
  "儲存：可選存到瀏覽器本機，或另存成 .json 到資料夾":"Save: to this browser, or as a .json file in a folder",
  /* ── 段落標題列：滑動增刪 ＋ 清除 ── */
@@ -1674,6 +1759,15 @@ const I18N={
 };
 /* ── 日本語（中文 → ja）── */
 const I18N_JA={
+ "⛪ 敬拜使用者：瀏覽歌譜":"⛪ 礼拝ユーザー：閲覧",
+ "🎧 個人使用者：自訂分類":"🎧 個人ユーザー：カテゴリ自由",
+ "⛪ 敬拜使用者 · 瀏覽歌譜":"⛪ 礼拝ユーザー · 閲覧",
+ "🎧 個人使用者 · 自訂分類":"🎧 個人ユーザー · カテゴリ自由",
+ "＋ 新增分類…":"＋ カテゴリ追加…",
+ "－ 移除分類…":"－ カテゴリ削除…",
+ "用途分類（可自行新增／移除）":"用途カテゴリ（自由に追加・削除できます）",
+ "用途分類（敬拜使用者固定為短歌／讚美／敬拜）":"用途カテゴリ（礼拝ユーザーは短歌／賛美／礼拝で固定）",
+ "「用途」欄位已切換成自訂模式：下拉選單最後有「＋ 新增分類…」與「－ 移除分類…」，可以建立你自己的分類。":"「用途」欄がカスタムモードになりました。プルダウンの最後に「＋ カテゴリ追加…」「－ カテゴリ削除…」があり、自分のカテゴリを作れます。",
  "▲ 工具列":"▲ ツールバー",
  "▼ 工具列":"▼ ツールバー",
  "🖥 電腦":"🖥 PC",
@@ -1694,15 +1788,14 @@ const I18N_JA={
  "白":"ライト",
  "粉":"ピンク",
  "💾 存檔":"💾 保存",
- "範本":"テンプレート",
+ "範本":"ひな形",
  "👤 使用者":"👤 ユーザー",
  "⋯ 更多":"⋯ その他",
  "↓ CSV":"↓ CSV",
  "↓ PNG 示意圖":"↓ PNG 構成図",
  "↓ PNG 方塊圖":"↓ PNG ブロック図",
  "🖨 圖示譜PDF":"🖨 アイコン譜PDF",
- "段落編輯":"セクション編集",
- "＋ 新增段落":"＋ セクション追加",
+  "＋ 新增段落":"＋ 段落追加",
  "刪":"削除",
  "展開示意圖":"構成マップ",
  "方塊流程圖":"ブロックフロー",
@@ -1710,8 +1803,8 @@ const I18N_JA={
  "和弦譜":"コード譜",
  "混合":"ミックス",
  "五線譜":"五線譜",
- "文字清單":"テキスト一覧",
- "匯出":"エクスポート",
+ "文字清單":"テキスト",
+ "匯出":"書き出し",
  "🗑 清除音符":"🗑 音符クリア",
  "↩ 上一步":"↩ 元に戻す",
  "↪ 下一步":"↪ やり直し",
@@ -1730,15 +1823,15 @@ const I18N_JA={
  "🔓 鎖定 關":"🔓 ロック OFF",
  "🔒 鎖定 開":"🔒 ロック ON",
  "🔒 鎖定中 — 點此解鎖編輯":"🔒 ロック中 — タップで編集を再開",
- "📄 聚會分頁 關":"📄 曲ごと改ページ OFF",
- "📄 聚會分頁 開":"📄 曲ごと改ページ ON",
- "🔍 辨識匯入":"🔍 OCR取り込み",
+ "📄 聚會分頁 關":"📄 曲ごと改頁 OFF",
+ "📄 聚會分頁 開":"📄 曲ごと改頁 ON",
+ "🔍 辨識匯入":"🔍 OCR取込",
  "📄 經典A4":"📄 A4に収める",
- "🖨 列印 / 存 PDF":"🖨 印刷 / PDF保存",
- "控制項 開":"操作ボタン ON",
- "控制項 關":"操作ボタン OFF",
+ "🖨 列印 / 存 PDF":"🖨 印刷 / PDF",
+ "控制項 開":"操作 ON",
+ "控制項 關":"操作 OFF",
  "⧉ 複製":"⧉ コピー",
- "▾ 收合":"▾ 折りたたむ",
+ "▾ 收合":"▾ たたむ",
  "▸ 展開":"▸ 展開",
  "📋 貼上":"📋 貼り付け",
  "＋ 加配器":"＋ パート追加",
@@ -1861,23 +1954,23 @@ const I18N_JA={
  "② 匯入 AI 轉譜結果":"② AIの結果を取り込む",
  "解析成段落 / 和弦":"セクション / コードに解析",
  "🤖 AI 轉譜（最準・免費・免 API key）":"🤖 AI採譜（高精度・無料・APIキー不要）",
- "段落流程圖":"セクションフロー",
- "樂器配置":"パート構成",
- "和弦摘要":"コード概要",
- "只看段落":"セクションのみ",
- "－ 刪除段落":"－ セクション削除",
+ "段落流程圖":"セクション図",
+ "樂器配置":"パート",
+ "和弦摘要":"コード表",
+ "只看段落":"段落のみ",
+ "－ 刪除段落":"－ 削除",
  "段落方塊要顯示什麼":"セクションのブロックに何を表示するか",
  "點段落展開編輯 · 右滑＝新增 · 左滑＝刪除 · 樂器鈕可拖到段落上":"セクションをタップで編集 · 右スワイプ＝追加 · 左スワイプ＝削除 · 楽器ボタンはセクションにドラッグできます",
  "名稱":"名前",
  "小節":"小節数",
  "顏色":"色",
  "備註":"メモ",
- "＋ 在此後新增":"＋ この後に追加",
+ "＋ 在此後新增":"＋ 後に追加",
  "⎘ 複製此段":"⎘ 複製",
  "🗑 移除此段":"🗑 削除",
- "樂器配置（基底）":"パート構成（ベース）",
- "＋ 內層":"＋ インナー",
- "刪內層":"インナー削除",
+ "樂器配置（基底）":"パート（ベース）",
+ "＋ 內層":"＋ 内層",
+ "刪內層":"内層削除",
  "（尚未填樂器配置）":"（パート未設定）",
  "（尚未填和弦）":"（コード未入力）",
  "在此後新增段落":"この後にセクションを追加",
@@ -1897,9 +1990,9 @@ const I18N_JA={
  "收合 / 展開工具列":"ツールバーを折りたたむ / 展開する",
  "📄 開新檔案":"📄 新規作成",
  "開新檔案：清空目前內容，開一份全新的譜":"新規作成：内容をすべて消して新しい楽譜を開きます",
- "輸出大小":"出力サイズ",
+ "輸出大小":"出力",
  "標準":"標準",
- "緊湊":"コンパクト",
+ "緊湊":"やや小",
  "最小":"最小",
  "輸出時的小節大小：緊湊或最小可讓一頁容納更多小節":"印刷時の小節サイズ：コンパクト / 最小なら1ページに多く入ります",
  "儲存：可選存到瀏覽器本機，或另存成 .json 到資料夾":"保存：このブラウザに保存するか、.json ファイルとしてフォルダに保存できます",
@@ -2000,11 +2093,355 @@ const I18N_JA={
  "這一拍的分割：♩四分 / ♪八分 / ♬十六分":"この拍の分割：♩4分 / ♪8分 / ♬16分"
 };
 
+/* ── 한국어（中文 → ko）── */
+const I18N_KO={
+ "⛪ 敬拜使用者：瀏覽歌譜":"⛪ 예배 사용자: 열람",
+ "🎧 個人使用者：自訂分類":"🎧 개인 사용자: 카테고리 자유",
+ "⛪ 敬拜使用者 · 瀏覽歌譜":"⛪ 예배 사용자 · 열람",
+ "🎧 個人使用者 · 自訂分類":"🎧 개인 사용자 · 카테고리 자유",
+ "＋ 新增分類…":"＋ 카테고리 추가…",
+ "－ 移除分類…":"－ 카테고리 삭제…",
+ "用途分類（可自行新增／移除）":"용도 카테고리 (직접 추가·삭제 가능)",
+ "用途分類（敬拜使用者固定為短歌／讚美／敬拜）":"용도 카테고리 (예배 사용자는 짧은 찬양／찬양／경배로 고정)",
+ "「用途」欄位已切換成自訂模式：下拉選單最後有「＋ 新增分類…」與「－ 移除分類…」，可以建立你自己的分類。":"「용도」 항목이 사용자 모드로 바뀌었습니다. 드롭다운 맨 아래의 「＋ 카테고리 추가…」와 「－ 카테고리 삭제…」로 나만의 카테고리를 만들 수 있습니다.",
+ "▲ 工具列":"▲ 도구 모음",
+ "▼ 工具列":"▼ 도구 모음",
+ "🖥 電腦":"🖥 PC",
+ "▦ 平板":"▦ 태블릿",
+ "📱 手機":"📱 모바일",
+ "📝 更新日誌":"📝 변경 내역",
+ "曲目":"곡명",
+ "演唱者":"아티스트",
+ "拍號":"박자",
+ "BPM":"BPM",
+ "用途":"용도",
+ "男":"남",
+ "女":"여",
+ "字級":"글자 크기",
+ "主題":"테마",
+ "微調Key":"키 미세조정",
+ "黑":"다크",
+ "白":"라이트",
+ "粉":"핑크",
+ "💾 存檔":"💾 저장",
+ "範本":"템플릿",
+ "👤 使用者":"👤 사용자",
+ "⋯ 更多":"⋯ 더보기",
+ "↓ CSV":"↓ CSV",
+ "↓ PNG 示意圖":"↓ PNG 구성도",
+ "↓ PNG 方塊圖":"↓ PNG 블록도",
+ "🖨 圖示譜PDF":"🖨 아이콘 악보 PDF",
+  "＋ 新增段落":"＋ 섹션 추가",
+ "刪":"삭제",
+ "展開示意圖":"구성 맵",
+ "方塊流程圖":"블록 플로우",
+ "圖示譜":"아이콘 악보",
+ "和弦譜":"코드 악보",
+ "混合":"믹스",
+ "五線譜":"오선보",
+ "文字清單":"텍스트",
+ "匯出":"내보내기",
+ "🗑 清除音符":"🗑 음표 지우기",
+ "↩ 上一步":"↩ 실행 취소",
+ "↪ 下一步":"↪ 다시 실행",
+ "🎹 放和弦":"🎹 코드 입력",
+ "顯示":"표시",
+ "級數":"디그리",
+ "和弦名(男Key)":"코드명(남 키)",
+ "和弦名(女Key)":"코드명(여 키)",
+ "男Key":"남 키",
+ "女Key":"여 키",
+ "全部每排":"전체 한 줄",
+ "套用…":"적용…",
+ "自動":"자동",
+ "🗑 全部清除":"🗑 전체 지우기",
+ "↩ 復原":"↩ 되돌리기",
+ "🔓 鎖定 關":"🔓 잠금 끔",
+ "🔒 鎖定 開":"🔒 잠금 켬",
+ "🔒 鎖定中 — 點此解鎖編輯":"🔒 잠김 — 탭하여 편집 잠금 해제",
+ "📄 聚會分頁 關":"📄 곡별 페이지 끔",
+ "📄 聚會分頁 開":"📄 곡별 페이지 켬",
+ "🔍 辨識匯入":"🔍 OCR 가져오기",
+ "📄 經典A4":"📄 A4 맞춤",
+ "🖨 列印 / 存 PDF":"🖨 인쇄 / PDF",
+ "控制項 開":"조작 켬",
+ "控制項 關":"조작 끔",
+ "⧉ 複製":"⧉ 복사",
+ "▾ 收合":"▾ 접기",
+ "▸ 展開":"▸ 펼치기",
+ "📋 貼上":"📋 붙여넣기",
+ "＋ 加配器":"＋ 파트 추가",
+ "每排:自動":"한 줄:자동",
+ "每排:2":"한 줄:2",
+ "每排:3":"한 줄:3",
+ "每排:4":"한 줄:4",
+ "每排:5":"한 줄:5",
+ "每排:6":"한 줄:6",
+ "每排:7":"한 줄:7",
+ "每排:8":"한 줄:8",
+ "每頁":"페이지당",
+ "段":"섹션",
+ "短歌":"짧은 찬양",
+ "讚美":"찬양",
+ "敬拜":"경배",
+ "服事清單（最多 6 首，可排序）":"예배 목록 (최대 6곡, 순서 변경 가능)",
+ "▶ 開始（依序載入）":"▶ 시작 (순서대로 불러오기)",
+ "＋ 加入":"＋ 추가",
+ "載入":"불러오기",
+ "刪除":"삭제",
+ "歸類":"분류",
+ "一般使用者（瀏覽歌譜）":"게스트 (열람만)",
+ "管理者登入":"관리자 로그인",
+ "使用者登入":"사용자 로그인",
+ "聚會服事":"예배",
+ "登出":"로그아웃",
+ "儲存目前到雲端":"클라우드에 저장",
+ "調性顯示":"키 표시",
+ "內層":"내부 레이어",
+ "基底":"기본",
+ "全部":"전체",
+ "色":"색",
+ "和弦":"코드",
+ "返回":"뒤로",
+ "關閉":"닫기",
+ "登入":"로그인",
+ "註冊":"회원가입",
+ "上一頁":"이전",
+ "下一頁":"다음",
+ "未命名":"제목 없음",
+ "新段落":"새 섹션",
+ "另存新檔":"다른 이름으로 저장",
+ "複製全部":"전체 복사",
+ "雲端歌庫":"클라우드 라이브러리",
+ "複製文字清單":"텍스트 목록 복사",
+ "上移":"위로",
+ "下移":"아래로",
+ "管理員":"관리자",
+ "節奏組 ◈":"리듬 섹션 ◈",
+ "📂 載入":"📂 불러오기",
+ "總小節":"총 마디",
+ "段落":"섹션",
+ "✓ 已複製":"✓ 복사했습니다",
+ "✓ 已載入":"✓ 불러왔습니다",
+ "✓ 已存檔":"✓ 저장했습니다",
+ "✓ 匯入成功！":"✓ 가져오기 완료!",
+ "讀取中…":"불러오는 중…",
+ "載入中…":"불러오는 중…",
+ "儲存中…":"저장 중…",
+ "處理中…":"처리 중…",
+ "登入中…":"로그인 중…",
+ "歸類中…":"분류 중…",
+ "準備中…":"준비 중…",
+ "產生中…":"생성 중…",
+ "讀取 PDF…":"PDF 읽는 중…",
+ "載入服事清單…":"예배 목록 불러오는 중…",
+ "載入辨識引擎…":"OCR 엔진 불러오는 중…",
+ "彈法…":"연주 방법…",
+ "段落備註…":"섹션 메모…",
+ "辨識出的文字會出現在這裡，可手動修正後再解析…":"OCR 결과가 여기에 표시됩니다. 수정 후 분석하세요…",
+ "不轉（保留和弦名）":"변환 안 함 (코드명 유지)",
+ "依男 Key 轉級數":"남 키 기준으로 디그리 변환",
+ "依女 Key 轉級數":"여 키 기준으로 디그리 변환",
+ "和弦轉級數：":"코드 → 디그리:",
+ "🔍 圖片 / PDF 辨識匯入":"🔍 이미지 / PDF OCR 가져오기",
+ "🎼 圖示譜 PDF":"🎼 아이콘 악보 PDF",
+ "🎵 和弦譜 PDF":"🎵 코드 악보 PDF",
+ "🎼 混合 PDF（和弦＋樂器）":"🎼 믹스 PDF (코드＋파트)",
+ "🖼 PNG 展開示意圖":"🖼 PNG 구성 맵",
+ "📦 PNG 方塊流程圖":"📦 PNG 블록 플로우",
+ "📊 CSV 樂器備註表":"📊 CSV 파트 표",
+ "📋 文字清單":"📋 텍스트 목록",
+ "↓ JSON 備份":"↓ JSON 백업",
+ "↓ Download JSON":"↓ JSON 다운로드",
+ "↓ PNG 展開示意圖":"↓ PNG 구성 맵",
+ "↓ PNG 方塊流程圖":"↓ PNG 블록 플로우",
+ "👤 使用者登入":"👤 사용자 로그인",
+ "🔑 管理者登入":"🔑 관리자 로그인",
+ "👁 一般使用者：瀏覽歌譜":"👁 게스트: 열람만",
+ "⛪ 聚會服事":"⛪ 예배",
+ "☁ 儲存目前到雲端":"☁ 클라우드에 저장",
+ "一般使用者 · 瀏覽歌譜":"게스트 · 열람만",
+ "💾 儲存譜":"💾 악보 저장",
+ "請選擇儲存方式：":"저장 방법을 선택하세요:",
+ "💾 存到瀏覽器本機":"💾 이 브라우저에 저장",
+ "📁 另存到資料夾（.json）":"📁 폴더에 저장 (.json)",
+ "下次用同一台裝置開啟會自動載入":"같은 기기에서는 다음에 자동으로 불러옵니다",
+ "可自選電腦資料夾位置存成檔案":"컴퓨터의 원하는 폴더에 파일로 저장",
+ "（此段尚未填樂器配置）":"(이 섹션은 파트 미설정)",
+ "點段落圓圈 → 右邊展開該段樂器配置（再點一次收起）":"섹션 원을 탭하면 오른쪽에 해당 파트 구성이 열립니다 (다시 탭하면 닫힘)",
+ "點樂器挑要看的部位":"악기를 탭해 표시를 필터링",
+ "升半音":"반음 올리기",
+ "降半音":"반음 내리기",
+ "拖曳移位":"드래그하여 이동",
+ "拖曳調長度":"드래그하여 길이 조절",
+ "接續到哪一段":"이어지는 섹션",
+ "此小節接續到哪一段":"이 마디가 이어지는 섹션",
+ "本小節拍號（點擊切換）":"이 마디의 박자 (탭하여 전환)",
+ "每排幾個小節":"한 줄당 마디 수",
+ "放大檢視字級":"글자 크게",
+ "縮小檢視字級":"글자 작게",
+ "展開更多功能":"더 많은 기능",
+ "查看歷次更新內容":"변경 내역 보기",
+ "新增一條配器（內容與其他頁共用）":"파트 추가 (다른 화면과 공유)",
+ "刪除此配器（各頁一起移除）":"이 파트 삭제 (모든 화면에서 제거)",
+ "一次設定所有段落每排小節數":"모든 섹션의 한 줄당 마디 수를 한 번에 설정",
+ "自動縮放，盡量塞進一張 A4":"자동 축소하여 A4 한 장에 맞추기",
+ "① 複製轉譜指令":"① 프롬프트 복사",
+ "② 匯入 AI 轉譜結果":"② AI 결과 가져오기",
+ "解析成段落 / 和弦":"섹션 / 코드로 분석",
+ "🤖 AI 轉譜（最準・免費・免 API key）":"🤖 AI 채보 (가장 정확·무료·API 키 불필요)",
+ "段落流程圖":"섹션 플로우",
+ "樂器配置":"파트",
+ "和弦摘要":"코드 요약",
+ "只看段落":"섹션만",
+ "－ 刪除段落":"－ 삭제",
+ "段落方塊要顯示什麼":"섹션 블록에 무엇을 표시할지",
+ "點段落展開編輯 · 右滑＝新增 · 左滑＝刪除 · 樂器鈕可拖到段落上":"섹션을 탭하면 편집 · 오른쪽 스와이프＝추가 · 왼쪽 스와이프＝삭제 · 악기 버튼을 섹션으로 드래그 가능",
+ "名稱":"이름",
+ "小節":"마디 수",
+ "顏色":"색상",
+ "備註":"메모",
+ "＋ 在此後新增":"＋ 뒤에 추가",
+ "⎘ 複製此段":"⎘ 복제",
+ "🗑 移除此段":"🗑 삭제",
+ "樂器配置（基底）":"파트 (기본)",
+ "＋ 內層":"＋ 레이어",
+ "刪內層":"레이어 삭제",
+ "（尚未填樂器配置）":"(파트 미설정)",
+ "（尚未填和弦）":"(코드 미입력)",
+ "在此後新增段落":"이 뒤에 섹션 추가",
+ "刪除此段落":"이 섹션 삭제",
+ "新增第一個段落":"첫 번째 섹션 추가",
+ "在最後新增一個段落":"마지막에 섹션 추가",
+ "刪除模式：開啟後每個段落名稱旁會出現 ✕，按下即刪除":"삭제 모드: 각 섹션 이름 옆에 ✕ 가 표시됩니다",
+ "複製這個段落（含和弦與樂器配置）":"이 섹션 복제 (코드와 파트 포함)",
+ "新增一個內層（同段不同顏色的疊加配器）":"내부 레이어 추가 (같은 섹션에 다른 색으로 파트를 겹침)",
+ "刪除這個內層":"이 내부 레이어 삭제",
+ "Loop":"Loop",
+ "新增自定義樂器 / 聲部":"사용자 악기 / 파트 추가",
+ "刪除自定義樂器（不會動到預設的）":"사용자 악기 삭제 (기본 악기는 유지)",
+ "▾ 工具列":"▾ 도구 모음",
+ "▸ 工具列":"▸ 도구 모음",
+ "收合/展開上方設定工具列":"위쪽 설정 도구 모음 접기 / 펼치기",
+ "收合 / 展開工具列":"도구 모음 접기 / 펼치기",
+ "📄 開新檔案":"📄 새 악보",
+ "開新檔案：清空目前內容，開一份全新的譜":"새로 만들기: 현재 내용을 모두 지우고 새 악보를 엽니다",
+ "輸出大小":"출력",
+ "標準":"표준",
+ "緊湊":"조밀",
+ "最小":"최소",
+ "輸出時的小節大小：緊湊或最小可讓一頁容納更多小節":"인쇄 시 마디 크기: 조밀하게 / 최소로 하면 한 페이지에 더 많이 들어갑니다",
+ "儲存：可選存到瀏覽器本機，或另存成 .json 到資料夾":"저장: 이 브라우저에 저장하거나 .json 파일로 폴더에 저장",
+ "🧹 清除":"🧹 지우기",
+ "只清除這一段填寫的和弦與 KB 數字；小節數、分割、拍號、重複、接續等格式都保留（可再按一次復原）":"이 섹션의 코드와 KB 숫자만 지웁니다. 마디 수·분할·박자·반복·연결 등 서식은 그대로 유지됩니다 (다시 누르면 되돌리기)",
+ "收合/展開此段":"이 섹션 접기 / 펼치기",
+ "選擇要輸出的段落":"인쇄할 섹션 선택",
+ "全不選":"전체 해제",
+ "開始輸出":"인쇄",
+ "點樂器挑要看的部位 · 可拖到段落上設定":"악기를 탭해 필터링 · 섹션으로 드래그하여 배정",
+ "一鍵全部顯示 / 全部關閉":"전체 표시 / 전체 숨김",
+ "新增自定義樂器／聲部":"사용자 악기 / 파트 추가",
+ "刪除自定義樂器（預設樂器不會被刪除）":"사용자 악기 삭제 (기본 악기는 삭제되지 않음)",
+ "黑（主要）":"검정 (메인)",
+ "藍（第二層）":"파랑 (2번째 레이어)",
+ "紅（高潮）":"빨강 (클라이맥스)",
+ "紫（特效）":"보라 (이펙트)",
+ "大三":"메이저",
+ "小三 m":"마이너 m",
+ "屬七 7":"도미넌트 7",
+ "大三 major":"메이저",
+ "小三 minor":"마이너",
+ "大七 maj7":"maj7",
+ "小七 m7":"m7",
+ "減 dim":"dim",
+ "增 aug":"aug",
+ "升降":"임시표",
+ "根音（級數）":"루트 (디그리)",
+ "和弦性質":"코드 성질",
+ "根音升降":"루트 임시표",
+ "和弦根音（級數）":"코드 루트 (디그리)",
+ "放和弦模式：開啟後點格子填入所選和弦（存級數，顯示可切級數/男女Key）":"코드 입력 모드: 칸을 탭하면 선택한 코드가 입력됩니다 (디그리로 저장, 표시는 남/여 키 코드명으로 전환 가능)",
+ "放和弦模式：開啟後，點任一格就把選好的和弦（整組級數）疊上去；再點一格可連續放":"코드 입력 모드: 칸을 탭하면 선택한 코드가 한꺼번에 쌓입니다. 계속 탭하면 연속 입력됩니다",
+ "在此段之後新增段落":"이 섹션 뒤에 추가",
+ "顯示/隱藏每個小節的控制鈕":"마디별 조작 버튼 표시 / 숨김",
+ "顯示/隱藏每個小節的控制鈕；隱藏時仍顯示已設定的值":"마디별 조작 버튼 표시 / 숨김 (이미 설정된 값은 숨겨도 표시됩니다)",
+ "複製小節：進入複製模式（預設選整段，可再拖曳/長按調整）→ 複製 → 點目標小節左/右緣(藍線) → 貼到任意位置（可跨段）":"마디 복사: 복사 모드 진입 (기본은 섹션 전체 선택, 드래그나 길게 눌러 조정) → 복사 → 붙여넣을 마디의 좌우 가장자리(파란 선) 탭 → 어디든 붙여넣기 (다른 섹션도 가능)",
+ "收合/展開此段（收合只留標題，方便專注其他段）":"이 섹션 접기 / 펼치기 (접으면 제목만 남습니다)",
+ "本小節重複次數":"이 마디의 반복 횟수",
+ "鎖定：開＝只能看譜、禁止編輯；關＝可編輯":"잠금: 켬＝보기 전용, 편집 불가 / 끔＝편집 가능",
+ "鎖定：開＝只能看譜與左右滑頁、禁止任何編輯；關＝可編輯":"잠금: 켬＝보기와 페이지 넘김만 가능, 편집 불가 / 끔＝편집 가능",
+ "聚會服事列印：開＝每首歌各自從新頁開始；關＝段落連續接著印":"예배용 인쇄: 켬＝곡마다 새 페이지에서 시작 / 끔＝섹션을 이어서 인쇄",
+ "半音微調 Key":"키를 반음씩 조정",
+ "清除整個譜的和弦／分割／重複／拍號／接續資料（可再按一次復原）":"악보 전체의 코드·분할·반복·박자·연결을 지웁니다 (다시 누르면 되돌리기)",
+ "清除整個譜的 KB 數字（可用上一步還原）":"악보 전체의 KB 숫자를 지웁니다 (실행 취소로 복원 가능)",
+ "🗑 清除":"🗑 지우기",
+ "上一步（只回復最近的動作，不清除其他）":"실행 취소 (직전 동작만)",
+ "下一步（重做）":"다시 실행",
+ "↓ PNG 段落圖":"↓ PNG 섹션 맵",
+ "切換版面：電腦 / 平板 / 手機":"레이아웃 전환: PC / 태블릿 / 모바일",
+ "電腦：側欄編輯 ＋ 寬版檢視":"PC: 넓은 화면",
+ "平板：編輯區移到上方、檢視全寬、圖示譜3欄":"태블릿: 전체 폭 보기, 아이콘 악보 3열",
+ "手機：隱藏編輯區、圖示譜2欄":"모바일: 간결한 보기, 아이콘 악보 2열",
+ "中文 / English":"中文 / English",
+ "介面配色（只影響螢幕，列印仍為白底原樣）":"화면 색상 (인쇄는 흰 배경 그대로)",
+ "使用者登入 / 雲端歌庫":"로그인 / 클라우드 라이브러리",
+ "匯出 JSON 備份":"JSON 백업 내보내기",
+ "從 JSON 匯入":"JSON에서 가져오기",
+ "列印圖示譜（每頁4段，A4）":"아이콘 악보 인쇄 (A4 한 페이지 4섹션)",
+ "點拍格可編輯。記號：":"박자 칸을 탭해 편집. 기호: ",
+ "級數、":"디그리, ",
+ "升降、":"임시표, ",
+ "品質、":"코드 성질, ",
+ "轉位、":"분수 코드, ",
+ "延續、":"타이, ",
+ "休止、":"쉼표, ",
+ "細分(2音=八分、3音=三連音、4音=十六分)。右上橘徽章設本小節拍號、末小節選「→接續」。上方「顯示」可切級數↔和弦名(男/女Key)。長按任一小節→拖曳選取→複製→點目標小節左/右緣(藍線)→貼到任意位置。":"분할 (2음＝8분, 3음＝셋잇단, 4음＝16분). 오른쪽 위 주황 배지로 이 마디의 박자를 설정하고, 마지막 마디에서는 「→연결」을 선택할 수 있습니다. 위쪽 「표시」로 디그리↔코드명(남/여 키)을 전환할 수 있습니다. 마디를 길게 누르고 → 드래그로 선택 → 복사 → 붙여넣을 마디의 좌우 가장자리(파란 선) 탭 → 어디든 붙여넣기.",
+ "混合＋：用上方「樂器篩選鈕（ALL / Vocal / KB …）」挑要顯示哪些樂器的配器。配器在小節上方，可自由拖曳移位與調長度（不卡小節），內容與其他頁共用。長按任一小節→拖曳選取→複製→點目標小節左/右緣(藍線)→貼到任意位置。":"믹스＋: 위쪽 악기 필터 (ALL / Vocal / KB …)로 표시할 파트를 고릅니다. 파트는 마디 위에 있으며 자유롭게 드래그하여 이동·길이 조절이 가능하고, 내용은 다른 화면과 공유됩니다. 마디를 길게 누르고 → 드래그로 선택 → 복사 → 붙여넣을 마디의 좌우 가장자리(파란 선) 탭 → 어디든 붙여넣기.",
+ "上方「樂器篩選鈕」挑要看的部位；拖 ⋮⋮ 移位、拖右緣調長度、✕刪除（清空文字＝各頁一起移除）":"위쪽 악기 필터로 볼 파트를 선택하세요. ⋮⋮ 를 드래그해 이동, 오른쪽 끝을 드래그해 길이 조절, ✕ 로 삭제 (텍스트를 비우면 모든 화면에서 제거)",
+ "KB 數字譜：每小節分「上排＝右手／下排＝左手」，點格子輸入級數，同一格用空白分隔可直向疊 1–3 個音（和弦）；或用右上「和弦」選根音級數＋性質，開「🎹 放和弦」後點格子整組疊上。時值＝簡譜底線（顯示在每格底部）：無＝四分、一條＝八分、兩條＝十六分。每一「拍」可各自切分：拍左上角的 ♩/♪/♬ 選單只切分那一拍（每拍等寬，切細只在該拍內部發生，不會讓整排縮小）；右手 R／左手 L 標在每列左上角。上方「顯示」可切級數↔男/女Key 和弦名。重複／接續／每排 全部沿用。長按任一小節→拖曳選取→複製→點目標小節左/右緣(藍線)→貼到任意位置。":"KB 숫자 악보: 각 마디는 윗줄＝오른손, 아랫줄＝왼손으로 나뉩니다. 칸을 탭해 디그리를 입력하고, 같은 칸에서 공백으로 구분하면 1–3음까지 세로로 쌓을 수 있습니다 (코드). 또는 오른쪽 위 「코드」에서 루트와 성질을 고르고 「🎹 코드 입력」을 켠 뒤 칸을 탭하면 화음이 한꺼번에 들어갑니다. 음길이는 칸 아래 밑줄로 표시합니다: 없음＝4분, 한 줄＝8분, 두 줄＝16분. 분할은 「박」마다 독립적이며, 박 왼쪽 위의 ♩/♪/♬ 메뉴는 그 박만 분할합니다 (각 박은 같은 너비를 유지하며, 잘게 나눠도 줄 전체가 줄지 않습니다). 오른손 R／왼손 L 은 각 줄 왼쪽 위에 표시됩니다. 위쪽 「표시」로 디그리↔남/여 키 코드명을 전환할 수 있습니다. 반복／연결／한 줄당 마디 수도 그대로 사용됩니다. 마디를 길게 누르고 → 드래그로 선택 → 복사 → 붙여넣을 마디의 좌우 가장자리(파란 선) 탭 → 어디든 붙여넣기.",
+ "🗂 段落流程圖 PDF":"🗂 섹션 플로우 PDF",
+ "段落順序、Bar 數與各段樂器配置一頁看完，適合團員快速掌握全曲架構":"섹션 순서·마디 수·각 섹션의 파트 구성을 한 페이지에서 볼 수 있어 팀원이 곡 구조를 빠르게 파악하기 좋습니다",
+ "上傳和弦譜圖片或 PDF，瀏覽器內 OCR 辨識並自動拆成段落／和弦（實驗性，通常需人工修正；可選依男/女 Key 轉級數）":"코드 악보 이미지나 PDF를 올리면 브라우저 내 OCR로 섹션과 코드로 자동 분리합니다 (실험적 기능·보통 수동 수정 필요, 남/여 키로 디그리 변환 가능)",
+ "每段小節攤開、依拍號顯示拍點，A4 直式列印，適合主領 / 樂手看和弦進行":"모든 마디를 박자에 맞춰 펼쳐 A4 세로로 인쇄합니다. 인도자와 연주자가 코드 진행을 따라가기 좋습니다",
+ "同一頁同時呈現和弦小節與各樂器部位，最完整的樂團總表":"코드 마디와 모든 파트를 같은 페이지에 담은 가장 완전한 밴드 총보",
+ "包含所有段落、Bar 數、顏色、樂器備註":"모든 섹션·마디 수·색상·파트 메모 포함",
+ "純文字格式，可貼入 Notion / 筆記 App":"일반 텍스트. Notion이나 메모 앱에 그대로 붙여넣을 수 있습니다",
+ "完整存檔，可日後匯入繼續編輯":"완전한 백업. 나중에 가져와서 계속 편집할 수 있습니다",
+ "在 Canva / Miro 快速還原（3 步驟）":"Canva / Miro 에서 재현하기 (3단계)",
+ "新增黑色畫布 → 每個段落用一個「圓形」（邊框顏色=段落色），內部疊加更小的彩色圓代表各樂器層次。節奏組 Drum+Bass 改用小方形置於圓底。":"검은 캔버스를 만들고 섹션마다 원을 하나씩 그립니다 (테두리 색＝섹션 색). 안에 더 작은 색 원을 겹쳐 각 파트 레이어를 표현합니다. Drum+Bass 리듬 섹션은 원 아래에 작은 사각형으로 놓습니다.",
+ "段落圓由「左至右排列」，圓徑依 Bar 數等比縮放。段落間用虛線箭頭連接，標注轉場（Beat Switch、漸弱）。":"섹션 원은 왼쪽에서 오른쪽으로 배치하고 지름은 마디 수에 비례시킵니다. 원 사이는 점선 화살표로 연결하고 전환(비트 체인지, 페이드 등)을 표기합니다.",
+ "本工具展開示意圖的「截圖」可直接貼入 Canva 作參考底圖，再疊加說明卡片。":"이 도구의 구성 맵 스크린샷을 그대로 Canva에 붙여 밑그림으로 쓰고, 그 위에 설명 카드를 얹으면 됩니다.",
+ "本小節分割：♩四分(4格) / ♪八分(8格) / ♬十六分(16格)":"이 마디의 분할: ♩4분(4칸) / ♪8분(8칸) / ♬16분(16칸)",
+ "本小節重複次數（點擊循環 ·/×2/×4/×8）":"이 마디의 반복 횟수 (탭하여 ·/×2/×4/×8 전환)",
+ "本小節拍號":"이 마디의 박자",
+ "(未命名)":"(제목 없음)",
+ "預估長度":"예상 길이",
+ "頁數(圖示譜)":"페이지 수 (아이콘 악보)",
+ "上一首":"이전 곡",
+ "下一首":"다음 곡",
+ "📂 讀檔":"📂 열기",
+ "📂 讀取譜":"📂 악보 불러오기",
+ "請選擇讀取方式：":"불러오기 방법을 선택하세요:",
+ "💾 從瀏覽器本機讀取":"💾 이 브라우저에서 불러오기",
+ "載入這台裝置上次存的譜":"이 기기에 마지막으로 저장한 악보를 불러옵니다",
+ "📁 從 .json 檔載入":"📁 .json 파일에서 불러오기",
+ "選一個譜檔或 JSON 備份載入":"악보 파일이나 JSON 백업을 선택하세요",
+ "↓ 下載 JSON 備份":"↓ JSON 백업 다운로드",
+ "含完整設定，也可給其他程式讀取":"모든 설정을 포함하며 다른 앱에서도 읽을 수 있습니다",
+ "讀檔：從瀏覽器本機的存檔，或從 .json 檔載入":"불러오기: 이 브라우저의 저장 데이터 또는 .json 파일에서",
+ "儲存：存到瀏覽器本機、另存成 .json 到資料夾，或匯出可攜的 JSON":"저장: 이 브라우저에 저장, .json 으로 폴더에 저장, 또는 이식 가능한 JSON 으로 내보내기",
+ "▴ 收起":"▴ 접기",
+ "Google 帳號登入":"Google 계정으로 로그인",
+ "或用 email 登入":"또는 이메일로 로그인",
+ "半音微調 Key：依目前「顯示」調男/女 Key":"키를 반음씩 조정 (현재 「표시」에 맞춰 남/여 키 변경)",
+ "這一拍的分割：♩四分 / ♪八分 / ♬十六分":"이 박의 분할: ♩4분 / ♪8분 / ♬16분"
+};
+
 /* 對話框（confirm / prompt / alert）用：純字串查表，找不到就原樣顯示 */
 function L(s){ const d=langOf(_lang); return (d&&d[s]!=null)?d[s]:s; }
-function Lf(zh,en,ja){ return _lang==='ja'?(ja!=null?ja:en):(_lang==='en'?en:zh); }
+function Lf(zh,en,ja,ko){ return _lang==='ko'?(ko!=null?ko:en):(_lang==='ja'?(ja!=null?ja:en):(_lang==='en'?en:zh)); }
 /* ── 多語系引擎：以中文為基準語，en / ja 各一張對照表 ── */
-function langOf(l){ return l==='en'?I18N : l==='ja'?I18N_JA : null; }   // 中文 → 該語言
+function langOf(l){ return l==='en'?I18N : l==='ja'?I18N_JA : l==='ko'?I18N_KO : null; }   // 中文 → 該語言
 const _i18nRev={};
 function langRev(l){                                 // 該語言 → 中文
   if(!_i18nRev[l]){ const m={}, d=langOf(l); if(d)for(const k in d){ if(m[d[k]]==null)m[d[k]]=k; } _i18nRev[l]=m; }
@@ -2047,11 +2484,11 @@ if(typeof MutationObserver!=='undefined'){
   });
   try{ obs.observe(document.body,{childList:true,subtree:true,characterData:true}); }catch(e){}
 }
-const LANG_BTN={zh:'EN', en:'JP', ja:'中'};        // 按鈕顯示下一個語言
-const LANG_TITLE={zh:'切換語言：中文 → English', en:'Switch language: English → 日本語', ja:'言語切替：日本語 → 中文'};
+const LANG_BTN={zh:'EN', en:'JP', ja:'KR', ko:'中'};        // 按鈕顯示下一個語言
+const LANG_TITLE={zh:'切換語言：中文 → English', en:'Switch language: English → 日本語', ja:'言語切替：日本語 → 한국어', ko:'언어 전환: 한국어 → 中文'};
 function applyLang(){ const b=document.getElementById('lang-btn');
   if(b){ b.textContent=LANG_BTN[_lang]||'EN'; b.title=LANG_TITLE[_lang]||''; }
-  document.documentElement.lang=(_lang==='ja')?'ja':(_lang==='en'?'en':'zh-Hant');
+  document.documentElement.lang={ja:'ja',ko:'ko',en:'en'}[_lang]||'zh-Hant';
   i18nApply(); }
 function toggleLang(){ _lang=LANGS[(LANGS.indexOf(_lang)+1)%LANGS.length];   /* 中文 → English → 日本語 → 中文 */ try{localStorage.setItem('arranger_lang',_lang);}catch(e){} try{renderSB();renderAll();updatePrintHead();updateKeyStepLabels();}catch(e){} applyLang(); }
 /* 聚會服事列印分頁：開＝每首歌分頁、關＝連續 */
@@ -2097,7 +2534,8 @@ function applyProjectData(data){
   const _tm=document.getElementById('s-time');
   if(_tm){ const v=data.meta?.time||'4/4'; _tm.dataset.val=v; _tm.value=v; syncTimeSelect(); }
   document.getElementById('s-bpm').value=data.meta?.bpm||'';
-  document.getElementById('s-usage').value=data.meta?.usage||'';
+  const _us=document.getElementById('s-usage');
+  if(_us){ const v=data.meta?.usage||''; _us.dataset.val=v; _us.value=v; renderUsageSelect(); }
   document.getElementById('s-mkey').value=data.meta?.mkey||'';
   document.getElementById('s-fkey').value=data.meta?.fkey||'';
   if(data.meta?.fontSize) setFontSize(data.meta.fontSize);
@@ -2214,11 +2652,17 @@ function cloudRenderModal(){
   } else if(_cloudMode==='adminlogin'){   // 管理者登入表單
     body.innerHTML=`<div class="cl-libhd">管理者登入</div><button class="btn cl-google" onclick="cloudSignInGoogle()"><svg class="g-ico" viewBox="0 0 48 48" aria-hidden="true"><path fill="#4285F4" d="M45.1 24.5c0-1.6-.1-2.7-.4-3.9H24v7.1h12.1c-.2 1.8-1.6 4.6-4.5 6.4l-.1.3 6.5 5 .5.1c4.1-3.8 6.6-9.4 6.6-15z"/><path fill="#34A853" d="M24 46c5.9 0 10.9-1.9 14.5-5.3l-6.9-5.3c-1.8 1.3-4.3 2.2-7.6 2.2-5.8 0-10.7-3.8-12.5-9l-.3.1-6.7 5.2-.1.3C8 41.1 15.4 46 24 46z"/><path fill="#FBBC05" d="M11.5 28.6c-.5-1.4-.7-2.9-.7-4.6s.3-3.2.7-4.6v-.3l-6.8-5.3-.2.1A22 22 0 0 0 2 24c0 3.5.9 6.9 2.5 9.9l7-5.3z"/><path fill="#EA4335" d="M24 9.5c4.1 0 6.9 1.8 8.5 3.3l6.2-6C34.9 3.4 29.9 1 24 1 15.4 1 8 6 4.5 14.1l7 5.3C13.3 13.3 18.2 9.5 24 9.5z"/></svg>Google 帳號登入</button><div class="cl-or">或用 email 登入</div><div class="cl-form"><input id="cl-email" type="email" placeholder="email" autocomplete="username"><input id="cl-pw" type="password" placeholder="密碼（至少6碼）" autocomplete="current-password"><div class="cl-actions"><button class="btn btna" onclick="cloudSignIn()">登入</button><button class="btn" onclick="cloudSignUp()">註冊</button><button class="btn" onclick="cloudMode('choose')">返回</button></div></div>`;
     lib.style.display='none';
-  } else if(_cloudMode==='browse'){   // 一般使用者瀏覽（免登入）
-    body.innerHTML=`<div class="cl-userline"><span class="cl-role">一般使用者 · 瀏覽歌譜</span><button class="btn" onclick="cloudMode('adminlogin')">🔑 管理者登入</button><button class="btn" onclick="cloudMode('choose')">返回</button></div>`;
+  } else if(_cloudMode==='personal'){   // 個人使用者：用途留白、可自訂分類
+    setUserKind('personal');
+    body.innerHTML=`<div class="cl-userline"><span class="cl-role">🎧 個人使用者 · 自訂分類</span><button class="btn" onclick="cloudMode('choose')">返回</button></div>`
+      +`<div class="cl-hint">「用途」欄位已切換成自訂模式：下拉選單最後有「＋ 新增分類…」與「－ 移除分類…」，可以建立你自己的分類。</div>`;
+    lib.style.display='none';
+  } else if(_cloudMode==='browse'){   // 敬拜使用者瀏覽（免登入）
+    setUserKind('worship');
+    body.innerHTML=`<div class="cl-userline"><span class="cl-role">⛪ 敬拜使用者 · 瀏覽歌譜</span><button class="btn" onclick="cloudMode('adminlogin')">🔑 管理者登入</button><button class="btn" onclick="cloudMode('choose')">返回</button></div>`;
     lib.style.display=''; cloudList();
   } else {   // 選擇身分
-    body.innerHTML=`<div class="cl-choose"><button class="btn cl-google" onclick="cloudSignInGoogle()"><svg class="g-ico" viewBox="0 0 48 48" aria-hidden="true"><path fill="#4285F4" d="M45.1 24.5c0-1.6-.1-2.7-.4-3.9H24v7.1h12.1c-.2 1.8-1.6 4.6-4.5 6.4l-.1.3 6.5 5 .5.1c4.1-3.8 6.6-9.4 6.6-15z"/><path fill="#34A853" d="M24 46c5.9 0 10.9-1.9 14.5-5.3l-6.9-5.3c-1.8 1.3-4.3 2.2-7.6 2.2-5.8 0-10.7-3.8-12.5-9l-.3.1-6.7 5.2-.1.3C8 41.1 15.4 46 24 46z"/><path fill="#FBBC05" d="M11.5 28.6c-.5-1.4-.7-2.9-.7-4.6s.3-3.2.7-4.6v-.3l-6.8-5.3-.2.1A22 22 0 0 0 2 24c0 3.5.9 6.9 2.5 9.9l7-5.3z"/><path fill="#EA4335" d="M24 9.5c4.1 0 6.9 1.8 8.5 3.3l6.2-6C34.9 3.4 29.9 1 24 1 15.4 1 8 6 4.5 14.1l7 5.3C13.3 13.3 18.2 9.5 24 9.5z"/></svg>Google 帳號登入</button><button class="btn btna" onclick="cloudMode('browse')">👁 一般使用者：瀏覽歌譜</button><button class="btn" onclick="cloudMode('adminlogin')">🔑 管理者登入</button></div><div class="cl-hint">一般使用者免登入即可瀏覽、載入、用「聚會服事」排歌；管理者登入後才能新增、儲存、刪除、歸類。</div>`;
+    body.innerHTML=`<div class="cl-choose"><button class="btn cl-google" onclick="cloudSignInGoogle()"><svg class="g-ico" viewBox="0 0 48 48" aria-hidden="true"><path fill="#4285F4" d="M45.1 24.5c0-1.6-.1-2.7-.4-3.9H24v7.1h12.1c-.2 1.8-1.6 4.6-4.5 6.4l-.1.3 6.5 5 .5.1c4.1-3.8 6.6-9.4 6.6-15z"/><path fill="#34A853" d="M24 46c5.9 0 10.9-1.9 14.5-5.3l-6.9-5.3c-1.8 1.3-4.3 2.2-7.6 2.2-5.8 0-10.7-3.8-12.5-9l-.3.1-6.7 5.2-.1.3C8 41.1 15.4 46 24 46z"/><path fill="#FBBC05" d="M11.5 28.6c-.5-1.4-.7-2.9-.7-4.6s.3-3.2.7-4.6v-.3l-6.8-5.3-.2.1A22 22 0 0 0 2 24c0 3.5.9 6.9 2.5 9.9l7-5.3z"/><path fill="#EA4335" d="M24 9.5c4.1 0 6.9 1.8 8.5 3.3l6.2-6C34.9 3.4 29.9 1 24 1 15.4 1 8 6 4.5 14.1l7 5.3C13.3 13.3 18.2 9.5 24 9.5z"/></svg>Google 帳號登入</button><button class="btn btna" onclick="cloudMode('browse')">⛪ 敬拜使用者：瀏覽歌譜</button><button class="btn" onclick="cloudMode('personal')">🎧 個人使用者：自訂分類</button><button class="btn" onclick="cloudMode('adminlogin')">🔑 管理者登入</button></div><div class="cl-hint">敬拜使用者：免登入瀏覽、載入、用「聚會服事」排歌，用途固定為短歌／讚美／敬拜。<br>個人使用者：用途留白，可自行新增、移除分類。<br>管理者登入後才能新增、儲存、刪除、歸類。</div>`;
     lib.style.display='none';
   }
 }
@@ -2227,12 +2671,61 @@ async function cloudSignIn(){ cloudMsg('登入中…'); const {data,error}=await
 /* Google 帳號登入（Supabase OAuth）。需先在 Supabase → Authentication → Providers 啟用 Google，
    並把本站網址加進 Redirect URLs。回來時 onAuthStateChange 會自動帶入使用者。 */
 async function cloudSignInGoogle(){
-  if(!_supa){ alert(Lf('雲端尚未設定。','Cloud is not configured yet.','クラウドが未設定です。')); return; }
-  cloudMsg(Lf('前往 Google 登入…','Opening Google sign-in…','Googleログインを開いています…'));
+  if(!_supa){ alert(Lf('雲端尚未設定。','Cloud is not configured yet.','クラウドが未設定です。','클라우드가 아직 설정되지 않았습니다.')); return; }
+  cloudMsg(Lf('前往 Google 登入…','Opening Google sign-in…','Googleログインを開いています…','Google 로그인을 여는 중…'));
   const {error}=await _supa.auth.signInWithOAuth({ provider:'google', options:{ redirectTo:location.origin+location.pathname } });
-  if(error)cloudMsg(Lf('Google 登入失敗：','Google sign-in failed: ','Googleログインに失敗しました：')+error.message);
+  if(error)cloudMsg(Lf('Google 登入失敗：','Google sign-in failed: ','Googleログインに失敗しました：','Google 로그인 실패: ')+error.message);
 }
 async function cloudSignOut(){ await _supa.auth.signOut(); _supaUser=null; _supaAdmin=false; _cloudId=null; cloudRenderModal(); }
+/* ── 使用者類型：worship＝敬拜使用者（用途固定三選項）／personal＝個人使用者（用途可自訂） ── */
+const USAGE_FIXED=['短歌','讚美','敬拜'];
+let _userKind='worship'; try{ const k=localStorage.getItem('arranger_userkind'); if(k==='personal'||k==='worship')_userKind=k; }catch(e){}
+let customUsages=[]; try{ customUsages=JSON.parse(localStorage.getItem('arranger_usages')||'[]')||[]; }catch(e){ customUsages=[]; }
+function saveUsages(){ try{ localStorage.setItem('arranger_usages',JSON.stringify(customUsages)); }catch(e){} }
+function setUserKind(k){
+  _userKind=k;
+  try{ localStorage.setItem('arranger_userkind',k); }catch(e){}
+  renderUsageSelect();
+}
+function usageList(){ return _userKind==='personal' ? customUsages.slice() : USAGE_FIXED.slice(); }
+/* 重建「用途」下拉：個人使用者最後多兩個管理項 */
+function renderUsageSelect(){
+  const el=document.getElementById('s-usage'); if(!el)return;
+  const cur=el.dataset.val!=null?el.dataset.val:(el.value||'');
+  const list=usageList();
+  const opts=(cur && !list.includes(cur)) ? [cur,...list] : list;
+  let html='<option value="">—</option>'+opts.map(o=>`<option value="${esc(o)}"${o===cur?' selected':''}>${esc(o)}</option>`).join('');
+  if(_userKind==='personal') html+='<option value="__add">＋ 新增分類…</option><option value="__del">－ 移除分類…</option>';
+  el.innerHTML=html; el.value=cur; el.dataset.val=cur;
+  el.title=_userKind==='personal'?L('用途分類（可自行新增／移除）'):L('用途分類（敬拜使用者固定為短歌／讚美／敬拜）');
+}
+function onUsageChange(el){
+  const v=el.value;
+  if(v==='__add'){
+    el.value=el.dataset.val||'';
+    const name=(prompt(Lf('新增用途分類名稱：','New category name:','用途カテゴリ名を追加：','추가할 용도 카테고리 이름:'))||'').trim();
+    if(name){
+      if(usageList().includes(name)){ alert(Lf('這個分類已經有了。','That category already exists.','このカテゴリはすでにあります。','이미 있는 카테고리입니다.')); }
+      else { customUsages.push(name); saveUsages(); el.dataset.val=name; }
+    }
+    renderUsageSelect(); schedRender(); return;
+  }
+  if(v==='__del'){
+    el.value=el.dataset.val||'';
+    if(!customUsages.length){ alert(Lf('目前沒有自訂分類可以移除。','No custom categories to remove yet.','削除できるカスタムカテゴリがありません。','삭제할 사용자 카테고리가 없습니다.')); renderUsageSelect(); return; }
+    const pick=(prompt(Lf('要移除哪一個分類？\n\n目前有：'+customUsages.join('、')+'\n\n請輸入名稱：',
+                          'Which category do you want to remove?\n\nCurrent: '+customUsages.join(', ')+'\n\nType its name:',
+                          'どのカテゴリを削除しますか？\n\n現在：'+customUsages.join('、')+'\n\n名前を入力してください：',
+                          '어떤 카테고리를 삭제할까요?\n\n현재: '+customUsages.join(', ')+'\n\n이름을 입력하세요:'))||'').trim();
+    if(pick){
+      const i=customUsages.indexOf(pick);
+      if(i<0) alert(Lf('找不到分類「'+pick+'」。','No category named "'+pick+'".','「'+pick+'」というカテゴリは見つかりません。','「'+pick+'」라는 카테고리를 찾을 수 없습니다.'));
+      else { customUsages.splice(i,1); saveUsages(); if((el.dataset.val||'')===pick)el.dataset.val=''; }
+    }
+    renderUsageSelect(); schedRender(); return;
+  }
+  el.dataset.val=v; schedRender();
+}
 let _cloudCat='';   // '' = 全部 / 短歌 / 讚美 / 敬拜
 let _cloudSongs=[];
 function cloudCat(c,btn){ _cloudCat=c; if(btn){ document.querySelectorAll('#cl-cats .cl-cat').forEach(b=>b.classList.remove('on')); btn.classList.add('on'); } cloudList(); }
@@ -2766,7 +3259,7 @@ function insDragUp(e){
   const s=sects.find(x=>x.id===+box.dataset.sid); if(!s)return;
   if(!s.layers||!s.layers[0])s.layers=[{color:'black',ins:{}}];
   const cur=s.layers[0].ins[d.name]||'';
-  const v=prompt(Lf(`「${s.name}」的 ${d.name} 要怎麼彈？`,`How should ${d.name} play in "${s.name}"?`,`「${s.name}」の ${d.name} はどう弾きますか？`), cur);
+  const v=prompt(Lf(`「${s.name}」的 ${d.name} 要怎麼彈？`,`How should ${d.name} play in "${s.name}"?`,`「${s.name}」の ${d.name} はどう弾きますか？`,`「${s.name}」의 ${d.name} 는 어떻게 연주하나요?`), cur);
   if(v===null)return;                                   // 取消
   if(String(v).trim())s.layers[0].ins[d.name]=String(v).trim();
   else delete s.layers[0].ins[d.name];                  // 清空＝移除該樂器
@@ -2861,7 +3354,7 @@ function addSectAfter(id){
 }
 function delSect(id){
   const s=sects.find(x=>x.id===id); if(!s)return;
-  if(!confirm(Lf(`確定移除段落「${s.name}」？`,`Remove section "${s.name}"?`,`セクション「${s.name}」を削除しますか？`)))return;
+  if(!confirm(Lf(`確定移除段落「${s.name}」？`,`Remove section "${s.name}"?`,`セクション「${s.name}」を削除しますか？`,`섹션 「${s.name}」을(를) 삭제할까요?`)))return;
   sects=sects.filter(x=>x.id!==id);
   if(_segOpen===id)_segOpen=null;
   renderSB(); renderSeg(); schedRender();
@@ -2947,7 +3440,7 @@ function hexFill(hex){
   return `rgba(${parseInt(m[1],16)},${parseInt(m[2],16)},${parseInt(m[3],16)},0.13)`;
 }
 function addCustomIns(){
-  const name=(prompt(Lf('新增自定義樂器／聲部名稱：\n（例如 Synth、Cello、Choir、Click）','Name of the new custom instrument / part:\n(e.g. Synth, Cello, Choir, Click)','追加するカスタム楽器 / パートの名前：\n（例：Synth、Cello、Choir、Click）'))||'').trim();
+  const name=(prompt(Lf('新增自定義樂器／聲部名稱：\n（例如 Synth、Cello、Choir、Click）','Name of the new custom instrument / part:\n(e.g. Synth, Cello, Choir, Click)','追加するカスタム楽器 / パートの名前：\n（例：Synth、Cello、Choir、Click）','추가할 사용자 악기 / 파트 이름:\n(예: Synth, Cello, Choir, Click)'))||'').trim();
   if(!name)return;
   if(INS.includes(name)){ alert('「'+name+'」已經存在了'); return; }
   if(name.length>10){ alert('名稱請控制在 10 個字以內'); return; }
@@ -2955,12 +3448,12 @@ function addCustomIns(){
   rebuildINS(); autoSave(); renderSB(); renderLegend(); if(currentView==='seg')renderSeg();
 }
 function delCustomIns(){
-  if(!customIns.length){ alert(Lf('目前沒有自定義樂器。\n（預設的 Vocal / KB / Pad / AG / EG1 / EG2 / Bass / Drum / Loop 不能刪除）','No custom instruments yet.\n(The built-in Vocal / KB / Pad / AG / EG1 / EG2 / Bass / Drum / Loop cannot be deleted.)','カスタム楽器はまだありません。\n（標準の Vocal / KB / Pad / AG / EG1 / EG2 / Bass / Drum / Loop は削除できません）')); return; }
+  if(!customIns.length){ alert(Lf('目前沒有自定義樂器。\n（預設的 Vocal / KB / Pad / AG / EG1 / EG2 / Bass / Drum / Loop 不能刪除）','No custom instruments yet.\n(The built-in Vocal / KB / Pad / AG / EG1 / EG2 / Bass / Drum / Loop cannot be deleted.)','カスタム楽器はまだありません。\n（標準の Vocal / KB / Pad / AG / EG1 / EG2 / Bass / Drum / Loop は削除できません）','사용자 악기가 아직 없습니다.\n(기본 Vocal / KB / Pad / AG / EG1 / EG2 / Bass / Drum / Loop 는 삭제할 수 없습니다)')); return; }
   const names=customIns.map(c=>c.name);
-  const pick=(prompt(Lf('要刪除哪一個自定義樂器？\n\n目前有：'+names.join('、')+'\n\n請輸入名稱：','Which custom instrument do you want to delete?\n\nCurrent: '+names.join(', ')+'\n\nType its name:','どのカスタム楽器を削除しますか？\n\n現在：'+names.join('、')+'\n\n名前を入力してください：'))||'').trim();
+  const pick=(prompt(Lf('要刪除哪一個自定義樂器？\n\n目前有：'+names.join('、')+'\n\n請輸入名稱：','Which custom instrument do you want to delete?\n\nCurrent: '+names.join(', ')+'\n\nType its name:','どのカスタム楽器を削除しますか？\n\n現在：'+names.join('、')+'\n\n名前を入力してください：','어떤 사용자 악기를 삭제할까요?\n\n현재: '+names.join(', ')+'\n\n이름을 입력하세요:'))||'').trim();
   if(!pick)return;
-  if(!names.includes(pick)){ alert(Lf('找不到自定義樂器「'+pick+'」\n（預設樂器不能刪除）','No custom instrument named "'+pick+'"\n(Built-in instruments cannot be deleted.)','「'+pick+'」というカスタム楽器は見つかりません\n（標準の楽器は削除できません）')); return; }
-  if(!confirm(Lf('確定刪除「'+pick+'」？各段落中這個樂器的內容也會一併移除。','Delete "'+pick+'"? Its content will also be removed from every section.','「'+pick+'」を削除しますか？各セクションのこの楽器の内容も一緒に消えます。')))return;
+  if(!names.includes(pick)){ alert(Lf('找不到自定義樂器「'+pick+'」\n（預設樂器不能刪除）','No custom instrument named "'+pick+'"\n(Built-in instruments cannot be deleted.)','「'+pick+'」というカスタム楽器は見つかりません\n（標準の楽器は削除できません）','「'+pick+'」라는 사용자 악기를 찾을 수 없습니다\n(기본 악기는 삭제할 수 없습니다)')); return; }
+  if(!confirm(Lf('確定刪除「'+pick+'」？各段落中這個樂器的內容也會一併移除。','Delete "'+pick+'"? Its content will also be removed from every section.','「'+pick+'」を削除しますか？各セクションのこの楽器の内容も一緒に消えます。','「'+pick+'」을(를) 삭제할까요? 각 섹션의 이 악기 내용도 함께 사라집니다.')))return;
   customIns=customIns.filter(c=>c.name!==pick);
   sects.forEach(s=>(s.layers||[]).forEach(l=>{ if(l&&l.ins)delete l.ins[pick]; }));
   sects.forEach(s=>{ if(Array.isArray(s.arr))s.arr=s.arr.filter(a=>a.ins!==pick); });
@@ -2973,7 +3466,7 @@ function renderLegend(){
   html+=INS.map(k=>{
     const on=insFilter.has(k),c=INSCOL[k];
     const style=on?`border-color:${c.stroke};color:${c.stroke};background:${c.fill}`:'';
-    return `<button class="ic-legitem${on?' on':''}" style="${style}" onclick="toggleIns('${k}')" title="${Lf('切換 '+k,'Toggle '+k,k+' の表示切替')}">${ICON[k]} ${k}</button>`;
+    return `<button class="ic-legitem${on?' on':''}" style="${style}" onclick="toggleIns('${k}')" title="${Lf('切換 '+k,'Toggle '+k,k+' の表示切替',k+' 표시 전환')}">${ICON[k]} ${k}</button>`;
   }).join('');
   html+=`<button class="ic-legitem ic-legadd" onclick="addCustomIns()" title="新增自定義樂器／聲部">＋</button>`;
   html+=`<button class="ic-legitem ic-legdel" onclick="delCustomIns()" title="刪除自定義樂器（預設樂器不會被刪除）">－</button>`;
@@ -3143,6 +3636,7 @@ function setPrintSize(v){
   _printSize=['std','cmp','min'].includes(v)?v:'std';
   try{localStorage.setItem('arranger_printsize',_printSize);}catch(e){}
   syncPrintSizeSel();
+renderUsageSelect();
 }
 function syncPrintSizeSel(){ document.querySelectorAll('.psize-sel').forEach(s=>s.value=_printSize); }
 /* 經典A4 自動字級的搜尋範圍（由大到小逐 px 找「還塞得下」的最大字級）。
@@ -3171,13 +3665,13 @@ function restoreModeAfterPrint(){
 function showPrintFsTip(fs,min,max,scale,fitOnePage,view){
   let el=document.getElementById('printfs-tip');
   if(!el){ el=document.createElement('div'); el.id='printfs-tip'; el.className='printfs-tip'; document.body.appendChild(el); }
-  const base=Lf('經典A4 輸出字級：','Fit-A4 font size: ','A4出力の文字サイズ：')+fs+'px'
-    +Lf('（自動挑選，範圍 ','  (auto, range ','（自動選択・範囲 ')+min+'–'+max
-    +Lf('）',')','）');
-  const okTxt=Lf('　·　已塞進 1 頁','  ·  fits on 1 page','　·　1ページに収まりました');
+  const base=Lf('經典A4 輸出字級：','Fit-A4 font size: ','A4出力の文字サイズ：','A4 출력 글자 크기: ')+fs+'px'
+    +Lf('（自動挑選，範圍 ','  (auto, range ','（自動選択・範囲 ','  (자동 선택, 범위 ')+min+'–'+max
+    +Lf('）',')','）',')');
+  const okTxt=Lf('　·　已塞進 1 頁','  ·  fits on 1 page','　·　1ページに収まりました','  ·  1페이지에 들어갔습니다');
   const noTxt=Lf('　·　字級已到最小仍需分頁，可用「📄 經典A4」的段落勾選只輸出需要的段落，或把「輸出大小」改成緊湊／最小',
                  '  ·  still needs more than one page at the smallest size — pick fewer sections in the Fit-A4 dialog, or set Output size to Compact / Smallest',
-                 '　·　最小サイズでも1ページに収まりません。「📄 A4に収める」でセクションを絞るか、「出力サイズ」をコンパクト／最小にしてください');
+                 '　·　最小サイズでも1ページに収まりません。「📄 A4に収める」でセクションを絞るか、「出力サイズ」をコンパクト／最小にしてください','  ·  최소 크기로도 1페이지에 들어가지 않습니다. 「📄 A4에 맞추기」에서 섹션을 줄이거나 「출력 크기」를 조밀하게／최소로 바꿔 보세요');
   el.textContent=base+(fitOnePage?okTxt:noTxt);
   el.classList.toggle('warn',!fitOnePage);
   el.classList.add('show');
@@ -3636,9 +4130,9 @@ function transposeKey(dir){
 }
 function updateKeyStepLabels(){
   let mode=chordDisp, sym='', txt;
-  if(mode==='female'){ sym=Lf('女','F','女'); txt=gv('s-fkey')||'—'; }
-  else if(mode==='male'){ sym=Lf('男','M','男'); txt=gv('s-mkey')||'—'; }
-  else { txt=gv('s-mkey')||gv('s-fkey')||'—'; sym=(gv('s-mkey')||!gv('s-fkey'))?Lf('男','M','男'):Lf('女','F','女'); }
+  if(mode==='female'){ sym=Lf('女','F','女','여'); txt=gv('s-fkey')||'—'; }
+  else if(mode==='male'){ sym=Lf('男','M','男','남'); txt=gv('s-mkey')||'—'; }
+  else { txt=gv('s-mkey')||gv('s-fkey')||'—'; sym=(gv('s-mkey')||!gv('s-fkey'))?Lf('男','M','男','남'):Lf('女','F','女','여'); }
   document.querySelectorAll('.keystep-lbl').forEach(e=>e.textContent=sym+' '+txt);
 }
 function syncDispSelects(){ ['chord-disp','mix-disp','mixp-disp'].forEach(id=>{const s=document.getElementById(id);if(s)s.value=chordDisp;}); }
@@ -3924,7 +4418,7 @@ function clearSect(id){
     sects[i]=_secClearBk[id]; delete _secClearBk[id];
     autoSave(); renderSB(); renderAll(); return;
   }
-  if(!confirm(Lf(`清除段落「${s.name}」填寫的和弦與 KB 數字？\n（小節數、分割、拍號、重複、接續等格式都會保留；可再按一次「↩ 復原」還原）`,`Clear the chords and KB numbers in "${s.name}"?\n(Bar count, subdivisions, meters, repeats and continuations are all kept. Press again to undo.)`,`「${s.name}」のコードとKB数字を消しますか？\n（小節数・分割・拍子・リピート・接続などの書式はそのまま残ります。もう一度「↩ 元に戻す」を押すと復元できます）`)))return;
+  if(!confirm(Lf(`清除段落「${s.name}」填寫的和弦與 KB 數字？\n（小節數、分割、拍號、重複、接續等格式都會保留；可再按一次「↩ 復原」還原）`,`Clear the chords and KB numbers in "${s.name}"?\n(Bar count, subdivisions, meters, repeats and continuations are all kept. Press again to undo.)`,`「${s.name}」のコードとKB数字を消しますか？\n（小節数・分割・拍子・リピート・接続などの書式はそのまま残ります。もう一度「↩ 元に戻す」を押すと復元できます）`,`「${s.name}」의 코드와 KB 숫자를 지울까요?\n(마디 수·분할·박자·반복·연결 등 서식은 그대로 유지됩니다. 다시 「↩ 되돌리기」를 누르면 복원됩니다)`)))return;
   _secClearBk[id]=JSON.parse(JSON.stringify(s));
   SECT_DATA_KEYS.forEach(k=>{ delete s[k]; });
   autoSave(); renderSB(); renderAll();
@@ -4416,7 +4910,7 @@ function addSect(){sects.push({id:nid++,name:'新段落',bars:4,color:'black',la
 /* 開新檔案：清空成一份全新乾淨的譜（會先確認） */
 function newChart(){
   _secClearBk={};
-  if(!confirm(Lf('開新檔案會清空目前所有內容，確定嗎？\n（若還沒存檔，請先按「💾 存檔」或「↓ JSON」備份）','Starting a new chart clears everything. Continue?\n(If you have not saved yet, use "💾 Save" or "↓ JSON" first.)','新規作成すると現在の内容はすべて消えます。よろしいですか？\n（まだ保存していない場合は先に「💾 保存」か「↓ JSON」でバックアップしてください）')))return;
+  if(!confirm(Lf('開新檔案會清空目前所有內容，確定嗎？\n（若還沒存檔，請先按「💾 存檔」或「↓ JSON」備份）','Starting a new chart clears everything. Continue?\n(If you have not saved yet, use "💾 Save" or "↓ JSON" first.)','新規作成すると現在の内容はすべて消えます。よろしいですか？\n（まだ保存していない場合は先に「💾 保存」か「↓ JSON」でバックアップしてください）','새로 만들면 현재 내용이 모두 지워집니다. 계속할까요?\n(아직 저장하지 않았다면 먼저 「💾 저장」이나 「↓ JSON」으로 백업하세요)')))return;
   applyProjectData({
     meta:{title:'',artist:'',time:'4/4',bpm:'',usage:'',mkey:'',fkey:'',fontSize:curFont},
     sects:[{id:1,name:'Intro',bars:4,color:'black',layers:[{color:'black',ins:{}}],notes:''}],
@@ -4500,7 +4994,7 @@ function schedRender(){
 
 function keyLabel(){
   const m=gv('s-mkey'), f=gv('s-fkey');
-  return [m?Lf('男 ','M ','男 ')+esc(m):'', f?Lf('女 ','F ','女 ')+esc(f):''].filter(Boolean).join('　');
+  return [m?Lf('男 ','M ','男 ','남 ')+esc(m):'', f?Lf('女 ','F ','女 ','여 ')+esc(f):''].filter(Boolean).join('　');
 }
 function updatePrintHead(){
   const usage=gv('s-usage'), artist=gv('s-artist'), kl=keyLabel();
@@ -4871,7 +5365,7 @@ try{const pp=parseInt(localStorage.getItem('arranger_perpage'));if(pp>=3&&pp<=16
 try{const mp=parseInt(localStorage.getItem('arranger_mixperpage'));if(mp>=1&&mp<=8)MIX_PER_PAGE=mp;}catch(e){}
 try{const mpp=parseInt(localStorage.getItem('arranger_mixpperpage'));if(mpp>=1&&mpp<=12)MIXP_PER_PAGE=mpp;}catch(e){}
 /* 預設開啟內容（範本）：Awesome God */
-const DEFAULT_PROJECT={"meta":{"title":"Awesome God","artist":"3rd","time":"4/4","bpm":"142","usage":"讚美","mkey":"D","fkey":"D","fontSize":18},"sects":[{"id":1,"name":"Intro","bars":8,"color":"blue","layers":[{"color":"black","ins":{}}],"notes":"","chords":[["1",".",".","."],["1",".",".","."],["1",".",".","."],["1",".",".","."],["1",".",".","."],["1",".",".","."],["1",".",".","."],["1",".",".","."]],"barsPerRow":4,"arr":[]},{"id":2,"name":"Verse","bars":11,"color":"black","layers":[{"color":"black","ins":{}}],"notes":"X2","chords":[["1",".",".","."],["1",".",".","."],["1",".",".","."],["1",".",".","."],["4",".",".","."],["4",".",".","."],["4",".",".","."],["1",".",".","."],["1",".",".","."],["1",".",".","."],["1",".",".","."],["",".",".","."]],"barsPerRow":4,"arr":[]},{"id":3,"name":"Pre Chorus","bars":9,"color":"purple","layers":[{"color":"black","ins":{}}],"notes":"","chords":[["6m",".",".","."],["5",".",".","."],["1",".",".","."],["4",".",".","."],["6m",".",".","."],["5",".",".","."],["1","",".","",".","",".","4"],["4",".",".","."],["4",".",".","."]],"barsPerRow":4,"arr":[],"subdiv":[null,null,null,null,null,null,2]},{"id":4,"name":"Chorus","bars":16,"color":"red","layers":[{"color":"black","ins":{}}],"notes":"","chords":[["4",".",".","."],["1/3",".",".","."],["2m",".",".","."],["1",".",".","."],["7b",".",".","."],["1",".",".","."],["4",".",".","."],["4",".",".","."],["4",".",".","."],["1/3",".",".","."],["2m",".",".","."],["1",".",".","."],["7b",".",".","."],["1",".",".","."],["4",".",".","."],["4",".",".","."]],"barsPerRow":4,"arr":[]},{"id":5,"name":"Interlude","bars":4,"color":"blue","layers":[{"color":"black","ins":{}}],"notes":"","chords":[["1",".",".","."],["1",".",".","."],["1",".",".","."],["1",".",".","."]],"barsPerRow":4,"arr":[]}],"nid":6};
+const DEFAULT_PROJECT={"meta":{"title":"You are good","artist":"Israel & New Breed","time":"4/4","bpm":"131","usage":"讚美","mkey":"E","fkey":"E","fontSize":15},"sects":[{"id":23,"name":"Intro","bars":4,"color":"black","layers":[{"color":"black","ins":{"EG1":"funky style"}},{"color":"blue","ins":{"EG1":"","Bass":"melody (high)","Drum":"fill in"}},{"color":"red","ins":{"Bass":"O","Drum":"O","EG1":"O","Pad":"O","KB":"O","EG2":"O","AG":"O"}}],"notes":"X\n1-4 bar EG only/\n5-8 bar bass + drum fill in/\n9-16 full in","chords":[["1","","",""],["1maj","","",""],["17","","",""],["4/1","","",""]],"barsPerRow":4},{"id":24,"name":"Verse","bars":8,"color":"black","layers":[{"color":"black","ins":{"Vocal":"O","KB":"On beat sync","AG":"On beat sync","Drum":"On beat sync","Bass":"On beat sync","EG2":"On beat sync"}},{"color":"blue","ins":{"EG1":"Lick"}}],"notes":"more energy","chords":[["1","","",""],["1maj","","",""],["17","","",""],["4/1","","",""],["1","","",""],["1maj","","",""],["17","","",""],["4/1","","",""]],"barsPerRow":4},{"id":25,"name":"Pre Chorus","bars":4,"color":"blue","layers":[{"color":"black","ins":{"Vocal":"O","KB":"O","AG":"O","EG2":"O","EG1":"O","Bass":"O","Drum":"O","Pad":"O"}}],"notes":"bar 4 builing","chords":[["4","","",""],["5/4","","",""],["6b/4","","",""],["7b/4","","",""]],"barsPerRow":4},{"id":26,"name":"Chorus","bars":16,"color":"red","layers":[{"color":"black","ins":{"KB":"O","EG2":"O","Drum":"O","Bass":"O","EG1":"O","AG":"O","Vocal":"O","Pad":"O"}}],"notes":"Lock in groove","chords":[["1","","",""],["5","","",""],["7b","","",""],["4","","",""],["1","","",""],["5","","",""],["7b","","",""],["4","","",""],["1","","",""],["5","","",""],["7b","","",""],["4","","",""],["1/3","","",""],["5m","","",""],["6b","","",""],["7b","","",""]],"barsPerRow":4},{"id":27,"name":"Interlude","bars":8,"color":"purple","layers":[{"color":"black","ins":{"Bass":"slap","Drum":"O","EG1":"funky style","KB":"O","AG":"O","EG2":"O","Pad":"O"}}],"notes":"Lock in groove","chords":[["1m","","",""],["1m","","",""],["1m","","",""],["1m","","",""],["1m","","",""],["1m","","",""],["1m","","",""],["1m","","",""]],"barsPerRow":4},{"id":29,"name":"Spirit","bars":8,"color":"red","layers":[{"color":"black","ins":{"Vocal":"O","KB":"O","EG2":"O","AG":"O","Drum":"O","Bass":"O","EG1":"O","Pad":"O"}}],"notes":"Lock in groove","barsPerRow":4,"chords":[["1m","","3b","4"],null,["1m","","7b","4/6"],["4/6","","",""],["1m","","3b","4"],null,["1m","","7b","4/6"],["4/6","","6b","5m"]]},{"id":28,"name":"Bridge","bars":4,"color":"purple","layers":[{"color":"black","ins":{"Vocal":"O","Pad":"O","EG1":"O","Bass":"O","Drum":"O","EG2":"O","AG":"O","KB":"O"}}],"notes":"X4 Lock in groove\nto little verse","chords":[["1m","","3b","4"],null,["1m","","7b","4/6"],["4/6","","6b","5m"]],"barsPerRow":4,"bargoto":[null,null,null,24]},{"id":30,"name":"Tag","bars":2,"color":"purple","layers":[{"color":"black","ins":{"Vocal":"O","Pad":"O","EG1":"O","Bass":"O","Drum":"O","EG2":"O","AG":"O","KB":"O"}}],"notes":"","chords":[["6b","","",""],["7b","","",""]],"barsPerRow":4},{"id":31,"name":"End","bars":1,"color":"black","layers":[{"color":"black","ins":{"Vocal":"O","Pad":"O","EG1":"O","Bass":"O","Drum":"O","EG2":"O","AG":"O","KB":"O"}}],"notes":"","barsPerRow":4,"chords":[["1m","","",""]]}],"nid":32};
 try{ applyProjectData(DEFAULT_PROJECT); }catch(e){}
 renderSB();
 renderAll();
