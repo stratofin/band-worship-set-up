@@ -718,6 +718,21 @@ body.mode-tablet .more-actions,body.mode-phone .more-actions{display:none;}
 body.mode-tablet .more-actions.open,body.mode-phone .more-actions.open{display:flex;flex-wrap:wrap;gap:0.4em;flex-basis:100%;width:100%;margin-top:0.35em;}
 body.mode-tablet .tbar-r,body.mode-phone .tbar-r{width:100%;flex-wrap:wrap;}
 body.mode-tablet .tbar-r .btn,body.mode-phone .tbar-r .btn{font-size:0.8em;padding:0.3em 0.55em;}
+/* ── 手機版工具列排版 ──
+   第一排：電腦/平板/手機 ＋ EN ＋ 更新日誌
+   第二排起：曲目等欄位
+   最後：開新檔案（整排）→ 存檔｜讀檔 → 範本｜使用者（四顆等寬） */
+body.mode-phone .topbar-row-2{align-items:flex-start;}
+body.mode-phone .seg,body.mode-phone #lang-btn,body.mode-phone .cl-btn{order:1;}
+body.mode-phone .tbar-r{order:2;display:grid;grid-template-columns:1fr 1fr;gap:0.4em;width:100%;margin-top:0.15em;}
+body.mode-phone .pills{flex:1 0 100%;order:3;margin-top:0.15em;}
+body.mode-phone .tbar-r>*{width:100%;min-width:0;justify-content:center;}
+body.mode-phone .tbar-r>*:first-child{grid-column:1 / -1;}   /* 開新檔案獨佔一排 */
+body.mode-phone .tbar-r .btn,body.mode-phone .tbar-r .tpl-sel{
+  display:inline-flex;align-items:center;justify-content:center;height:2.1em;box-sizing:border-box;
+  padding:0 0.5em;font-size:0.82em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;}
+body.mode-phone .tbar-r .tpl-sel{text-align:center;text-align-last:center;}
+body.mode-phone .tbar-r #json-import{display:none;}
 /* 平板：編輯區移到上方、檢視全寬、圖示譜3欄 */
 body.mode-tablet .page{grid-template-columns:1fr;}
 body.mode-tablet .icpage-grid{grid-template-columns:repeat(3,minmax(0,1fr));}
