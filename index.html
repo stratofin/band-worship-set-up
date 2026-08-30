@@ -832,6 +832,9 @@ body.mode-phone .page{grid-template-columns:minmax(0,1fr);}
 body.mode-phone .ccard-head{padding:0.4em 0.55em;}
 body.mode-phone .ctrl-toggle{font-size:0.55em;padding:0.06em 0.32em;}
 body.mode-phone .cbpr-sel{font-size:0.55em;}
+/* 手機版譜面：每排只放 2 個小節（好點選），字級已改為與電腦版相同，
+   這裡只把排間距略收，整體高度就會貼近電腦版 */
+body.mode-phone .cbar-grid{row-gap:0.45em;}
 body.mode-phone .cmeta{font-size:0.68em;flex:0 0 auto;margin-left:auto;}
 /* 手機版中間工具列：縮小到能把「輸出大小｜📄 經典A4｜🖨 列印/存 PDF」排在同一行 */
 body.mode-phone .view-print{gap:0.3rem 0.26rem;}
@@ -1323,6 +1326,11 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
     <div class="cl-head"><span>📝 更新日誌 · Worship Arranger</span><button class="btn" onclick="hideChangelog()">✕</button></div>
     <div class="cl-body">
       <p class="cl-ver">開發時間軸：2026-06-17 ～ 2026-08-30（依使用回饋持續優化）</p>
+
+      <h4>手機版小節大小貼近電腦版 <span class="cl-date">2026-08-30</span></h4>
+      <ul><li>混合頁的和弦字級改用「段落原本的每排設定」計算，不再因為手機版壓成每排 2 個而放大成兩倍</li>
+      <li>手機仍維持每排 2 個小節（好點選），但字級與格子高度與電腦／平板一致</li>
+      <li>若是你自己把段落設成每排 2，仍照原本的大字顯示；列印與經典A4 完全不受影響</li></ul>
 
       <h4>範本選單內建兩首 <span class="cl-date">2026-08-30</span></h4>
       <ul><li>「範本」下拉新增兩個內建範本：個人使用者範本「小星星」、敬拜使用者範本「You are good」</li>
@@ -4835,7 +4843,9 @@ function mixCardHtml(s,plus){
     // 預設一排 4 小節（和弦頁一致）；每排固定 bpr 欄（不足的排不拉滿）；配器軸逐排對齊
     const bpr=barsPerRowOf(s,4);
     const nRows=Math.ceil(bars/bpr), rfw=bpr/bars;
-    const fsEm=Math.max(0.8,Math.min(2.6,4.8/bpr)).toFixed(2);   // 每排越少字越大，撐滿整行
+    /* 字級用「原始每排設定」計算，不跟著手機版壓成 2 而放大兩倍 —— 手機與電腦視覺一致 */
+    const bprFont=Math.max(1,(window._printBPR||0)||(parseInt(s.barsPerRow)||0)||4);
+    const fsEm=Math.max(0.8,Math.min(2.6,4.8/bprFont)).toFixed(2);
     let blocks='';
     for(let br=0;br<nRows;br++){
       const b0=br*bpr, b1=Math.min(bars,(br+1)*bpr);
