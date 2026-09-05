@@ -102,6 +102,15 @@ body.print-maxi .cbar2.kbbar{padding:0.05em 0.04em!important;}
 .secpick-acts{display:flex;gap:0.4em;align-items:center;margin-bottom:0.6em;}
 .secpick-acts .btn{font-size:0.8em;padding:0.25em 0.6em;}
 .secpick-count{margin-left:auto;font-size:0.8em;color:var(--text3);}
+/* 「選一個做法」對話框（貼上方式／清除方式） */
+.choice-note{margin:0 0 0.8em;font-size:0.82em;color:var(--text3);line-height:1.5;}
+.choice-list{display:flex;flex-direction:column;gap:0.5em;}
+.choice-item{display:flex;flex-direction:column;align-items:flex-start;gap:0.25em;text-align:left;
+  padding:0.7em 0.85em;line-height:1.45;white-space:normal;height:auto;}
+.choice-item .choice-t{font-weight:700;font-size:0.95em;}
+.choice-item .choice-d{font-size:0.78em;color:var(--text3);font-weight:400;}
+.choice-item.btna .choice-d{color:rgba(13,13,13,.72);}
+#choice-modal .secpick-foot{margin-top:0.8em;justify-content:flex-end;}
 .secpick-list{overflow-y:auto;flex:1 1 auto;border:1px solid var(--border2);border-radius:0.5em;padding:0.3em;}
 .secpick-row{display:flex;align-items:center;gap:0.5em;padding:0.4em 0.5em;border-radius:0.35em;cursor:pointer;}
 .secpick-row:hover{background:rgba(255,255,255,0.05);}
@@ -1327,6 +1336,18 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
     <div class="cl-body">
       <p class="cl-ver">開發時間軸：2026-06-17 ～ 2026-08-30（依使用回饋持續優化）</p>
 
+      <h4>清除也能選小節 ＋ 貼上／清除方式可選 <span class="cl-date">2026-09-02</span></h4>
+      <ul><li>段落標題的「🧹 清除」改成與「⧉ 複製」同一套流程：先拖曳選要清的小節範圍，再按清除</li>
+      <li>清除時可選：<b>只清除裡面的資料</b>（小節保留，分割／拍號／重複／接續不動）或 <b>連小節一起刪除</b></li>
+      <li>貼上時可選：<b>插入新小節</b>（原本的往後移）或 <b>覆蓋原有小節</b>（總小節數不變；不足時自動延伸）</li>
+      <li>兩個對話框都會先說明會發生什麼、段落會變成幾小節，按取消不會有任何改動</li></ul>
+
+      <h4>頁尾與法務頁四語化 <span class="cl-date">2026-09-02</span></h4>
+      <ul><li>頁尾版權字樣改為「© 2026 Arranger 理譜人」，連結文字跟著介面語言切換</li>
+      <li>服務條款／退款政策／隱私權政策三頁全文四語（中／英／日／韓），標題、內文、表格都會翻譯</li>
+      <li>從頁尾點進去會自動帶入目前語言；三頁右上角也有語言鈕可單獨切換，選擇會記住</li>
+      <li>非中文版標示為翻譯參考，法律效力以繁體中文版為準</li></ul>
+
       <h4>手機版小節大小貼近電腦版 <span class="cl-date">2026-08-30</span></h4>
       <ul><li>混合頁的和弦字級改用「段落原本的每排設定」計算，不再因為手機版壓成每排 2 個而放大成兩倍</li>
       <li>手機仍維持每排 2 個小節（好點選），但字級與格子高度與電腦／平板一致</li>
@@ -1638,6 +1659,12 @@ function detectLang(){
 }
 let _lang='zh'; try{ const sv=localStorage.getItem('arranger_lang'); _lang=(sv&&LANGS.indexOf(sv)>=0)?sv:detectLang(); }catch(e){ _lang=detectLang(); }
 const I18N={
+ "選要清除的小節範圍，再決定只清內容還是連小節一起刪除":"Pick the bars to clear, then choose contents-only or delete the bars",
+ "按住小節左右拖曳，選要清除的範圍":"Press and drag across bars to choose what to clear",
+ "服務條款":"Terms of Service",
+ "退款政策":"Refund Policy",
+ "隱私權政策":"Privacy Policy",
+ "聯絡我們":"Contact",
  "個人使用者範本：小星星":"Personal template: Twinkle Twinkle Little Star",
  "敬拜使用者範本：You are good":"Worship template: You are good",
  "我的歌庫":"My Library",
@@ -1713,7 +1740,7 @@ const I18N={
  "儲存：可選存到瀏覽器本機，或另存成 .json 到資料夾":"Save: to this browser, or as a .json file in a folder",
  /* ── 段落標題列：滑動增刪 ＋ 清除 ── */
  "🧹 清除":"🧹 Clear",
- "只清除這一段填寫的和弦與 KB 數字；小節數、分割、拍號、重複、接續等格式都保留（可再按一次復原）":"Clears only this section's chords and KB numbers. Bar count, subdivisions, meters, repeats and continuations are all kept (press again to undo)",
+ "只清除這一段填寫的和弦與 KB 數字；小節數、分割、拍號、重複、接續等格式都保留（可再按一次復原）":"Choose which bars to clear, then pick whether to clear their contents or delete the bars entirely",
  "收合/展開此段":"Collapse / expand this section",
  /* ── 經典 A4 選擇段落 ── */
  "選擇要輸出的段落":"Choose sections to print","全部":"All","全不選":"None","開始輸出":"Print",
@@ -1792,6 +1819,12 @@ const I18N={
 };
 /* ── 日本語（中文 → ja）── */
 const I18N_JA={
+ "選要清除的小節範圍，再決定只清內容還是連小節一起刪除":"消す小節の範囲を選び、中身だけか小節ごとかを決めます",
+ "按住小節左右拖曳，選要清除的範圍":"小節を長押しして左右にドラッグし、消す範囲を選びます",
+ "服務條款":"利用規約",
+ "退款政策":"返金ポリシー",
+ "隱私權政策":"プライバシーポリシー",
+ "聯絡我們":"お問い合わせ",
  "個人使用者範本：小星星":"個人ユーザー用テンプレート：きらきら星",
  "敬拜使用者範本：You are good":"礼拝ユーザー用テンプレート：You are good",
  "我的歌庫":"マイライブラリ",
@@ -2040,7 +2073,7 @@ const I18N_JA={
  "輸出時的小節大小：緊湊或最小可讓一頁容納更多小節":"印刷時の小節サイズ：コンパクト / 最小なら1ページに多く入ります",
  "儲存：可選存到瀏覽器本機，或另存成 .json 到資料夾":"保存：このブラウザに保存するか、.json ファイルとしてフォルダに保存できます",
  "🧹 清除":"🧹 クリア",
- "只清除這一段填寫的和弦與 KB 數字；小節數、分割、拍號、重複、接續等格式都保留（可再按一次復原）":"このセクションのコードとKB数字だけを消します。小節数・分割・拍子・リピート・接続などの書式はそのまま残ります（もう一度押すと元に戻ります）",
+ "只清除這一段填寫的和弦與 KB 數字；小節數、分割、拍號、重複、接續等格式都保留（可再按一次復原）":"消す小節を選んでから、中身だけ消すか小節ごと削除するかを選べます",
  "收合/展開此段":"このセクションを折りたたむ / 展開する",
  "選擇要輸出的段落":"出力するセクションを選ぶ",
  "全不選":"すべて解除",
@@ -2138,6 +2171,12 @@ const I18N_JA={
 
 /* ── 한국어（中文 → ko）── */
 const I18N_KO={
+ "選要清除的小節範圍，再決定只清內容還是連小節一起刪除":"지울 마디 범위를 고른 뒤 내용만 지울지 마디까지 삭제할지 정합니다",
+ "按住小節左右拖曳，選要清除的範圍":"마디를 길게 눌러 좌우로 드래그해 지울 범위를 선택하세요",
+ "服務條款":"이용약관",
+ "退款政策":"환불 정책",
+ "隱私權政策":"개인정보 처리방침",
+ "聯絡我們":"문의하기",
  "個人使用者範本：小星星":"개인 사용자 템플릿: 반짝반짝 작은 별",
  "敬拜使用者範本：You are good":"예배 사용자 템플릿: You are good",
  "我的歌庫":"내 라이브러리",
@@ -2385,7 +2424,7 @@ const I18N_KO={
  "輸出時的小節大小：緊湊或最小可讓一頁容納更多小節":"인쇄 시 마디 크기: 조밀하게 / 최소로 하면 한 페이지에 더 많이 들어갑니다",
  "儲存：可選存到瀏覽器本機，或另存成 .json 到資料夾":"저장: 이 브라우저에 저장하거나 .json 파일로 폴더에 저장",
  "🧹 清除":"🧹 지우기",
- "只清除這一段填寫的和弦與 KB 數字；小節數、分割、拍號、重複、接續等格式都保留（可再按一次復原）":"이 섹션의 코드와 KB 숫자만 지웁니다. 마디 수·분할·박자·반복·연결 등 서식은 그대로 유지됩니다 (다시 누르면 되돌리기)",
+ "只清除這一段填寫的和弦與 KB 數字；小節數、分割、拍號、重複、接續等格式都保留（可再按一次復原）":"지울 마디를 고른 뒤 내용만 지울지 마디까지 삭제할지 선택할 수 있습니다",
  "收合/展開此段":"이 섹션 접기 / 펼치기",
  "選擇要輸出的段落":"인쇄할 섹션 선택",
  "全不選":"전체 해제",
@@ -2538,9 +2577,13 @@ if(typeof MutationObserver!=='undefined'){
 }
 const LANG_BTN={zh:'EN', en:'JP', ja:'KR', ko:'中'};        // 按鈕顯示下一個語言
 const LANG_TITLE={zh:'切換語言：中文 → English', en:'Switch language: English → 日本語', ja:'言語切替：日本語 → 한국어', ko:'언어 전환: 한국어 → 中文'};
+function syncFooterLinks(){
+  document.querySelectorAll('.sf-link').forEach(a=>{ a.href='./'+a.dataset.page+'.html?lang='+_lang; });
+}
 function applyLang(){ const b=document.getElementById('lang-btn');
   if(b){ b.textContent=LANG_BTN[_lang]||'EN'; b.title=LANG_TITLE[_lang]||''; }
   document.documentElement.lang={ja:'ja',ko:'ko',en:'en'}[_lang]||'zh-Hant';
+  syncFooterLinks();
   i18nApply(); }
 function toggleLang(){ _lang=LANGS[(LANGS.indexOf(_lang)+1)%LANGS.length];   /* 中文 → English → 日本語 → 中文 */ try{localStorage.setItem('arranger_lang',_lang);}catch(e){} try{renderSB();renderAll();updatePrintHead();updateKeyStepLabels();initTemplates();}catch(e){} applyLang(); }
 /* 聚會服事列印分頁：開＝每首歌分頁、關＝連續 */
@@ -4586,19 +4629,44 @@ function pasteSection(id){
   autoSave(); renderSB(); renderAll();
 }
 /* ── 小節／區塊 複製貼上：選範圍→複製→點目標小節插入其後（和弦譜／混合共用） ── */
+/* 通用「選一個做法」對話框：回傳所選 key，取消回傳 null */
+function askChoice(title,opts,note){
+  return new Promise(resolve=>{
+    const old=document.getElementById('choice-modal'); if(old)old.remove();
+    const m=document.createElement('div'); m.id='choice-modal'; m.className='secpick-modal';
+    m.innerHTML=`<div class="secpick-box">
+      <h3>${esc(title)}</h3>
+      ${note?`<p class="choice-note">${esc(note)}</p>`:''}
+      <div class="choice-list">${opts.map(o=>`<button class="btn choice-item${o.primary?' btna':''}" data-k="${esc(o.key)}">
+        <span class="choice-t">${esc(o.title)}</span>${o.desc?`<span class="choice-d">${esc(o.desc)}</span>`:''}</button>`).join('')}</div>
+      <div class="secpick-foot"><button class="btn" data-k="__cancel">${esc(L('取消'))}</button></div>
+    </div>`;
+    document.body.appendChild(m);
+    const done=v=>{ m.remove(); resolve(v); };
+    m.addEventListener('click',e=>{
+      const b=e.target.closest('[data-k]');
+      if(!b){ if(e.target===m)done(null); return; }
+      done(b.dataset.k==='__cancel'?null:b.dataset.k);
+    });
+    document.addEventListener('keydown',function esc2(ev){ if(ev.key==='Escape'){ document.removeEventListener('keydown',esc2); done(null); } });
+  });
+}
+/* 小節選取模式：purpose = copy（複製貼上）/ clear（清除小節） */
+let _barPurpose='copy';
 let _barPickMode=false, _barSel=null, _barClip=null, _barStage='select', _barInsert=null, _barDragging=false;
 function toggleBarPick(){
   _barPickMode=!_barPickMode;
-  if(!_barPickMode){ _barSel=null; _barStage='select'; _barInsert=null; _barClip=null; _barDragging=false; }
+  if(!_barPickMode){ _barSel=null; _barStage='select'; _barInsert=null; _barClip=null; _barDragging=false; _barPurpose='copy'; }
   document.body.classList.toggle('barpick',_barPickMode);
   document.querySelectorAll('.barpick-btn').forEach(b=>b.classList.toggle('on',_barPickMode));
   renderBarPickBar(); renderCharts();
 }
 /* 按段落標題「複製」鈕：進入複製模式並預設選取整段（可再拖曳/長按調整範圍） */
-function barPickSection(id){
+function barPickSection(id,purpose){
   const s=sects.find(x=>x.id===id); if(!s)return;
   if(_chordPlaceOn)toggleChordPlace();
   const bars=Math.max(1,parseInt(s.bars)||1);
+  _barPurpose=purpose||'copy';
   _barPickMode=true; _barStage='select'; _barClip=null; _barInsert=null; _barDragging=false;
   document.body.classList.add('barpick');
   _barSel={sid:id,a:0,b:bars-1,done:true};
@@ -4665,6 +4733,56 @@ function pasteBarsAt(sid,index){
   _barInsert={sid:s.id, index:at+n};        // 貼上後插入點移到新內容之後，方便連續貼
   autoSave(); renderSB(); renderCharts(); renderBarPickBar();
 }
+/* 清除選取的小節：可選「只清內容」或「連小節一起刪除」 */
+async function clearBarsAsk(){
+  if(!_barSel)return;
+  const s=sects.find(x=>x.id===_barSel.sid); if(!s)return;
+  const lo=Math.min(_barSel.a,_barSel.b), hi=Math.max(_barSel.a,_barSel.b), n=hi-lo+1;
+  const bars=Math.max(1,parseInt(s.bars)||1);
+  const k=await askChoice(
+    Lf('清除 '+n+' 個小節','Clear '+n+' bar(s)','小節 '+n+' 個をクリア',n+'개 마디 지우기'),
+    [{key:'data',primary:true,
+      title:Lf('只清除裡面的資料','Clear contents only','中身だけ消す','내용만 지우기'),
+      desc:Lf('小節保留，和弦與 KB 數字清空；分割、拍號、重複、接續維持不變',
+              'Bars stay; chords and KB numbers are emptied. Subdivisions, meters, repeats and continuations are kept.',
+              '小節は残し、コードとKB数字を空にします。分割・拍子・リピート・接続はそのまま。',
+              '마디는 남기고 코드와 KB 숫자를 비웁니다. 분할·박자·반복·연결은 유지됩니다.')},
+     {key:'bars',
+      title:Lf('連小節一起刪除','Delete the bars too','小節ごと削除','마디까지 삭제'),
+      desc:Lf('這 '+n+' 個小節整個移除，段落小節數變成 '+Math.max(1,bars-n),
+              'Removes these '+n+' bar(s); the section becomes '+Math.max(1,bars-n)+' bars.',
+              'この '+n+' 小節を丸ごと削除し、セクションは '+Math.max(1,bars-n)+' 小節になります。',
+              '이 '+n+'개 마디를 완전히 삭제하며 섹션은 '+Math.max(1,bars-n)+'마디가 됩니다.')}],
+    Lf('段落「'+s.name+'」的第 '+(lo+1)+'–'+(hi+1)+' 小節',
+       'Bars '+(lo+1)+'–'+(hi+1)+' of "'+s.name+'"',
+       '「'+s.name+'」の '+(lo+1)+'–'+(hi+1)+' 小節',
+       '「'+s.name+'」의 '+(lo+1)+'–'+(hi+1)+' 마디'));
+  if(!k)return;
+  if(k==='data') clearBarsData(s,lo,hi); else deleteBarsRange(s,lo,hi);
+  autoSave(); renderSB(); renderCharts(); renderBarPickBar();
+}
+/* 只清內容：和弦與 KB 音符清空，格式（分割／拍號／重複／接續）保留 */
+function clearBarsData(s,lo,hi){
+  migrateKBSection(s);
+  const bars=Math.max(1,parseInt(s.bars)||1);
+  s.chords=_padArr(s.chords,bars,'');
+  for(let b=lo;b<=hi;b++){
+    s.chords[b]=[];
+    _BARKBK.forEach(k=>{ if(Array.isArray(s[k])&&s[k].length>b && !/Sub$/.test(k)) s[k][b]=undefined; });
+  }
+}
+/* 連小節刪除：整段抽掉，所有逐小節陣列一起縮短 */
+function deleteBarsRange(s,lo,hi){
+  migrateKBSection(s);
+  const bars=Math.max(1,parseInt(s.bars)||1), n=hi-lo+1;
+  if(n>=bars){ clearBarsData(s,0,bars-1); return; }   // 不允許把整段刪成 0 小節 → 退回只清內容
+  ['chords','meters','rep','subdiv','bargoto'].concat(_BARKBK).forEach(k=>{
+    if(!Array.isArray(s[k]))return;
+    const a=s[k].slice(); a.splice(lo,n); s[k]=a;
+  });
+  s.bars=bars-n;
+  _barSel={sid:s.id,a:Math.min(lo,s.bars-1),b:Math.min(lo,s.bars-1),done:true};
+}
 function pasteBars(sid,bar){ pasteBarsAt(sid,bar+1); }   // 相容舊呼叫：插到該小節後面
 function copyBarsReselect(){ _barStage='select'; _barSel=null; _barInsert=null; renderCharts(); renderBarPickBar(); }
 /* ── 複製小節互動：按住小節拖曳選取；paste 階段點小節左/右半設插入點（觸控＋滑鼠共用 pointer 事件） ── */
@@ -4675,7 +4793,7 @@ let _lpTimer=null, _lpCand=null;
 function _clearLongPress(){ if(_lpTimer){clearTimeout(_lpTimer);_lpTimer=null;} _lpCand=null; }
 function _startBarPickFromLongPress(){
   _lpTimer=null; if(!_lpCand)return;
-  _barPickMode=true; _barStage='select'; _barClip=null; _barInsert=null;
+  _barPickMode=true; _barStage='select'; _barClip=null; _barInsert=null; _barPurpose='copy';
   document.body.classList.add('barpick');
   _barSel={sid:_lpCand.sid,a:_lpCand.bar,b:_lpCand.bar,done:false}; _barDragging=true;
   _lpCand=null;
@@ -4711,7 +4829,71 @@ document.addEventListener('pointerdown',onBarPickDown,true);
 document.addEventListener('pointermove',onBarPickMove,true);
 document.addEventListener('pointerup',onBarPickUp,true);
 document.addEventListener('pointercancel',onBarPickUp,true);
-function doPasteAtInsert(){ if(_barInsert)pasteBarsAt(_barInsert.sid,_barInsert.index); }
+/* 貼上前先問：插入新小節，還是覆蓋原有小節 */
+async function doPasteAtInsert(){
+  if(!_barInsert)return;
+  const clip=_barClip&&_barClip.cols; if(!clip||!clip.length)return;
+  const s=sects.find(x=>x.id===_barInsert.sid); if(!s)return;
+  const n=clip.length, at=Math.max(0,Math.min(Math.max(1,parseInt(s.bars)||1),_barInsert.index|0));
+  const bars=Math.max(1,parseInt(s.bars)||1);
+  const room=bars-at;                                    // 從插入點往後還有幾個小節可被覆蓋
+  const k=await askChoice(
+    Lf('貼上 '+n+' 個小節','Paste '+n+' bar(s)','小節 '+n+' 個を貼り付け',n+'개 마디 붙여넣기'),
+    [{key:'insert',primary:true,
+      title:Lf('插入新小節','Insert as new bars','新しい小節として挿入','새 마디로 삽입'),
+      desc:Lf('原本的小節往後移，段落小節數變成 '+(bars+n),
+              'Existing bars shift right; the section becomes '+(bars+n)+' bars.',
+              '既存の小節は後ろにずれ、セクションは '+(bars+n)+' 小節になります。',
+              '기존 마디는 뒤로 밀리고 섹션은 '+(bars+n)+'마디가 됩니다.')},
+     {key:'overwrite',
+      title:Lf('覆蓋原有小節','Overwrite existing bars','既存の小節を上書き','기존 마디 덮어쓰기'),
+      desc:(room>=n
+        ? Lf('從插入點起的 '+n+' 個小節會被取代，總小節數不變',
+             'The next '+n+' bar(s) are replaced; the bar count stays the same.',
+             '挿入位置から '+n+' 小節が置き換わり、小節数は変わりません。',
+             '삽입 위치부터 '+n+'개 마디가 대체되며 마디 수는 그대로입니다.')
+        : Lf('後面只剩 '+room+' 個小節，會覆蓋這些並往後延伸到 '+(at+n),
+             'Only '+room+' bar(s) remain; they will be replaced and the section extended to '+(at+n)+' bars.',
+             '後ろに '+room+' 小節しかないため、上書きしてセクションを '+(at+n)+' 小節に拡張します。',
+             '뒤에 '+room+'개 마디만 있어 덮어쓰고 섹션을 '+(at+n)+'마디로 확장합니다.'))}],
+    Lf('貼到段落「'+s.name+'」的第 '+(at+1)+' 小節'+(at>=bars?'（最後）':'')+'之前',
+       'Pasting before bar '+(at+1)+' of "'+s.name+'"',
+       '「'+s.name+'」の '+(at+1)+' 小節の前に貼り付け',
+       '「'+s.name+'」의 '+(at+1)+'번째 마디 앞에 붙여넣기'));
+  if(!k)return;
+  if(k==='overwrite') overwriteBarsAt(_barInsert.sid,at);
+  else pasteBarsAt(_barInsert.sid,at);
+}
+/* 覆蓋貼上：從 at 開始逐一取代，不足時往後延伸 */
+function overwriteBarsAt(sid,at){
+  const clip=_barClip&&_barClip.cols; if(!clip||!clip.length)return;
+  const s=sects.find(x=>x.id===sid); if(!s)return;
+  migrateKBSection(s);
+  const bars=Math.max(1,parseInt(s.bars)||1), n=clip.length, need=Math.max(bars,at+n);
+  s.chords =_padArr(s.chords,need,'');
+  s.meters =_padArr(s.meters,need,'');
+  s.rep    =_padArr(s.rep,need,1);
+  s.subdiv =_padArr(s.subdiv,need,1);
+  s.bargoto=_padArr(s.bargoto,need,'');
+  clip.forEach((c,i)=>{
+    const b=at+i;
+    s.chords[b]=c.chords.slice();
+    s.meters[b]=c.meter||'';
+    s.rep[b]=c.rep||1;
+    s.subdiv[b]=c.subdiv||1;
+    s.bargoto[b]='';
+  });
+  _BARKBK.forEach(k=>{
+    const anyKB=clip.some(x=>x.kb&&x.kb[k]!=null), existing=Array.isArray(s[k])&&s[k].length;
+    if(!anyKB&&!existing)return;
+    s[k]=_padArr(s[k],need,undefined);
+    clip.forEach((c,i)=>{ const v=c.kb&&c.kb[k]; s[k][at+i]=(v!=null)?JSON.parse(JSON.stringify(v)):undefined; });
+    s._kbv=2;
+  });
+  s.bars=need;
+  _barInsert={sid:s.id, index:Math.min(need,at+n)};
+  autoSave(); renderSB(); renderCharts(); renderBarPickBar();
+}
 function renderBarPickBar(){
   const el=document.getElementById('barpick-bar'); if(!el)return;
   if(!_barPickMode){ el.innerHTML=''; return; }
@@ -4723,8 +4905,11 @@ function renderBarPickBar(){
       +`<button class="btn" onclick="toggleBarPick()">完成</button>`;
   } else {
     const n=barSelCount();
-    el.innerHTML=`<span>${n?('已選 '+n+' 小節'):'按住小節左右拖曳選取範圍'}</span>`
-      +`<button class="btn btna"${n?'':' disabled'} onclick="copyBars()">⧉ 複製</button>`
+    const act=(_barPurpose==='clear')
+      ? `<button class="btn btna"${n?'':' disabled'} onclick="clearBarsAsk()">🧹 清除</button>`
+      : `<button class="btn btna"${n?'':' disabled'} onclick="copyBars()">⧉ 複製</button>`;
+    const hint=_barPurpose==='clear'?'按住小節左右拖曳，選要清除的範圍':'按住小節左右拖曳選取範圍';
+    el.innerHTML=`<span>${n?('已選 '+n+' 小節'):hint}</span>`+act
       +`<button class="btn" onclick="toggleBarPick()">取消</button>`;
   }
 }
@@ -4753,7 +4938,7 @@ function renderChord(){
     const bars=Math.max(1,parseInt(s.bars)||1);
     const ssc=_songStartSet.has(s.id)?' song-start':'';
     const head=cardSwipeWrap(s,`<div class="ccard-head" data-sid="${s.id}" style="background:${col.fill};color:${col.stroke}">
-        <span class="chead-l">${(s._song||window._printSongTitle)?`<span class="csong">🎵 ${esc(s._song||window._printSongTitle)}${(s._dispMode&&s._dispMode!=='num'&&s._dispKey)?' · '+(s._dispMode==='female'?'女':'男')+esc(s._dispKey):''}</span>`:''}<span class="cname">${esc(s.name)}</span>${bprSelect(s)}<button class="ctrl-toggle" onclick="toggleCtrl(${s.id})" title="顯示/隱藏每個小節的控制鈕；隱藏時仍顯示已設定的值">控制項 ${s.ctrlOff?'關':'開'}</button><button class="ctrl-toggle" onclick="barPickSection(${s.id})" title="複製小節：進入複製模式（預設選整段，可再拖曳/長按調整）→ 複製 → 點目標小節左/右緣(藍線) → 貼到任意位置（可跨段）">⧉ 複製</button><button class="ctrl-toggle secclr-btn" onclick="clearSect(${s.id})" title="只清除這一段填寫的和弦與 KB 數字；小節數、分割、拍號、重複、接續等格式都保留（可再按一次復原）">${_secClearBk[s.id]?'↩ 復原':'🧹 清除'}</button><button class="ctrl-toggle" onclick="toggleFold(${s.id})" title="收合/展開此段（收合只留標題，方便專注其他段）">${s.fold?'▸ 展開':'▾ 收合'}</button></span>
+        <span class="chead-l">${(s._song||window._printSongTitle)?`<span class="csong">🎵 ${esc(s._song||window._printSongTitle)}${(s._dispMode&&s._dispMode!=='num'&&s._dispKey)?' · '+(s._dispMode==='female'?'女':'男')+esc(s._dispKey):''}</span>`:''}<span class="cname">${esc(s.name)}</span>${bprSelect(s)}<button class="ctrl-toggle" onclick="toggleCtrl(${s.id})" title="顯示/隱藏每個小節的控制鈕；隱藏時仍顯示已設定的值">控制項 ${s.ctrlOff?'關':'開'}</button><button class="ctrl-toggle" onclick="barPickSection(${s.id})" title="複製小節：進入複製模式（預設選整段，可再拖曳/長按調整）→ 複製 → 點目標小節左/右緣(藍線) → 貼到任意位置（可跨段）">⧉ 複製</button><button class="ctrl-toggle secclr-btn" onclick="barPickSection(${s.id},'clear')" title="選要清除的小節範圍，再決定只清內容還是連小節一起刪除">${_secClearBk[s.id]?'↩ 復原':'🧹 清除'}</button><button class="ctrl-toggle" onclick="toggleFold(${s.id})" title="收合/展開此段（收合只留標題，方便專注其他段）">${s.fold?'▸ 展開':'▾ 收合'}</button></span>
         <span class="cmeta">${bars} Bar · ${esc(gv('s-time'))}</span>
       </div>`);
     if(s.fold) return `<div class="ccard folded${ssc}" style="border-color:${col.stroke}">${head}</div>`;
@@ -4824,7 +5009,7 @@ function mixCardHtml(s,plus){
   const cells=barCellsHtml(s,beats);
   const ins=mixInsBody(s,plus);
   const head=cardSwipeWrap(s,`<div class="ccard-head" data-sid="${s.id}" style="background:${col.fill};color:${col.stroke}">
-        <span class="chead-l">${(s._song||window._printSongTitle)?`<span class="csong">🎵 ${esc(s._song||window._printSongTitle)}${(s._dispMode&&s._dispMode!=='num'&&s._dispKey)?' · '+(s._dispMode==='female'?'女':'男')+esc(s._dispKey):''}</span>`:''}<span class="cname">${esc(s.name)}</span>${bprSelect(s)}<button class="ctrl-toggle" onclick="toggleCtrl(${s.id})" title="顯示/隱藏每個小節的控制鈕；隱藏時仍顯示已設定的值">控制項 ${s.ctrlOff?'關':'開'}</button><button class="ctrl-toggle" onclick="barPickSection(${s.id})" title="複製小節：進入複製模式（預設選整段，可再拖曳/長按調整）→ 複製 → 點目標小節左/右緣(藍線) → 貼到任意位置（可跨段）">⧉ 複製</button><button class="ctrl-toggle secclr-btn" onclick="clearSect(${s.id})" title="只清除這一段填寫的和弦與 KB 數字；小節數、分割、拍號、重複、接續等格式都保留（可再按一次復原）">${_secClearBk[s.id]?'↩ 復原':'🧹 清除'}</button><button class="ctrl-toggle" onclick="toggleFold(${s.id})" title="收合/展開此段（收合只留標題，方便專注其他段）">${s.fold?'▸ 展開':'▾ 收合'}</button></span><span class="cmeta">${bars} Bar · ${esc(gv('s-time'))}</span>
+        <span class="chead-l">${(s._song||window._printSongTitle)?`<span class="csong">🎵 ${esc(s._song||window._printSongTitle)}${(s._dispMode&&s._dispMode!=='num'&&s._dispKey)?' · '+(s._dispMode==='female'?'女':'男')+esc(s._dispKey):''}</span>`:''}<span class="cname">${esc(s.name)}</span>${bprSelect(s)}<button class="ctrl-toggle" onclick="toggleCtrl(${s.id})" title="顯示/隱藏每個小節的控制鈕；隱藏時仍顯示已設定的值">控制項 ${s.ctrlOff?'關':'開'}</button><button class="ctrl-toggle" onclick="barPickSection(${s.id})" title="複製小節：進入複製模式（預設選整段，可再拖曳/長按調整）→ 複製 → 點目標小節左/右緣(藍線) → 貼到任意位置（可跨段）">⧉ 複製</button><button class="ctrl-toggle secclr-btn" onclick="barPickSection(${s.id},'clear')" title="選要清除的小節範圍，再決定只清內容還是連小節一起刪除">${_secClearBk[s.id]?'↩ 復原':'🧹 清除'}</button><button class="ctrl-toggle" onclick="toggleFold(${s.id})" title="收合/展開此段（收合只留標題，方便專注其他段）">${s.fold?'▸ 展開':'▾ 收合'}</button></span><span class="cmeta">${bars} Bar · ${esc(gv('s-time'))}</span>
       </div>`);
   const note=s.notes?`<div class="ccard-note">⚑ ${esc(s.notes)}</div>`:'';
   const ssc=_songStartSet.has(s.id)?' song-start':'';
@@ -5342,7 +5527,7 @@ function kbCardHtml(s){
   const bars=Math.max(1,parseInt(s.bars)||1);
   const ssc=_songStartSet.has(s.id)?' song-start':'';
   const song=(s._song||window._printSongTitle);
-  const head=cardSwipeWrap(s,`<div class="ccard-head" data-sid="${s.id}" style="background:${col.fill};color:${col.stroke}"><span class="chead-l">${song?`<span class="csong">🎵 ${esc(song)}${(s._dispMode&&s._dispMode!=='num'&&s._dispKey)?' · '+(s._dispMode==='female'?'女':'男')+esc(s._dispKey):''}</span>`:''}<span class="cname">${esc(s.name)}</span>${bprSelect(s)}<button class="ctrl-toggle" onclick="toggleCtrl(${s.id})" title="顯示/隱藏每個小節的控制鈕">控制項 ${s.ctrlOff?'關':'開'}</button><button class="ctrl-toggle" onclick="barPickSection(${s.id})" title="複製小節：進入複製模式（預設選整段，可再拖曳/長按調整）→ 複製 → 點目標小節左/右緣(藍線) → 貼到任意位置（可跨段）">⧉ 複製</button><button class="ctrl-toggle secclr-btn" onclick="clearSect(${s.id})" title="只清除這一段填寫的和弦與 KB 數字；小節數、分割、拍號、重複、接續等格式都保留（可再按一次復原）">${_secClearBk[s.id]?'↩ 復原':'🧹 清除'}</button><button class="ctrl-toggle" onclick="toggleFold(${s.id})" title="收合/展開此段">${s.fold?'▸ 展開':'▾ 收合'}</button></span><span class="cmeta">${bars} Bar · ${esc(gv('s-time'))}</span></div>`);
+  const head=cardSwipeWrap(s,`<div class="ccard-head" data-sid="${s.id}" style="background:${col.fill};color:${col.stroke}"><span class="chead-l">${song?`<span class="csong">🎵 ${esc(song)}${(s._dispMode&&s._dispMode!=='num'&&s._dispKey)?' · '+(s._dispMode==='female'?'女':'男')+esc(s._dispKey):''}</span>`:''}<span class="cname">${esc(s.name)}</span>${bprSelect(s)}<button class="ctrl-toggle" onclick="toggleCtrl(${s.id})" title="顯示/隱藏每個小節的控制鈕">控制項 ${s.ctrlOff?'關':'開'}</button><button class="ctrl-toggle" onclick="barPickSection(${s.id})" title="複製小節：進入複製模式（預設選整段，可再拖曳/長按調整）→ 複製 → 點目標小節左/右緣(藍線) → 貼到任意位置（可跨段）">⧉ 複製</button><button class="ctrl-toggle secclr-btn" onclick="barPickSection(${s.id},'clear')" title="選要清除的小節範圍，再決定只清內容還是連小節一起刪除">${_secClearBk[s.id]?'↩ 復原':'🧹 清除'}</button><button class="ctrl-toggle" onclick="toggleFold(${s.id})" title="收合/展開此段">${s.fold?'▸ 展開':'▾ 收合'}</button></span><span class="cmeta">${bars} Bar · ${esc(gv('s-time'))}</span></div>`);
   if(s.fold) return `<div class="ccard folded${ssc}" style="border-color:${col.stroke}">${head}</div>`;
   let cells='';
   // 每排第一個小節補起始線（與 kbBarGridStyle 同一套每排邏輯），各排線條位置才一致
@@ -5554,3 +5739,23 @@ window.addEventListener('load',syncTopbarH);
 </div>
 </body>
 </html>
+<!-- ── 法務連結頁尾（Paddle domain review 需要能從導覽找到）── -->
+<style>
+.site-footer{
+  border-top:1px solid var(--border);
+  margin-top:2em;padding:1.6em 1.5em 2.4em;
+  display:flex;flex-wrap:wrap;align-items:center;gap:.4em 1.4em;
+  font-size:.85em;color:var(--text3);
+}
+.site-footer a{color:var(--text2);text-decoration:none;}
+.site-footer a:hover{color:var(--accent);text-decoration:underline;}
+.site-footer .sf-copy{margin-right:auto;}
+@media print{.site-footer{display:none;}}
+</style>
+<footer class="site-footer">
+  <span class="sf-copy">© 2026 Arranger 理譜人</span>
+  <a class="sf-link" data-page="terms" href="./terms.html">服務條款</a>
+  <a class="sf-link" data-page="refund" href="./refund.html">退款政策</a>
+  <a class="sf-link" data-page="privacy" href="./privacy.html">隱私權政策</a>
+  <a href="mailto:theholyghost2@gmail.com">聯絡我們</a>
+</footer>
