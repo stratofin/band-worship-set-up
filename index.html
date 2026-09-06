@@ -599,6 +599,10 @@ body.svc-mode .svc-only{display:inline-flex!important;}
 .kbstk .bt-suf{position:static;transform:none;font-size:0.56em;vertical-align:0;margin-left:0.02em;}
 /* 降/升記號用真正的樂譜符號，字體略小、微微上提，省空間也更好辨識 */
 .acc{font-size:0.72em;vertical-align:0.62em;line-height:1;letter-spacing:-0.04em;margin:0 -0.34em 0 -0.1em;display:inline-block;}
+/* 轉位低音的記號：疊在低音音名正上方，不推開後面的字 */
+.bt-bassn{position:relative;display:inline-block;}
+.bt-bassn>.acc.acc-top{position:absolute;left:50%;bottom:0.58em;transform:translateX(-50%);
+  font-size:0.62em;vertical-align:0;margin:0;line-height:1;white-space:nowrap;}
 /* 後綴（m7、maj9…）裡面的升降記號本來就是小字，維持原本行距不再上提 */
 .bt-suf .acc{font-size:0.9em;vertical-align:0.12em;margin:0;}
 /* 疊在上方的長後綴：裡面的記號也不另外上提 */
@@ -1347,6 +1351,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
       <ul><li>♯／♭ 放大成 0.72em 並抬到音名右上角，比後綴大、一眼就看得出是升降記號</li>
       <li>短後綴（m、m7…）回到正常基線高度，位置收到記號的左下方，形成「C 大字 ＋ 右上 ♯ ＋ 下方 m」的排法</li>
       <li>記號的右側留白收回 0.34em，整組 C♯m 橫向只佔約 1.1 個字寬（原本 ♯ 是正常大小時要 1.55 個字寬）</li>
+      <li>轉位和弦（A/C♯、F/E♭、4/♭7…）的記號改成疊在低音音名的<b>正上方</b>，完全不佔橫向 —— A/C♯ 與 A/C 一樣寬</li>
       <li>長後綴（maj9、sus）維持疊在正上方；KB 疊音格子較小，放大與上提幅度另外收斂</li></ul>
 
       <h4>清除也能選小節 ＋ 貼上／清除方式可選 <span class="cl-date">2026-09-02</span></h4>
@@ -4380,6 +4385,25 @@ function noteToDeg(note,keySemi){
 function normSign(tok){ return String(tok||'').replace(/♭/g,'b').replace(/♯/g,'#').replace(/♮/g,''); }
 /* 顯示：把 ASCII 的 b/# 換成真正的降/升記號（♭/♯），字體略小；大寫音名 B 不受影響 */
 function accSym(str){ return String(str).replace(/#/g,'<span class="acc">♯</span>').replace(/b/g,'<span class="acc">♭</span>'); }
+/* 轉位低音（/C#、/3b…）：升降記號改疊在低音音名的正上方，橫向不佔位 */
+function accChar(a){ return String(a).replace(/#/g,'♯').replace(/b/g,'♭'); }
+function bassHtml(bass){
+  const m=String(bass).match(/^\/(.*)$/); if(!m)return accSym(esc(bass));
+  const t=m[1];
+  let note='',acc='',rest='';
+  let mm=t.match(/^([A-G])([#b]+)(.*)$/);                 // 音名在前：C# / Eb
+  if(mm){ note=mm[1]; acc=mm[2]; rest=mm[3]||''; }
+  else {
+    mm=t.match(/^([#b]+)([1-7])(.*)$/);                   // 級數：記號在前 #1 / b3
+    if(mm){ acc=mm[1]; note=mm[2]; rest=mm[3]||''; }
+  }
+  if(!note)return '/'+accSym(esc(t));
+  /* 記號用絕對定位疊在正上方；DOM 順序照原本的寫法（音名在前 C♯、級數在後 ♯1），
+     複製文字與螢幕閱讀器讀到的順序才正確 */
+  const accEl='<span class="acc acc-top">'+accChar(acc)+'</span>';
+  const inner=/^[1-7]$/.test(note) ? accEl+esc(note) : esc(note)+accEl;
+  return '/<span class="bt-bassn">'+inner+'</span>'+accSym(esc(rest));
+}
 /* 把「前綴升降」搬到音名後：#C→C#、bE→Eb（開頭是 #/b 且接大寫音名才換；級數 b3/#4 不受影響） */
 function normAccPos(tok){ return String(normSign(tok)).replace(/^([#b])([A-G])/, (m,a,L)=>L+a); }
 function chordToNum(tok,keySemi){
@@ -4453,10 +4477,11 @@ function renderBeatToken(tok,s){
     // 估算顯示寬度：疊上去的後綴不佔橫向空間；右上標的後綴仍要計入（約 0.6 倍）
     /* 升降記號改為上標，橫向只佔約半個字寬 → 寬度估算跟著調小，長和弦才不會被誤判成要縮字 */
     const accW=t2=>String(t2).replace(/[#b]/g,'').length+(String(t2).match(/[#b]/g)||[]).length*0.5;
-    const wide=upSuf ? accW(sp.root)+accW(sp.bass)
-                     : accW(sp.root)+accW(sp.bass)+sufStr.length*0.6;
+    const bassW=t2=>String(t2).replace(/[#b]/g,'').length;   // 低音的升降記號疊在正上方，不佔橫向
+    const wide=upSuf ? accW(sp.root)+bassW(sp.bass)
+                     : accW(sp.root)+bassW(sp.bass)+sufStr.length*0.6;
     const lc=wide>=4.4?' bt-xlong':wide>=2.8?' bt-long':'';
-    return '<span class="bt-note'+lc+'">'+accSym(esc(sp.root))+(sufStr?'<span class="bt-suf'+sufCls+'">'+accSym(esc(sufStr))+'</span>':'')+(sp.bass?accSym(esc(sp.bass)):'')+'</span>';
+    return '<span class="bt-note'+lc+'">'+accSym(esc(sp.root))+(sufStr?'<span class="bt-suf'+sufCls+'">'+accSym(esc(sufStr))+'</span>':'')+(sp.bass?bassHtml(sp.bass):'')+'</span>';
   };
   if(tok.startsWith('(')){
     const inner=tok.replace(/^\(|\)$/g,'').trim().split(/\s+/).filter(Boolean);
