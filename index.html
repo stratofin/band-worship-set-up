@@ -598,7 +598,13 @@ body.svc-mode .svc-only{display:inline-flex!important;}
 /* KB 頁維持原本的右上標（該頁格子小、上方空間有限） */
 .kbstk .bt-suf{position:static;transform:none;font-size:0.48em;vertical-align:0.42em;}
 /* 降/升記號用真正的樂譜符號，字體略小、微微上提，省空間也更好辨識 */
-.acc{font-size:0.78em;vertical-align:0.08em;letter-spacing:-0.02em;}
+.acc{font-size:0.56em;vertical-align:0.62em;line-height:1;letter-spacing:-0.04em;margin:0 -0.02em 0 -0.05em;display:inline-block;}
+/* 後綴（m7、maj9…）裡面的升降記號本來就是小字，維持原本行距不再上提 */
+.bt-suf .acc{font-size:0.9em;vertical-align:0.12em;margin:0;}
+/* 疊在上方的長後綴：裡面的記號也不另外上提 */
+.bt-suf-up .acc{font-size:0.9em;vertical-align:0.1em;margin:0;}
+/* KB 頁的直向疊音格子較小，記號上提幅度收斂一點才不會頂出格線 */
+.kbstk .acc{font-size:0.62em;vertical-align:0.46em;margin:0;}
 /* 長和弦壓在自己格內，不溢出到隔壁格造成互相擠壓 */
 .cbeatcol>.beat-r{overflow:hidden;}
 .bt-rest{color:var(--text3);}
@@ -998,6 +1004,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   /* 列印：和弦相關內容加深（原本沿用螢幕淺色，白底上太淡） */
   body.print-chord .beat-r,body.print-mix .beat-r,body.print-mixp .beat-r,
   body.print-chord .bt-suf,body.print-mix .bt-suf,body.print-mixp .bt-suf{color:#111!important;}
+  body[class*="print-"] .acc{font-size:0.6em!important;vertical-align:0.58em!important;}
   body.print-chord .bt-rest,body.print-mix .bt-rest,body.print-mixp .bt-rest{color:#222!important;}
   body.print-chord .bt-sus,body.print-mix .bt-sus,body.print-mixp .bt-sus{color:#b3b3b3!important;opacity:1!important;font-size:0.78em!important;}
   body.print-chord .cbnum,body.print-mix .cbnum,body.print-mixp .cbnum{color:#c4c4c4!important;opacity:1!important;font-size:0.42em!important;}
@@ -1335,6 +1342,11 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
     <div class="cl-head"><span>📝 更新日誌 · Worship Arranger</span><button class="btn" onclick="hideChangelog()">✕</button></div>
     <div class="cl-body">
       <p class="cl-ver">開發時間軸：2026-06-17 ～ 2026-08-30（依使用回饋持續優化）</p>
+
+      <h4>升降記號改成上標，和弦更省空間 <span class="cl-date">2026-09-06</span></h4>
+      <ul><li>♯／♭ 改為右上角的小型上標，橫向只佔約半個字寬 —— C♯m 的「m」會緊接在 C 後面，不再被記號推開</li>
+      <li>平板與手機上長和弦（A/C♯、E♭maj9…）比較不會擠成一團或被縮小</li>
+      <li>後綴（m7、maj9）與 KB 疊音格子裡的記號維持原本行距，列印時上標略放大保持清楚</li></ul>
 
       <h4>清除也能選小節 ＋ 貼上／清除方式可選 <span class="cl-date">2026-09-02</span></h4>
       <ul><li>段落標題的「🧹 清除」改成與「⧉ 複製」同一套流程：先拖曳選要清的小節範圍，再按清除</li>
@@ -4438,8 +4450,10 @@ function renderBeatToken(tok,s){
     const sufStr=String(sp.suf||'').replace(/sus4/g,'sus'), upSuf=sufStr.length>=3;
     const sufCls=upSuf?(' bt-suf-up s'+Math.min(6,sufStr.length)):'';
     // 估算顯示寬度：疊上去的後綴不佔橫向空間；右上標的後綴仍要計入（約 0.6 倍）
-    const wide=upSuf ? String(sp.root).length+String(sp.bass).length
-                     : String(sp.root).length+String(sp.bass).length+sufStr.length*0.6;
+    /* 升降記號改為上標，橫向只佔約半個字寬 → 寬度估算跟著調小，長和弦才不會被誤判成要縮字 */
+    const accW=t2=>String(t2).replace(/[#b]/g,'').length+(String(t2).match(/[#b]/g)||[]).length*0.5;
+    const wide=upSuf ? accW(sp.root)+accW(sp.bass)
+                     : accW(sp.root)+accW(sp.bass)+sufStr.length*0.6;
     const lc=wide>=4.4?' bt-xlong':wide>=2.8?' bt-long':'';
     return '<span class="bt-note'+lc+'">'+accSym(esc(sp.root))+(sufStr?'<span class="bt-suf'+sufCls+'">'+accSym(esc(sufStr))+'</span>':'')+(sp.bass?accSym(esc(sp.bass)):'')+'</span>';
   };
