@@ -598,17 +598,22 @@ body.svc-mode .svc-only{display:inline-flex!important;}
 /* KB 頁維持原本的右上標（該頁格子小、上方空間有限） */
 .kbstk .bt-suf{position:static;transform:none;font-size:0.56em;vertical-align:0;margin-left:0.02em;}
 /* 降/升記號用真正的樂譜符號，字體略小、微微上提，省空間也更好辨識 */
-.acc{font-size:0.72em;vertical-align:0.62em;line-height:1;letter-spacing:-0.04em;margin:0 -0.34em 0 -0.1em;display:inline-block;}
-/* 轉位低音的記號：疊在低音音名正上方，不推開後面的字 */
-.bt-bassn{position:relative;display:inline-block;}
-.bt-bassn>.acc.acc-top{position:absolute;left:50%;bottom:0.58em;transform:translateX(-50%);
-  font-size:0.62em;vertical-align:0;margin:0;line-height:1;white-space:nowrap;}
+.acc{font-size:0.72em;vertical-align:0.62em;line-height:1;letter-spacing:-0.04em;margin:0 0 0 -0.1em;display:inline-block;}
+/* 只有「記號後面緊接短後綴」時才把後綴收到記號下方；B♭/D 這種後面接斜線的不受影響 */
+.acc + .bt-suf{margin-left:-0.34em;}
+/* 轉位低音的記號：疊在低音音名正上方，不推開後面的字
+   （容器 line-height:1 → 高度等於字身；bottom:100% 貼齊字身頂端，
+     再用 margin-bottom 微調貼近程度，不受字級換算影響、也不會壓到字） */
+.bt-bassn{position:relative;display:inline-block;line-height:1;}
+.bt-bassn>.acc.acc-top{position:absolute;left:50%;bottom:100%;transform:translateX(-50%);
+  font-size:0.62em;vertical-align:0;margin:0 0 -0.1em 0;line-height:1;white-space:nowrap;}
 /* 後綴（m7、maj9…）裡面的升降記號本來就是小字，維持原本行距不再上提 */
 .bt-suf .acc{font-size:0.9em;vertical-align:0.12em;margin:0;}
 /* 疊在上方的長後綴：裡面的記號也不另外上提 */
 .bt-suf-up .acc{font-size:0.9em;vertical-align:0.1em;margin:0;}
 /* KB 頁的直向疊音格子較小，記號上提幅度收斂一點才不會頂出格線 */
-.kbstk .acc{font-size:0.68em;vertical-align:0.5em;margin:0 -0.24em 0 -0.06em;}
+.kbstk .acc{font-size:0.68em;vertical-align:0.5em;margin:0 0 0 -0.06em;}
+.kbstk .acc + .bt-suf{margin-left:-0.24em;}
 /* 長和弦壓在自己格內，不溢出到隔壁格造成互相擠壓 */
 .cbeatcol>.beat-r{overflow:hidden;}
 .bt-rest{color:var(--text3);}
@@ -1352,7 +1357,9 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
       <li>短後綴（m、m7…）回到正常基線高度，位置收到記號的左下方，形成「C 大字 ＋ 右上 ♯ ＋ 下方 m」的排法</li>
       <li>記號的右側留白收回 0.34em，整組 C♯m 橫向只佔約 1.1 個字寬（原本 ♯ 是正常大小時要 1.55 個字寬）</li>
       <li>轉位和弦（A/C♯、F/E♭、4/♭7…）的記號改成疊在低音音名的<b>正上方</b>，完全不佔橫向 —— A/C♯ 與 A/C 一樣寬</li>
-      <li>長後綴（maj9、sus）維持疊在正上方；KB 疊音格子較小，放大與上提幅度另外收斂</li></ul>
+      <li>長後綴（maj9、sus）維持疊在正上方；KB 疊音格子較小，放大與上提幅度另外收斂</li>
+      <li><b>修正</b>：轉位低音的記號原本會壓在音名上（A/C♯ 的 ♯ 穿過 C）—— 改用字身頂端對齊，記號穩定貼在字的正上方，各字級與列印都不會再重疊</li>
+      <li><b>修正</b>：B♭/D 這種「記號後面接斜線」的和弦，斜線不會再被拉到記號上；收窄只在後面真的有短後綴時才作用</li></ul>
 
       <h4>清除也能選小節 ＋ 貼上／清除方式可選 <span class="cl-date">2026-09-02</span></h4>
       <ul><li>段落標題的「🧹 清除」改成與「⧉ 複製」同一套流程：先拖曳選要清的小節範圍，再按清除</li>
