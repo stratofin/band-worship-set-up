@@ -583,7 +583,7 @@ body.svc-mode .svc-only{display:inline-flex!important;}
 /* 較長的和弦（如 D/F#）自動縮字，避免在窄格中被切掉 */
 .bt-note.bt-long{font-size:0.8em;letter-spacing:-0.02em;}
 .bt-note.bt-xlong{font-size:0.64em;letter-spacing:-0.03em;}
-.bt-suf{font-size:0.5em;vertical-align:0.72em;font-weight:600;letter-spacing:-0.04em;margin-left:-0.1em;line-height:1;}
+.bt-suf{font-size:0.6em;vertical-align:0;font-weight:600;letter-spacing:-0.03em;margin-left:0.02em;line-height:1;}
 /* 和弦頁／混合頁：只有「較長」的後綴（maj9/add4/sus4/dim…）疊在數字正上方省橫向空間；
    短後綴（m、m7、7…）維持右上標比較好讀。容器寬度撐滿整格，後綴才不會被切掉。 */
 .beat-r{padding-top:0.72em;width:100%;}
@@ -596,15 +596,15 @@ body.svc-mode .svc-only{display:inline-flex!important;}
 .beat-r .bt-suf-up.s5{font-size:0.43em;}
 .beat-r .bt-suf-up.s6{font-size:0.37em;}
 /* KB 頁維持原本的右上標（該頁格子小、上方空間有限） */
-.kbstk .bt-suf{position:static;transform:none;font-size:0.48em;vertical-align:0.42em;margin-left:0;}
+.kbstk .bt-suf{position:static;transform:none;font-size:0.56em;vertical-align:0;margin-left:0.02em;}
 /* 降/升記號用真正的樂譜符號，字體略小、微微上提，省空間也更好辨識 */
-.acc{font-size:0.54em;vertical-align:0.72em;line-height:1;letter-spacing:-0.05em;margin:0 -0.05em 0 -0.12em;display:inline-block;}
+.acc{font-size:0.72em;vertical-align:0.62em;line-height:1;letter-spacing:-0.04em;margin:0 -0.34em 0 -0.1em;display:inline-block;}
 /* 後綴（m7、maj9…）裡面的升降記號本來就是小字，維持原本行距不再上提 */
 .bt-suf .acc{font-size:0.9em;vertical-align:0.12em;margin:0;}
 /* 疊在上方的長後綴：裡面的記號也不另外上提 */
 .bt-suf-up .acc{font-size:0.9em;vertical-align:0.1em;margin:0;}
 /* KB 頁的直向疊音格子較小，記號上提幅度收斂一點才不會頂出格線 */
-.kbstk .acc{font-size:0.6em;vertical-align:0.6em;margin:0 0 0 -0.08em;}
+.kbstk .acc{font-size:0.68em;vertical-align:0.5em;margin:0 -0.24em 0 -0.06em;}
 /* 長和弦壓在自己格內，不溢出到隔壁格造成互相擠壓 */
 .cbeatcol>.beat-r{overflow:hidden;}
 .bt-rest{color:var(--text3);}
@@ -1004,7 +1004,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   /* 列印：和弦相關內容加深（原本沿用螢幕淺色，白底上太淡） */
   body.print-chord .beat-r,body.print-mix .beat-r,body.print-mixp .beat-r,
   body.print-chord .bt-suf,body.print-mix .bt-suf,body.print-mixp .bt-suf{color:#111!important;}
-  body[class*="print-"] .acc{font-size:0.58em!important;vertical-align:0.7em!important;}
+  body[class*="print-"] .acc{font-size:0.7em!important;vertical-align:0.6em!important;}
   body.print-chord .bt-rest,body.print-mix .bt-rest,body.print-mixp .bt-rest{color:#222!important;}
   body.print-chord .bt-sus,body.print-mix .bt-sus,body.print-mixp .bt-sus{color:#b3b3b3!important;opacity:1!important;font-size:0.78em!important;}
   body.print-chord .cbnum,body.print-mix .cbnum,body.print-mixp .cbnum{color:#c4c4c4!important;opacity:1!important;font-size:0.42em!important;}
@@ -1343,11 +1343,11 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
     <div class="cl-body">
       <p class="cl-ver">開發時間軸：2026-06-17 ～ 2026-08-30（依使用回饋持續優化）</p>
 
-      <h4>升降記號與後綴一起排到右上角 <span class="cl-date">2026-09-06</span></h4>
-      <ul><li>♯／♭ 與短後綴（m、m7…）改成同高度的小字，並排在音名右上角 —— C♯m 看起來像 C 加上右上的「♯m」</li>
-      <li>上標頂端與大寫字母切齊（不再高出去頂到上方的拍點數字），並往左收緊貼住音名</li>
-      <li>兩者橫向合計只佔約一個字寬，平板與手機上長和弦（A/C♯、E♭maj9…）不再擠成一團或被自動縮小</li>
-      <li>長後綴（maj9、sus）維持原本疊在正上方的做法；KB 疊音格子較小，記號上提幅度另外收斂</li></ul>
+      <h4>升降記號放大移到右上角、後綴回到基線 <span class="cl-date">2026-09-06</span></h4>
+      <ul><li>♯／♭ 放大成 0.72em 並抬到音名右上角，比後綴大、一眼就看得出是升降記號</li>
+      <li>短後綴（m、m7…）回到正常基線高度，位置收到記號的左下方，形成「C 大字 ＋ 右上 ♯ ＋ 下方 m」的排法</li>
+      <li>記號的右側留白收回 0.34em，整組 C♯m 橫向只佔約 1.1 個字寬（原本 ♯ 是正常大小時要 1.55 個字寬）</li>
+      <li>長後綴（maj9、sus）維持疊在正上方；KB 疊音格子較小，放大與上提幅度另外收斂</li></ul>
 
       <h4>清除也能選小節 ＋ 貼上／清除方式可選 <span class="cl-date">2026-09-02</span></h4>
       <ul><li>段落標題的「🧹 清除」改成與「⧉ 複製」同一套流程：先拖曳選要清的小節範圍，再按清除</li>
