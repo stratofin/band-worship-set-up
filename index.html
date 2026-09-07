@@ -1352,6 +1352,12 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
     <div class="cl-body">
       <p class="cl-ver">開發時間軸：2026-06-17 ～ 2026-08-30（依使用回饋持續優化）</p>
 
+      <h4>修正：小寫輸入的和弦無法轉級數 <span class="cl-date">2026-09-07</span></h4>
+      <ul><li>手動輸入小寫和弦（c#m、a/c#、bbmaj9、ebmaj9…）時，原本會被當成看不懂的符號，切級數時保持原樣不轉換</li>
+      <li>現在音名大小寫一律容錯：每段（含斜線低音）開頭的音名自動轉大寫，後綴 m／maj7／sus4／dim／add9 維持小寫</li>
+      <li>已經存成小寫的舊譜不用重打，開啟後顯示與級數轉換會自動修正</li>
+      <li>級數寫法不受影響：♭7、♯4、1/3 仍是級數，不會被誤判成 B7 之類的和弦</li></ul>
+
       <h4>升降記號放大移到右上角、後綴回到基線 <span class="cl-date">2026-09-06</span></h4>
       <ul><li>♯／♭ 放大成 0.72em 並抬到音名右上角，比後綴大、一眼就看得出是升降記號</li>
       <li>短後綴（m、m7…）回到正常基線高度，位置收到記號的左下方，形成「C 大字 ＋ 右上 ♯ ＋ 下方 m」的排法</li>
@@ -4412,7 +4418,16 @@ function bassHtml(bass){
   return '/<span class="bt-bassn">'+inner+'</span>'+accSym(esc(rest));
 }
 /* 把「前綴升降」搬到音名後：#C→C#、bE→Eb（開頭是 #/b 且接大寫音名才換；級數 b3/#4 不受影響） */
-function normAccPos(tok){ return String(normSign(tok)).replace(/^([#b])([A-G])/, (m,a,L)=>L+a); }
+/* 音名大小寫容錯：手動輸入常打小寫（c#m、a/c#、bb、ebmaj9），
+   把每段（含斜線低音）開頭的音名字母轉成大寫；後綴 m／maj7／sus4／dim／add9 維持小寫。
+   開頭是級數寫法（1、b3、#4）者原樣跳過，才不會把降七度 b7 誤判成 B7 和弦。 */
+function normNoteCase(tok){
+  return String(tok||'').split('/').map(p=>{
+    if(/^\s*[#b]?[1-7]/.test(p)) return p;                                     // 級數：b7 / #4 / 3 → 不動
+    return p.replace(/^(\s*)([#b]?)([a-g])/, (m,sp,a,L)=>sp+a+L.toUpperCase()); // c#m→C#m、bb→bB（下一步搬成 Bb）
+  }).join('/');
+}
+function normAccPos(tok){ return normNoteCase(normSign(tok)).replace(/^([#b])([A-G])/, (m,a,L)=>L+a); }
 function chordToNum(tok,keySemi){
   if(keySemi==null)return tok;
   tok=normAccPos(tok);                                                // #C / bE 也納入辨識
@@ -4429,7 +4444,7 @@ const _ENH={'C#':'Db','Db':'C#','D#':'Eb','Eb':'D#','F#':'Gb','Gb':'F#','G#':'Ab
 function askEnharmonic(tok){
   const s=normAccPos(String(tok||'').trim());
   const m=s.match(/^([A-G][#b])(.*)$/);
-  if(!m)return tok;
+  if(!m)return s;   /* 不需問同音異名的（Cm7、A/C#…）也回傳正規化結果，小寫輸入才會被存成大寫 */
   const cur=m[1], alt=_ENH[cur]; if(!alt)return s;
   const useAlt=confirm('「'+cur+'」與「'+alt+'」是同音異名。\n\n要改用 '+alt+' 嗎？\n　確定 ＝ 用 '+alt+'\n　取消 ＝ 保留 '+cur);
   return (useAlt?alt:cur)+m[2];
