@@ -115,6 +115,7 @@ body.print-maxi .cbar2.kbbar{padding:0.05em 0.04em!important;}
 .choice-item .choice-d{font-size:0.78em;color:var(--text3);font-weight:400;}
 .choice-item.btna .choice-d{color:rgba(13,13,13,.72);}
 #choice-modal .secpick-foot{margin-top:0.8em;justify-content:flex-end;}
+#choice-modal .choice-list{overflow-y:auto;max-height:60vh;}   /* 段落多的時候可捲動 */
 .secpick-list{overflow-y:auto;flex:1 1 auto;border:1px solid var(--border2);border-radius:0.5em;padding:0.3em;}
 .secpick-row{display:flex;align-items:center;gap:0.5em;padding:0.4em 0.5em;border-radius:0.35em;cursor:pointer;}
 .secpick-row:hover{background:rgba(255,255,255,0.05);}
@@ -1245,6 +1246,8 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
         <span class="key-step" title="半音微調 Key：依目前「顯示」調男/女 Key"><label>微調Key</label><button onclick="transposeKey(1)" title="升半音">▲</button><b class="keystep-lbl">—</b><button onclick="transposeKey(-1)" title="降半音">▼</button></span>
         <label class="ic-hint">和弦 <select class="ic-sel cp-acc" onchange="setPlaceAcc(this.value)" title="升降"><option value="">♮</option><option value="b">♭</option><option value="#">♯</option></select><select class="ic-sel cp-root" onchange="setPlaceRoot(this.value)" title="根音（級數）"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option></select><select class="ic-sel cp-qual" onchange="setPlaceQual(this.value)" title="和弦性質"><option value="">大三</option><option value="m">小三 m</option><option value="6">6</option><option value="m6">m6</option><option value="7">屬七 7</option><option value="maj7">maj7</option><option value="m7">m7</option><option value="9">9</option><option value="maj9">maj9</option><option value="m9">m9</option><option value="add9">add9</option><option value="11">11</option><option value="m11">m11</option><option value="13">13</option><option value="maj13">maj13</option><option value="m13">m13</option><option value="sus2">sus2</option><option value="sus">sus</option><option value="7sus">7sus</option><option value="dim">dim</option><option value="aug">aug</option></select><button class="stbtn chordplace-btn" onclick="toggleChordPlace()" title="放和弦模式：開啟後點格子填入所選和弦（存級數，顯示可切級數/男女Key）">🎹 放和弦</button></label>
         <label class="ic-hint">全部每排 <select class="ic-sel" onchange="applyAllBPR(this)" title="一次設定所有段落每排小節數"><option value="__">套用…</option><option value="">自動</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option></select></label>
+        <button class="stbtn chord-undo" onclick="chordUndo()" title="上一步（只回復最近的動作，不清除其他）" disabled>↩ 上一步</button>
+        <button class="stbtn chord-redo" onclick="chordRedo()" title="下一步（重做）" disabled>↪ 下一步</button>
         <button class="clear-btn" onclick="clearAll()" title="清除整個譜的和弦／分割／重複／拍號／接續資料（可再按一次復原）">🗑 全部清除</button>
       </div>
       <div class="chord-hint">點拍格可編輯。記號：<b>1–7</b>級數、<b>b/#</b>升降、<b>m/sus4/maj7</b>品質、<b>1/3</b>轉位、<b>.</b>延續、<b>x</b>休止、<b>(1 5)</b>細分(2音=八分、3音=三連音、4音=十六分)。右上橘徽章設本小節拍號、末小節選「→接續」。上方「顯示」可切級數↔和弦名(男/女Key)。長按任一小節→拖曳選取→複製→點目標小節左/右緣(藍線)→貼到任意位置。</div>
@@ -1267,6 +1270,8 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
         <span class="key-step" title="半音微調 Key：依目前「顯示」調男/女 Key"><label>微調Key</label><button onclick="transposeKey(1)" title="升半音">▲</button><b class="keystep-lbl">—</b><button onclick="transposeKey(-1)" title="降半音">▼</button></span>
         <label class="ic-hint">和弦 <select class="ic-sel cp-acc" onchange="setPlaceAcc(this.value)" title="升降"><option value="">♮</option><option value="b">♭</option><option value="#">♯</option></select><select class="ic-sel cp-root" onchange="setPlaceRoot(this.value)" title="根音（級數）"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option></select><select class="ic-sel cp-qual" onchange="setPlaceQual(this.value)" title="和弦性質"><option value="">大三</option><option value="m">小三 m</option><option value="6">6</option><option value="m6">m6</option><option value="7">屬七 7</option><option value="maj7">maj7</option><option value="m7">m7</option><option value="9">9</option><option value="maj9">maj9</option><option value="m9">m9</option><option value="add9">add9</option><option value="11">11</option><option value="m11">m11</option><option value="13">13</option><option value="maj13">maj13</option><option value="m13">m13</option><option value="sus2">sus2</option><option value="sus">sus</option><option value="7sus">7sus</option><option value="dim">dim</option><option value="aug">aug</option></select><button class="stbtn chordplace-btn" onclick="toggleChordPlace()" title="放和弦模式：開啟後點格子填入所選和弦（存級數，顯示可切級數/男女Key）">🎹 放和弦</button></label>
         <label class="ic-hint">全部每排 <select class="ic-sel" onchange="applyAllBPR(this)" title="一次設定所有段落每排小節數"><option value="__">套用…</option><option value="">自動</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option></select></label>
+        <button class="stbtn chord-undo" onclick="chordUndo()" title="上一步（只回復最近的動作，不清除其他）" disabled>↩ 上一步</button>
+        <button class="stbtn chord-redo" onclick="chordRedo()" title="下一步（重做）" disabled>↪ 下一步</button>
         <button class="clear-btn" onclick="clearAll()" title="清除整個譜的和弦／分割／重複／拍號／接續資料（可再按一次復原）">🗑 全部清除</button>
       </div>
       <div class="chord-hint">混合＋：用上方「樂器篩選鈕（ALL / Vocal / KB …）」挑要顯示哪些樂器的配器。配器在小節上方，可自由拖曳移位與調長度（不卡小節），內容與其他頁共用。長按任一小節→拖曳選取→複製→點目標小節左/右緣(藍線)→貼到任意位置。</div>
@@ -1289,7 +1294,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
         <label class="ic-hint">全部每排 <select class="ic-sel" onchange="applyAllBPR(this)" title="一次設定所有段落每排小節數"><option value="__">套用…</option><option value="">自動</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option></select></label>
         <button class="stbtn" id="staff-undo" onclick="staffUndo()" title="上一步（只回復最近的動作，不清除其他）" disabled>↩ 上一步</button>
         <button class="stbtn" id="staff-redo" onclick="staffRedo()" title="下一步（重做）" disabled>↪ 下一步</button>
-        <button class="clear-btn" onclick="clearStaff()" title="清除整個譜的 KB 數字（可用上一步還原）">🗑 清除</button>
+        <button class="clear-btn" onclick="clearStaff()" title="清除 KB 數字：可選小節範圍或整個譜（可用上一步還原）">🗑 清除</button>
       </div>
       <div class="chord-hint">KB 數字譜：每小節分「上排＝右手／下排＝左手」，點格子輸入級數，同一格用空白分隔可直向疊 1–3 個音（和弦）；或用右上「和弦」選根音級數＋性質，開「🎹 放和弦」後點格子整組疊上。時值＝簡譜底線（顯示在每格底部）：無＝四分、一條＝八分、兩條＝十六分。每一「拍」可各自切分：拍左上角的 ♩/♪/♬ 選單只切分那一拍（每拍等寬，切細只在該拍內部發生，不會讓整排縮小）；右手 R／左手 L 標在每列左上角。上方「顯示」可切級數↔男/女Key 和弦名。重複／接續／每排 全部沿用。長按任一小節→拖曳選取→複製→點目標小節左/右緣(藍線)→貼到任意位置。</div>
       <div class="chord-content" id="staff-content"></div>
@@ -1367,6 +1372,19 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
     <div class="cl-head"><span>📝 更新日誌 · Worship Arranger</span><button class="btn" onclick="hideChangelog()">✕</button></div>
     <div class="cl-body">
       <p class="cl-ver">開發時間軸：2026-06-17 ～ 2026-08-30（依使用回饋持續優化）</p>
+
+      <h4>和弦譜／混合頁也有上一步、KB 清除獨立 <span class="cl-date">2026-09-08</span></h4>
+      <ul><li>和弦譜與混合頁的工具列新增「↩ 上一步／↪ 下一步」，用法與 KB 頁一樣</li>
+      <li>會記錄的動作：格子輸入和弦、放和弦、貼上（插入／覆蓋）、清除小節、刪除小節、段落清除、全部清除；最多回溯 80 步</li>
+      <li>只回復和弦與小節格式，不會動到 KB 數字、配器與其他頁設定；點進格子沒有改內容不會佔一步</li>
+      <li>KB 頁的段落「🧹 清除」與小節清除改成<b>只清 KB 數字</b>，和弦不再一起被清掉</li>
+      <li>和弦譜與混合頁的清除維持原本行為（和弦與 KB 一起清）；再按一次「↩ 復原」只會還原當初清掉的那幾項</li>
+      <li>KB 頁工具列的「🗑 清除」也能選範圍了：按下去先選「選小節範圍清除」或「整個譜全部清除」；選範圍時再挑段落，接著就跟段落上的 🧹 清除一樣拖曳選小節</li></ul>
+
+      <h4>文字清單改成純和弦、每行四小節 <span class="cl-date">2026-09-08</span></h4>
+      <ul><li>拿掉樂器配置（各聲部與內層），只留段落資訊、和弦與備註，畫面清爽好對照；要看配器請用混合或圖示譜</li>
+      <li>和弦不再擠成一長行，改成<b>每行四個小節</b>，行首標小節編號（Bar 1-4、Bar 5-8…），最後不足四格的自己一行</li>
+      <li>「複製全部」複製到的內容與畫面完全一致；CSV 匯出的和弦欄位維持原本的單行格式</li></ul>
 
       <h4>新增「意見回饋」按鈕 <span class="cl-date">2026-09-07</span></h4>
       <ul><li>標題「理譜人」右邊、「▲ 工具列」鈕的右邊新增「💬」圖示鈕，點下去直接開啟郵件軟體寫信給我們（arrangeppl@gmail.com）</li>
@@ -1846,6 +1864,7 @@ const I18N={
  "半音微調 Key":"Nudge key by a semitone",
  "清除整個譜的和弦／分割／重複／拍號／接續資料（可再按一次復原）":"Clear chords, subdivisions, repeats, meters and continuations for the whole chart (press again to undo)",
  "清除整個譜的 KB 數字（可用上一步還原）":"Clear the KB numbers for the whole chart (use Undo to restore)",
+ "清除 KB 數字：可選小節範圍或整個譜（可用上一步還原）":"Clear KB numbers: pick a bar range or the whole chart (use Undo to restore)",
  "🗑 清除":"🗑 Clear",
  "上一步（只回復最近的動作，不清除其他）":"Undo (reverts the last action only)","下一步（重做）":"Redo",
  /* ── 頂部工具列 title ── */
@@ -2189,6 +2208,7 @@ const I18N_JA={
  "半音微調 Key":"キーを半音ずつ調整",
  "清除整個譜的和弦／分割／重複／拍號／接續資料（可再按一次復原）":"楽譜全体のコード・分割・リピート・拍子・接続を消します（もう一度押すと元に戻ります）",
  "清除整個譜的 KB 數字（可用上一步還原）":"楽譜全体のKB数字を消します（「元に戻す」で復元できます）",
+ "清除 KB 數字：可選小節範圍或整個譜（可用上一步還原）":"KB数字を消す：小節の範囲か楽譜全体を選べます（「元に戻す」で復元できます）",
  "🗑 清除":"🗑 クリア",
  "上一步（只回復最近的動作，不清除其他）":"元に戻す（直前の操作だけ）",
  "下一步（重做）":"やり直し",
@@ -2540,6 +2560,7 @@ const I18N_KO={
  "半音微調 Key":"키를 반음씩 조정",
  "清除整個譜的和弦／分割／重複／拍號／接續資料（可再按一次復原）":"악보 전체의 코드·분할·반복·박자·연결을 지웁니다 (다시 누르면 되돌리기)",
  "清除整個譜的 KB 數字（可用上一步還原）":"악보 전체의 KB 숫자를 지웁니다 (실행 취소로 복원 가능)",
+ "清除 KB 數字：可選小節範圍或整個譜（可用上一步還原）":"KB 숫자 지우기: 마디 범위 또는 악보 전체를 고를 수 있습니다 (실행 취소로 복원 가능)",
  "🗑 清除":"🗑 지우기",
  "上一步（只回復最近的動作，不清除其他）":"실행 취소 (직전 동작만)",
  "下一步（重做）":"다시 실행",
@@ -4358,6 +4379,7 @@ function toggleChordPlace(){
 function placeChordAt(cell){
   const sid=+cell.dataset.sid, bar=+cell.dataset.bar, b=+cell.dataset.b;
   if(!isFinite(sid)||!isFinite(bar)||!isFinite(b))return;
+  chordPushHistory();
   setBeat(sid,bar,b,placeChordToken()); renderCharts();
 }
 /* 單小節拍號 override */
@@ -4609,6 +4631,10 @@ function beatEdit(cell){ if(_barPickMode)return;   /* 複製模式：小節選�
 function beatSave(id,bar,beat,inp){
   const v=askEnharmonic(normSign(inp.value));   // ♭/♯ 轉 ASCII；Cb/Fb/B#/E# → 彈窗選常用或保留
   if(v!==inp.value) inp.value=v;
+  /* 內容真的有變才記一步，避免點進點出就塞滿上一步 */
+  try{ const s0=sects.find(x=>x.id===id);
+       const old=s0?String((getBeatData(s0,bar,cellsForBar(s0,bar))||[])[beat]||''):'';
+       if(String(v||'')!==old) chordPushHistory(); }catch(e){}
   setBeat(id,bar,beat,v);
   const cell=inp.closest('.cbeatcol'), r=cell.querySelector('.beat-r');
   r.innerHTML=renderBeatToken(v,sects.find(x=>x.id===id)); r.style.display=''; inp.style.display='none';
@@ -4738,6 +4764,7 @@ let _clearBackup=null;
 function clearAll(){
   if(_clearBackup){ sects=_clearBackup; _clearBackup=null; autoSave(); renderSB(); renderAll(); updateClearBtns(); return; }
   if(!confirm('清除整個譜的和弦／分割／重複／拍號／接續資料？（可再按一次「復原」還原）'))return;
+  chordPushHistory();
   _clearBackup=JSON.parse(JSON.stringify(sects));
   sects.forEach(s=>{ delete s.chords; delete s.subdiv; delete s.rep; delete s.meters; delete s.bargoto; delete s.goto; });
   autoSave(); renderSB(); renderAll(); updateClearBtns();
@@ -4748,16 +4775,27 @@ function updateClearBtns(){ document.querySelectorAll('.clear-btn').forEach(b=>{
 /* 清掉：和弦、KB 上下行音符與時值；保留：小節數、分割(subdiv/kbUpSub/kbLoSub)、拍號、重複、接續、每排、段名、顏色、備註 */
 const SECT_DATA_KEYS=['chords','kbUp','kbLo','kbUpD','kbLoD'];
 var _secClearBk=window._secClearBk||{};      // var：確保任何時機取值都不會踩到暫時性死區
+const SECT_KB_KEYS=['kbUp','kbLo','kbUpD','kbLoD'];
+/* 在 KB 頁按清除＝只清 KB 數字（和弦不動）；在和弦譜／混合頁＝清和弦與 KB（原本的行為） */
+function sectClearKeys(){ return (currentView==='staff')?SECT_KB_KEYS:SECT_DATA_KEYS; }
 function clearSect(id){
   const i=sects.findIndex(x=>x.id===id); if(i<0)return;
   const s=sects[i];
-  if(_secClearBk[id]){                       // 再按一次＝復原
-    sects[i]=_secClearBk[id]; delete _secClearBk[id];
+  if(_secClearBk[id]){                       // 再按一次＝復原（只還原當初清掉的那幾項）
+    const bk=_secClearBk[id]; delete _secClearBk[id];
+    (bk._keys||SECT_DATA_KEYS).forEach(k=>{ if(bk[k]===undefined) delete s[k]; else s[k]=bk[k]; });
     autoSave(); renderSB(); renderAll(); return;
   }
-  if(!confirm(Lf(`清除段落「${s.name}」填寫的和弦與 KB 數字？\n（小節數、分割、拍號、重複、接續等格式都會保留；可再按一次「↩ 復原」還原）`,`Clear the chords and KB numbers in "${s.name}"?\n(Bar count, subdivisions, meters, repeats and continuations are all kept. Press again to undo.)`,`「${s.name}」のコードとKB数字を消しますか？\n（小節数・分割・拍子・リピート・接続などの書式はそのまま残ります。もう一度「↩ 元に戻す」を押すと復元できます）`,`「${s.name}」의 코드와 KB 숫자를 지울까요?\n(마디 수·분할·박자·반복·연결 등 서식은 그대로 유지됩니다. 다시 「↩ 되돌리기」를 누르면 복원됩니다)`)))return;
-  _secClearBk[id]=JSON.parse(JSON.stringify(s));
-  SECT_DATA_KEYS.forEach(k=>{ delete s[k]; });
+  const kbOnly=(currentView==='staff'), keys=sectClearKeys();
+  const msg=kbOnly
+    ? Lf(`清除段落「${s.name}」填寫的 KB 數字？\n（和弦不會被清掉；小節數、分割、拍號、重複、接續等格式也都保留；可再按一次「↩ 復原」還原）`,`Clear the KB numbers in "${s.name}"?\n(Chords are left untouched. Bar count, subdivisions, meters, repeats and continuations are all kept. Press again to undo.)`,`「${s.name}」のKB数字を消しますか？\n（コードは消えません。小節数・分割・拍子・リピート・接続などの書式もそのまま残ります。もう一度「↩ 元に戻す」を押すと復元できます）`,`「${s.name}」의 KB 숫자를 지울까요?\n(코드는 지우지 않습니다. 마디 수·분할·박자·반복·연결 등 서식도 그대로 유지됩니다. 다시 「↩ 되돌리기」를 누르면 복원됩니다)`)
+    : Lf(`清除段落「${s.name}」填寫的和弦與 KB 數字？\n（小節數、分割、拍號、重複、接續等格式都會保留；可再按一次「↩ 復原」還原）`,`Clear the chords and KB numbers in "${s.name}"?\n(Bar count, subdivisions, meters, repeats and continuations are all kept. Press again to undo.)`,`「${s.name}」のコードとKB数字を消しますか？\n（小節数・分割・拍子・リピート・接続などの書式はそのまま残ります。もう一度「↩ 元に戻す」を押すと復元できます）`,`「${s.name}」의 코드와 KB 숫자를 지울까요?\n(마디 수·분할·박자·반복·연결 등 서식은 그대로 유지됩니다. 다시 「↩ 되돌리기」를 누르면 복원됩니다)`);
+  if(!confirm(msg))return;
+  if(kbOnly) staffPushHistory(); else chordPushHistory();
+  const bk={_keys:keys};
+  keys.forEach(k=>{ bk[k]=(s[k]!==undefined)?JSON.parse(JSON.stringify(s[k])):undefined; });
+  _secClearBk[id]=bk;
+  keys.forEach(k=>{ delete s[k]; });
   autoSave(); renderSB(); renderAll();
 }
 
@@ -4864,6 +4902,7 @@ function _insArr(a,at,items){ a=a.slice(); a.splice(at,0,...items); return a; }
 function pasteBarsAt(sid,index){
   const clip=_barClip&&_barClip.cols; if(!clip||!clip.length)return;
   const s=sects.find(x=>x.id===sid); if(!s)return;
+  chordPushHistory(); staffPushHistory();
   migrateKBSection(s);
   const bars=Math.max(1,parseInt(s.bars)||1), at=Math.max(0,Math.min(bars,index|0)), n=clip.length;
   s.chords =_insArr(_padArr(s.chords,bars,''),at,clip.map(x=>x.chords.slice()));
@@ -4887,14 +4926,20 @@ async function clearBarsAsk(){
   const s=sects.find(x=>x.id===_barSel.sid); if(!s)return;
   const lo=Math.min(_barSel.a,_barSel.b), hi=Math.max(_barSel.a,_barSel.b), n=hi-lo+1;
   const bars=Math.max(1,parseInt(s.bars)||1);
+  const kbOnly=(currentView==='staff');   // KB 頁只清 KB 數字，和弦保持不動
   const k=await askChoice(
     Lf('清除 '+n+' 個小節','Clear '+n+' bar(s)','小節 '+n+' 個をクリア',n+'개 마디 지우기'),
     [{key:'data',primary:true,
       title:Lf('只清除裡面的資料','Clear contents only','中身だけ消す','내용만 지우기'),
-      desc:Lf('小節保留，和弦與 KB 數字清空；分割、拍號、重複、接續維持不變',
-              'Bars stay; chords and KB numbers are emptied. Subdivisions, meters, repeats and continuations are kept.',
-              '小節は残し、コードとKB数字を空にします。分割・拍子・リピート・接続はそのまま。',
-              '마디는 남기고 코드와 KB 숫자를 비웁니다. 분할·박자·반복·연결은 유지됩니다.')},
+      desc:kbOnly
+        ? Lf('小節保留，只清空 KB 數字（和弦不動）；分割、拍號、重複、接續維持不變',
+             'Bars stay; only the KB numbers are emptied (chords untouched). Subdivisions, meters, repeats and continuations are kept.',
+             '小節は残し、KB数字だけを空にします（コードはそのまま）。分割・拍子・リピート・接続も変わりません。',
+             '마디는 남기고 KB 숫자만 비웁니다(코드는 그대로). 분할·박자·반복·연결도 유지됩니다.')
+        : Lf('小節保留，和弦與 KB 數字清空；分割、拍號、重複、接續維持不變',
+             'Bars stay; chords and KB numbers are emptied. Subdivisions, meters, repeats and continuations are kept.',
+             '小節は残し、コードとKB数字を空にします。分割・拍子・リピート・接続はそのまま。',
+             '마디는 남기고 코드와 KB 숫자를 비웁니다. 분할·박자·반복·연결은 유지됩니다.')},
      {key:'bars',
       title:Lf('連小節一起刪除','Delete the bars too','小節ごと削除','마디까지 삭제'),
       desc:Lf('這 '+n+' 個小節整個移除，段落小節數變成 '+Math.max(1,bars-n),
@@ -4906,24 +4951,28 @@ async function clearBarsAsk(){
        '「'+s.name+'」の '+(lo+1)+'–'+(hi+1)+' 小節',
        '「'+s.name+'」의 '+(lo+1)+'–'+(hi+1)+' 마디'));
   if(!k)return;
-  if(k==='data') clearBarsData(s,lo,hi); else deleteBarsRange(s,lo,hi);
+  if(k==='data'){ if(kbOnly) staffPushHistory(); else chordPushHistory(); clearBarsData(s,lo,hi); }
+  else { chordPushHistory(); staffPushHistory(); deleteBarsRange(s,lo,hi); }
   autoSave(); renderSB(); renderCharts(); renderBarPickBar();
 }
-/* 只清內容：和弦與 KB 音符清空，格式（分割／拍號／重複／接續）保留 */
-function clearBarsData(s,lo,hi){
+/* 只清內容：格式（分割／拍號／重複／接續）保留
+   kind: 'kb'＝只清 KB 數字（KB 頁）／'chord'＝只清和弦／'all'＝兩者都清
+   不指定時依目前頁面決定：KB 頁只清 KB，和弦譜與混合頁維持原本的兩者都清 */
+function clearBarsData(s,lo,hi,kind){
+  kind=kind||((currentView==='staff')?'kb':'all');
   migrateKBSection(s);
   const bars=Math.max(1,parseInt(s.bars)||1);
-  s.chords=_padArr(s.chords,bars,'');
+  if(kind!=='kb') s.chords=_padArr(s.chords,bars,'');
   for(let b=lo;b<=hi;b++){
-    s.chords[b]=[];
-    _BARKBK.forEach(k=>{ if(Array.isArray(s[k])&&s[k].length>b && !/Sub$/.test(k)) s[k][b]=undefined; });
+    if(kind!=='kb') s.chords[b]=[];
+    if(kind!=='chord') _BARKBK.forEach(k=>{ if(Array.isArray(s[k])&&s[k].length>b && !/Sub$/.test(k)) s[k][b]=undefined; });
   }
 }
 /* 連小節刪除：整段抽掉，所有逐小節陣列一起縮短 */
 function deleteBarsRange(s,lo,hi){
   migrateKBSection(s);
   const bars=Math.max(1,parseInt(s.bars)||1), n=hi-lo+1;
-  if(n>=bars){ clearBarsData(s,0,bars-1); return; }   // 不允許把整段刪成 0 小節 → 退回只清內容
+  if(n>=bars){ clearBarsData(s,0,bars-1,'all'); return; }   // 不允許把整段刪成 0 小節 → 退回只清內容（結構操作兩頁共用，一律全清）
   ['chords','meters','rep','subdiv','bargoto'].concat(_BARKBK).forEach(k=>{
     if(!Array.isArray(s[k]))return;
     const a=s[k].slice(); a.splice(lo,n); s[k]=a;
@@ -5016,6 +5065,7 @@ async function doPasteAtInsert(){
 function overwriteBarsAt(sid,at){
   const clip=_barClip&&_barClip.cols; if(!clip||!clip.length)return;
   const s=sects.find(x=>x.id===sid); if(!s)return;
+  chordPushHistory(); staffPushHistory();
   migrateKBSection(s);
   const bars=Math.max(1,parseInt(s.bars)||1), n=clip.length, need=Math.max(bars,at+n);
   s.chords =_padArr(s.chords,need,'');
@@ -5073,6 +5123,25 @@ function chordSummary(s){
     parts.push((m?`(${m}) `:'')+arr.join(' ')+(rep>1?` ×${rep}`:''));
   }
   return any?('| '+parts.join(' | ')+' |'):'';
+}
+/* 文字清單用：同樣的和弦內容，但切成每行 N 個小節（預設 4），螢幕上比較好對照 */
+function chordSummaryLines(s,perRow){
+  const per=Math.max(1,parseInt(perRow)||4);
+  const bars=Math.max(1,parseInt(s.bars)||1);
+  let any=false; const parts=[];
+  for(let i=0;i<bars;i++){
+    const cn=cellsForBar(s,i); const pb=getBeatData(s,i,cn); const arr=[];
+    for(let b=0;b<cn;b++){ const v=String(pb[b]||'').trim(); if(v)any=true; arr.push(v||'·'); }
+    const m=barMeter(s,i), rep=repOf(s,i);
+    parts.push((m?`(${m}) `:'')+arr.join(' ')+(rep>1?` ×${rep}`:''));
+  }
+  if(!any)return [];
+  const out=[];
+  for(let i=0;i<parts.length;i+=per){
+    const seg=parts.slice(i,i+per);
+    out.push({from:i+1,to:i+seg.length,text:'| '+seg.join(' | ')+' |'});
+  }
+  return out;
 }
 /* 聚會服事：標記每首歌的第一段（給「每首分頁」列印用） */
 let _songStartSet=new Set();
@@ -5309,7 +5378,7 @@ function renderMixP(){
   mixpUpdateInd(); renderLegend();
 }
 /* 小節控制鈕（分割/重複/拍號/接續/每排/控制項）統一重繪三種譜面，確保混合＋同步更新 */
-function renderCharts(){ renderChord(); renderMix(); renderMixP(); if(currentView==='staff')renderStaff(); }
+function renderCharts(){ renderChord(); renderMix(); renderMixP(); if(currentView==='staff')renderStaff(); try{updateChordUndoBtns();}catch(e){} }
 
 /* ── RENDER SIDEBAR ── */
 function renderSB(){
@@ -5488,6 +5557,36 @@ let currentView='seg';
 const STAFF_MIN=-6, STAFF_MAX=16;   // 音高索引（index 2=E4 底線、10=F5 頂線；0=C4 中央C）
 const STAFF_S=9, STAFF_YTOP=16;
 let _staffSel=null;
+/* 和弦譜／混合頁 上一步/下一步：快照和弦相關欄位（依段落 id 對應，不動 KB 數字與其他頁設定） */
+let _chUndo=[], _chRedo=[];
+const CHORD_HKEYS=['chords','subdiv','rep','meters','bargoto','goto','bars','barsPerRow'];
+function chordSnapshot(){
+  return JSON.stringify(sects.map(s=>{ const o={id:s.id}; CHORD_HKEYS.forEach(k=>{ o[k]=(s[k]!=null)?s[k]:null; }); return o; }));
+}
+function chordPushHistory(){
+  try{ _chUndo.push(chordSnapshot()); }catch(e){ return; }
+  if(_chUndo.length>80)_chUndo.shift(); _chRedo.length=0; updateChordUndoBtns();
+}
+function chordRestore(snap){
+  JSON.parse(snap).forEach(o=>{
+    const s=sects.find(x=>x.id===o.id); if(!s)return;                 // 段落已被刪掉就略過，不會炸掉
+    CHORD_HKEYS.forEach(k=>{ if(o[k]==null) delete s[k]; else s[k]=o[k]; });
+  });
+}
+function chordUndo(){
+  if(!_chUndo.length)return;
+  _chRedo.push(chordSnapshot()); chordRestore(_chUndo.pop());
+  _barSel=null; _barInsert=null; autoSave(); renderSB(); renderCharts();
+}
+function chordRedo(){
+  if(!_chRedo.length)return;
+  _chUndo.push(chordSnapshot()); chordRestore(_chRedo.pop());
+  _barSel=null; _barInsert=null; autoSave(); renderSB(); renderCharts();
+}
+function updateChordUndoBtns(){
+  document.querySelectorAll('.chord-undo').forEach(b=>b.disabled=!_chUndo.length);
+  document.querySelectorAll('.chord-redo').forEach(b=>b.disabled=!_chRedo.length);
+}
 /* 五線譜 上一步/下一步：快照整份 staff（不影響其他頁資料） */
 let _staffUndo=[], _staffRedo=[];
 const KB_KEYS=['kbUp','kbLo','kbUpD','kbLoD','kbUpSub','kbLoSub'];
@@ -5690,10 +5789,41 @@ function renderStaff(){
   root.innerHTML=sects.map(kbCardHtml).join('');
   renderLegend(); updateStaffUndoBtns();
 }
-function clearStaff(){
-  if(!confirm('清除整個譜的 KB 數字？（可用「↩ 上一步」還原）'))return;
-  staffPushHistory();
-  sects.forEach(s=>{ KB_KEYS.forEach(k=>delete s[k]); }); autoSave(); renderStaff();
+/* 段落多的時候先問要清哪一段（只有一段就直接用那段） */
+async function askSectionForBars(){
+  if(!sects.length)return null;
+  if(sects.length===1)return sects[0].id;
+  const k=await askChoice(
+    Lf('選要清除的段落','Which section?','どのセクション？','어느 섹션인가요?'),
+    sects.map((s,i)=>({key:String(s.id),primary:i===0,
+      title:s.name||('#'+(i+1)),
+      desc:Math.max(1,parseInt(s.bars)||1)+' Bar'})));
+  return (k==null)?null:(+k);
+}
+/* 工具列的「🗑 清除」：先選要怎麼清 —— 指定小節範圍（同段落標題上的 🧹 清除）或整譜全清 */
+async function clearStaff(){
+  const k=await askChoice(
+    Lf('清除 KB 數字','Clear KB numbers','KB数字を消す','KB 숫자 지우기'),
+    [{key:'range',primary:true,
+      title:Lf('選小節範圍清除','Pick a bar range','小節の範囲を選んで消す','마디 범위를 골라 지우기'),
+      desc:Lf('接著拖曳選要清的小節，再決定只清內容還是連小節一起刪除',
+              'Then drag to select the bars and choose contents-only or delete the bars.',
+              'その後、消す小節をドラッグで選び、中身だけか小節ごとかを選びます。',
+              '이어서 지울 마디를 드래그로 선택하고, 내용만 지울지 마디까지 삭제할지 고릅니다.')},
+     {key:'all',
+      title:Lf('整個譜的 KB 數字全部清除','Clear the whole chart','楽譜全体を消す','악보 전체 지우기'),
+      desc:Lf('所有段落的 KB 數字一次清空（可用「↩ 上一步」還原）',
+              'Empties the KB numbers in every section (use Undo to restore).',
+              '全セクションのKB数字を一度に空にします（「元に戻す」で復元できます）。',
+              '모든 섹션의 KB 숫자를 한 번에 비웁니다 (실행 취소로 복원 가능).')}]);
+  if(!k)return;
+  if(k==='all'){
+    staffPushHistory();
+    sects.forEach(s=>{ KB_KEYS.forEach(x=>delete s[x]); });
+    autoSave(); renderStaff(); return;
+  }
+  const sid=await askSectionForBars();
+  if(sid!=null) barPickSection(sid,'clear');
 }
 function renderCurrent(){
   if(currentView==='seg')renderSeg();
@@ -5707,15 +5837,19 @@ function renderCurrent(){
 function renderAll(){renderCurrent();renderTimeSelects();updatePrintHead();renderSummary();updateKeyStepLabels();i18nMaybe();autoSave();}
 
 /* ── TEXT LIST ── */
+const TL_BARS_PER_ROW=4;   // 文字清單每行顯示幾個小節
 function buildTL(){
   let t=`=== 編曲架構 ===\n曲目：${gv('s-title')}${gv('s-artist')?'／'+gv('s-artist'):''}  ${keyLabel().replace(/<[^>]+>/g,'')}  拍號：${gv('s-time')}  BPM：${gv('s-bpm')}\n${'─'.repeat(38)}\n\n`;
   let _prevSong=null;
   sects.forEach((s,i)=>{
     if(s._song && s._song!==_prevSong){ t+=`\n🎵 ═══════ ${s._song} ═══════\n`; _prevSong=s._song; }
     t+=`[${i+1}] ${s._song?'《'+s._song+'》 ':''}${s.name}  ${s.bars} Bar  ${COL[s.color].label}\n`;
-    const ch=chordSummary(s); if(ch)t+=`    ${'和弦'.padEnd(5)}: ${ch}\n`;
-    if(s.layers[0])INS.forEach(k=>{if(s.layers[0].ins[k])t+=`    ${k.padEnd(6)}: ${s.layers[0].ins[k]}\n`;});
-    s.layers.slice(1).forEach((l,li)=>{t+=`  ↳ 內層${li+1}（${COL[l.color].label}）\n`;INS.forEach(k=>{if(l.ins[k])t+=`      ${k.padEnd(6)}: ${l.ins[k]}\n`;});});
+    /* 和弦：每行四個小節，行首標小節編號；樂器配置不列（要看配器請用混合／圖示譜） */
+    const lines=chordSummaryLines(s,TL_BARS_PER_ROW);
+    lines.forEach(ln=>{
+      const lbl=(ln.from===ln.to)?`Bar ${ln.from}`:`Bar ${ln.from}-${ln.to}`;
+      t+=`    ${lbl.padEnd(11)}: ${ln.text}\n`;
+    });
     if(s.notes)t+=`  ⚑ ${s.notes}\n`;
     {const bars=Math.max(1,parseInt(s.bars)||1); for(let b=0;b<bars;b++){const gid=getBarGoto(s,b,bars); if(gid){const gt=sects.find(x=>x.id===gid); if(gt)t+=`  ▶ 小節${b+1} 接續到：${gt.name}\n`;}}}
     t+='\n';
