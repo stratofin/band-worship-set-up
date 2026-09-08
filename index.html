@@ -1300,6 +1300,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
         <select class="ic-sel" id="kb-croot" title="和弦根音（級數）"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option></select>
         <select class="ic-sel" id="kb-cqual" title="和弦性質"><option value="maj">大三 major</option><option value="min">小三 minor</option><option value="6">6</option><option value="m6">m6</option><option value="7">屬七 7</option><option value="maj7">大七 maj7</option><option value="m7">小七 m7</option><option value="9">9</option><option value="maj9">maj9</option><option value="m9">m9</option><option value="add9">add9</option><option value="11">11</option><option value="m11">m11</option><option value="13">13</option><option value="maj13">maj13</option><option value="m13">m13</option><option value="sus2">sus2</option><option value="sus">sus</option><option value="7sus">7sus</option><option value="dim">減 dim</option><option value="aug">增 aug</option></select>
         <button class="stbtn" id="kb-chordmode" onclick="kbChordMode()" title="放和弦模式：開啟後，點任一格就把選好的和弦（整組級數）疊上去；再點一格可連續放">🎹 放和弦</button>
+        <button class="stbtn" id="kb-order" onclick="toggleKbOrder()" title="疊音的顯示順序：順序下＝先輸入的排在下面（輸入 1 3 5 顯示成 5 3 1）；順序上＝照輸入順序由上往下">↧ 順序下</button>
         <label class="ic-hint">符號 <select class="ic-sel" id="kb-sym" onchange="setKbSym(this.value)" title="選好符號後，點有音的格子就加上去；再點一次拿掉"><option value="">—（不加）</option><option value="arp">琶音 ⌇</option></select></label>
         <label class="ic-hint">全部每排 <select class="ic-sel" onchange="applyAllBPR(this)" title="一次設定所有段落每排小節數"><option value="__">套用…</option><option value="">自動</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option></select></label>
         <button class="stbtn" onclick="kbLoadFromChords()" title="載入：把和弦譜／混合頁的和弦轉成 KB 數字（右手疊和弦音、左手根音）">⇩ 載入</button>
@@ -1391,6 +1392,13 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
       <li>KB 頁的段落「🧹 清除」與小節清除改成<b>只清 KB 數字</b>，和弦不再一起被清掉</li>
       <li>和弦譜與混合頁的清除維持原本行為（和弦與 KB 一起清）；再按一次「↩ 復原」只會還原當初清掉的那幾項</li>
       <li>KB 頁工具列的「🗑 清除」也能選範圍了：按下去先選「選小節範圍清除」或「整個譜全部清除」；選範圍時再挑段落，接著就跟段落上的 🧹 清除一樣拖曳選小節</li></ul>
+
+      <h4>KB 頁新增「順序上／順序下」切換 <span class="cl-date">2026-09-08</span></h4>
+      <ul><li>「🎹 放和弦」右邊新增順序切換鈕，決定同一格疊音由上而下怎麼排</li>
+      <li><b>↧ 順序下（預設）</b>：先輸入的排在下面 —— 輸入 1 3 5 顯示成 5 / 3 / 1，和看譜習慣一致</li>
+      <li><b>↥ 順序上</b>：照輸入順序由上往下 —— 輸入 1 3 5 顯示成 1 / 3 / 5</li>
+      <li>只影響顯示，格子裡存的內容不變；選擇會記住，下次開啟沿用</li>
+      <li>配合這個設定，「🎹 放和弦」與「⇩ 載入」產生的和弦改成由低音往高音存，預設下看到的仍是高音在上（6m → 3 / 1 / 6）；在此之前載入的譜若上下顛倒，重新按一次「⇩ 載入」選「覆蓋既有」即可</li></ul>
 
       <h4>KB 頁新增「符號」下拉：琶音記號 <span class="cl-date">2026-09-08</span></h4>
       <ul><li>KB 工具列「🎹 放和弦」右邊新增「符號」下拉，先選「琶音 ⌇」，再點有音的格子就在和弦左邊加上垂直波浪線；再點一次拿掉</li>
@@ -1825,7 +1833,7 @@ const I18N={
  "▶ 開始（依序載入）":"▶ Start (load in order)","＋ 加入":"＋ Add","載入":"Load","刪除":"Delete","歸類":"Tag",
  "一般使用者（瀏覽歌譜）":"Guest (browse)","管理者登入":"Admin Login","使用者登入":"User Login","聚會服事":"Service","登出":"Sign out","儲存目前到雲端":"Save current to cloud",
  "調性顯示":"Tonality",
- "內層":"Inner","基底":"Base","全部":"All","色":"Color","和弦":"Chord","符號":"Symbol","—（不加）":"— (none)","琶音 ⌇":"Arpeggio ⌇","琶音":"Arpeggio","選好符號後，點有音的格子就加上去；再點一次拿掉":"Pick a symbol, then tap a cell that has notes to add it; tap again to remove","返回":"Back","關閉":"Close","登入":"Login","註冊":"Sign up","上一頁":"Prev","下一頁":"Next","未命名":"Untitled","新段落":"New Section","另存新檔":"Save As","複製全部":"Copy all","雲端歌庫":"Cloud Library","複製文字清單":"Copy Text List","上移":"Up","下移":"Down","管理員":"Admin","節奏組 ◈":"Rhythm ◈","📂 載入":"📂 Load","總小節":"Total bars","段落":"Sections",
+ "內層":"Inner","基底":"Base","全部":"All","色":"Color","和弦":"Chord","符號":"Symbol","↧ 順序下":"↧ Low first","↥ 順序上":"↥ High first","疊音的顯示順序：順序下＝先輸入的排在下面（輸入 1 3 5 顯示成 5 3 1）；順序上＝照輸入順序由上往下":"Stacking order: Low first puts the earliest note at the bottom (typing 1 3 5 shows 5 3 1); High first keeps the typed order top-down","—（不加）":"— (none)","琶音 ⌇":"Arpeggio ⌇","琶音":"Arpeggio","選好符號後，點有音的格子就加上去；再點一次拿掉":"Pick a symbol, then tap a cell that has notes to add it; tap again to remove","返回":"Back","關閉":"Close","登入":"Login","註冊":"Sign up","上一頁":"Prev","下一頁":"Next","未命名":"Untitled","新段落":"New Section","另存新檔":"Save As","複製全部":"Copy all","雲端歌庫":"Cloud Library","複製文字清單":"Copy Text List","上移":"Up","下移":"Down","管理員":"Admin","節奏組 ◈":"Rhythm ◈","📂 載入":"📂 Load","總小節":"Total bars","段落":"Sections",
  "✓ 已複製":"✓ Copied","✓ 已載入":"✓ Loaded","✓ 已存檔":"✓ Saved","✓ 匯入成功！":"✓ Imported!",
  "讀取中…":"Loading…","載入中…":"Loading…","儲存中…":"Saving…","處理中…":"Processing…","登入中…":"Signing in…","歸類中…":"Tagging…","準備中…":"Preparing…","產生中…":"Generating…","讀取 PDF…":"Reading PDF…","載入服事清單…":"Loading service list…","載入辨識引擎…":"Loading OCR engine…",
  "彈法…":"Play…","段落備註…":"Section note…","辨識出的文字會出現在這裡，可手動修正後再解析…":"OCR text appears here; edit then parse…",
@@ -1973,7 +1981,7 @@ const I18N_JA={
  "🖥 電腦":"🖥 PC",
  "▦ 平板":"▦ タブレット",
  "📱 手機":"📱 スマホ",
- "📝 更新日誌":"📝 更新履歴","許願":"リクエスト","符號":"記号","—（不加）":"—（なし）","琶音 ⌇":"アルペジオ ⌇","琶音":"アルペジオ","選好符號後，點有音的格子就加上去；再點一次拿掉":"記号を選んでから、音が入っているマスをタップすると付きます。もう一度タップで外れます","意見回饋：寫信告訴我們你的建議或遇到的問題":"ご意見：ご提案や不具合をメールでお知らせください",
+ "📝 更新日誌":"📝 更新履歴","許願":"リクエスト","符號":"記号","↧ 順序下":"↧ 低音が下","↥ 順序上":"↥ 入力順","疊音的顯示順序：順序下＝先輸入的排在下面（輸入 1 3 5 顯示成 5 3 1）；順序上＝照輸入順序由上往下":"重ねる順番：「低音が下」は先に入力した音を下に置きます（1 3 5 → 5 3 1）。「入力順」は入力した順に上から並べます","—（不加）":"—（なし）","琶音 ⌇":"アルペジオ ⌇","琶音":"アルペジオ","選好符號後，點有音的格子就加上去；再點一次拿掉":"記号を選んでから、音が入っているマスをタップすると付きます。もう一度タップで外れます","意見回饋：寫信告訴我們你的建議或遇到的問題":"ご意見：ご提案や不具合をメールでお知らせください",
  "曲目":"曲名",
  "演唱者":"アーティスト",
  "拍號":"拍子",
@@ -2325,7 +2333,7 @@ const I18N_KO={
  "🖥 電腦":"🖥 PC",
  "▦ 平板":"▦ 태블릿",
  "📱 手機":"📱 모바일",
- "📝 更新日誌":"📝 변경 내역","許願":"요청","符號":"기호","—（不加）":"—(없음)","琶音 ⌇":"아르페지오 ⌇","琶音":"아르페지오","選好符號後，點有音的格子就加上去；再點一次拿掉":"기호를 고른 뒤 음이 있는 칸을 누르면 붙습니다. 다시 누르면 제거됩니다","意見回饋：寫信告訴我們你的建議或遇到的問題":"의견 보내기: 제안이나 문제를 메일로 알려 주세요",
+ "📝 更新日誌":"📝 변경 내역","許願":"요청","符號":"기호","↧ 順序下":"↧ 낮은음 아래","↥ 順序上":"↥ 입력 순서","疊音的顯示順序：順序下＝先輸入的排在下面（輸入 1 3 5 顯示成 5 3 1）；順序上＝照輸入順序由上往下":"쌓는 순서: 「낮은음 아래」는 먼저 입력한 음을 아래에 둡니다(1 3 5 → 5 3 1). 「입력 순서」는 입력한 순서대로 위에서부터 배치합니다","—（不加）":"—(없음)","琶音 ⌇":"아르페지오 ⌇","琶音":"아르페지오","選好符號後，點有音的格子就加上去；再點一次拿掉":"기호를 고른 뒤 음이 있는 칸을 누르면 붙습니다. 다시 누르면 제거됩니다","意見回饋：寫信告訴我們你的建議或遇到的問題":"의견 보내기: 제안이나 문제를 메일로 알려 주세요",
  "曲目":"곡명",
  "演唱者":"아티스트",
  "拍號":"박자",
@@ -5730,7 +5738,7 @@ function chordDegsKB(rootDeg,qual,acc){
     let a=(rootSemi+Q.se[k])-natAbs; a=Math.max(-2,Math.min(2,a));
     const acc=a===1?'#':a===-1?'b':a===2?'##':a===-2?'bb':'';
     return {semi:rootSemi+Q.se[k], tok:acc+slot}; });
-  out.sort((x,y)=>y.semi-x.semi);
+  out.sort((x,y)=>x.semi-y.semi);          // 由低到高存，顯示順序交給「順序上／下」決定
   return out.map(o=>o.tok);
 }
 /* ── 從和弦譜／混合頁載入：把每一格的和弦轉成 KB 數字（右手＝疊和弦音、左手＝根音） ── */
@@ -5817,6 +5825,18 @@ async function kbLoadFromChords(){
 }
 function kbChordMode(){ _kbChordOn=!_kbChordOn; if(_kbChordOn)setKbSym('');
   const b=document.getElementById('kb-chordmode'); if(b)b.classList.toggle('on',_kbChordOn); }
+/* 疊音顯示順序：down＝先輸入的排在下面（輸入 1 3 5 → 由上而下 5 3 1，預設）；up＝照輸入順序由上往下 */
+let _kbOrder='down'; try{ if(localStorage.getItem('arranger_kborder')==='up')_kbOrder='up'; }catch(e){}
+function kbOrderNums(nums){ return (_kbOrder==='down')?nums.slice().reverse():nums; }
+function syncKbOrderBtn(){
+  const b=document.getElementById('kb-order'); if(!b)return;
+  b.textContent=(_kbOrder==='down')?'↧ 順序下':'↥ 順序上';
+}
+function toggleKbOrder(){
+  _kbOrder=(_kbOrder==='down')?'up':'down';
+  try{localStorage.setItem('arranger_kborder',_kbOrder);}catch(e){}
+  syncKbOrderBtn(); renderStaff();
+}
 /* 符號模式：選好符號後點格子就加上去（目前有琶音） */
 let _kbSym='';
 function setKbSym(v){
@@ -5836,7 +5856,7 @@ function kbCellHtml(s,row,i,fine,beat,k,sub){
   const tok=kbGet(s,row,i,fine);
   const d=kbGetD(s,row,i,fine), eff=(d==null)?kbAutoDur(sub):d;
   const nums=tok.trim()?tok.trim().split(/\s+/).slice(0,3):[];
-  const stack=nums.length?nums.map(t=>`<span class="kbn">${renderBeatToken(t,s)}</span>`).join(''):'<span class="kbn kbempty">·</span>';
+  const stack=nums.length?kbOrderNums(nums).map(t=>`<span class="kbn">${renderBeatToken(t,s)}</span>`).join(''):'<span class="kbn kbempty">·</span>';
   const arp=(nums.length&&kbGetArp(s,row,i,fine))?`<span class="kbarp" title="琶音">${kbArpSvg(nums.length)}</span>`:'';
   return `<div class="kbcol" data-sid="${s.id}" data-row="${row}" data-bar="${i}" data-c="${fine}" onclick="kbEdit(this)">`
     +`<span class="cbnum">${kbSubLabel(beat,k,sub)}</span>`
@@ -6131,6 +6151,7 @@ initTopbar();
 applySvcPB();
 syncMaxiBtns();
 syncPrintSizeSel();
+try{ syncKbOrderBtn(); }catch(e){}
 applyLang();
 syncTopbarH();
 if(_langAsk){ try{ showLangPick(); }catch(e){} }   /* 國外使用者：先問語言再開始 */
