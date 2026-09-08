@@ -1292,6 +1292,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
         <select class="ic-sel" id="kb-cqual" title="和弦性質"><option value="maj">大三 major</option><option value="min">小三 minor</option><option value="6">6</option><option value="m6">m6</option><option value="7">屬七 7</option><option value="maj7">大七 maj7</option><option value="m7">小七 m7</option><option value="9">9</option><option value="maj9">maj9</option><option value="m9">m9</option><option value="add9">add9</option><option value="11">11</option><option value="m11">m11</option><option value="13">13</option><option value="maj13">maj13</option><option value="m13">m13</option><option value="sus2">sus2</option><option value="sus">sus</option><option value="7sus">7sus</option><option value="dim">減 dim</option><option value="aug">增 aug</option></select>
         <button class="stbtn" id="kb-chordmode" onclick="kbChordMode()" title="放和弦模式：開啟後，點任一格就把選好的和弦（整組級數）疊上去；再點一格可連續放">🎹 放和弦</button>
         <label class="ic-hint">全部每排 <select class="ic-sel" onchange="applyAllBPR(this)" title="一次設定所有段落每排小節數"><option value="__">套用…</option><option value="">自動</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option></select></label>
+        <button class="stbtn" onclick="kbLoadFromChords()" title="載入：把和弦譜／混合頁的和弦轉成 KB 數字（右手疊和弦音、左手根音）">⇩ 載入</button>
         <button class="stbtn" id="staff-undo" onclick="staffUndo()" title="上一步（只回復最近的動作，不清除其他）" disabled>↩ 上一步</button>
         <button class="stbtn" id="staff-redo" onclick="staffRedo()" title="下一步（重做）" disabled>↪ 下一步</button>
         <button class="clear-btn" onclick="clearStaff()" title="清除 KB 數字：可選小節範圍或整個譜（可用上一步還原）">🗑 清除</button>
@@ -1380,6 +1381,13 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
       <li>KB 頁的段落「🧹 清除」與小節清除改成<b>只清 KB 數字</b>，和弦不再一起被清掉</li>
       <li>和弦譜與混合頁的清除維持原本行為（和弦與 KB 一起清）；再按一次「↩ 復原」只會還原當初清掉的那幾項</li>
       <li>KB 頁工具列的「🗑 清除」也能選範圍了：按下去先選「選小節範圍清除」或「整個譜全部清除」；選範圍時再挑段落，接著就跟段落上的 🧹 清除一樣拖曳選小節</li></ul>
+
+      <h4>KB 頁新增「⇩ 載入」：和弦一鍵變 KB 數字 <span class="cl-date">2026-09-08</span></h4>
+      <ul><li>KB 工具列「↩ 上一步」左邊新增「⇩ 載入」，把和弦譜／混合頁已經填好的和弦直接轉成 KB 數字譜</li>
+      <li><b>右手（上排）</b>＝和弦組成音由上往下疊，例如 6m → 3 / 1 / 6；3m → 7 / 5 / 3；<b>左手（下排）</b>＝根音，轉位和弦（1/3）用低音</li>
+      <li>音名輸入（Am、F…）會先換算成級數再疊；升降、m7、maj7、sus、add9、9/11/13、m7♭5、dim7 都對應到正確的組成音</li>
+      <li>和弦有切分的拍，KB 同一拍也會自動跟著切分，載入的音才看得到；延續點與休止會跳過</li>
+      <li>已經寫過 KB 數字時會先問「只填空白的格子」或「覆蓋既有」；不論哪一種都可用「↩ 上一步」還原</li></ul>
 
       <h4>文字清單改成純和弦、每行四小節 <span class="cl-date">2026-09-08</span></h4>
       <ul><li>拿掉樂器配置（各聲部與內層），只留段落資訊、和弦與備註，畫面清爽好對照；要看配器請用混合或圖示譜</li>
@@ -1782,7 +1790,7 @@ const I18N={
  "黑":"Dark","白":"Light","粉":"Pink",
  "💾 存檔":"💾 Save","範本":"Template","👤 使用者":"👤 User","⋯ 更多":"⋯ More","↓ CSV":"↓ CSV","↓ PNG 示意圖":"↓ PNG Flow","↓ PNG 方塊圖":"↓ PNG Blocks","🖨 圖示譜PDF":"🖨 Icon PDF",
  "＋ 新增段落":"＋ Add sec.","刪":"Del",
- "展開示意圖":"Flow Map","方塊流程圖":"Block Flow","圖示譜":"Icon Chart","和弦譜":"Chord Chart","混合":"Mix","五線譜":"Staff","文字清單":"Text List","匯出":"Export","🗑 清除音符":"🗑 Clear notes","↩ 上一步":"↩ Undo","↪ 下一步":"↪ Redo","🎹 放和弦":"🎹 Place chord",
+ "展開示意圖":"Flow Map","方塊流程圖":"Block Flow","圖示譜":"Icon Chart","和弦譜":"Chord Chart","混合":"Mix","五線譜":"Staff","文字清單":"Text List","匯出":"Export","🗑 清除音符":"🗑 Clear notes","↩ 上一步":"↩ Undo","↪ 下一步":"↪ Redo","⇩ 載入":"⇩ Load chords","載入：把和弦譜／混合頁的和弦轉成 KB 數字（右手疊和弦音、左手根音）":"Load: turn the chords from the Chord Chart / Mix pages into KB numbers (right hand stacks the chord tones, left hand takes the root)","🎹 放和弦":"🎹 Place chord",
  "顯示":"Show","級數":"Degrees","和弦名(男Key)":"Chord (M Key)","和弦名(女Key)":"Chord (F Key)","男Key":"M Key","女Key":"F Key",
  "全部每排":"All / row","套用…":"Apply…","自動":"Auto",
  "🗑 全部清除":"🗑 Clear All","↩ 復原":"↩ Undo",
@@ -1977,7 +1985,7 @@ const I18N_JA={
  "文字清單":"テキスト",
  "匯出":"書き出し",
  "🗑 清除音符":"🗑 音符クリア",
- "↩ 上一步":"↩ 元に戻す",
+ "↩ 上一步":"↩ 元に戻す","⇩ 載入":"⇩ コード読込","載入：把和弦譜／混合頁的和弦轉成 KB 數字（右手疊和弦音、左手根音）":"読み込み：コード譜／ミックスのコードをKB数字に変換します（右手＝構成音の重ね、左手＝ルート）",
  "↪ 下一步":"↪ やり直し",
  "🎹 放和弦":"🎹 コード入力",
  "顯示":"表示",
@@ -2329,7 +2337,7 @@ const I18N_KO={
  "文字清單":"텍스트",
  "匯出":"내보내기",
  "🗑 清除音符":"🗑 음표 지우기",
- "↩ 上一步":"↩ 실행 취소",
+ "↩ 上一步":"↩ 실행 취소","⇩ 載入":"⇩ 코드 불러오기","載入：把和弦譜／混合頁的和弦轉成 KB 數字（右手疊和弦音、左手根音）":"불러오기: 코드 악보/믹스 페이지의 코드를 KB 숫자로 변환합니다 (오른손＝구성음 쌓기, 왼손＝루트)",
  "↪ 下一步":"↪ 다시 실행",
  "🎹 放和弦":"🎹 코드 입력",
  "顯示":"표시",
@@ -5686,7 +5694,9 @@ const _KBQ={maj:{st:[0,2,4],se:[0,4,7]},min:{st:[0,2,4],se:[0,3,7]},dim:{st:[0,2
   /* 十三和弦 */
   '13':{st:[0,2,6,12],se:[0,4,10,21]},maj13:{st:[0,2,6,12],se:[0,4,11,21]},m13:{st:[0,2,6,12],se:[0,3,10,21]},
   /* 掛留七 */
-  '7sus4':{st:[0,3,4,6],se:[0,5,7,10]},'7sus':{st:[0,3,4,6],se:[0,5,7,10]}};
+  '7sus4':{st:[0,3,4,6],se:[0,5,7,10]},'7sus':{st:[0,3,4,6],se:[0,5,7,10]},
+  /* 半減與減七（載入和弦時會用到，五音才會是降五度） */
+  m7b5:{st:[0,2,4,6],se:[0,3,6,10]},dim7:{st:[0,2,4,6],se:[0,3,6,9]}};
 function chordDegsKB(rootDeg,qual,acc){
   const R=parseInt(rootDeg)||1, Q=_KBQ[qual]||_KBQ.maj;
   const accSemi=(acc==='#')?1:(acc==='b')?-1:0;          // 根音升降：整個和弦平移半音，組成音自動帶正確 b/#
@@ -5697,6 +5707,88 @@ function chordDegsKB(rootDeg,qual,acc){
     return {semi:rootSemi+Q.se[k], tok:acc+slot}; });
   out.sort((x,y)=>y.semi-x.semi);
   return out.map(o=>o.tok);
+}
+/* ── 從和弦譜／混合頁載入：把每一格的和弦轉成 KB 數字（右手＝疊和弦音、左手＝根音） ── */
+/* 和弦後綴 → _KBQ 的性質代號（辨識不出來的一律當大三和弦） */
+function kbQualOf(suf){
+  const q=String(suf||'').trim().replace(/\s+/g,''); if(!q)return 'maj';
+  if(_KBQ[q])return q;
+  const l=q.toLowerCase(); if(_KBQ[l])return l;
+  if(/^(min|-)$/.test(l))return 'min';
+  if(/^m(?!aj)/.test(l)){                      // m 開頭＝小和弦系列（m7b5 等沒有專屬定義的先當 m7）
+    if(/^m13/.test(l))return 'm13'; if(/^m11/.test(l))return 'm11';
+    if(/^m9/.test(l))return 'm9';   if(/^m7/.test(l))return 'm7';
+    if(/^m6/.test(l))return 'm6';   return 'min';
+  }
+  if(/^maj13/.test(l))return 'maj13'; if(/^maj9/.test(l))return 'maj9'; if(/^maj7/.test(l))return 'maj7';
+  if(/^7sus/.test(l))return '7sus';   if(/^sus2/.test(l))return 'sus2'; if(/^sus/.test(l))return 'sus';
+  if(/^dim/.test(l))return 'dim';     if(/^aug|^\+/.test(l))return 'aug'; if(/^add9/.test(l))return 'add9';
+  if(/^13/.test(l))return '13'; if(/^11/.test(l))return '11'; if(/^9/.test(l))return '9';
+  if(/^7/.test(l))return '7';   if(/^6/.test(l))return '6';
+  return 'maj';
+}
+/* 一格和弦文字 → {acc,root,qual,bass}；休止／延續／看不懂的回 null */
+function kbParseChordToken(tok,s){
+  let t=String(tok||'').trim();
+  if(!t||t==='.'||t==='x'||t==='X'||t==='·')return null;
+  if(t.startsWith('('))t=t.replace(/^\(|\)$/g,'').trim().split(/\s+/)[0]||'';   // 細分格取第一個和弦
+  t=normToNum(normAccPos(t),s);                                                   // 音名(Am)也先轉成級數(6m)
+  const m=String(t).match(/^([#b]?)([1-7])(.*)$/); if(!m)return null;
+  let rest=m[3]||'', bass='';
+  const sl=rest.indexOf('/'); if(sl>=0){ bass=rest.slice(sl+1).trim(); rest=rest.slice(0,sl); }
+  return {acc:m[1],root:m[2],qual:kbQualOf(rest),bass:bass};
+}
+async function kbLoadFromChords(){
+  const hasKB=sects.some(s=>['kbUp','kbLo'].some(k=>Array.isArray(s[k])&&s[k].some(r=>Array.isArray(r)&&r.some(v=>String(v||'').trim()))));
+  let mode='fill';
+  if(hasKB){
+    const k=await askChoice(
+      Lf('載入和弦到 KB','Load chords into KB','コードをKBに読み込む','코드를 KB로 불러오기'),
+      [{key:'fill',primary:true,
+        title:Lf('只填空白的格子','Fill empty cells only','空いているマスだけ埋める','비어 있는 칸만 채우기'),
+        desc:Lf('已經寫好的 KB 數字都保留不動','Keeps everything you have already written.','すでに入力したKB数字はそのまま残します。','이미 입력한 KB 숫자는 그대로 둡니다.')},
+       {key:'over',
+        title:Lf('覆蓋既有的 KB 數字','Overwrite existing KB numbers','既存のKB数字を上書き','기존 KB 숫자 덮어쓰기'),
+        desc:Lf('有和弦的格子一律重新填入（可用「↩ 上一步」還原）','Every cell with a chord is refilled (use Undo to restore).','コードがあるマスをすべて入れ直します（「元に戻す」で復元できます）。','코드가 있는 칸을 모두 다시 채웁니다 (실행 취소로 복원 가능).')}],
+      Lf('右手＝和弦組成音由上往下疊，左手＝根音（轉位和弦用低音）',
+         'Right hand: the chord tones stacked top-down. Left hand: the root (or the slash bass).',
+         '右手＝コード構成音を上から順に、左手＝ルート（分数コードはベース音）。',
+         '오른손＝코드 구성음을 위에서 아래로, 왼손＝루트(분수 코드는 베이스음).'));
+    if(!k)return; mode=k;
+  }
+  staffPushHistory();
+  let n=0;
+  sects.forEach(s=>{
+    migrateKBSection(s);
+    const bars=Math.max(1,parseInt(s.bars)||1);
+    for(let bar=0;bar<bars;bar++){
+      const f=subdivFactor(s,bar), bb=barBeats(s,bar);
+      const pb=getBeatData(s,bar,cellsForBar(s,bar));
+      for(let beat=0;beat<bb;beat++){
+        let usedFine=false;
+        for(let k=0;k<f;k++){
+          const p=kbParseChordToken(pb[beat*f+k],s); if(!p)continue;
+          const fine=kbFine(beat,k,f);
+          const up=chordDegsKB(p.root,p.qual,p.acc).join(' ');   // 高音在上
+          const lo=p.bass||((p.acc||'')+p.root);
+          if(mode==='over'||!kbGet(s,'up',bar,fine)) kbSet(s,'up',bar,fine,up);
+          if(mode==='over'||!kbGet(s,'lo',bar,fine)) kbSet(s,'lo',bar,fine,lo);
+          usedFine=true; n++;
+        }
+        /* 和弦這一拍有切分時，KB 的同一拍也跟著切，載入的音才看得到 */
+        if(usedFine&&f>1)['up','lo'].forEach(row=>{
+          const sk=kbSubKey(row); if(!Array.isArray(s[sk]))s[sk]=[];
+          let ra=s[sk][bar];
+          if(!Array.isArray(ra)){ const base=[1,2,4].includes(ra)?ra:subdivFactor(s,bar); ra=new Array(bb).fill(base); }
+          else { while(ra.length<bb)ra.push(subdivFactor(s,bar)); }
+          if((ra[beat]||1)<f)ra[beat]=f; s[sk][bar]=ra;
+        });
+      }
+    }
+    s._kbv=2;
+  });
+  autoSave(); renderStaff();
+  if(!n)alert(Lf('和弦譜還沒有任何和弦可以載入。','There are no chords to load yet.','読み込めるコードがまだありません。','불러올 코드가 아직 없습니다.'));
 }
 function kbChordMode(){ _kbChordOn=!_kbChordOn; const b=document.getElementById('kb-chordmode'); if(b)b.classList.toggle('on',_kbChordOn); }
 function kbCellHtml(s,row,i,fine,beat,k,sub){
