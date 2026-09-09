@@ -188,7 +188,13 @@ body.print-maxi .cbar2.kbbar{padding:0.05em 0.04em!important;}
 .kbarp{display:inline-block;width:0.34em;flex:0 0 auto;color:var(--text);align-self:stretch;}
 .kbarp svg{display:block;width:100%;height:100%;}
 body.kbsym-on .kbcol{cursor:pointer;}   /* 符號模式：點格子＝加／拿掉記號，不是輸入 */
-@media print{ body[class*="print-"] .kbarp{color:#000!important;} }
+/* 連結線：選起點時該格反黃；線本身畫在段落卡片上的一層 overlay，不影響版面 */
+.kbcol.tiesel{outline:2px solid var(--accent);outline-offset:-2px;border-radius:4px;background:rgba(212,168,67,0.18);}
+.kbtie-layer{position:absolute;inset:0;pointer-events:none;z-index:6;}
+.kbtie{position:absolute;color:var(--text);}
+.kbtie svg{display:block;width:100%;height:100%;overflow:visible;}
+.ccard{position:relative;}
+@media print{ body[class*="print-"] .kbarp,body[class*="print-"] .kbtie{color:#000!important;} }
 .kbbeat.s2 .kbarp{width:0.3em;} .kbbeat.s4 .kbarp{width:0.26em;}
 .kbunder{position:absolute;left:50%;transform:translateX(-50%);bottom:0.3em;width:0.6em;height:0;pointer-events:none;color:var(--text);}
 .kbunder.d1{border-top:0.08em solid currentColor;}
@@ -834,6 +840,13 @@ body.mode-phone #s-time{width:auto!important;}
 body.mode-phone #s-bpm{width:2.4em!important;}
 body.mode-phone .fbtn{width:1.35em;height:1.35em;font-size:0.9em;}
 body.mode-phone #font-size-label{min-width:16px;}
+/* 語言鈕：五種語言（繁／簡／EN／JP／KR）字數不同，固定寬度與字級才不會忽大忽小 */
+/* 寬度與內距用 rem（不受自身字級影響），所以放大漢字時按鈕大小不變 */
+#lang-btn{min-width:2.3rem;padding-left:0.35rem;padding-right:0.35rem;text-align:center;
+  font-size:0.82em;line-height:1.15;display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;}
+#lang-btn.lb-cjk{font-size:0.98em;font-weight:600;letter-spacing:0;}
+body.mode-phone #lang-btn{min-width:2rem;font-size:0.78em;}
+body.mode-phone #lang-btn.lb-cjk{font-size:0.94em;}
 /* ① EN／更新日誌：外框比照左邊的「電腦｜平板｜手機」那組 */
 body.mode-phone .segbtn.cl-btn{
   border:1px solid var(--border2);border-radius:0.45em;margin-left:0;
@@ -1301,7 +1314,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
         <select class="ic-sel" id="kb-cqual" title="和弦性質"><option value="maj">大三 major</option><option value="min">小三 minor</option><option value="6">6</option><option value="m6">m6</option><option value="7">屬七 7</option><option value="maj7">大七 maj7</option><option value="m7">小七 m7</option><option value="9">9</option><option value="maj9">maj9</option><option value="m9">m9</option><option value="add9">add9</option><option value="11">11</option><option value="m11">m11</option><option value="13">13</option><option value="maj13">maj13</option><option value="m13">m13</option><option value="sus2">sus2</option><option value="sus">sus</option><option value="7sus">7sus</option><option value="dim">減 dim</option><option value="aug">增 aug</option></select>
         <button class="stbtn" id="kb-chordmode" onclick="kbChordMode()" title="放和弦模式：開啟後，點任一格就把選好的和弦（整組級數）疊上去；再點一格可連續放">🎹 放和弦</button>
         <button class="stbtn" id="kb-order" onclick="toggleKbOrder()" title="疊音的顯示順序：順序下＝先輸入的排在下面（輸入 1 3 5 顯示成 5 3 1）；順序上＝照輸入順序由上往下">↧ 順序下</button>
-        <label class="ic-hint">符號 <select class="ic-sel" id="kb-sym" onchange="setKbSym(this.value)" title="選好符號後，點有音的格子就加上去；再點一次拿掉"><option value="">—（不加）</option><option value="arp">琶音 ⌇</option></select></label>
+        <label class="ic-hint">符號 <select class="ic-sel" id="kb-sym" onchange="setKbSym(this.value)" title="琶音：點有音的格子加上／拿掉；連結線：先點第一個和弦（反黃），再點第二個就連起來"><option value="">—（不加）</option><option value="arp">琶音 ⌇</option><option value="tie">連結線 ⌒</option></select></label>
         <label class="ic-hint">全部每排 <select class="ic-sel" onchange="applyAllBPR(this)" title="一次設定所有段落每排小節數"><option value="__">套用…</option><option value="">自動</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option></select></label>
         <button class="stbtn" onclick="kbLoadFromChords()" title="載入：把和弦譜／混合頁的和弦轉成 KB 數字（右手疊和弦音、左手根音）">⇩ 載入</button>
         <button class="stbtn icon-only" id="staff-undo" onclick="staffUndo()" title="上一步（只回復最近的動作，不清除其他）" disabled>↩</button>
@@ -1393,12 +1406,27 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
       <li>和弦譜與混合頁的清除維持原本行為（和弦與 KB 一起清）；再按一次「↩ 復原」只會還原當初清掉的那幾項</li>
       <li>KB 頁工具列的「🗑 清除」也能選範圍了：按下去先選「選小節範圍清除」或「整個譜全部清除」；選範圍時再挑段落，接著就跟段落上的 🧹 清除一樣拖曳選小節</li></ul>
 
+      <h4>新增简体中文（語言鈕：繁 → 簡 → EN → JP → KR） <span class="cl-date">2026-09-08</span></h4>
+      <ul><li>語言鈕原本的「中」改成「繁」，並在繁體後面加入「簡」，循環變成 繁 → 简 → English → 日本語 → 한국어</li>
+      <li>简体不只是換字，連用詞也一起轉換：匯出→导出、檔案→文件、資料→数据、設定→设置、列印→打印、使用者→用户、載入→加载</li>
+      <li>首次進入的語言選單多了「简体中文」；瀏覽器語言是 zh-CN／zh-Hans／新加坡等地區會自動選简体，台港澳仍是繁體</li>
+      <li>服務條款、退款政策、隱私權政策三頁也支援简体，從頁尾點進去會沿用目前語言</li>
+      <li>切換不會失真：繁 → 简 → 其他語言 → 繁，文字都能完整還原</li>
+      <li>語言鈕改成固定寬度，五種語言（繁／簡／EN／JP／KR）按鈕大小一致；漢字在同字級下字面本來就比 EN 這種拉丁大寫小，所以顯示「繁」「簡」時字體單獨放大並加粗，看起來才與其他語言一樣大。法務頁的語言鈕同樣處理</li></ul>
+
       <h4>KB 頁新增「順序上／順序下」切換 <span class="cl-date">2026-09-08</span></h4>
       <ul><li>「🎹 放和弦」右邊新增順序切換鈕，決定同一格疊音由上而下怎麼排</li>
       <li><b>↧ 順序下（預設）</b>：先輸入的排在下面 —— 輸入 1 3 5 顯示成 5 / 3 / 1，和看譜習慣一致</li>
       <li><b>↥ 順序上</b>：照輸入順序由上往下 —— 輸入 1 3 5 顯示成 1 / 3 / 5</li>
       <li>只影響顯示，格子裡存的內容不變；選擇會記住，下次開啟沿用</li>
       <li>配合這個設定，「🎹 放和弦」與「⇩ 載入」產生的和弦改成由低音往高音存，預設下看到的仍是高音在上（6m → 3 / 1 / 6）；在此之前載入的譜若上下顛倒，重新按一次「⇩ 載入」選「覆蓋既有」即可</li></ul>
+
+      <h4>KB 符號新增「連結線」 <span class="cl-date">2026-09-09</span></h4>
+      <ul><li>「符號」下拉多了「連結線 ⌒」：選好之後<b>先點第一個和弦</b>，該格會反黃，<b>再點第二個和弦</b>就連起來</li>
+      <li>可以跨小節連（例如第 1 小節最後一拍連到第 2 小節第一拍）；右手、左手各自獨立</li>
+      <li>要移除的話，在符號模式下點線的任一端就會拿掉；點反黃的那格＝取消選取</li>
+      <li>只做連結線（相同音高延續），不做圓滑線</li>
+      <li>線是照實際版面畫上去的，換排、改字級、換裝置、列印都會重新對位；複製貼上、存檔讀檔一起帶著，也可用「↩ 上一步」還原</li></ul>
 
       <h4>KB 頁新增「符號」下拉：琶音記號 <span class="cl-date">2026-09-08</span></h4>
       <ul><li>KB 工具列「🎹 放和弦」右邊新增「符號」下拉，先選「琶音 ⌇」，再點有音的格子就在和弦左邊加上垂直波浪線；再點一次拿掉</li>
@@ -1761,14 +1789,14 @@ function setTheme(name){
 }
 (function initTheme(){ let t='dark'; try{t=localStorage.getItem('arranger_theme')||'dark';}catch(e){} setTheme(t); })();
 /* ── 介面語言：中文(預設) / English；字典逐字串對應，渲染後重套，可還原 ── */
-const LANGS=['zh','en','ja','ko'];   // 語言循環順序：中文 → English → 日本語 → 한국어
+const LANGS=['zh','cn','en','ja','ko'];   // 語言循環順序：繁體 → 简体 → English → 日本語 → 한국어
 /* 語言：使用者手動選過就用他選的；否則依登入者的瀏覽器 / 系統語言自動挑最合適的 */
 function detectLang(){
   const ls=[]; try{ if(navigator.languages)ls.push(...navigator.languages); if(navigator.language)ls.push(navigator.language); }catch(e){}
   for(const raw of ls){ const n=String(raw||'').toLowerCase();
     if(n.startsWith('ko'))return 'ko';
     if(n.startsWith('ja'))return 'ja';
-    if(n.startsWith('zh'))return 'zh';
+    if(n.startsWith('zh')) return /(hans|cn|sg|my)/.test(n)?'cn':'zh';   // 简体地區給简体，其餘（台港澳）給繁體
     if(n.startsWith('en'))return 'en';
   }
   return 'en';                                   // 其他語言先給英文（比中文好懂）
@@ -1833,7 +1861,7 @@ const I18N={
  "▶ 開始（依序載入）":"▶ Start (load in order)","＋ 加入":"＋ Add","載入":"Load","刪除":"Delete","歸類":"Tag",
  "一般使用者（瀏覽歌譜）":"Guest (browse)","管理者登入":"Admin Login","使用者登入":"User Login","聚會服事":"Service","登出":"Sign out","儲存目前到雲端":"Save current to cloud",
  "調性顯示":"Tonality",
- "內層":"Inner","基底":"Base","全部":"All","色":"Color","和弦":"Chord","符號":"Symbol","↧ 順序下":"↧ Low first","↥ 順序上":"↥ High first","疊音的顯示順序：順序下＝先輸入的排在下面（輸入 1 3 5 顯示成 5 3 1）；順序上＝照輸入順序由上往下":"Stacking order: Low first puts the earliest note at the bottom (typing 1 3 5 shows 5 3 1); High first keeps the typed order top-down","—（不加）":"— (none)","琶音 ⌇":"Arpeggio ⌇","琶音":"Arpeggio","選好符號後，點有音的格子就加上去；再點一次拿掉":"Pick a symbol, then tap a cell that has notes to add it; tap again to remove","返回":"Back","關閉":"Close","登入":"Login","註冊":"Sign up","上一頁":"Prev","下一頁":"Next","未命名":"Untitled","新段落":"New Section","另存新檔":"Save As","複製全部":"Copy all","雲端歌庫":"Cloud Library","複製文字清單":"Copy Text List","上移":"Up","下移":"Down","管理員":"Admin","節奏組 ◈":"Rhythm ◈","📂 載入":"📂 Load","總小節":"Total bars","段落":"Sections",
+ "內層":"Inner","基底":"Base","全部":"All","色":"Color","和弦":"Chord","符號":"Symbol","↧ 順序下":"↧ Low first","↥ 順序上":"↥ High first","疊音的顯示順序：順序下＝先輸入的排在下面（輸入 1 3 5 顯示成 5 3 1）；順序上＝照輸入順序由上往下":"Stacking order: Low first puts the earliest note at the bottom (typing 1 3 5 shows 5 3 1); High first keeps the typed order top-down","—（不加）":"— (none)","琶音 ⌇":"Arpeggio ⌇","琶音":"Arpeggio","連結線 ⌒":"Tie ⌒","連結線":"Tie","琶音：點有音的格子加上／拿掉；連結線：先點第一個和弦（反黃），再點第二個就連起來":"Arpeggio: tap a cell with notes to add or remove it. Tie: tap the first chord (it highlights), then tap the second to connect them","返回":"Back","關閉":"Close","登入":"Login","註冊":"Sign up","上一頁":"Prev","下一頁":"Next","未命名":"Untitled","新段落":"New Section","另存新檔":"Save As","複製全部":"Copy all","雲端歌庫":"Cloud Library","複製文字清單":"Copy Text List","上移":"Up","下移":"Down","管理員":"Admin","節奏組 ◈":"Rhythm ◈","📂 載入":"📂 Load","總小節":"Total bars","段落":"Sections",
  "✓ 已複製":"✓ Copied","✓ 已載入":"✓ Loaded","✓ 已存檔":"✓ Saved","✓ 匯入成功！":"✓ Imported!",
  "讀取中…":"Loading…","載入中…":"Loading…","儲存中…":"Saving…","處理中…":"Processing…","登入中…":"Signing in…","歸類中…":"Tagging…","準備中…":"Preparing…","產生中…":"Generating…","讀取 PDF…":"Reading PDF…","載入服事清單…":"Loading service list…","載入辨識引擎…":"Loading OCR engine…",
  "彈法…":"Play…","段落備註…":"Section note…","辨識出的文字會出現在這裡，可手動修正後再解析…":"OCR text appears here; edit then parse…",
@@ -1981,7 +2009,7 @@ const I18N_JA={
  "🖥 電腦":"🖥 PC",
  "▦ 平板":"▦ タブレット",
  "📱 手機":"📱 スマホ",
- "📝 更新日誌":"📝 更新履歴","許願":"リクエスト","符號":"記号","↧ 順序下":"↧ 低音が下","↥ 順序上":"↥ 入力順","疊音的顯示順序：順序下＝先輸入的排在下面（輸入 1 3 5 顯示成 5 3 1）；順序上＝照輸入順序由上往下":"重ねる順番：「低音が下」は先に入力した音を下に置きます（1 3 5 → 5 3 1）。「入力順」は入力した順に上から並べます","—（不加）":"—（なし）","琶音 ⌇":"アルペジオ ⌇","琶音":"アルペジオ","選好符號後，點有音的格子就加上去；再點一次拿掉":"記号を選んでから、音が入っているマスをタップすると付きます。もう一度タップで外れます","意見回饋：寫信告訴我們你的建議或遇到的問題":"ご意見：ご提案や不具合をメールでお知らせください",
+ "📝 更新日誌":"📝 更新履歴","許願":"リクエスト","符號":"記号","↧ 順序下":"↧ 低音が下","↥ 順序上":"↥ 入力順","疊音的顯示順序：順序下＝先輸入的排在下面（輸入 1 3 5 顯示成 5 3 1）；順序上＝照輸入順序由上往下":"重ねる順番：「低音が下」は先に入力した音を下に置きます（1 3 5 → 5 3 1）。「入力順」は入力した順に上から並べます","—（不加）":"—（なし）","琶音 ⌇":"アルペジオ ⌇","琶音":"アルペジオ","連結線 ⌒":"タイ ⌒","連結線":"タイ","琶音：點有音的格子加上／拿掉；連結線：先點第一個和弦（反黃），再點第二個就連起來":"アルペジオ：音のあるマスをタップで付け外し。タイ：最初の和音をタップ（ハイライト）し、次の和音をタップでつながります","意見回饋：寫信告訴我們你的建議或遇到的問題":"ご意見：ご提案や不具合をメールでお知らせください",
  "曲目":"曲名",
  "演唱者":"アーティスト",
  "拍號":"拍子",
@@ -2333,7 +2361,7 @@ const I18N_KO={
  "🖥 電腦":"🖥 PC",
  "▦ 平板":"▦ 태블릿",
  "📱 手機":"📱 모바일",
- "📝 更新日誌":"📝 변경 내역","許願":"요청","符號":"기호","↧ 順序下":"↧ 낮은음 아래","↥ 順序上":"↥ 입력 순서","疊音的顯示順序：順序下＝先輸入的排在下面（輸入 1 3 5 顯示成 5 3 1）；順序上＝照輸入順序由上往下":"쌓는 순서: 「낮은음 아래」는 먼저 입력한 음을 아래에 둡니다(1 3 5 → 5 3 1). 「입력 순서」는 입력한 순서대로 위에서부터 배치합니다","—（不加）":"—(없음)","琶音 ⌇":"아르페지오 ⌇","琶音":"아르페지오","選好符號後，點有音的格子就加上去；再點一次拿掉":"기호를 고른 뒤 음이 있는 칸을 누르면 붙습니다. 다시 누르면 제거됩니다","意見回饋：寫信告訴我們你的建議或遇到的問題":"의견 보내기: 제안이나 문제를 메일로 알려 주세요",
+ "📝 更新日誌":"📝 변경 내역","許願":"요청","符號":"기호","↧ 順序下":"↧ 낮은음 아래","↥ 順序上":"↥ 입력 순서","疊音的顯示順序：順序下＝先輸入的排在下面（輸入 1 3 5 顯示成 5 3 1）；順序上＝照輸入順序由上往下":"쌓는 순서: 「낮은음 아래」는 먼저 입력한 음을 아래에 둡니다(1 3 5 → 5 3 1). 「입력 순서」는 입력한 순서대로 위에서부터 배치합니다","—（不加）":"—(없음)","琶音 ⌇":"아르페지오 ⌇","琶音":"아르페지오","連結線 ⌒":"이음줄 ⌒","連結線":"이음줄","琶音：點有音的格子加上／拿掉；連結線：先點第一個和弦（反黃），再點第二個就連起來":"아르페지오: 음이 있는 칸을 눌러 추가/제거. 이음줄: 첫 화음을 누르면 강조되고, 두 번째 화음을 누르면 연결됩니다","意見回饋：寫信告訴我們你的建議或遇到的問題":"의견 보내기: 제안이나 문제를 메일로 알려 주세요",
  "曲目":"곡명",
  "演唱者":"아티스트",
  "拍號":"박자",
@@ -2663,9 +2691,87 @@ const I18N_KO={
 
 /* 對話框（confirm / prompt / alert）用：純字串查表，找不到就原樣顯示 */
 function L(s){ const d=langOf(_lang); return (d&&d[s]!=null)?d[s]:s; }
-function Lf(zh,en,ja,ko){ return _lang==='ko'?(ko!=null?ko:en):(_lang==='ja'?(ja!=null?ja:en):(_lang==='en'?en:zh)); }
+/* ── 简体中文：以繁體為基準，逐字串對照（由 OpenCC t2s 產生，反向無碰撞可安全還原） ── */
+const I18N_CN={
+ "選要清除的小節範圍，再決定只清內容還是連小節一起刪除":"选要清除的小节范围，再决定只清内容还是连小节一起删除","按住小節左右拖曳，選要清除的範圍":"按住小节左右拖曳，选要清除的范围","服務條款":"服务条款","隱私權政策":"隐私权政策","聯絡我們":"联系我们","個人使用者範本：小星星":"个人用户范本：小星星",
+ "敬拜使用者範本：You are good":"敬拜用户范本：You are good","我的歌庫":"我的歌库","＋ 收藏目前這份":"＋ 收藏目前这份","我的歌庫還是空的，按「＋ 收藏目前這份」把現在編輯的譜存進來。":"我的歌库还是空的，按「＋ 收藏目前这份」把现在编辑的谱存进来。","個人使用者不使用雲端歌庫，歌曲只存在這台裝置上。":"个人用户不使用云端歌库，歌曲只存在这台设备上。","🎧 個人使用者 · 我的歌庫":"🎧 个人用户 · 我的歌库",
+ "「用途」下拉最後有「＋ 新增分類…／－ 移除分類…」可自訂分類；「🎵 演奏模式」可從我的歌庫挑最多 10 首排成一份。":"「用途」下拉最后有「＋ 添加分类…／－ 移除分类…」可自订分类；「🎵 演奏模式」可从我的歌库挑最多 10 首排成一份。","清單（最多 10 首，可排序）":"清单（最多 10 首，可排序）","⛪ 敬拜使用者：瀏覽歌譜":"⛪ 敬拜用户：浏览歌谱","🎧 個人使用者：自訂分類":"🎧 个人用户：自订分类","⛪ 敬拜使用者 · 瀏覽歌譜":"⛪ 敬拜用户 · 浏览歌谱","🎧 個人使用者 · 自訂分類":"🎧 个人用户 · 自订分类",
+ "＋ 新增分類…":"＋ 添加分类…","－ 移除分類…":"－ 移除分类…","用途分類（可自行新增／移除）":"用途分类（可自行添加／移除）","用途分類（敬拜使用者固定為短歌／讚美／敬拜）":"用途分类（敬拜用户固定为短歌／赞美／敬拜）","許願":"许愿","🖥 電腦":"🖥 电脑",
+ "📱 手機":"📱 手机","📝 更新日誌":"📝 更新日志","意見回饋：寫信告訴我們你的建議或遇到的問題":"意见反馈：写信告诉我们你的建议或遇到的问题","拍號":"拍号","字級":"字级","主題":"主题",
+ "微調Key":"微调Key","💾 存檔":"💾 保存","範本":"范本","👤 使用者":"👤 用户","↓ PNG 示意圖":"↓ PNG 示意图","↓ PNG 方塊圖":"↓ PNG 方块图",
+ "🖨 圖示譜PDF":"🖨 图标谱PDF","＋ 新增段落":"＋ 添加段落","刪":"删","展開示意圖":"展开示意图","方塊流程圖":"方块流程图","圖示譜":"图标谱",
+ "和弦譜":"和弦谱","五線譜":"五线谱","文字清單":"文字清单","匯出":"导出","⇩ 載入":"⇩ 加载","載入：把和弦譜／混合頁的和弦轉成 KB 數字（右手疊和弦音、左手根音）":"加载：把和弦谱／混合页的和弦转成 KB 数字（右手叠和弦音、左手根音）",
+ "顯示":"显示","級數":"级数","自動":"自动","↩ 復原":"↩ 复原","🔓 鎖定 關":"🔓 锁定 关","🔒 鎖定 開":"🔒 锁定 开",
+ "🔒 鎖定中 — 點此解鎖編輯":"🔒 锁定中 — 点此解锁编辑","📄 聚會分頁 關":"📄 聚会分页 关","📄 聚會分頁 開":"📄 聚会分页 开","🔍 辨識匯入":"🔍 辨识导入","📄 經典A4":"📄 经典A4","🖨 列印 / 存 PDF":"🖨 打印 / 存 PDF",
+ "控制項 開":"控制项 开","控制項 關":"控制项 关","⧉ 複製":"⧉ 复制","▸ 展開":"▸ 展开","📋 貼上":"📋 粘贴","每排:自動":"每排:自动",
+ "每頁":"每页","讚美":"赞美","▶ 開始（依序載入）":"▶ 开始（依序加载）","載入":"加载","刪除":"删除","歸類":"归类",
+ "一般使用者（瀏覽歌譜）":"一般用户（浏览歌谱）","管理者登入":"管理者登录","使用者登入":"用户登录","聚會服事":"聚会服事","登出":"注销","儲存目前到雲端":"保存目前到云端",
+ "調性顯示":"调性显示","內層":"内层","符號":"符号","↧ 順序下":"↧ 顺序下","↥ 順序上":"↥ 顺序上","疊音的顯示順序：順序下＝先輸入的排在下面（輸入 1 3 5 顯示成 5 3 1）；順序上＝照輸入順序由上往下":"叠音的显示顺序：顺序下＝先输入的排在下面（输入 1 3 5 显示成 5 3 1）；顺序上＝照输入顺序由上往下",
+ "選好符號後，點有音的格子就加上去；再點一次拿掉":"选好符号后，点有音的格子就加上去；再点一次拿掉","關閉":"关闭","登入":"登录","註冊":"注册","上一頁":"上一页","下一頁":"下一页",
+ "另存新檔":"另存新档","複製全部":"复制全部","雲端歌庫":"云端歌库","複製文字清單":"复制文字清单","管理員":"管理员","節奏組 ◈":"节奏组 ◈",
+ "📂 載入":"📂 加载","總小節":"总小节","✓ 已複製":"✓ 已复制","✓ 已載入":"✓ 已加载","✓ 已存檔":"✓ 已保存","✓ 匯入成功！":"✓ 导入成功！",
+ "讀取中…":"读取中…","載入中…":"加载中…","儲存中…":"保存中…","處理中…":"处理中…","登入中…":"登录中…","歸類中…":"归类中…",
+ "準備中…":"准备中…","產生中…":"产生中…","讀取 PDF…":"读取 PDF…","載入服事清單…":"加载服事清单…","載入辨識引擎…":"加载辨识引擎…","彈法…":"弹法…",
+ "段落備註…":"段落备注…","辨識出的文字會出現在這裡，可手動修正後再解析…":"辨识出的文本会出现在这里，可手动修正后再解析…","不轉（保留和弦名）":"不转（保留和弦名）","依男 Key 轉級數":"依男 Key 转级数","依女 Key 轉級數":"依女 Key 转级数","和弦轉級數：":"和弦转级数：",
+ "🔍 圖片 / PDF 辨識匯入":"🔍 图片 / PDF 辨识导入","🎼 圖示譜 PDF":"🎼 图标谱 PDF","🎵 和弦譜 PDF":"🎵 和弦谱 PDF","🎼 混合 PDF（和弦＋樂器）":"🎼 混合 PDF（和弦＋乐器）","🖼 PNG 展開示意圖":"🖼 PNG 展开示意图","📦 PNG 方塊流程圖":"📦 PNG 方块流程图",
+ "📊 CSV 樂器備註表":"📊 CSV 乐器备注表","📋 文字清單":"📋 文字清单","↓ JSON 備份":"↓ JSON 备份","↓ PNG 展開示意圖":"↓ PNG 展开示意图","↓ PNG 方塊流程圖":"↓ PNG 方块流程图","👤 使用者登入":"👤 用户登录",
+ "🔑 管理者登入":"🔑 管理者登录","👁 一般使用者：瀏覽歌譜":"👁 一般用户：浏览歌谱","⛪ 聚會服事":"⛪ 聚会服事","☁ 儲存目前到雲端":"☁ 保存目前到云端","一般使用者 · 瀏覽歌譜":"一般用户 · 浏览歌谱","💾 儲存譜":"💾 保存谱",
+ "請選擇儲存方式：":"请选择保存方式：","💾 存到瀏覽器本機":"💾 存到浏览器本机","📁 另存到資料夾（.json）":"📁 另存到文件夹（.json）","下次用同一台裝置開啟會自動載入":"下次用同一台设备打开会自动加载","可自選電腦資料夾位置存成檔案":"可自选电脑文件夹位置存成文件","（此段尚未填樂器配置）":"（此段尚未填乐器配置）",
+ "點段落圓圈 → 右邊展開該段樂器配置（再點一次收起）":"点段落圆圈 → 右边展开该段乐器配置（再点一次收起）","點樂器挑要看的部位":"点乐器挑要看的部位","拖曳調長度":"拖曳调长度","接續到哪一段":"接续到哪一段","此小節接續到哪一段":"此小节接续到哪一段","本小節拍號（點擊切換）":"本小节拍号（点击切换）",
+ "每排幾個小節":"每排几个小节","放大檢視字級":"放大查看字级","縮小檢視字級":"缩小查看字级","展開更多功能":"展开更多功能","查看歷次更新內容":"查看历次更新内容","新增一條配器（內容與其他頁共用）":"添加一条配器（内容与其他页共用）",
+ "刪除此配器（各頁一起移除）":"删除此配器（各页一起移除）","一次設定所有段落每排小節數":"一次设置所有段落每排小节数","自動縮放，盡量塞進一張 A4":"自动缩放，尽量塞进一张 A4","① 複製轉譜指令":"① 复制转谱指令","② 匯入 AI 轉譜結果":"② 导入 AI 转谱结果","🤖 AI 轉譜（最準・免費・免 API key）":"🤖 AI 转谱（最准・免费・免 API key）",
+ "段落流程圖":"段落流程图","樂器配置":"乐器配置","－ 刪除段落":"－ 删除段落","段落方塊要顯示什麼":"段落方块要显示什么","點段落展開編輯 · 右滑＝新增 · 左滑＝刪除 · 樂器鈕可拖到段落上":"点段落展开编辑 · 右滑＝添加 · 左滑＝删除 · 乐器钮可拖到段落上","名稱":"名称",
+ "小節":"小节","顏色":"颜色","備註":"备注","＋ 在此後新增":"＋ 在此后添加","⎘ 複製此段":"⎘ 复制此段","樂器配置（基底）":"乐器配置（基底）",
+ "＋ 內層":"＋ 内层","刪內層":"删内层","（尚未填樂器配置）":"（尚未填乐器配置）","在此後新增段落":"在此后添加段落","刪除此段落":"删除此段落","新增第一個段落":"添加第一个段落",
+ "在最後新增一個段落":"在最后添加一个段落","刪除模式：開啟後每個段落名稱旁會出現 ✕，按下即刪除":"删除模式：打开后每个段落名称旁会出现 ✕，按下即删除","複製這個段落（含和弦與樂器配置）":"复制这个段落（含和弦与乐器配置）","新增一個內層（同段不同顏色的疊加配器）":"添加一个内层（同段不同颜色的叠加配器）","刪除這個內層":"删除这个内层","新增自定義樂器 / 聲部":"添加自定义乐器 / 声部",
+ "刪除自定義樂器（不會動到預設的）":"删除自定义乐器（不会动到缺省的）","收合/展開上方設定工具列":"收合/展开上方设置工具列","收合 / 展開工具列":"收合 / 展开工具列","📄 開新檔案":"📄 开新文件","開新檔案：清空目前內容，開一份全新的譜":"开新文件：清空目前内容，开一份全新的谱","輸出大小":"输出大小",
+ "標準":"标准","緊湊":"紧凑","輸出時的小節大小：緊湊或最小可讓一頁容納更多小節":"输出时的小节大小：紧凑或最小可让一页容纳更多小节","儲存：可選存到瀏覽器本機，或另存成 .json 到資料夾":"保存：可选存到浏览器本机，或另存成 .json 到文件夹","只清除這一段填寫的和弦與 KB 數字；小節數、分割、拍號、重複、接續等格式都保留（可再按一次復原）":"只清除这一段填写的和弦与 KB 数字；小节数、分割、拍号、重复、接续等格式都保留（可再按一次复原）","收合/展開此段":"收合/展开此段",
+ "選擇要輸出的段落":"选择要输出的段落","全不選":"全不选","開始輸出":"开始输出","點樂器挑要看的部位 · 可拖到段落上設定":"点乐器挑要看的部位 · 可拖到段落上设置","一鍵全部顯示 / 全部關閉":"一键全部显示 / 全部关闭","新增自定義樂器／聲部":"添加自定义乐器／声部",
+ "刪除自定義樂器（預設樂器不會被刪除）":"删除自定义乐器（缺省乐器不会被删除）","藍（第二層）":"蓝（第二层）","紅（高潮）":"红（高潮）","屬七 7":"属七 7","減 dim":"减 dim","根音（級數）":"根音（级数）",
+ "和弦性質":"和弦性质","和弦根音（級數）":"和弦根音（级数）","放和弦模式：開啟後點格子填入所選和弦（存級數，顯示可切級數/男女Key）":"放和弦模式：打开后点格子填入所选和弦（存级数，显示可切级数/男女Key）","放和弦模式：開啟後，點任一格就把選好的和弦（整組級數）疊上去；再點一格可連續放":"放和弦模式：打开后，点任一格就把选好的和弦（整组级数）叠上去；再点一格可连续放","在此段之後新增段落":"在此段之后添加段落","顯示/隱藏每個小節的控制鈕":"显示/隐藏每个小节的控制钮",
+ "顯示/隱藏每個小節的控制鈕；隱藏時仍顯示已設定的值":"显示/隐藏每个小节的控制钮；隐藏时仍显示已设置的值","複製小節：進入複製模式（預設選整段，可再拖曳/長按調整）→ 複製 → 點目標小節左/右緣(藍線) → 貼到任意位置（可跨段）":"复制小节：进入复制模式（缺省选整段，可再拖曳/长按调整）→ 复制 → 点目标小节左/右缘(蓝线) → 贴到任意位置（可跨段）","收合/展開此段（收合只留標題，方便專注其他段）":"收合/展开此段（收合只留标题，方便专注其他段）","本小節重複次數":"本小节重复次数","鎖定：開＝只能看譜、禁止編輯；關＝可編輯":"锁定：开＝只能看谱、禁止编辑；关＝可编辑","鎖定：開＝只能看譜與左右滑頁、禁止任何編輯；關＝可編輯":"锁定：开＝只能看谱与左右滑页、禁止任何编辑；关＝可编辑",
+ "聚會服事列印：開＝每首歌各自從新頁開始；關＝段落連續接著印":"聚会服事打印：开＝每首歌各自从新页开始；关＝段落连续接着印","半音微調 Key":"半音微调 Key","清除整個譜的和弦／分割／重複／拍號／接續資料（可再按一次復原）":"清除整个谱的和弦／分割／重复／拍号／接续数据（可再按一次复原）","清除整個譜的 KB 數字（可用上一步還原）":"清除整个谱的 KB 数字（可用上一步还原）","清除 KB 數字：可選小節範圍或整個譜（可用上一步還原）":"清除 KB 数字：可选小节范围或整个谱（可用上一步还原）","上一步（只回復最近的動作，不清除其他）":"上一步（只回复最近的动作，不清除其他）",
+ "↓ PNG 段落圖":"↓ PNG 段落图","切換版面：電腦 / 平板 / 手機":"切换版面：电脑 / 平板 / 手机","電腦：側欄編輯 ＋ 寬版檢視":"电脑：侧栏编辑 ＋ 宽版查看","平板：編輯區移到上方、檢視全寬、圖示譜3欄":"平板：编辑区移到上方、查看全宽、图标谱3栏","手機：隱藏編輯區、圖示譜2欄":"手机：隐藏编辑区、图标谱2栏","介面配色（只影響螢幕，列印仍為白底原樣）":"接口配色（只影响屏幕，打印仍为白底原样）",
+ "使用者登入 / 雲端歌庫":"用户登录 / 云端歌库","匯出 JSON 備份":"导出 JSON 备份","從 JSON 匯入":"从 JSON 导入","列印圖示譜（每頁4段，A4）":"打印图标谱（每页4段，A4）","點拍格可編輯。記號：":"点拍格可编辑。记号：","級數、":"级数、",
+ "品質、":"品质、","轉位、":"转位、","延續、":"延续、","細分(2音=八分、3音=三連音、4音=十六分)。右上橘徽章設本小節拍號、末小節選「→接續」。上方「顯示」可切級數↔和弦名(男/女Key)。長按任一小節→拖曳選取→複製→點目標小節左/右緣(藍線)→貼到任意位置。":"细分(2音=八分、3音=三连音、4音=十六分)。右上橘徽章设本小节拍号、末小节选「→接续」。上方「显示」可切级数↔和弦名(男/女Key)。长按任一小节→拖曳选取→复制→点目标小节左/右缘(蓝线)→贴到任意位置。","混合＋：用上方「樂器篩選鈕（ALL / Vocal / KB …）」挑要顯示哪些樂器的配器。配器在小節上方，可自由拖曳移位與調長度（不卡小節），內容與其他頁共用。長按任一小節→拖曳選取→複製→點目標小節左/右緣(藍線)→貼到任意位置。":"混合＋：用上方「乐器筛选钮（ALL / Vocal / KB …）」挑要显示哪些乐器的配器。配器在小节上方，可自由拖曳移位与调长度（不卡小节），内容与其他页共用。长按任一小节→拖曳选取→复制→点目标小节左/右缘(蓝线)→贴到任意位置。","上方「樂器篩選鈕」挑要看的部位；拖 ⋮⋮ 移位、拖右緣調長度、✕刪除（清空文字＝各頁一起移除）":"上方「乐器筛选钮」挑要看的部位；拖 ⋮⋮ 移位、拖右缘调长度、✕删除（清空文本＝各页一起移除）",
+ "KB 數字譜：每小節分「上排＝右手／下排＝左手」，點格子輸入級數，同一格用空白分隔可直向疊 1–3 個音（和弦）；或用右上「和弦」選根音級數＋性質，開「🎹 放和弦」後點格子整組疊上。時值＝簡譜底線（顯示在每格底部）：無＝四分、一條＝八分、兩條＝十六分。每一「拍」可各自切分：拍左上角的 ♩/♪/♬ 選單只切分那一拍（每拍等寬，切細只在該拍內部發生，不會讓整排縮小）；右手 R／左手 L 標在每列左上角。上方「顯示」可切級數↔男/女Key 和弦名。重複／接續／每排 全部沿用。長按任一小節→拖曳選取→複製→點目標小節左/右緣(藍線)→貼到任意位置。":"KB 数字谱：每小节分「上排＝右手／下排＝左手」，点格子输入级数，同一格用空白分隔可直向叠 1–3 个音（和弦）；或用右上「和弦」选根音级数＋性质，开「🎹 放和弦」后点格子整组叠上。时值＝简谱底线（显示在每格底部）：无＝四分、一条＝八分、两条＝十六分。每一「拍」可各自切分：拍左上角的 ♩/♪/♬ 菜单只切分那一拍（每拍等宽，切细只在该拍内部发生，不会让整排缩小）；右手 R／左手 L 标在每列左上角。上方「显示」可切级数↔男/女Key 和弦名。重复／接续／每排 全部沿用。长按任一小节→拖曳选取→复制→点目标小节左/右缘(蓝线)→贴到任意位置。","🗂 段落流程圖 PDF":"🗂 段落流程图 PDF","段落順序、Bar 數與各段樂器配置一頁看完，適合團員快速掌握全曲架構":"段落顺序、Bar 数与各段乐器配置一页看完，适合团员快速掌握全曲架构","上傳和弦譜圖片或 PDF，瀏覽器內 OCR 辨識並自動拆成段落／和弦（實驗性，通常需人工修正；可選依男/女 Key 轉級數）":"上传和弦谱图片或 PDF，浏览器内 OCR 辨识并自动拆成段落／和弦（实验性，通常需人工修正；可选依男/女 Key 转级数）","每段小節攤開、依拍號顯示拍點，A4 直式列印，適合主領 / 樂手看和弦進行":"每段小节摊开、依拍号显示拍点，A4 直式打印，适合主领 / 乐手看和弦进行","同一頁同時呈現和弦小節與各樂器部位，最完整的樂團總表":"同一页同时呈现和弦小节与各乐器部位，最完整的乐团总表",
+ "包含所有段落、Bar 數、顏色、樂器備註":"包含所有段落、Bar 数、颜色、乐器备注","純文字格式，可貼入 Notion / 筆記 App":"纯文本格式，可贴入 Notion / 笔记 App","完整存檔，可日後匯入繼續編輯":"完整保存，可日后导入继续编辑","在 Canva / Miro 快速還原（3 步驟）":"在 Canva / Miro 快速还原（3 步骤）","新增黑色畫布 → 每個段落用一個「圓形」（邊框顏色=段落色），內部疊加更小的彩色圓代表各樂器層次。節奏組 Drum+Bass 改用小方形置於圓底。":"添加黑色画布 → 每个段落用一个「圆形」（边框颜色=段落色），内部叠加更小的彩色圆代表各乐器层次。节奏组 Drum+Bass 改用小方形置于圆底。","段落圓由「左至右排列」，圓徑依 Bar 數等比縮放。段落間用虛線箭頭連接，標注轉場（Beat Switch、漸弱）。":"段落圆由「左至右排列」，圆径依 Bar 数等比缩放。段落间用虚线箭头连接，标注转场（Beat Switch、渐弱）。",
+ "本工具展開示意圖的「截圖」可直接貼入 Canva 作參考底圖，再疊加說明卡片。":"本工具展开示意图的「截屏」可直接贴入 Canva 作参考底图，再叠加说明卡片。","本小節分割：♩四分(4格) / ♪八分(8格) / ♬十六分(16格)":"本小节分割：♩四分(4格) / ♪八分(8格) / ♬十六分(16格)","本小節重複次數（點擊循環 ·/×2/×4/×8）":"本小节重复次数（点击循环 ·/×2/×4/×8）","本小節拍號":"本小节拍号","預估長度":"预估长度","頁數(圖示譜)":"页数(图标谱)",
+ "📂 讀檔":"📂 读取","📂 讀取譜":"📂 读取谱","請選擇讀取方式：":"请选择读取方式：","💾 從瀏覽器本機讀取":"💾 从浏览器本机读取","載入這台裝置上次存的譜":"加载这台设备上次存的谱","📁 從 .json 檔載入":"📁 从 .json 档加载",
+ "選一個譜檔或 JSON 備份載入":"选一个谱档或 JSON 备份加载","↓ 下載 JSON 備份":"↓ 下载 JSON 备份","含完整設定，也可給其他程式讀取":"含完整设置，也可给其他程序读取","讀檔：從瀏覽器本機的存檔，或從 .json 檔載入":"读取：从浏览器本机的保存，或从 .json 档加载","儲存：存到瀏覽器本機、另存成 .json 到資料夾，或匯出可攜的 JSON":"保存：存到浏览器本机、另存成 .json 到文件夹，或导出可携的 JSON","Google 帳號登入":"Google 帐号登录",
+ "或用 email 登入":"或用 email 登录","半音微調 Key：依目前「顯示」調男/女 Key":"半音微调 Key：依目前「显示」调男/女 Key","這一拍的分割：♩四分 / ♪八分 / ♬十六分":"这一拍的分割：♩四分 / ♪八分 / ♬十六分"
+};
+/* 字元級繁→簡表：給 Lf()／confirm／alert 這些不進畫面對照表的動態字串用 */
+const T2S_CH={
+ "丟":"丢","並":"并","乾":"干","亂":"乱","佔":"占","併":"并","來":"来","係":"系","個":"个","們":"们","側":"侧","備":"备","傳":"传","僅":"仅",
+ "優":"优","儲":"储","內":"内","兩":"两","冊":"册","別":"别","刪":"删","則":"则","剛":"刚","動":"动","務":"务","勢":"势","匯":"汇","區":"区",
+ "卻":"却","參":"参","員":"员","問":"问","啟":"启","單":"单","嗎":"吗","嘗":"尝","國":"国","圍":"围","圓":"圆","圖":"图","團":"团","執":"执",
+ "報":"报","場":"场","塊":"块","壓":"压","壞":"坏","夾":"夹","實":"实","寧":"宁","寫":"写","寬":"宽","專":"专","尋":"寻","對":"对","導":"导",
+ "層":"层","屬":"属","帳":"帐","帶":"带","幾":"几","庫":"库","張":"张","強":"强","彈":"弹","後":"后","徑":"径","從":"从","復":"复","徹":"彻",
+ "態":"态","慣":"惯","應":"应","捲":"卷","掛":"挂","採":"采","換":"换","搶":"抢","撐":"撑","擇":"择","擊":"击","擋":"挡","據":"据","擠":"挤",
+ "擴":"扩","擾":"扰","攔":"拦","攜":"携","攤":"摊","敗":"败","數":"数","斂":"敛","斷":"断","於":"于","時":"时","暫":"暂","書":"书","會":"会",
+ "條":"条","極":"极","構":"构","樂":"乐","標":"标","樣":"样","機":"机","橫":"横","檔":"档","檢":"检","欄":"栏","權":"权","歷":"历","歸":"归",
+ "殘":"残","決":"决","沒":"没","淨":"净","淺":"浅","減":"减","測":"测","湊":"凑","準":"准","滿":"满","漸":"渐","瀏":"浏","為":"为","無":"无",
+ "狀":"状","獨":"独","現":"现","環":"环","產":"产","畫":"画","異":"异","當":"当","疊":"叠","發":"发","盡":"尽","盤":"盘","確":"确","碼":"码",
+ "礎":"础","種":"种","稱":"称","穩":"稳","筆":"笔","節":"节","範":"范","篩":"筛","簡":"简","籤":"签","約":"约","紅":"红","納":"纳","純":"纯",
+ "級":"级","細":"细","組":"组","結":"结","絕":"绝","絞":"绞","絡":"络","給":"给","統":"统","經":"经","綠":"绿","維":"维","網":"网","綴":"缀",
+ "緊":"紧","緒":"绪","線":"线","緣":"缘","編":"编","縮":"缩","縱":"纵","總":"总","繪":"绘","繼":"继","續":"续","義":"义","習":"习","聯":"联",
+ "聲":"声","脹":"胀","腦":"脑","臨":"临","與":"与","舊":"旧","蓋":"盖","薦":"荐","藍":"蓝","處":"处","虛":"虚","號":"号","螢":"萤","衝":"冲",
+ "補":"补","裝":"装","裡":"里","製":"制","複":"复","見":"见","規":"规","視":"视","覺":"觉","覽":"览","觀":"观","觸":"触","訂":"订","計":"计",
+ "訊":"讯","訖":"讫","記":"记","設":"设","許":"许","訴":"诉","註":"注","詞":"词","詢":"询","試":"试","話":"话","該":"该","詳":"详","誌":"志",
+ "認":"认","語":"语","誤":"误","說":"说","説":"说","調":"调","請":"请","論":"论","謂":"谓","證":"证","識":"识","譜":"谱","譯":"译","議":"议",
+ "護":"护","讀":"读","變":"变","讓":"让","讚":"赞","豎":"竖","負":"负","責":"责","費":"费","貼":"贴","資":"资","質":"质","賴":"赖","軌":"轨",
+ "軟":"软","軸":"轴","較":"较","載":"载","輔":"辅","輕":"轻","輪":"轮","輯":"辑","輸":"输","轉":"转","這":"这","連":"连","進":"进","運":"运",
+ "過":"过","達":"达","遞":"递","遠":"远","適":"适","遷":"迁","選":"选","遺":"遗","還":"还","邊":"边","邏":"逻","郵":"邮","鄰":"邻","鈕":"钮",
+ "錄":"录","錯":"错","録":"录","鍵":"键","鎖":"锁","長":"长","閃":"闪","閉":"闭","開":"开","間":"间","閱":"阅","閲":"阅","關":"关","陣":"阵",
+ "隊":"队","階":"阶","際":"际","隨":"随","隱":"隐","雜":"杂","離":"离","雲":"云","電":"电","韓":"韩","響":"响","頁":"页","頂":"顶","項":"项",
+ "順":"顺","須":"须","預":"预","頓":"顿","領":"领","頭":"头","顆":"颗","題":"题","顏":"颜","願":"愿","顛":"颠","類":"类","顯":"显","餘":"余",
+ "饋":"馈","驗":"验","驟":"骤","體":"体","麼":"么","黃":"黄","點":"点","齊":"齐"
+};
+function toCN(s){ return String(s==null?"":s).replace(/[\u4e00-\u9fff]/g,c=>T2S_CH[c]||c); }
+function Lf(zh,en,ja,ko){ return _lang==='cn'?toCN(zh):_lang==='ko'?(ko!=null?ko:en):(_lang==='ja'?(ja!=null?ja:en):(_lang==='en'?en:zh)); }
 /* ── 多語系引擎：以中文為基準語，en / ja 各一張對照表 ── */
-function langOf(l){ return l==='en'?I18N : l==='ja'?I18N_JA : l==='ko'?I18N_KO : null; }   // 中文 → 該語言
+function langOf(l){ return l==='en'?I18N : l==='ja'?I18N_JA : l==='ko'?I18N_KO : l==='cn'?I18N_CN : null; }   // 繁體 → 該語言
 const _i18nRev={};
 function langRev(l){                                 // 該語言 → 中文
   if(!_i18nRev[l]){ const m={}, d=langOf(l); if(d)for(const k in d){ if(m[d[k]]==null)m[d[k]]=k; } _i18nRev[l]=m; }
@@ -2708,14 +2814,16 @@ if(typeof MutationObserver!=='undefined'){
   });
   try{ obs.observe(document.body,{childList:true,subtree:true,characterData:true}); }catch(e){}
 }
-const LANG_BTN={zh:'EN', en:'JP', ja:'KR', ko:'中'};        // 按鈕顯示下一個語言
-const LANG_TITLE={zh:'切換語言：中文 → English', en:'Switch language: English → 日本語', ja:'言語切替：日本語 → 한국어', ko:'언어 전환: 한국어 → 中文'};
+const LANG_BTN={zh:'簡', cn:'EN', en:'JP', ja:'KR', ko:'繁'};        // 按鈕顯示下一個語言
+const LANG_TITLE={zh:'切換語言：繁體 → 简体', cn:'切换语言：简体 → English', en:'Switch language: English → 日本語', ja:'言語切替：日本語 → 한국어', ko:'언어 전환: 한국어 → 繁體'};
 function syncFooterLinks(){
   document.querySelectorAll('.sf-link').forEach(a=>{ a.href='./'+a.dataset.page+'.html?lang='+_lang; });
 }
 function applyLang(){ const b=document.getElementById('lang-btn');
-  if(b){ b.textContent=LANG_BTN[_lang]||'EN'; b.title=LANG_TITLE[_lang]||''; }
-  document.documentElement.lang={ja:'ja',ko:'ko',en:'en'}[_lang]||'zh-Hant';
+  if(b){ const t=LANG_BTN[_lang]||'EN'; b.textContent=t; b.title=LANG_TITLE[_lang]||'';
+         /* 漢字（繁／簡）在同一字級下字面比 EN/JP/KR 這種拉丁大寫小，視覺上會顯得縮水 → 單獨放大補回來 */
+         b.classList.toggle('lb-cjk',/[\u4e00-\u9fff]/.test(t)); }
+  document.documentElement.lang={ja:'ja',ko:'ko',en:'en',cn:'zh-Hans'}[_lang]||'zh-Hant';
   syncFooterLinks();
   i18nApply(); }
 function setLangTo(l){
@@ -2742,6 +2850,7 @@ function sendFeedback(){
 }
 /* 首次進入的語言選單：每個選項用該語言自己的文字寫，不管使用者現在看到什麼語言都認得出來 */
 const LANG_PICK=[{k:'zh',n:'繁體中文',s:'Traditional Chinese'},
+                 {k:'cn',n:'简体中文',s:'Simplified Chinese'},
                  {k:'en',n:'English',s:'English'},
                  {k:'ja',n:'日本語',s:'Japanese'},
                  {k:'ko',n:'한국어',s:'Korean'}];
@@ -2749,7 +2858,7 @@ function showLangPick(){
   if(document.getElementById('langpick-modal'))return;
   const m=document.createElement('div'); m.id='langpick-modal'; m.className='secpick-modal';
   m.innerHTML='<div class="secpick-box langpick-box">'
-    +'<h3 class="langpick-h">Choose your language<br>選擇語言 ／ 言語を選択 ／ 언어 선택</h3>'
+    +'<h3 class="langpick-h">Choose your language<br>選擇語言 ／ 选择语言 ／ 言語を選択 ／ 언어 선택</h3>'
     +'<p class="langpick-note">You can change it any time with the language button in the toolbar.<br>'
     +'之後可以用工具列的語言按鈕隨時更換。</p>'
     +'<div class="langpick-list">'
@@ -4812,7 +4921,7 @@ function updateClearBtns(){ document.querySelectorAll('.clear-btn').forEach(b=>{
 /* 清掉：和弦、KB 上下行音符與時值；保留：小節數、分割(subdiv/kbUpSub/kbLoSub)、拍號、重複、接續、每排、段名、顏色、備註 */
 const SECT_DATA_KEYS=['chords','kbUp','kbLo','kbUpD','kbLoD'];
 var _secClearBk=window._secClearBk||{};      // var：確保任何時機取值都不會踩到暫時性死區
-const SECT_KB_KEYS=['kbUp','kbLo','kbUpD','kbLoD','kbUpArp','kbLoArp'];
+const SECT_KB_KEYS=['kbUp','kbLo','kbUpD','kbLoD','kbUpArp','kbLoArp','kbUpTie','kbLoTie'];
 /* 在 KB 頁按清除＝只清 KB 數字（和弦不動）；在和弦譜／混合頁＝清和弦與 KB（原本的行為） */
 function sectClearKeys(){ return (currentView==='staff')?SECT_KB_KEYS:SECT_DATA_KEYS; }
 function clearSect(id){
@@ -4918,7 +5027,7 @@ function barPickCls(s,i,bars){
   if(_barInsert&&_barInsert.sid===s.id){ if(_barInsert.index===i)c+=' ins-before'; if(_barInsert.index===bars&&i===bars-1)c+=' ins-after'; }
   return c;
 }
-const _BARKBK=['kbUp','kbLo','kbUpD','kbLoD','kbUpSub','kbLoSub','kbUpArp','kbLoArp'];
+const _BARKBK=['kbUp','kbLo','kbUpD','kbLoD','kbUpSub','kbLoSub','kbUpArp','kbLoArp','kbUpTie','kbLoTie'];
 function copyBars(){
   if(!_barSel)return; const s=sects.find(x=>x.id===_barSel.sid); if(!s)return;
   migrateKBSection(s);                     // 確保 KB 為 v2 格式再複製
@@ -5626,7 +5735,7 @@ function updateChordUndoBtns(){
 }
 /* 五線譜 上一步/下一步：快照整份 staff（不影響其他頁資料） */
 let _staffUndo=[], _staffRedo=[];
-const KB_KEYS=['kbUp','kbLo','kbUpD','kbLoD','kbUpSub','kbLoSub','kbUpArp','kbLoArp'];
+const KB_KEYS=['kbUp','kbLo','kbUpD','kbLoD','kbUpSub','kbLoSub','kbUpArp','kbLoArp','kbUpTie','kbLoTie'];
 function staffSnapshot(){ return JSON.stringify(sects.map(s=>{const o={}; KB_KEYS.forEach(k=>o[k]=s[k]!=null?s[k]:null); return o;})); }
 function staffPushHistory(){ _staffUndo.push(staffSnapshot()); if(_staffUndo.length>120)_staffUndo.shift(); _staffRedo.length=0; }
 function staffRestore(snap){ const arr=JSON.parse(snap); sects.forEach((s,i)=>{ const o=arr[i]||{}; KB_KEYS.forEach(k=>{ if(o[k]==null) delete s[k]; else s[k]=o[k]; }); }); }
@@ -5642,6 +5751,18 @@ function kbGetD(s,row,bar,c){ const k=kbKey(row)+'D'; const a=s[k]; const rr=a&&
 function kbArpKey(row){ return kbKey(row)+'Arp'; }
 function kbGetArp(s,row,bar,c){ const a=s[kbArpKey(row)]; const rr=a&&a[bar]; return (rr&&rr[c])?1:0; }
 function kbSetArp(s,row,bar,c,v){ const k=kbArpKey(row); if(!Array.isArray(s[k]))s[k]=[]; if(!Array.isArray(s[k][bar]))s[k][bar]=[]; s[k][bar][c]=v?1:0; s._kbv=2; }
+/* 連結線：存在起點格，值＝終點的 "小節,細格點"（同一列、可跨小節） */
+function kbTieKey(row){ return kbKey(row)+'Tie'; }
+function kbGetTie(s,row,bar,c){ const a=s[kbTieKey(row)]; const rr=a&&a[bar]; const v=rr&&rr[c]; return v?String(v):''; }
+function kbSetTie(s,row,bar,c,v){ const k=kbTieKey(row); if(!Array.isArray(s[k]))s[k]=[]; if(!Array.isArray(s[k][bar]))s[k][bar]=[]; s[k][bar][c]=v||''; s._kbv=2; }
+/* 這一格是不是某條連結線的終點（畫線時要標記，移除時也要找得到） */
+function kbTieEndOf(s,row,bar,c){
+  const a=s[kbTieKey(row)]; if(!Array.isArray(a))return null;
+  const want=bar+','+c;
+  for(let b=0;b<a.length;b++){ const rr=a[b]; if(!Array.isArray(rr))continue;
+    for(let i=0;i<rr.length;i++){ if(rr[i]===want)return {bar:b,c:i}; } }
+  return null;
+}
 function kbSetD(s,row,bar,c,v){ const k=kbKey(row)+'D'; if(!Array.isArray(s[k]))s[k]=[]; if(!Array.isArray(s[k][bar]))s[k][bar]=[]; s[k][bar][c]=(v===0||v===1||v===2)?v:null; s._kbv=2; }
 function kbAutoDur(fac){ return fac===4?2:fac===2?1:0; }   // 分割 4/8/16 → 0/1/2 條底線
 /* KB 專用：右手/左手「每一拍」各自獨立的分割。
@@ -5837,10 +5958,67 @@ function toggleKbOrder(){
   try{localStorage.setItem('arranger_kborder',_kbOrder);}catch(e){}
   syncKbOrderBtn(); renderStaff();
 }
+/* 連結線：第一次點＝選起點（反黃），第二次點＝連到終點；點已經有線的格子＝移除 */
+var _tieSel=window._tieSel||null;   /* var：kbCellHtml 可能比宣告先執行 */
+function kbTieClick(cell){
+  const sid=+cell.dataset.sid, row=cell.dataset.row, bar=+cell.dataset.bar, c=+cell.dataset.c;
+  const s=sects.find(x=>x.id===sid); if(!s)return;
+  if(!kbGet(s,row,bar,c)){ _tieSel=null; renderStaff(); return; }        // 空格子不接線
+  /* 已經是某條線的起點或終點 → 點一下就移除那條線 */
+  if(!_tieSel){
+    if(kbGetTie(s,row,bar,c)){ staffPushHistory(); kbSetTie(s,row,bar,c,''); autoSave(); renderStaff(); return; }
+    const st=kbTieEndOf(s,row,bar,c);
+    if(st){ staffPushHistory(); kbSetTie(s,row,st.bar,st.c,''); autoSave(); renderStaff(); return; }
+    _tieSel={sid,row,bar,c}; renderStaff(); return;                      // 選起點
+  }
+  if(_tieSel.sid===sid&&_tieSel.row===row&&_tieSel.bar===bar&&_tieSel.c===c){ _tieSel=null; renderStaff(); return; }  // 再點自己＝取消
+  if(_tieSel.sid!==sid||_tieSel.row!==row){                              // 不同段或不同手 → 改選這一格當起點
+    _tieSel={sid,row,bar,c}; renderStaff(); return;
+  }
+  const a=_tieSel, b={bar,c};
+  const from=(a.bar<b.bar||(a.bar===b.bar&&a.c<b.c))?a:b, to=(from===a)?b:a;
+  staffPushHistory();
+  kbSetTie(s,row,from.bar,from.c,to.bar+','+to.c);
+  _tieSel=null; autoSave(); renderStaff();
+}
+/* 連結線畫在格子上方：量測起訖格的實際位置，用一層 SVG 疊在整段上（跨小節、換排都畫得出來） */
+function drawKbTies(){
+  document.querySelectorAll('#staff-content .kbtie-layer').forEach(el=>el.remove());
+  sects.forEach(s=>{
+    ['up','lo'].forEach(row=>{
+      const arr=s[kbTieKey(row)]; if(!Array.isArray(arr))return;
+      arr.forEach((rr,bar)=>{ if(!Array.isArray(rr))return;
+        rr.forEach((v,c)=>{
+          if(!v)return;
+          const m=String(v).split(','); const tb=+m[0], tc=+m[1];
+          const q=(b,cc)=>document.querySelector('#staff-content .cbar2[data-sid="'+s.id+'"][data-bar="'+b+'"] .kbrow[data-row="'+row+'"] .kbcol[data-c="'+cc+'"]');
+          const e1=q(bar,c), e2=q(tb,tc); if(!e1||!e2)return;
+          const card=e1.closest('.ccard')||e1.closest('.cbar2').parentElement; if(!card)return;
+          const cr=card.getBoundingClientRect(), r1=e1.getBoundingClientRect(), r2=e2.getBoundingClientRect();
+          if(!r1.width||!r2.width)return;
+          const sameRow=Math.abs(r1.top-r2.top)<4;
+          const segs=sameRow?[[r1,r2]]:[[r1,r1],[r2,r2]];               // 換排時兩端各畫半條
+          let lay=card.querySelector(':scope > .kbtie-layer');
+          if(!lay){ lay=document.createElement('div'); lay.className='kbtie-layer'; card.appendChild(lay); }
+          segs.forEach(([p,qq])=>{
+            const x1=p.left-cr.left+p.width*0.30, x2=qq.left-cr.left+qq.width*0.70;
+            const y=p.top-cr.top+p.height*0.10;                          // 貼在音符上緣
+            const w=Math.max(6,x2-x1), h=Math.max(5,Math.min(11,w*0.22));
+            const d=document.createElement('div');
+            d.className='kbtie';
+            d.style.cssText='left:'+x1+'px;top:'+(y-h-1)+'px;width:'+w+'px;height:'+h+'px;';
+            d.innerHTML='<svg viewBox="0 0 100 '+h+'" preserveAspectRatio="none"><path d="M0 '+h+' Q50 0 100 '+h+'" fill="none" stroke="currentColor" stroke-width="'+(1.6*h/8)+'" vector-effect="non-scaling-stroke"/></svg>';
+            lay.appendChild(d);
+          });
+        });
+      });
+    });
+  });
+}
 /* 符號模式：選好符號後點格子就加上去（目前有琶音） */
 let _kbSym='';
 function setKbSym(v){
-  _kbSym=String(v||'');
+  _kbSym=String(v||''); _tieSel=null;
   if(_kbSym&&_kbChordOn)kbChordMode();                   // 兩種模式不同時開
   const sel=document.getElementById('kb-sym'); if(sel&&sel.value!==_kbSym)sel.value=_kbSym;
   document.body.classList.toggle('kbsym-on',!!_kbSym);
@@ -5858,7 +6036,8 @@ function kbCellHtml(s,row,i,fine,beat,k,sub){
   const nums=tok.trim()?tok.trim().split(/\s+/).slice(0,3):[];
   const stack=nums.length?kbOrderNums(nums).map(t=>`<span class="kbn">${renderBeatToken(t,s)}</span>`).join(''):'<span class="kbn kbempty">·</span>';
   const arp=(nums.length&&kbGetArp(s,row,i,fine))?`<span class="kbarp" title="琶音">${kbArpSvg(nums.length)}</span>`:'';
-  return `<div class="kbcol" data-sid="${s.id}" data-row="${row}" data-bar="${i}" data-c="${fine}" onclick="kbEdit(this)">`
+  const tsel=(_tieSel&&_tieSel.sid===s.id&&_tieSel.row===row&&_tieSel.bar===i&&_tieSel.c===fine)?' tiesel':'';
+  return `<div class="kbcol${tsel}" data-sid="${s.id}" data-row="${row}" data-bar="${i}" data-c="${fine}" onclick="kbEdit(this)">`
     +`<span class="cbnum">${kbSubLabel(beat,k,sub)}</span>`
     +`<span class="kbstkwrap">${arp}<span class="kbstk">${stack}</span></span>`
     +`<span class="kbunder d${eff}"></span>`
@@ -5896,6 +6075,9 @@ function kbEdit(cell){
   if(_barPickMode)return;   /* 複製模式：小節選取/插入點由 pointer 事件處理 */
   if(_locked)return;
   _staffSel={sid:+cell.dataset.sid,row:cell.dataset.row,bar:+cell.dataset.bar,c:+cell.dataset.c};
+  if(_kbSym==='tie'){        /* 連結線：先點起點（反黃），再點終點就連起來 */
+    kbTieClick(cell); return;
+  }
   if(_kbSym==='arp'){        /* 符號模式：點一下加琶音，再點一下拿掉 */
     const s=sects.find(x=>x.id===+cell.dataset.sid); if(!s)return;
     const row=cell.dataset.row, bar=+cell.dataset.bar, c=+cell.dataset.c;
@@ -5950,6 +6132,7 @@ function renderStaff(){
   sects.forEach(migrateKBSection);
   root.innerHTML=sects.map(kbCardHtml).join('');
   renderLegend(); updateStaffUndoBtns();
+  try{ if(typeof requestAnimationFrame==='function')requestAnimationFrame(drawKbTies); else drawKbTies(); }catch(e){}
 }
 /* 段落多的時候先問要清哪一段（只有一段就直接用那段） */
 async function askSectionForBars(){
@@ -6156,6 +6339,10 @@ applyLang();
 syncTopbarH();
 if(_langAsk){ try{ showLangPick(); }catch(e){} }   /* 國外使用者：先問語言再開始 */
 window.addEventListener('load',syncTopbarH);
+window.addEventListener('resize',()=>{ try{ if(currentView==='staff')drawKbTies(); }catch(e){} });
+/* 列印前後版面會變，連結線是量測畫的 → 兩個時機都重畫一次 */
+window.addEventListener('beforeprint',()=>{ try{ drawKbTies(); }catch(e){} });
+window.addEventListener('afterprint',()=>{ try{ drawKbTies(); }catch(e){} });
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <div class="cl-modal" id="save-modal" onclick="if(event.target===this)closeSaveMenu()">
