@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Worship Arranger v3.5</title>
+<title>Arranger 理譜人 v3.5</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyBpZD0iX+WcluWxpF8xIiBkYXRhLW5hbWU9IuWcluWxpCAxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDI0IDEwMjQiPgogIDxkZWZzPgogICAgPHN0eWxlPgogICAgICAuY2xzLTEgewogICAgICAgIGZpbGw6ICNmY2M5MTg7CiAgICAgIH0KICAgIDwvc3R5bGU+CiAgPC9kZWZzPgogIDxnIGlkPSJf55Sf5oiQ5byP54mp5Lu2IiBkYXRhLW5hbWU9IueUn+aIkOW8j+eJqeS7tiI+CiAgICA8cGF0aCBjbGFzcz0iY2xzLTEiIGQ9Ik00ODQuMDgsMzUxLjY2bC0yLjcyLDkxLjg1LTQuMjcsMTEzLjYtNC4wNywxMDIuNDctMy40LDEwMS4wMmMtLjUsMTQuODUtNC4zMywyNy45NC05Ljg5LDQxLjQxLTkuODIsMjMuNzktMjQuMjIsNDMuNDktNDIuNjMsNjEuNDQtNTUuMDYsNTMuNjktMTMyLjQ1LDc4Ljk1LTIwOC45NCw3Mi45Ny0zOS45NS0zLjEyLTgzLjE5LTIxLjAxLTEwMi41Ni01Ni44LTYuODctMTIuNy0xMS40Ny0yNy4zNC0xMS4yMS00Mi4xLDEuNTgtODYuNjEsOTcuMTEtMTU1LjM2LDE3NS4xOS0xNzYuODksNDIuNjMtMTEuODEsODYuNDYtMTQuMzQsMTMxLjMtM2wtNi45NC0yMDMuNjItMi42OS04MS4xOS05My4yNSwyNC4xLTg5LjMyLDIzLjk2LTYuMjMtMTMxLjA2LDkyLjUxLTIyLjYxLDkyLjY4LTIxLjU2LTUuMzctMTMxLjk4LDExNC4wOS0yNi45Ni03LjMyLDEzNy4zMyw4My42Ny0xNy45Miw4NS4xNi0xNy45MSwxNTguMDctMjYuNjksNjQuNDQtOC4xOS0zLjM2LDYxLjk3LTcuODcsMTYyLjY2LTEwLjc4LDI1MC4yMy00LjA5LDU4LjcyYy0xLjQ1LDIwLjc0LTExLjA5LDM5LjA5LTIyLjk0LDU2LjAyLTE4LjAyLDI1Ljc2LTQyLjAxLDQ1LjI3LTY5LjQ1LDYwLjM4LTI5LjQ0LDE2LjIxLTYwLjQ3LDI1LjQ0LTkzLjkxLDI4LjQ1LTIxLjg5LDEuOTctNDIuODgsMi4xNS02NC4zNS0zLjAyLTQzLjk4LTEwLjYtNzcuNTMtNDQuMzMtNzQuMi05MS4yMywzLjk1LTU1LjYsNTEuNjMtOTkuMTgsOTguNzYtMTI0LjEyLDQ0LjIyLTIzLjQsOTkuNDQtMzMuNjgsMTQ4LjE1LTIyLjYxbC4xLTQ4LjkzLS4wNi0yMTEuNzguMjUtMzguMTYtMTAzLjcsMTkuNzctNzEuOTMsMTQuNzUtMTE2Ljg2LDI1LjI1WiIvPgogIDwvZz4KPC9zdmc+">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Space+Mono:wght@400;700&display=swap');
@@ -696,6 +697,11 @@ body.svc-mode .svc-only{display:inline-flex!important;}
 .cl-role{font-size:0.74em;border:1px solid var(--border2);border-radius:99px;padding:0.08em 0.6em;color:var(--text2);}
 .cl-role.admin{border-color:var(--accent);color:var(--accent);}
 .cl-hint{font-size:0.82em;color:var(--text3);margin-top:0.3em;}
+/* 訂閱（Paddle）狀態列 */
+.sub-box{display:flex;align-items:center;gap:0.6em;flex-wrap:wrap;margin:0.6em 0 0.2em;padding-top:0.6em;border-top:1px solid var(--border2);}
+.sub-badge{font-size:0.74em;font-weight:700;letter-spacing:0.06em;border:1px solid var(--accent);color:var(--accent);border-radius:99px;padding:0.08em 0.7em;}
+.sub-note{font-size:0.82em;color:var(--text3);}
+.sub-note.bad{color:#e05252;}
 .cl-msg{font-size:0.82em;color:var(--accent);min-height:1.2em;margin:0.4em 0;}
 .cl-libhd{font-size:0.7em;font-weight:700;letter-spacing:1px;color:var(--text3);text-transform:uppercase;margin:0.6em 0 0.3em;}
 .cl-cats{display:flex;gap:0.35em;flex-wrap:wrap;margin-bottom:0.5em;}
@@ -1394,7 +1400,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
 <!-- 更新日誌（透明視窗，按外面消失） -->
 <div id="cl-modal" class="cl-modal" onclick="if(event.target===this)hideChangelog()">
   <div class="cl-box">
-    <div class="cl-head"><span>📝 更新日誌 · Worship Arranger</span><button class="btn" onclick="hideChangelog()">✕</button></div>
+    <div class="cl-head"><span>📝 更新日誌 · Arranger 理譜人</span><button class="btn" onclick="hideChangelog()">✕</button></div>
     <div class="cl-body">
       <p class="cl-ver">開發時間軸：2026-06-17 ～ 2026-08-30（依使用回饋持續優化）</p>
 
@@ -1420,6 +1426,12 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
       <li><b>↥ 順序上</b>：照輸入順序由上往下 —— 輸入 1 3 5 顯示成 1 / 3 / 5</li>
       <li>只影響顯示，格子裡存的內容不變；選擇會記住，下次開啟沿用</li>
       <li>配合這個設定，「🎹 放和弦」與「⇩ 載入」產生的和弦改成由低音往高音存，預設下看到的仍是高音在上（6m → 3 / 1 / 6）；在此之前載入的譜若上下顛倒，重新按一次「⇩ 載入」選「覆蓋既有」即可</li></ul>
+
+      <h4>專案更名為 ArrangerLIPU <span class="cl-date">2026-09-10</span></h4>
+      <ul><li>專案資料夾與相關檔案統一改名為 ArrangerLIPU；程式主檔為 ArrangerLIPU.html</li>
+      <li>網頁標題與更新日誌抬頭改成「Arranger 理譜人」，匯出 JSON 的產生者標示改為 Arranger LIPU</li>
+      <li>網址、部署入口（index.html）與服務條款等三頁檔名維持不變，既有連結與書籤都不受影響</li>
+      <li>JSON 的格式識別字串沿用舊值，以前存的檔案都還能正常讀回來</li></ul>
 
       <h4>KB 符號新增「連結線」 <span class="cl-date">2026-09-09</span></h4>
       <ul><li>「符號」下拉多了「連結線 ⌒」：選好之後<b>先點第一個和弦</b>，該格會反黃，<b>再點第二個和弦</b>就連起來</li>
@@ -1452,7 +1464,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
       <li>「複製全部」複製到的內容與畫面完全一致；CSV 匯出的和弦欄位維持原本的單行格式</li></ul>
 
       <h4>新增「意見回饋」按鈕 <span class="cl-date">2026-09-07</span></h4>
-      <ul><li>標題「理譜人」右邊、「▲ 工具列」鈕的右邊新增「💬」圖示鈕，點下去直接開啟郵件軟體寫信給我們（arrangeppl@gmail.com）</li>
+      <ul><li>標題「理譜人」右邊、「▲ 工具列」鈕的右邊新增「💬」圖示鈕，點下去直接開啟郵件軟體寫信給我們（support@arrangerlipu.com）</li>
       <li>只放圖示不佔空間，滑鼠移上去（或長按）會顯示「意見回饋」說明，說明文字跟著介面語言</li>
       <li>手機版標題區改成直排時，💬 仍與「▲ 工具列」並排在同一列，不會掉到下一行</li>
       <li>主旨與說明會跟著介面語言（中／英／日／韓），信件末端自動附上裝置與瀏覽器資訊，方便我們重現問題</li>
@@ -2834,7 +2846,7 @@ function setLangTo(l){
 }
 function toggleLang(){ setLangTo(LANGS[(LANGS.indexOf(_lang)+1)%LANGS.length]); }   /* 中文 → English → 日本語 → 한국어 */
 /* 意見回饋：開啟郵件軟體寫信給我們，主旨與說明跟著介面語言 */
-const FEEDBACK_MAIL='arrangeppl@gmail.com';
+const FEEDBACK_MAIL='support@arrangerlipu.com';
 function sendFeedback(){
   const sub=Lf('Arranger 理譜人 意見回饋','Arranger feedback','Arranger フィードバック','Arranger 의견 보내기');
   const hint=Lf('（請在這裡寫下你的建議，或說明遇到的問題。若是畫面異常，方便的話附上截圖。）',
@@ -3005,6 +3017,12 @@ function loadTemplate(file){
 const SUPA_URL = 'https://zkkzgnulojwkhfmbgjvz.supabase.co';   // 專案根網址（不含 /rest/v1/）
 const SUPA_KEY = 'sb_publishable_qEtADJHrjOhEFB26Mvfcow_Z47h7TSK';   // Publishable key（可公開；權限靠 RLS 把關）
 let _supa=null,_supaUser=null,_supaAdmin=false,_cloudId=null;
+/* ════ 訂閱付費（Paddle）════
+   設定步驟見 PADDLE_SETUP.md。TOKEN / PRICE 留空 ＝ 訂閱功能不啟用（其餘功能照舊）。 */
+const PADDLE_ENV   = 'sandbox';   // 'sandbox' 測試 / 'production' 正式
+const PADDLE_TOKEN = '';          // ← Paddle → Developer tools → Authentication → client-side token
+const PADDLE_PRICE = '';          // ← 月訂閱的 Price ID（pri_ 開頭）
+let _paddleOn=false,_sub=null,_isPro=false;
 function cv(id){ const e=document.getElementById(id); return e?e.value:''; }
 function cloudMsg(t){ const e=document.getElementById('cl-msg'); if(e)e.textContent=t||''; }
 async function cloudInit(){
@@ -3014,9 +3032,11 @@ async function cloudInit(){
     const cb=document.getElementById('cloud-btn'); if(cb)cb.style.display='';
     const { data:{ session } } = await _supa.auth.getSession();
     if(session){ _supaUser=session.user; await cloudFetchRole(); }
+    await fetchSubscription();
     updateCloudBtn();
     _supa.auth.onAuthStateChange(async (_e,ss)=>{ _supaUser = ss?ss.user:null; _supaAdmin=false;
       if(_supaUser)await cloudFetchRole();
+      await fetchSubscription();
       const m=document.getElementById('cloud-modal');
       if(m&&m.classList.contains('show'))cloudRenderModal();
       updateCloudBtn();
@@ -3036,6 +3056,69 @@ async function cloudFetchRole(){
   try{ const {data}=await _supa.from('profiles').select('role').eq('id',_supaUser.id).single(); _supaAdmin=!!(data&&data.role==='admin'); }catch(e){}
   renderUsageSelect();
 }
+/* ════════ 訂閱付費（Paddle）════════
+   前端只負責「開結帳視窗」與「顯示狀態」；訂閱狀態一律由 Paddle webhook 寫進資料庫。
+   _isPro 只是 UI 層（console 改得掉），真正的限制要在 Supabase RLS 用 is_subscribed() 再擋一次。 */
+function paddleInit(){
+  if(!PADDLE_TOKEN || !PADDLE_PRICE || !window.Paddle) return;   // 未設定 → 不啟用
+  try{
+    if(PADDLE_ENV!=='production') Paddle.Environment.set('sandbox');
+    Paddle.Initialize({ token:PADDLE_TOKEN, eventCallback:ev=>{
+      if(ev && (ev.name==='checkout.completed' || ev.name==='checkout.closed')){
+        /* webhook 寫進資料庫要一點時間，延遲兩次重查 */
+        setTimeout(fetchSubscription,2500); setTimeout(fetchSubscription,8000);
+      }
+    }});
+    _paddleOn=true;
+  }catch(e){ console.warn('paddleInit',e); }
+}
+async function fetchSubscription(){
+  _sub=null; _isPro=false;
+  if(_supa && _supaUser){
+    try{
+      const {data}=await _supa.from('subscriptions')
+        .select('status,plan,current_period_end,cancel_at_period_end').maybeSingle();
+      _sub=data||null;
+      _isPro=!!(_sub && ['active','trialing'].includes(_sub.status)
+        && (!_sub.current_period_end || new Date(_sub.current_period_end)>new Date()));
+    }catch(e){ console.warn('fetchSubscription',e); }
+  }
+  document.body.classList.toggle('is-pro',_isPro);
+  const m=document.getElementById('cloud-modal');
+  if(m&&m.classList.contains('show'))cloudRenderModal();
+}
+function subDate(s){ try{ return new Date(s).toLocaleDateString(); }catch(e){ return ''; } }
+function subUiHtml(){
+  if(!_paddleOn) return '';                       // 未設定金流 → 整區不出現
+  const st=_sub?_sub.status:'';
+  if(_isPro){
+    const d=(_sub&&_sub.current_period_end)?subDate(_sub.current_period_end):'';
+    const note=(_sub&&_sub.cancel_at_period_end)
+      ? (d?L('已排定取消，可用到')+' '+d:L('已排定取消'))
+      : (d?L('下次續訂')+' '+d:'');
+    return '<div class="sub-box"><span class="sub-badge">PRO</span><span class="sub-note">'+esc(note)+'</span></div>';
+  }
+  if(st==='past_due'){
+    return '<div class="sub-box"><span class="sub-note bad">'+esc(L('扣款失敗，訂閱暫停中'))+'</span>'
+      +'<button class="btn btna" onclick="openCheckout()">'+esc(L('重新訂閱'))+'</button></div>';
+  }
+  return '<div class="sub-box"><span class="sub-note">'+esc(L('升級 PRO 解鎖付費功能'))+'</span>'
+    +'<button class="btn btna" onclick="openCheckout()">'+esc(L('升級 PRO'))+'</button></div>';
+}
+function openCheckout(){
+  if(!_paddleOn){ alert(L('訂閱功能尚未設定（見 PADDLE_SETUP.md）。')); return; }
+  if(!_supaUser){ alert(L('請先登入再訂閱。')); return; }
+  const dark=!(document.body.classList.contains('theme-light')||document.body.classList.contains('theme-pink'));
+  const loc=(_lang==='cn')?'zh-Hans':(_lang==='zh')?'zh-Hant':(_lang==='ja')?'ja':(_lang==='ko')?'ko':'en';
+  try{
+    Paddle.Checkout.open({
+      items:[{ priceId:PADDLE_PRICE, quantity:1 }],
+      customer:_supaUser.email?{ email:_supaUser.email }:undefined,
+      customData:{ supabase_user_id:_supaUser.id },
+      settings:{ theme:dark?'dark':'light', locale:loc }
+    });
+  }catch(e){ alert(L('結帳視窗開啟失敗：')+e.message); }
+}
 let _cloudMode='choose';   // choose / browse / adminlogin（未登入時）
 function openCloud(){ if(!_supa){ alert('雲端尚未設定（請見 SUPABASE_SETUP.md 填入連線資訊）。'); return; } if(!_supaUser)_cloudMode='choose'; document.getElementById('cloud-modal').classList.add('show'); cloudRenderModal(); }
 function closeCloud(){ const m=document.getElementById('cloud-modal'); if(m)m.classList.remove('show'); }
@@ -3049,7 +3132,8 @@ function cloudRenderModal(){
     body.innerHTML=`<div class="cl-userline">${_av?`<img class="cl-avatar" src="${esc(_av)}" alt="">`:''}<span class="cl-email">${esc(_nm||_supaUser.email||'')}</span><span class="cl-role ${_supaAdmin?'admin':''}">${_supaAdmin?'管理員':'使用者'}</span><button class="btn" onclick="cloudSignOut()">登出</button></div>`
       +(_supaAdmin
         ? `<div class="cl-actions"><button class="btn btna" onclick="cloudSave()">☁ 儲存目前到雲端</button><button class="btn" onclick="cloudNewSave()">另存新檔</button></div>`
-        : `<div class="cl-hint">此帳號為一般使用者：可瀏覽/載入歌譜；修改只存本機。</div>`);
+        : `<div class="cl-hint">此帳號為一般使用者：可瀏覽/載入歌譜；修改只存本機。</div>`)
+      +subUiHtml();
     lib.style.display=''; cloudList();
   } else if(_cloudMode==='adminlogin'){   // 管理者登入表單
     body.innerHTML=`<div class="cl-libhd">管理者登入</div><button class="btn cl-google" onclick="cloudSignInGoogle()"><svg class="g-ico" viewBox="0 0 48 48" aria-hidden="true"><path fill="#4285F4" d="M45.1 24.5c0-1.6-.1-2.7-.4-3.9H24v7.1h12.1c-.2 1.8-1.6 4.6-4.5 6.4l-.1.3 6.5 5 .5.1c4.1-3.8 6.6-9.4 6.6-15z"/><path fill="#34A853" d="M24 46c5.9 0 10.9-1.9 14.5-5.3l-6.9-5.3c-1.8 1.3-4.3 2.2-7.6 2.2-5.8 0-10.7-3.8-12.5-9l-.3.1-6.7 5.2-.1.3C8 41.1 15.4 46 24 46z"/><path fill="#FBBC05" d="M11.5 28.6c-.5-1.4-.7-2.9-.7-4.6s.3-3.2.7-4.6v-.3l-6.8-5.3-.2.1A22 22 0 0 0 2 24c0 3.5.9 6.9 2.5 9.9l7-5.3z"/><path fill="#EA4335" d="M24 9.5c4.1 0 6.9 1.8 8.5 3.3l6.2-6C34.9 3.4 29.9 1 24 1 15.4 1 8 6 4.5 14.1l7 5.3C13.3 13.3 18.2 9.5 24 9.5z"/></svg>Google 帳號登入</button><div class="cl-or">或用 email 登入</div><div class="cl-form"><input id="cl-email" type="email" placeholder="email" autocomplete="username"><input id="cl-pw" type="password" placeholder="密碼（至少6碼）" autocomplete="current-password"><div class="cl-actions"><button class="btn btna" onclick="cloudSignIn()">登入</button><button class="btn" onclick="cloudSignUp()">註冊</button><button class="btn" onclick="cloudMode('choose')">返回</button></div></div>`;
@@ -3378,7 +3462,7 @@ function buildExportJSON(){
 
   return {
     format:'worship-arranger-chart', version:'3.5', exportedAt:new Date().toISOString(),
-    generator:{name:'Worship Arranger', url:'https://band-worship-set-up.vercel.app/'},
+    generator:{name:'Arranger LIPU', url:'https://band-worship-set-up.vercel.app/'},
     spec:{
       chordSystem:'Nashville 級數（1–7，可加 b/# 前綴）。degree 為原始儲存值；chordMaleKey / chordFemaleKey 為已依該 Key 換算好的實際和弦名，可直接使用。',
       slotTypes:{chord:'和弦', sustain:'延續（原始符號 .）', rest:'休止（原始符號 x）', none:'空拍／不換和弦（原始符號 0）'},
@@ -6328,6 +6412,7 @@ renderAll();
 bindSwipe();
 initTemplates();
 cloudInit();
+paddleInit();
 initMode();
 syncDispSelects();
 initTopbar();
@@ -6386,5 +6471,5 @@ window.addEventListener('afterprint',()=>{ try{ drawKbTies(); }catch(e){} });
   <a class="sf-link" data-page="terms" href="./terms.html">服務條款</a>
   <a class="sf-link" data-page="refund" href="./refund.html">退款政策</a>
   <a class="sf-link" data-page="privacy" href="./privacy.html">隱私權政策</a>
-  <a href="mailto:arrangeppl@gmail.com">聯絡我們</a>
+  <a href="mailto:support@arrangerlipu.com">聯絡我們</a>
 </footer>
