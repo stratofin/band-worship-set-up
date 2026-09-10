@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>定價 — Arranger 理譜人</title>
+<meta name="description" content="Arranger 理譜人：敬拜樂團的編曲架構視覺化工具。月訂閱 6 美元；加購敬拜雲端歌庫每月共 20 美元。">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0d0d0d;--bg2:#151515;--border:rgba(255,255,255,.08);--text:#e6e4dd;--text2:#928f88;--text3:#4e4d4a;--accent:#d4a843}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-serif;line-height:1.85;font-size:15px;-webkit-text-size-adjust:100%}
+.wrap{max-width:760px;margin:0 auto;padding:0 24px 96px}
+header{padding:56px 0 28px;border-bottom:1px solid var(--border)}
+.back{display:inline-block;color:var(--text2);text-decoration:none;font-size:13px;margin-bottom:26px}
+.back:hover{color:var(--accent)}
+h1{font-size:28px;font-weight:700;letter-spacing:-.01em;margin-bottom:10px;line-height:1.3}
+.lead{color:var(--text2);font-size:15px;max-width:56ch}
+h2{font-size:17px;font-weight:700;color:var(--accent);margin:42px 0 12px}
+h3{font-size:15px;font-weight:500;margin:24px 0 8px}
+p{margin-bottom:14px}
+ul{margin:0 0 16px;padding-left:20px}
+li{margin-bottom:8px}
+li::marker{color:var(--text3)}
+a{color:var(--accent)}
+strong{font-weight:700}
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+th{color:var(--text2);font-weight:500;font-size:13px}
+td.c,th.c{text-align:center;white-space:nowrap}
+.note{background:var(--bg2);border-left:2px solid var(--accent);padding:14px 18px;margin:18px 0;color:var(--text2);font-size:14px}
+.note p:last-child{margin-bottom:0}
+.plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(212px,1fr));gap:14px;margin:26px 0 8px}
+.plan{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:22px 20px 24px;display:flex;flex-direction:column}
+.plan.hi{border-color:var(--accent)}
+.pname{font-size:14px;color:var(--text2);margin-bottom:10px}
+.plan.hi .pname{color:var(--accent)}
+.price{font-size:30px;font-weight:700;line-height:1.2;letter-spacing:-.02em}
+.cycle{font-size:13px;color:var(--text3);margin-bottom:16px}
+.plan ul{margin:0;padding-left:18px;font-size:14px;color:var(--text2)}
+.plan li{margin-bottom:7px}
+.tag{display:inline-block;font-size:11px;letter-spacing:.06em;border:1px solid var(--accent);color:var(--accent);border-radius:99px;padding:1px 9px;margin-left:8px;vertical-align:middle}
+footer{margin-top:64px;padding-top:24px;border-top:1px solid var(--border);color:var(--text3);font-size:13px}
+footer a{color:var(--text2);text-decoration:none;margin-right:18px}
+footer a:hover{color:var(--accent)}
+@media(max-width:520px){h1{font-size:24px}.price{font-size:26px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <a class="back" href="./index.html">← 回到 Arranger 理譜人</a>
+  <h1>定價</h1>
+  <p class="lead">Arranger 理譜人是給敬拜樂團用的編曲架構視覺化工具。把一首歌的段落結構、各樂器在每段彈什麼、編排的層次，整理成一頁看得懂的圖，並能列印成 A4 圖示譜發給團員。</p>
+</header>
+
+<h2>方案</h2>
+
+<div class="plans">
+  <div class="plan">
+    <div class="pname">訂閱</div>
+    <div class="price">US$6</div>
+    <div class="cycle">每月</div>
+    <ul>
+      <li>完整編曲編輯功能</li>
+      <li>四種檢視：展開示意圖、方塊流程圖、圖示譜、文字清單</li>
+      <li>列印 A4 圖示譜與 PDF</li>
+      <li>JSON 匯入匯出</li>
+      <li>雲端帳號與多裝置同步</li>
+      <li>我的歌庫雲端備份</li>
+      <li>不含敬拜雲端歌庫</li>
+    </ul>
+  </div>
+  <div class="plan hi">
+    <div class="pname">訂閱 ＋ 敬拜雲端歌庫</div>
+    <div class="price">US$20</div>
+    <div class="cycle">每月（訂閱 US$6 ＋ 歌庫 US$14）</div>
+    <ul>
+      <li>訂閱方案的全部功能</li>
+      <li>敬拜雲端歌庫完整取用</li>
+      <li>歌庫持續增補新的編曲架構</li>
+    </ul>
+  </div>
+</div>
+
+<p class="lead">兩個方案都含 3 天免費試用，試用期內取消不會扣款。</p>
+
+<p class="lead">價格以美元計價。實際結帳金額會依你所在地區換算幣別，並依當地稅法加計稅金。</p>
+
+<h2>方案比較</h2>
+
+<table>
+  <tr>
+    <th>功能</th>
+    <th class="c">訂閱</th>
+    <th class="c">＋ 敬拜雲端歌庫</th>
+  </tr>
+  <tr><td>段落結構編排與分軌配器標示</td><td class="c">✓</td><td class="c">✓</td></tr>
+  <tr><td>四種檢視與 A4 圖示譜列印</td><td class="c">✓</td><td class="c">✓</td></tr>
+  <tr><td>JSON 匯入匯出</td><td class="c">✓</td><td class="c">✓</td></tr>
+  <tr><td>五種介面語言</td><td class="c">✓</td><td class="c">✓</td></tr>
+  <tr><td>雲端帳號與多裝置同步</td><td class="c">✓</td><td class="c">✓</td></tr>
+  <tr><td>我的歌庫雲端備份</td><td class="c">✓</td><td class="c">✓</td></tr>
+  <tr><td>敬拜雲端歌庫</td><td class="c">—</td><td class="c">✓</td></tr>
+</table>
+
+<h2>敬拜雲端歌庫包含什麼</h2>
+<p>歌庫提供的是<strong>編曲架構資料</strong>：一首歌分成哪些段落、每段幾個小節、各樂器在每段的彈法與層次安排。</p>
+<div class="note">
+  <p>歌庫<strong>不包含</strong>詞曲、旋律、歌詞、錄音或任何原始樂譜。使用時請自行確認你所演出的歌曲已取得必要的公開演出或重製授權。</p>
+</div>
+
+<h2>常見問題</h2>
+
+<h3>試用怎麼算？</h3>
+<p>註冊後 3 天內功能完全開放。試用期間隨時取消都不會扣款；沒有取消的話，第 4 天開始按方案計費。</p>
+
+<h3>誰是賣方？</h3>
+<p>本服務的訂單由 Paddle.com Market Ltd 處理，Paddle 為本服務之經銷商暨法定賣方。你的付款、發票、稅務與退款均由 Paddle 處理，我們不會取得或儲存你的信用卡資料。</p>
+
+<h3>可以隨時取消嗎？</h3>
+<p>可以。取消後付費功能會持續開放到當期計費週期結束，之後不再續扣。取消訂閱不會刪除你的帳號或雲端資料。</p>
+
+<h3>有退款嗎？</h3>
+<p>首次訂閱後 14 天內，不需要理由就可以全額退款。詳細條件見退款政策。</p>
+
+<h3>取消之後我的編曲還在嗎？</h3>
+<p>在。你建立的編曲資料著作權歸你所有，隨時可以用匯出 JSON 功能自行下載全部內容。</p>
+
+<h3>教會團隊可以共用一個帳號嗎？</h3>
+<p>訂閱為個人使用。若你們需要多人方案，請來信與我們聯絡。</p>
+
+<h2>聯絡我們</h2>
+<p>訂閱或帳單問題請來信：<a href="mailto:support@arrangerlipu.com">support@arrangerlipu.com</a></p>
+<p>營運者：LAI, CHUN-PI<br>所在地：臺灣</p>
+
+<footer>
+  <a href="./index.html">Arranger 理譜人</a>
+  <a href="./pricing.html">定價</a>
+  <a href="./terms.html">服務條款</a>
+  <a href="./refund.html">退款政策</a>
+  <a href="./privacy.html">隱私權政策</a>
+</footer>
+</div>
+<script src="./policy-i18n.js"></script>
+</body>
+</html>

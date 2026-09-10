@@ -692,6 +692,8 @@ body.svc-mode .svc-only{display:inline-flex!important;}
 .cl-form{display:flex;flex-wrap:wrap;gap:0.5em;align-items:center;}
 .cl-form input{flex:1 1 12em;min-width:10em;background:var(--bg3);border:1px solid var(--border2);border-radius:0.4em;color:var(--text);font-family:inherit;font-size:0.9em;padding:0.45em 0.6em;outline:none;}
 .cl-actions{display:flex;gap:0.5em;flex-wrap:wrap;margin-top:0.2em;}
+.cl-kind{display:flex;gap:0.5em;flex-wrap:wrap;align-items:center;margin:0.7em 0 0.2em;padding-top:0.7em;border-top:1px solid var(--border2);}
+.cl-kind-note{font-size:0.78em;color:var(--text3);}
 .cl-userline{display:flex;align-items:center;gap:0.6em;flex-wrap:wrap;margin-bottom:0.5em;}
 .cl-email{font-weight:600;}
 .cl-role{font-size:0.74em;border:1px solid var(--border2);border-radius:99px;padding:0.08em 0.6em;color:var(--text2);}
@@ -1186,6 +1188,67 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
 </style>
 </head>
 <body>
+<!-- ══ 進站鎖：未登入時蓋住整個 App ══════════════════════════
+     背後的介面轉灰、不可點；解鎖條件是真的登入（Google 或 email）。
+     SUPA_URL／SUPA_KEY 留空時不上鎖，這樣本機直接開檔仍可使用。 -->
+<style>
+#gate{position:fixed;inset:0;z-index:9998;display:none;align-items:center;justify-content:center;padding:20px;
+  background:rgba(13,13,13,.93);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);overflow:auto;}
+body.gated{overflow:hidden;}
+body.gated #gate{display:flex;}
+body.gated>*:not(#gate){filter:grayscale(.9) opacity(.32)!important;pointer-events:none!important;user-select:none!important;}
+.gate-card{width:100%;max-width:360px;background:var(--bg2,#151515);border:1px solid var(--border,rgba(255,255,255,.1));
+  border-radius:14px;padding:30px 26px 24px;text-align:center;box-shadow:0 18px 60px rgba(0,0,0,.5);}
+.gate-title{font-size:20px;font-weight:700;margin:0 0 22px;color:var(--text,#e6e4dd);}
+.gate-sub{font-size:13px;color:var(--text2,#928f88);margin:0 0 22px;line-height:1.7;}
+.gate-btn{width:100%;padding:11px 14px;border-radius:8px;font:inherit;font-size:14px;cursor:pointer;
+  background:transparent;color:var(--text,#e6e4dd);border:1px solid var(--border2,rgba(255,255,255,.16));margin-bottom:9px;
+  display:flex;align-items:center;justify-content:center;gap:8px;}
+.gate-btn:hover{border-color:var(--accent,#d4a843);color:var(--accent,#d4a843);}
+.gate-btn.gate-primary{background:var(--accent,#d4a843);border-color:var(--accent,#d4a843);color:#151515;font-weight:700;}
+.gate-btn.gate-primary:hover{filter:brightness(1.08);color:#151515;}
+.gate-google{animation:gatePulse 2.4s ease-in-out infinite;}
+@keyframes gatePulse{0%,100%{box-shadow:0 0 0 0 rgba(212,168,67,.34);border-color:var(--accent,#d4a843);}
+  50%{box-shadow:0 0 0 7px rgba(212,168,67,0);border-color:rgba(212,168,67,.5);}}
+@media(prefers-reduced-motion:reduce){.gate-google{animation:none;border-color:var(--accent,#d4a843);}}
+.gate-test{border-style:dashed;color:var(--text2,#928f88);}
+.gate-or{font-size:12px;color:var(--text3,#4e4d4a);margin:14px 0 10px;}
+.gate-sep{height:1px;background:var(--border,rgba(255,255,255,.08));margin:14px 0 12px;}
+.gate-guest{font-size:12.5px;color:var(--text2,#928f88);background:none;border:1px dashed var(--border2,rgba(255,255,255,.16));}
+.gate-remember{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--text2,#928f88);
+  margin:2px 0 14px;cursor:pointer;user-select:none;line-height:1;}
+.gate-remember input[type="checkbox"]{width:15px;height:15px;flex:0 0 15px;margin:0;padding:0;border:0;background:none;
+  border-radius:0;accent-color:var(--accent,#d4a843);cursor:pointer;}
+.gate-remember:hover{color:var(--text,#e6e4dd);}
+.gate-kind{font-size:13px;color:var(--text2,#928f88);margin:0 0 14px;line-height:1.7;}
+.gate-back{background:none;border:none;color:var(--text3,#4e4d4a);font:inherit;font-size:12.5px;cursor:pointer;margin-top:4px;padding:6px;}
+.gate-back:hover{color:var(--accent,#d4a843);}
+.gate-card input:not([type="checkbox"]){width:100%;padding:10px 12px;margin-bottom:9px;border-radius:8px;font:inherit;font-size:14px;
+  background:rgba(255,255,255,.04);color:var(--text,#e6e4dd);border:1px solid var(--border,rgba(255,255,255,.1));}
+.gate-card input:not([type="checkbox"]):focus{outline:none;border-color:var(--accent,#d4a843);}
+.gate-row{display:flex;gap:8px;}
+.gate-row .gate-btn{margin-bottom:0;}
+.gate-msg{font-size:12.5px;color:var(--accent,#d4a843);margin:12px 0 0;min-height:1.2em;line-height:1.6;}
+.gate-note{font-size:12px;color:var(--text3,#4e4d4a);margin:12px 0 0;line-height:1.7;}
+.gate-links{margin-top:16px;padding-top:14px;border-top:1px solid var(--border,rgba(255,255,255,.08));
+  display:flex;flex-wrap:wrap;justify-content:center;gap:6px 14px;}
+.gate-links a{font-size:12px;color:var(--text2,#928f88);text-decoration:none;}
+.gate-links a:hover{color:var(--accent,#d4a843);}
+@media print{#gate{display:none!important;}body.gated>*{filter:none!important;}}
+</style>
+<div id="gate">
+  <div class="gate-card">
+    <h2 class="gate-title">Arranger 理譜人</h2>
+    <div id="gate-body"></div>
+    <p class="gate-msg" id="gate-msg"></p>
+    <div class="gate-links">
+      <a href="./pricing.html">定價</a>
+      <a href="./terms.html">服務條款</a>
+      <a href="./privacy.html">隱私權政策</a>
+      <a href="./refund.html">退款政策</a>
+    </div>
+  </div>
+</div>
 <button class="lock-banner" onclick="toggleLock()" title="目前為鎖定狀態，只能看譜與左右滑頁。點此解鎖即可編輯（含樂器配器）">🔒 鎖定中 — 點此解鎖編輯</button>
 <div id="barpick-bar" class="barpick-bar"></div>
 
@@ -1828,6 +1891,11 @@ try{
   else { _lang=detectLang(); _langAsk=!isZhEnv(); }
 }catch(e){ _lang=detectLang(); _langAsk=!isZhEnv(); }
 const I18N={
+ /* 進站鎖面板 */ "個人使用者登入":"Personal user sign-in","敬拜使用者登入":"Worship user sign-in","Google 註冊":"Sign up with Google","email 註冊":"Sign up with email","先不登入，以敬拜使用者瀏覽":"Browse as a worship user without signing in","測試期間開放，正式版將關閉":"Open during testing; closed at launch","註冊後要以哪種身分使用？":"Which kind of user will this account be?","個人使用者":"Personal user","敬拜使用者":"Worship user","管理者":"Admin","記住帳號":"Remember my email","密碼（至少 6 碼）":"Password (at least 6 characters)",
+ /* 身分切換 */ "⛪ 敬拜使用者":"⛪ Worship user","🎧 個人使用者":"🎧 Personal user","用途固定為短歌／讚美／敬拜":"Categories fixed: short song / praise / worship","用途留白，可自行新增、移除分類":"Categories left open — add or remove your own",
+ /* 測試帳號 */ "用測試帳號進入":"Enter with the test account","測試帳號登入失敗：":"Test account sign-in failed: ",
+ /* 進站鎖 */ "敬拜樂團的編曲架構視覺化工具":"Arrangement-structure visualisation for worship bands","用 Google 帳號登入":"Sign in with Google","或用 email":"or use email","註冊並開始試用":"Sign up and start the trial","新帳號享 3 天免費試用，試用期內取消不扣款。":"New accounts get a 3-day free trial. Cancel during the trial and you are not charged.","定價":"Pricing","雲端尚未設定。":"Cloud is not configured yet.","前往 Google 登入…":"Opening Google sign-in…","Google 登入失敗：":"Google sign-in failed: ","登入失敗：":"Sign-in failed: ","請填 email，密碼至少 6 碼。":"Enter an email and a password of at least 6 characters.","註冊失敗：":"Sign-up failed: ","註冊成功，請查收驗證信後再登入。":"Account created — check your inbox for the verification email, then sign in.",
+ /* 訂閱 */ "已排定取消，可用到":"Scheduled to end, available until","已排定取消":"Scheduled to end","試用中，首次扣款":"Trial — first charge","試用中":"Trial","下次續訂":"Renews","訂閱 ＋ 歌庫":"Subscription + Library","訂閱中":"Subscribed","＋ 加購敬拜雲端歌庫":"+ Add Worship Cloud Library","移除歌庫加購":"Remove library add-on","扣款失敗，訂閱暫停中":"Payment failed, subscription on hold","重新訂閱":"Resubscribe","訂閱後可使用雲端帳號與多裝置同步":"Subscribe for a cloud account and multi-device sync","訂閱":"Subscribe","訂閱 ＋ 敬拜雲端歌庫":"Subscribe + Worship Cloud Library","請先登入。":"Please sign in first.","移除歌庫加購後，下一期起不再收取歌庫費用，歌庫內容也會關閉。確定？":"Removing the library add-on stops the library charge from the next period and closes library content. Continue?","操作失敗：":"Action failed: ","已送出，稍候更新…":"Sent — updating shortly…","訂閱功能尚未設定（見 PADDLE_SETUP.md）。":"Subscriptions are not configured yet (see PADDLE_SETUP.md).","請先登入再訂閱。":"Please sign in before subscribing.","結帳視窗開啟失敗：":"Could not open checkout: ",
  "選要清除的小節範圍，再決定只清內容還是連小節一起刪除":"Pick the bars to clear, then choose contents-only or delete the bars",
  "按住小節左右拖曳，選要清除的範圍":"Press and drag across bars to choose what to clear",
  "服務條款":"Terms of Service",
@@ -1990,6 +2058,11 @@ const I18N={
 };
 /* ── 日本語（中文 → ja）── */
 const I18N_JA={
+ /* 進站鎖面板 */ "個人使用者登入":"個人ユーザーでログイン","敬拜使用者登入":"賛美ユーザーでログイン","Google 註冊":"Google で登録","email 註冊":"email で登録","先不登入，以敬拜使用者瀏覽":"ログインせず賛美ユーザーとして閲覧","測試期間開放，正式版將關閉":"テスト期間中のみ公開。正式版では閉じます","註冊後要以哪種身分使用？":"このアカウントはどちらの種類で使いますか？","個人使用者":"個人ユーザー","敬拜使用者":"賛美ユーザー","管理者":"管理者","記住帳號":"メールアドレスを記憶する","密碼（至少 6 碼）":"パスワード（6 文字以上）",
+ /* 身分切換 */ "⛪ 敬拜使用者":"⛪ 賛美ユーザー","🎧 個人使用者":"🎧 個人ユーザー","用途固定為短歌／讚美／敬拜":"用途は「短い曲／賛美／礼拝」に固定","用途留白，可自行新增、移除分類":"用途は空欄。自由に追加・削除できます",
+ /* 測試帳號 */ "用測試帳號進入":"テストアカウントで入る","測試帳號登入失敗：":"テストアカウントのログインに失敗しました：",
+ /* 進站鎖 */ "敬拜樂團的編曲架構視覺化工具":"賛美バンドのためのアレンジ構成ビジュアル化ツール","用 Google 帳號登入":"Google アカウントでログイン","或用 email":"または email で","註冊並開始試用":"登録してトライアルを始める","新帳號享 3 天免費試用，試用期內取消不扣款。":"新規アカウントには 3 日間の無料トライアル。トライアル中の解約は課金されません。","定價":"料金","雲端尚未設定。":"クラウドが未設定です。","前往 Google 登入…":"Google ログインを開いています…","Google 登入失敗：":"Google ログインに失敗しました：","登入失敗：":"ログインに失敗しました：","請填 email，密碼至少 6 碼。":"email と 6 文字以上のパスワードを入力してください。","註冊失敗：":"登録に失敗しました：","註冊成功，請查收驗證信後再登入。":"登録しました。確認メールを受け取ってからログインしてください。",
+ /* 訂閱 */ "已排定取消，可用到":"解約予定、利用可能期限","已排定取消":"解約予定","試用中，首次扣款":"トライアル中、初回請求","試用中":"トライアル中","下次續訂":"次回更新","訂閱 ＋ 歌庫":"サブスク ＋ ライブラリ","訂閱中":"契約中","＋ 加購敬拜雲端歌庫":"＋ 賛美クラウドライブラリを追加","移除歌庫加購":"ライブラリ追加を解除","扣款失敗，訂閱暫停中":"決済失敗、サブスク停止中","重新訂閱":"再契約","訂閱後可使用雲端帳號與多裝置同步":"契約するとクラウドアカウントと複数端末の同期が使えます","訂閱":"契約する","訂閱 ＋ 敬拜雲端歌庫":"契約 ＋ 賛美クラウドライブラリ","請先登入。":"先にログインしてください。","移除歌庫加購後，下一期起不再收取歌庫費用，歌庫內容也會關閉。確定？":"ライブラリ追加を解除すると、次の期間からライブラリの料金は請求されず、ライブラリの内容も利用できなくなります。よろしいですか？","操作失敗：":"操作に失敗しました：","已送出，稍候更新…":"送信しました。まもなく反映されます…","訂閱功能尚未設定（見 PADDLE_SETUP.md）。":"サブスク機能が未設定です（PADDLE_SETUP.md 参照）。","請先登入再訂閱。":"契約の前にログインしてください。","結帳視窗開啟失敗：":"決済画面を開けませんでした：",
  "選要清除的小節範圍，再決定只清內容還是連小節一起刪除":"消す小節の範囲を選び、中身だけか小節ごとかを決めます",
  "按住小節左右拖曳，選要清除的範圍":"小節を長押しして左右にドラッグし、消す範囲を選びます",
  "服務條款":"利用規約",
@@ -2343,6 +2416,11 @@ const I18N_JA={
 
 /* ── 한국어（中文 → ko）── */
 const I18N_KO={
+ /* 進站鎖面板 */ "個人使用者登入":"개인 사용자 로그인","敬拜使用者登入":"워십 사용자 로그인","Google 註冊":"Google 로 가입","email 註冊":"email 로 가입","先不登入，以敬拜使用者瀏覽":"로그인하지 않고 워십 사용자로 둘러보기","測試期間開放，正式版將關閉":"테스트 기간에만 열려 있으며 정식판에서는 닫힙니다","註冊後要以哪種身分使用？":"이 계정은 어떤 사용자로 쓰시겠어요?","個人使用者":"개인 사용자","敬拜使用者":"워십 사용자","管理者":"관리자","記住帳號":"이메일 기억하기","密碼（至少 6 碼）":"비밀번호 (6 자 이상)",
+ /* 身分切換 */ "⛪ 敬拜使用者":"⛪ 워십 사용자","🎧 個人使用者":"🎧 개인 사용자","用途固定為短歌／讚美／敬拜":"용도는 짧은 곡／찬양／예배로 고정","用途留白，可自行新增、移除分類":"용도는 비워 두고 직접 추가·삭제 가능",
+ /* 測試帳號 */ "用測試帳號進入":"테스트 계정으로 입장","測試帳號登入失敗：":"테스트 계정 로그인 실패: ",
+ /* 進站鎖 */ "敬拜樂團的編曲架構視覺化工具":"워십 밴드를 위한 편곡 구조 시각화 도구","用 Google 帳號登入":"Google 계정으로 로그인","或用 email":"또는 email 사용","註冊並開始試用":"가입하고 체험 시작","新帳號享 3 天免費試用，試用期內取消不扣款。":"새 계정은 3 일 무료 체험. 체험 기간에 해지하면 요금이 청구되지 않습니다.","定價":"요금","雲端尚未設定。":"클라우드가 아직 설정되지 않았습니다.","前往 Google 登入…":"Google 로그인을 여는 중…","Google 登入失敗：":"Google 로그인 실패: ","登入失敗：":"로그인 실패: ","請填 email，密碼至少 6 碼。":"email 과 6 자 이상의 비밀번호를 입력하세요.","註冊失敗：":"가입 실패: ","註冊成功，請查收驗證信後再登入。":"가입되었습니다. 인증 메일을 확인한 뒤 로그인해 주세요.",
+ /* 訂閱 */ "已排定取消，可用到":"해지 예정, 이용 가능 기한","已排定取消":"해지 예정","試用中，首次扣款":"체험 중, 첫 결제","試用中":"체험 중","下次續訂":"다음 갱신","訂閱 ＋ 歌庫":"구독 ＋ 라이브러리","訂閱中":"구독 중","＋ 加購敬拜雲端歌庫":"＋ 워십 클라우드 라이브러리 추가","移除歌庫加購":"라이브러리 추가 해제","扣款失敗，訂閱暫停中":"결제 실패, 구독 정지 중","重新訂閱":"다시 구독","訂閱後可使用雲端帳號與多裝置同步":"구독하면 클라우드 계정과 여러 기기 동기화를 사용할 수 있습니다","訂閱":"구독하기","訂閱 ＋ 敬拜雲端歌庫":"구독 ＋ 워십 클라우드 라이브러리","請先登入。":"먼저 로그인해 주세요.","移除歌庫加購後，下一期起不再收取歌庫費用，歌庫內容也會關閉。確定？":"라이브러리 추가를 해제하면 다음 주기부터 라이브러리 요금이 청구되지 않고 라이브러리 내용도 닫힙니다. 계속할까요?","操作失敗：":"작업 실패: ","已送出，稍候更新…":"전송했습니다. 곧 반영됩니다…","訂閱功能尚未設定（見 PADDLE_SETUP.md）。":"구독 기능이 아직 설정되지 않았습니다 (PADDLE_SETUP.md 참고).","請先登入再訂閱。":"구독하기 전에 로그인해 주세요.","結帳視窗開啟失敗：":"결제창을 열지 못했습니다: ",
  "選要清除的小節範圍，再決定只清內容還是連小節一起刪除":"지울 마디 범위를 고른 뒤 내용만 지울지 마디까지 삭제할지 정합니다",
  "按住小節左右拖曳，選要清除的範圍":"마디를 길게 눌러 좌우로 드래그해 지울 범위를 선택하세요",
  "服務條款":"이용약관",
@@ -2705,6 +2783,11 @@ const I18N_KO={
 function L(s){ const d=langOf(_lang); return (d&&d[s]!=null)?d[s]:s; }
 /* ── 简体中文：以繁體為基準，逐字串對照（由 OpenCC t2s 產生，反向無碰撞可安全還原） ── */
 const I18N_CN={
+ /* 進站鎖面板 */ "個人使用者登入":"个人用户登录","敬拜使用者登入":"敬拜用户登录","Google 註冊":"Google 注册","email 註冊":"email 注册","先不登入，以敬拜使用者瀏覽":"先不登录，以敬拜用户浏览","測試期間開放，正式版將關閉":"测试期间开放，正式版将关闭","註冊後要以哪種身分使用？":"注册后要以哪种身分使用？","個人使用者":"个人用户","敬拜使用者":"敬拜用户","管理者":"管理者","記住帳號":"记住帐号","密碼（至少 6 碼）":"密码（至少 6 码）",
+ /* 身分切換 */ "⛪ 敬拜使用者":"⛪ 敬拜用户","🎧 個人使用者":"🎧 个人用户","用途固定為短歌／讚美／敬拜":"用途固定为短歌／赞美／敬拜","用途留白，可自行新增、移除分類":"用途留白，可自行添加、移除分类",
+ /* 測試帳號 */ "用測試帳號進入":"用测试帐号进入","測試帳號登入失敗：":"测试帐号登录失败：",
+ /* 進站鎖 */ "敬拜樂團的編曲架構視覺化工具":"敬拜乐团的编曲架构可视化工具","用 Google 帳號登入":"用 Google 帐号登录","或用 email":"或用 email","註冊並開始試用":"注册并开始试用","新帳號享 3 天免費試用，試用期內取消不扣款。":"新帐号享 3 天免费试用，试用期内取消不扣款。","定價":"定价","雲端尚未設定。":"云端尚未设置。","前往 Google 登入…":"前往 Google 登录…","Google 登入失敗：":"Google 登录失败：","登入失敗：":"登录失败：","請填 email，密碼至少 6 碼。":"请填 email，密码至少 6 码。","註冊失敗：":"注册失败：","註冊成功，請查收驗證信後再登入。":"注册成功，请查收验证信后再登录。",
+ /* 訂閱 */ "已排定取消，可用到":"已排定取消，可用到","已排定取消":"已排定取消","試用中，首次扣款":"试用中，首次扣款","試用中":"试用中","下次續訂":"下次续订","訂閱 ＋ 歌庫":"订阅 ＋ 歌库","訂閱中":"订阅中","＋ 加購敬拜雲端歌庫":"＋ 加购敬拜云端歌库","移除歌庫加購":"移除歌库加购","扣款失敗，訂閱暫停中":"扣款失败，订阅暂停中","重新訂閱":"重新订阅","訂閱後可使用雲端帳號與多裝置同步":"订阅后可使用云端帐号与多设备同步","訂閱":"订阅","訂閱 ＋ 敬拜雲端歌庫":"订阅 ＋ 敬拜云端歌库","請先登入。":"请先登录。","移除歌庫加購後，下一期起不再收取歌庫費用，歌庫內容也會關閉。確定？":"移除歌库加购后，下一期起不再收取歌库费用，歌库内容也会关闭。确定？","操作失敗：":"操作失败：","已送出，稍候更新…":"已送出，稍候更新…","訂閱功能尚未設定（見 PADDLE_SETUP.md）。":"订阅功能尚未设置（见 PADDLE_SETUP.md）。","請先登入再訂閱。":"请先登录再订阅。","結帳視窗開啟失敗：":"结账窗口打开失败：",
  "選要清除的小節範圍，再決定只清內容還是連小節一起刪除":"选要清除的小节范围，再决定只清内容还是连小节一起删除","按住小節左右拖曳，選要清除的範圍":"按住小节左右拖曳，选要清除的范围","服務條款":"服务条款","隱私權政策":"隐私权政策","聯絡我們":"联系我们","個人使用者範本：小星星":"个人用户范本：小星星",
  "敬拜使用者範本：You are good":"敬拜用户范本：You are good","我的歌庫":"我的歌库","＋ 收藏目前這份":"＋ 收藏目前这份","我的歌庫還是空的，按「＋ 收藏目前這份」把現在編輯的譜存進來。":"我的歌库还是空的，按「＋ 收藏目前这份」把现在编辑的谱存进来。","個人使用者不使用雲端歌庫，歌曲只存在這台裝置上。":"个人用户不使用云端歌库，歌曲只存在这台设备上。","🎧 個人使用者 · 我的歌庫":"🎧 个人用户 · 我的歌库",
  "「用途」下拉最後有「＋ 新增分類…／－ 移除分類…」可自訂分類；「🎵 演奏模式」可從我的歌庫挑最多 10 首排成一份。":"「用途」下拉最后有「＋ 添加分类…／－ 移除分类…」可自订分类；「🎵 演奏模式」可从我的歌库挑最多 10 首排成一份。","清單（最多 10 首，可排序）":"清单（最多 10 首，可排序）","⛪ 敬拜使用者：瀏覽歌譜":"⛪ 敬拜用户：浏览歌谱","🎧 個人使用者：自訂分類":"🎧 个人用户：自订分类","⛪ 敬拜使用者 · 瀏覽歌譜":"⛪ 敬拜用户 · 浏览歌谱","🎧 個人使用者 · 自訂分類":"🎧 个人用户 · 自订分类",
@@ -3021,8 +3104,21 @@ let _supa=null,_supaUser=null,_supaAdmin=false,_cloudId=null;
    設定步驟見 PADDLE_SETUP.md。TOKEN / PRICE 留空 ＝ 訂閱功能不啟用（其餘功能照舊）。 */
 const PADDLE_ENV   = 'sandbox';   // 'sandbox' 測試 / 'production' 正式
 const PADDLE_TOKEN = '';          // ← Paddle → Developer tools → Authentication → client-side token
-const PADDLE_PRICE = '';          // ← 月訂閱的 Price ID（pri_ 開頭）
-let _paddleOn=false,_sub=null,_isPro=false;
+const PADDLE_PRICE_BASE = '';     // ← 基本訂閱的 Price ID（pri_ 開頭）
+const PADDLE_PRICE_LIB  = '';     // ← 敬拜雲端歌庫加購的 Price ID（留空＝不賣加購）
+let _paddleOn=false,_sub=null,_isPro=false,_hasLib=false;
+/* ════ 測試帳號 ════
+   給幫忙試用、回報問題的人用。這是一個「真的」Supabase 帳號，
+   所以 RLS、訂閱狀態、試用期的行為都跟一般使用者一致。
+   帳密會出現在原始碼裡 —— 任何人看得到，所以：
+     · 只放測試用資料，不要放真實歌譜
+     · 正式對外後把 TEST_EMAIL 清空即可移除按鈕
+     · TEST_ONLY_WITH_FLAG 設 true 的話，只有網址帶 ?test 才會出現按鈕
+   要讓測試帳號看得到付費功能，在 Supabase 的 subscriptions 表手動插一列：
+     user_id = 該帳號的 uuid，status = 'active'，current_period_end = 未來日期 */
+const TEST_EMAIL = 'tester@arrangerlipu.com';   // ← 測試帳號 email（留空＝不顯示按鈕）
+const TEST_PW    = '';            // ← 測試帳號密碼
+const TEST_ONLY_WITH_FLAG = false;
 function cv(id){ const e=document.getElementById(id); return e?e.value:''; }
 function cloudMsg(t){ const e=document.getElementById('cl-msg'); if(e)e.textContent=t||''; }
 async function cloudInit(){
@@ -3031,15 +3127,22 @@ async function cloudInit(){
     _supa=window.supabase.createClient(SUPA_URL, SUPA_KEY);
     const cb=document.getElementById('cloud-btn'); if(cb)cb.style.display='';
     const { data:{ session } } = await _supa.auth.getSession();
-    if(session){ _supaUser=session.user; await cloudFetchRole(); }
+    if(session){
+      _supaUser=session.user; await cloudFetchRole();
+      /* Google 註冊是跳轉出去再回來，身分在跳轉前存起來，回來才套用 */
+      try{ const pk=localStorage.getItem('arranger_pending_kind');
+        if(pk){ gateApplyRole(pk); localStorage.removeItem('arranger_pending_kind'); } }catch(e){}
+    }
     await fetchSubscription();
     updateCloudBtn();
+    syncGate();
     _supa.auth.onAuthStateChange(async (_e,ss)=>{ _supaUser = ss?ss.user:null; _supaAdmin=false;
       if(_supaUser)await cloudFetchRole();
       await fetchSubscription();
       const m=document.getElementById('cloud-modal');
       if(m&&m.classList.contains('show'))cloudRenderModal();
       updateCloudBtn();
+      syncGate();
     });
   }catch(e){ console.warn('cloudInit',e); }
 }
@@ -3060,7 +3163,7 @@ async function cloudFetchRole(){
    前端只負責「開結帳視窗」與「顯示狀態」；訂閱狀態一律由 Paddle webhook 寫進資料庫。
    _isPro 只是 UI 層（console 改得掉），真正的限制要在 Supabase RLS 用 is_subscribed() 再擋一次。 */
 function paddleInit(){
-  if(!PADDLE_TOKEN || !PADDLE_PRICE || !window.Paddle) return;   // 未設定 → 不啟用
+  if(!PADDLE_TOKEN || !PADDLE_PRICE_BASE || !window.Paddle) return;   // 未設定 → 不啟用
   try{
     if(PADDLE_ENV!=='production') Paddle.Environment.set('sandbox');
     Paddle.Initialize({ token:PADDLE_TOKEN, eventCallback:ev=>{
@@ -3073,17 +3176,21 @@ function paddleInit(){
   }catch(e){ console.warn('paddleInit',e); }
 }
 async function fetchSubscription(){
-  _sub=null; _isPro=false;
+  _sub=null; _isPro=false; _hasLib=false;
   if(_supa && _supaUser){
     try{
       const {data}=await _supa.from('subscriptions')
-        .select('status,plan,current_period_end,cancel_at_period_end').maybeSingle();
+        .select('status,plan,items,current_period_end,cancel_at_period_end').maybeSingle();
       _sub=data||null;
       _isPro=!!(_sub && ['active','trialing'].includes(_sub.status)
         && (!_sub.current_period_end || new Date(_sub.current_period_end)>new Date()));
+      /* 歌庫是同一張訂閱上的第二個 item；items 由 webhook 寫入 */
+      _hasLib=!!(_isPro && PADDLE_PRICE_LIB && Array.isArray(_sub.items)
+        && _sub.items.indexOf(PADDLE_PRICE_LIB)>=0);
     }catch(e){ console.warn('fetchSubscription',e); }
   }
   document.body.classList.toggle('is-pro',_isPro);
+  document.body.classList.toggle('has-lib',_hasLib);
   const m=document.getElementById('cloud-modal');
   if(m&&m.classList.contains('show'))cloudRenderModal();
 }
@@ -3091,36 +3198,205 @@ function subDate(s){ try{ return new Date(s).toLocaleDateString(); }catch(e){ re
 function subUiHtml(){
   if(!_paddleOn) return '';                       // 未設定金流 → 整區不出現
   const st=_sub?_sub.status:'';
+  const lib=!!PADDLE_PRICE_LIB;
   if(_isPro){
     const d=(_sub&&_sub.current_period_end)?subDate(_sub.current_period_end):'';
+    const trial=(_sub&&_sub.status==='trialing');
     const note=(_sub&&_sub.cancel_at_period_end)
       ? (d?L('已排定取消，可用到')+' '+d:L('已排定取消'))
+      : trial ? (d?L('試用中，首次扣款')+' '+d:L('試用中'))
       : (d?L('下次續訂')+' '+d:'');
-    return '<div class="sub-box"><span class="sub-badge">PRO</span><span class="sub-note">'+esc(note)+'</span></div>';
+    let h='<div class="sub-box"><span class="sub-badge">'+(_hasLib?esc(L('訂閱 ＋ 歌庫')):esc(L('訂閱中')))+'</span>'
+      +'<span class="sub-note">'+esc(note)+'</span>';
+    if(lib && !_hasLib) h+='<button class="btn" onclick="subLibrary(true)">'+esc(L('＋ 加購敬拜雲端歌庫'))+'</button>';
+    else if(lib && _hasLib) h+='<button class="btn" onclick="subLibrary(false)">'+esc(L('移除歌庫加購'))+'</button>';
+    return h+'</div>';
   }
   if(st==='past_due'){
     return '<div class="sub-box"><span class="sub-note bad">'+esc(L('扣款失敗，訂閱暫停中'))+'</span>'
-      +'<button class="btn btna" onclick="openCheckout()">'+esc(L('重新訂閱'))+'</button></div>';
+      +'<button class="btn btna" onclick="openCheckout(false)">'+esc(L('重新訂閱'))+'</button></div>';
   }
-  return '<div class="sub-box"><span class="sub-note">'+esc(L('升級 PRO 解鎖付費功能'))+'</span>'
-    +'<button class="btn btna" onclick="openCheckout()">'+esc(L('升級 PRO'))+'</button></div>';
+  let h='<div class="sub-box"><span class="sub-note">'+esc(L('訂閱後可使用雲端帳號與多裝置同步'))+'</span>'
+    +'<button class="btn btna" onclick="openCheckout(false)">'+esc(L('訂閱'))+'</button>';
+  if(lib) h+='<button class="btn" onclick="openCheckout(true)">'+esc(L('訂閱 ＋ 敬拜雲端歌庫'))+'</button>';
+  return h+'</div>';
 }
-function openCheckout(){
+/* 在既有訂閱上加購／移除歌庫。真正動 Paddle 的是 Edge Function，
+   前端只負責帶著登入 token 呼叫它；狀態回寫一律走 webhook。 */
+async function subLibrary(add){
+  if(!_supa||!_supaUser){ alert(L('請先登入。')); return; }
+  if(!add && !confirm(L('移除歌庫加購後，下一期起不再收取歌庫費用，歌庫內容也會關閉。確定？'))) return;
+  cloudMsg(L('處理中…'));
+  try{
+    const { data:{ session } } = await _supa.auth.getSession();
+    const r=await fetch(SUPA_URL.replace(/\/$/,'')+'/functions/v1/paddle-subscription',{
+      method:'POST',
+      headers:{ 'content-type':'application/json', 'authorization':'Bearer '+(session?session.access_token:'') },
+      body: JSON.stringify({ action: add?'add':'remove' })
+    });
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok||!j.ok){ cloudMsg(L('操作失敗：')+(j.error||r.status)); return; }
+    cloudMsg(L('已送出，稍候更新…'));
+    setTimeout(fetchSubscription,2500); setTimeout(fetchSubscription,8000);
+  }catch(e){ cloudMsg(L('操作失敗：')+e.message); }
+}
+function openCheckout(withLib){
   if(!_paddleOn){ alert(L('訂閱功能尚未設定（見 PADDLE_SETUP.md）。')); return; }
   if(!_supaUser){ alert(L('請先登入再訂閱。')); return; }
   const dark=!(document.body.classList.contains('theme-light')||document.body.classList.contains('theme-pink'));
   const loc=(_lang==='cn')?'zh-Hans':(_lang==='zh')?'zh-Hant':(_lang==='ja')?'ja':(_lang==='ko')?'ko':'en';
   try{
     Paddle.Checkout.open({
-      items:[{ priceId:PADDLE_PRICE, quantity:1 }],
+      items: (withLib && PADDLE_PRICE_LIB)
+        ? [{ priceId:PADDLE_PRICE_BASE, quantity:1 },{ priceId:PADDLE_PRICE_LIB, quantity:1 }]
+        : [{ priceId:PADDLE_PRICE_BASE, quantity:1 }],
       customer:_supaUser.email?{ email:_supaUser.email }:undefined,
       customData:{ supabase_user_id:_supaUser.id },
       settings:{ theme:dark?'dark':'light', locale:loc }
     });
   }catch(e){ alert(L('結帳視窗開啟失敗：')+e.message); }
 }
+/* ════════ 進站鎖 ════════
+   進站前先選身分。三個「登入」走同一套 Supabase 驗證，差別只在登入後要用哪種
+   用途分類；兩個「註冊」則是先問身分再建帳號。
+   真正的資料把關在 Supabase RLS，這層只是不讓未登入的人操作介面。 */
+const GUEST_BROWSE = true;   /* 測試期間開放「免登入以敬拜使用者瀏覽」；正式收費時改 false */
+let _gateView='menu', _gateRole='worship', _gateMethod='email', _guest=false;
+
+const _GICO='<svg class="g-ico" viewBox="0 0 48 48" width="17" height="17" aria-hidden="true"><path fill="#4285F4" d="M45.1 24.5c0-1.6-.1-2.7-.4-3.9H24v7.1h12.1c-.2 1.8-1.6 4.6-4.5 6.4l-.1.3 6.5 5 .5.1c4.1-3.8 6.6-9.4 6.6-15z"/><path fill="#34A853" d="M24 46c5.9 0 10.9-1.9 14.5-5.3l-6.9-5.3c-1.8 1.3-4.3 2.2-7.6 2.2-5.8 0-10.7-3.8-12.5-9l-.3.1-6.7 5.2-.1.3C8 41.1 15.4 46 24 46z"/><path fill="#FBBC05" d="M11.5 28.6c-.5-1.4-.7-2.9-.7-4.6s.3-3.2.7-4.6v-.3l-6.8-5.3-.2.1A22 22 0 0 0 2 24c0 3.5.9 6.9 2.5 9.9l7-5.3z"/><path fill="#EA4335" d="M24 9.5c4.1 0 6.9 1.8 8.5 3.3l6.2-6C34.9 3.4 29.9 1 24 1 15.4 1 8 6 4.5 14.1l7 5.3C13.3 13.3 18.2 9.5 24 9.5z"/></svg>';
+
+function gateMsg(t){ const e=document.getElementById('gate-msg'); if(e)e.textContent=t||''; }
+function gateNeeded(){ return !!(SUPA_URL && SUPA_KEY) && !_supaUser && !_guest; }
+function gv(id){ const e=document.getElementById(id); return e?e.value.trim():''; }
+
+/* 記住帳號：只記 email。密碼不存瀏覽器——存了等於把帳號送給任何能碰這台電腦的人。
+   維持登入狀態本來就由 Supabase 的 session 負責，不需要我們保存密碼。 */
+function rememberedEmail(){ try{ return localStorage.getItem('arranger_login_email')||''; }catch(e){ return ''; } }
+function rememberOn(){ try{ return localStorage.getItem('arranger_login_remember')==='1'; }catch(e){ return false; } }
+function saveRemember(em){
+  const on=(document.getElementById('gate-remember')||{}).checked;
+  try{
+    if(on){ localStorage.setItem('arranger_login_remember','1'); localStorage.setItem('arranger_login_email',em||''); }
+    else { localStorage.removeItem('arranger_login_remember'); localStorage.removeItem('arranger_login_email'); }
+  }catch(e){}
+}
+
+function gateTestOn(){
+  if(!TEST_EMAIL || !TEST_PW) return false;
+  if(!TEST_ONLY_WITH_FLAG) return true;
+  try{ return new URLSearchParams(location.search).has('test'); }catch(e){ return false; }
+}
+function gateGo(view,arg){
+  _gateView=view;
+  if(view==='login') _gateRole=arg;
+  if(view==='kind')  _gateMethod=arg;
+  if(view==='signup')_gateRole=arg;
+  gateMsg(''); gateRender();
+}
+function gateRoleName(r){ return r==='personal'?L('個人使用者'):r==='admin'?L('管理者'):L('敬拜使用者'); }
+
+function gateRender(){
+  const b=document.getElementById('gate-body'); if(!b)return;
+  const esc2=esc;
+  if(_gateView==='menu'){
+    let h='';
+    h+='<button class="gate-btn gate-primary" onclick="gateGo(\'login\',\'personal\')">'+esc2(L('個人使用者登入'))+'</button>';
+    h+='<button class="gate-btn" onclick="gateGo(\'login\',\'worship\')">'+esc2(L('敬拜使用者登入'))+'</button>';
+    h+='<button class="gate-btn" onclick="gateGo(\'login\',\'admin\')">'+esc2(L('管理者登入'))+'</button>';
+    h+='<div class="gate-sep"></div>';
+    h+='<button class="gate-btn gate-google" onclick="gateGo(\'kind\',\'google\')">'+_GICO+esc2(L('Google 註冊'))+'</button>';
+    h+='<button class="gate-btn" onclick="gateGo(\'kind\',\'email\')">'+esc2(L('email 註冊'))+'</button>';
+    if(gateTestOn())
+      h+='<button class="gate-btn gate-test" onclick="gateTest()">'+esc2(L('用測試帳號進入'))+'</button>';
+    if(GUEST_BROWSE){
+      h+='<div class="gate-sep"></div>';
+      h+='<button class="gate-btn gate-guest" onclick="gateGuest()">'+esc2(L('先不登入，以敬拜使用者瀏覽'))+'</button>';
+      h+='<p class="gate-note">'+esc2(L('測試期間開放，正式版將關閉'))+'</p>';
+    }
+    h+='<p class="gate-note">'+esc2(L('新帳號享 3 天免費試用，試用期內取消不扣款。'))+'</p>';
+    b.innerHTML=h; return;
+  }
+  if(_gateView==='kind'){
+    b.innerHTML='<p class="gate-kind">'+esc2(L('註冊後要以哪種身分使用？'))+'</p>'
+      +'<button class="gate-btn gate-primary" onclick="gateGo(\'signup\',\'personal\')">'+esc2(L('個人使用者'))+'</button>'
+      +'<p class="gate-note">'+esc2(L('用途留白，可自行新增、移除分類'))+'</p>'
+      +'<button class="gate-btn" onclick="gateGo(\'signup\',\'worship\')">'+esc2(L('敬拜使用者'))+'</button>'
+      +'<p class="gate-note">'+esc2(L('用途固定為短歌／讚美／敬拜'))+'</p>'
+      +'<button class="gate-back" onclick="gateGo(\'menu\')">'+esc2(L('返回'))+'</button>';
+    return;
+  }
+  /* login / signup 共用表單 */
+  const signup=(_gateView==='signup');
+  const em=signup?'':(rememberOn()?rememberedEmail():(gateTestOn()?TEST_EMAIL:''));
+  if(signup && _gateMethod==='google'){ gateGoogle(_gateRole); return; }
+  b.innerHTML='<p class="gate-kind">'+esc2(signup?gateRoleName(_gateRole)+' · '+L('註冊'):gateRoleName(_gateRole)+' · '+L('登入'))+'</p>'
+    +'<input id="gate-email" type="email" placeholder="email" autocomplete="username" value="'+esc2(em)+'">'
+    +'<input id="gate-pw" type="password" placeholder="'+esc2(L('密碼（至少 6 碼）'))+'" autocomplete="'+(signup?'new-password':'current-password')+'">'
+    +(signup?'':'<label class="gate-remember"><input type="checkbox" id="gate-remember"'+(rememberOn()?' checked':'')+'>'+esc2(L('記住帳號'))+'</label>')
+    +'<button class="gate-btn gate-primary" onclick="'+(signup?'gateSignUp()':'gateSignIn()')+'">'+esc2(signup?L('註冊'):L('登入'))+'</button>'
+    +(signup?'':'<button class="gate-btn gate-google" onclick="gateGoogle(\''+_gateRole+'\')">'+_GICO+esc2(L('用 Google 帳號登入'))+'</button>')
+    +'<button class="gate-back" onclick="gateGo(\'menu\')">'+esc2(L('返回'))+'</button>';
+}
+
+function syncGate(){
+  const need=gateNeeded();
+  document.body.classList.toggle('gated', need);
+  if(need) gateRender(); else gateMsg('');
+}
+/* 身分套用：影響「用途」下拉與聚會／演奏模式 */
+function gateApplyRole(r){
+  const k=(r==='personal')?'personal':'worship';
+  setUserKind(k); setSvcKind(k==='personal'?'perform':'service');
+}
+async function gateAfterLogin(user,role){
+  _supaUser=user; await cloudFetchRole(); await fetchSubscription();
+  if(role==='admin' && !_supaAdmin) gateApplyRole('worship'); else gateApplyRole(role);
+  updateCloudBtn(); syncGate();
+}
+function gateGuest(){
+  _guest=true; gateApplyRole('worship');
+  try{ sessionStorage.setItem('arranger_guest','1'); }catch(e){}
+  syncGate();
+}
+async function gateGoogle(role){
+  if(!_supa){ gateMsg(L('雲端尚未設定。')); return; }
+  try{ localStorage.setItem('arranger_pending_kind', (role==='personal')?'personal':'worship'); }catch(e){}
+  gateMsg(L('前往 Google 登入…'));
+  const {error}=await _supa.auth.signInWithOAuth({ provider:'google', options:{ redirectTo:location.origin+location.pathname } });
+  if(error) gateMsg(L('Google 登入失敗：')+error.message);
+}
+async function gateSignIn(){
+  if(!_supa){ gateMsg(L('雲端尚未設定。')); return; }
+  const em=gv('gate-email');
+  gateMsg(L('登入中…'));
+  const {data,error}=await _supa.auth.signInWithPassword({ email:em, password:gv('gate-pw') });
+  if(error){ gateMsg(L('登入失敗：')+error.message); return; }
+  saveRemember(em);
+  await gateAfterLogin(data.user,_gateRole);
+}
+async function gateSignUp(){
+  if(!_supa){ gateMsg(L('雲端尚未設定。')); return; }
+  const em=gv('gate-email'), pw=gv('gate-pw');
+  if(!em || pw.length<6){ gateMsg(L('請填 email，密碼至少 6 碼。')); return; }
+  gateMsg(L('處理中…'));
+  const {data,error}=await _supa.auth.signUp({ email:em, password:pw });
+  if(error){ gateMsg(L('註冊失敗：')+error.message); return; }
+  if(data && data.session){ await gateAfterLogin(data.user,_gateRole); return; }
+  gateApplyRole(_gateRole);                       /* 等驗證信期間先把身分記起來 */
+  gateMsg(L('註冊成功，請查收驗證信後再登入。'));
+}
+async function gateTest(){
+  if(!_supa){ gateMsg(L('雲端尚未設定。')); return; }
+  gateMsg(L('登入中…'));
+  const {data,error}=await _supa.auth.signInWithPassword({ email:TEST_EMAIL, password:TEST_PW });
+  if(error){ gateMsg(L('測試帳號登入失敗：')+error.message); return; }
+  await gateAfterLogin(data.user,'worship');
+}
 let _cloudMode='choose';   // choose / browse / adminlogin（未登入時）
-function openCloud(){ if(!_supa){ alert('雲端尚未設定（請見 SUPABASE_SETUP.md 填入連線資訊）。'); return; } if(!_supaUser)_cloudMode='choose'; document.getElementById('cloud-modal').classList.add('show'); cloudRenderModal(); }
+function openCloud(){ if(!_supa){ alert('雲端尚未設定（請見 SUPABASE_SETUP.md 填入連線資訊）。'); return; }
+  /* 訪客瀏覽中按「使用者」＝ 想登入 → 回到進站鎖 */
+  if(!_supaUser && _guest){ _guest=false; try{ sessionStorage.removeItem('arranger_guest'); }catch(e){} _gateView='menu'; syncGate(); return; }
+  if(!_supaUser)_cloudMode='choose'; document.getElementById('cloud-modal').classList.add('show'); cloudRenderModal(); }
 function closeCloud(){ const m=document.getElementById('cloud-modal'); if(m)m.classList.remove('show'); }
 function cloudMode(m){ _cloudMode=m; cloudRenderModal(); }
 function cloudRenderModal(){
@@ -3133,8 +3409,12 @@ function cloudRenderModal(){
       +(_supaAdmin
         ? `<div class="cl-actions"><button class="btn btna" onclick="cloudSave()">☁ 儲存目前到雲端</button><button class="btn" onclick="cloudNewSave()">另存新檔</button></div>`
         : `<div class="cl-hint">此帳號為一般使用者：可瀏覽/載入歌譜；修改只存本機。</div>`)
+      +userKindHtml()
+      +(_userKind==='personal'?myLibHtml():'')
       +subUiHtml();
-    lib.style.display=''; cloudList();
+    /* 個人使用者不看雲端歌庫，看自己的我的歌庫 */
+    if(_userKind==='personal'){ lib.style.display='none'; renderSetlist(); }
+    else { lib.style.display=''; cloudList(); }
   } else if(_cloudMode==='adminlogin'){   // 管理者登入表單
     body.innerHTML=`<div class="cl-libhd">管理者登入</div><button class="btn cl-google" onclick="cloudSignInGoogle()"><svg class="g-ico" viewBox="0 0 48 48" aria-hidden="true"><path fill="#4285F4" d="M45.1 24.5c0-1.6-.1-2.7-.4-3.9H24v7.1h12.1c-.2 1.8-1.6 4.6-4.5 6.4l-.1.3 6.5 5 .5.1c4.1-3.8 6.6-9.4 6.6-15z"/><path fill="#34A853" d="M24 46c5.9 0 10.9-1.9 14.5-5.3l-6.9-5.3c-1.8 1.3-4.3 2.2-7.6 2.2-5.8 0-10.7-3.8-12.5-9l-.3.1-6.7 5.2-.1.3C8 41.1 15.4 46 24 46z"/><path fill="#FBBC05" d="M11.5 28.6c-.5-1.4-.7-2.9-.7-4.6s.3-3.2.7-4.6v-.3l-6.8-5.3-.2.1A22 22 0 0 0 2 24c0 3.5.9 6.9 2.5 9.9l7-5.3z"/><path fill="#EA4335" d="M24 9.5c4.1 0 6.9 1.8 8.5 3.3l6.2-6C34.9 3.4 29.9 1 24 1 15.4 1 8 6 4.5 14.1l7 5.3C13.3 13.3 18.2 9.5 24 9.5z"/></svg>Google 帳號登入</button><div class="cl-or">或用 email 登入</div><div class="cl-form"><input id="cl-email" type="email" placeholder="email" autocomplete="username"><input id="cl-pw" type="password" placeholder="密碼（至少6碼）" autocomplete="current-password"><div class="cl-actions"><button class="btn btna" onclick="cloudSignIn()">登入</button><button class="btn" onclick="cloudSignUp()">註冊</button><button class="btn" onclick="cloudMode('choose')">返回</button></div></div>`;
     lib.style.display='none';
@@ -3153,6 +3433,21 @@ function cloudRenderModal(){
     body.innerHTML=`<div class="cl-choose"><button class="btn cl-google" onclick="cloudSignInGoogle()"><svg class="g-ico" viewBox="0 0 48 48" aria-hidden="true"><path fill="#4285F4" d="M45.1 24.5c0-1.6-.1-2.7-.4-3.9H24v7.1h12.1c-.2 1.8-1.6 4.6-4.5 6.4l-.1.3 6.5 5 .5.1c4.1-3.8 6.6-9.4 6.6-15z"/><path fill="#34A853" d="M24 46c5.9 0 10.9-1.9 14.5-5.3l-6.9-5.3c-1.8 1.3-4.3 2.2-7.6 2.2-5.8 0-10.7-3.8-12.5-9l-.3.1-6.7 5.2-.1.3C8 41.1 15.4 46 24 46z"/><path fill="#FBBC05" d="M11.5 28.6c-.5-1.4-.7-2.9-.7-4.6s.3-3.2.7-4.6v-.3l-6.8-5.3-.2.1A22 22 0 0 0 2 24c0 3.5.9 6.9 2.5 9.9l7-5.3z"/><path fill="#EA4335" d="M24 9.5c4.1 0 6.9 1.8 8.5 3.3l6.2-6C34.9 3.4 29.9 1 24 1 15.4 1 8 6 4.5 14.1l7 5.3C13.3 13.3 18.2 9.5 24 9.5z"/></svg>Google 帳號登入</button><button class="btn btna" onclick="cloudMode('browse')">⛪ 敬拜使用者：瀏覽歌譜</button><button class="btn" onclick="cloudMode('personal')">🎧 個人使用者：自訂分類</button><button class="btn" onclick="cloudMode('adminlogin')">🔑 管理者登入</button></div><div class="cl-hint">敬拜使用者：免登入瀏覽、載入、用「聚會服事」排歌，用途固定為短歌／讚美／敬拜。<br>個人使用者：用途留白，可自行新增、移除分類。<br>管理者登入後才能新增、儲存、刪除、歸類。</div>`;
     lib.style.display='none';
   }
+}
+/* 身分（用途分類的行為不同）：登入之後仍要能切換，
+   否則進站鎖上線後就沒有地方選了。 */
+function userKindHtml(){
+  const w=_userKind!=='personal';
+  return '<div class="cl-kind">'
+    +'<button class="btn'+(w?' btna':'')+'" onclick="pickUserKind(\'worship\')">'+esc(L('⛪ 敬拜使用者'))+'</button>'
+    +'<button class="btn'+(w?'':' btna')+'" onclick="pickUserKind(\'personal\')">'+esc(L('🎧 個人使用者'))+'</button>'
+    +'<span class="cl-kind-note">'+esc(w?L('用途固定為短歌／讚美／敬拜'):L('用途留白，可自行新增、移除分類'))+'</span>'
+    +'</div>';
+}
+function pickUserKind(k){
+  setUserKind(k);
+  setSvcKind(k==='personal'?'perform':'service');
+  cloudRenderModal();
 }
 async function cloudSignUp(){ cloudMsg('處理中…'); const {error}=await _supa.auth.signUp({email:cv('cl-email'),password:cv('cl-pw')}); cloudMsg(error?('註冊失敗：'+error.message):'註冊成功；若需 email 驗證請查收信件後再登入。'); }
 async function cloudSignIn(){ cloudMsg('登入中…'); const {data,error}=await _supa.auth.signInWithPassword({email:cv('cl-email'),password:cv('cl-pw')}); if(error){cloudMsg('登入失敗：'+error.message);return;} _supaUser=data.user; await cloudFetchRole(); cloudRenderModal(); }
@@ -6411,6 +6706,10 @@ renderSB();
 renderAll();
 bindSwipe();
 initTemplates();
+/* 先上鎖再查 session：寧可多鎖半秒，也不要未登入的介面閃出來 */
+if(SUPA_URL && SUPA_KEY) document.body.classList.add('gated');
+try{ if(sessionStorage.getItem('arranger_guest')==='1') _guest=true; }catch(e){}
+try{ syncGate(); }catch(e){}
 cloudInit();
 paddleInit();
 initMode();
@@ -6468,6 +6767,7 @@ window.addEventListener('afterprint',()=>{ try{ drawKbTies(); }catch(e){} });
 </style>
 <footer class="site-footer">
   <span class="sf-copy">© 2026 Arranger 理譜人</span>
+  <a class="sf-link" data-page="pricing" href="./pricing.html">定價</a>
   <a class="sf-link" data-page="terms" href="./terms.html">服務條款</a>
   <a class="sf-link" data-page="refund" href="./refund.html">退款政策</a>
   <a class="sf-link" data-page="privacy" href="./privacy.html">隱私權政策</a>

@@ -1,0 +1,27 @@
+# ── Vercel 部署白名單 ─────────────────────────────
+# 先排除全部，再逐一放行網站真正需要的檔案。
+# 這樣新增備份檔、SQL、內部文件時，不會不小心變成公開可下載。
+# 之後網站多了新檔案（例如 landing.html），記得在下面加一行 !檔名
+# ─────────────────────────────────────────────────
+/*
+
+# 網站本體
+!index.html
+
+# 定價頁（Paddle domain review 必看）
+!pricing.html
+
+# 法務三頁（Paddle domain review 會實際點）
+!terms.html
+!refund.html
+!privacy.html
+!policy-i18n.js
+
+# 範本清單與清單裡實際引用的歌譜
+!templates.json
+!Awesome_God.json
+!我們歡迎君王降臨.json
+
+# 圖示
+!logo_icon.png
+!Logoicon-new.svg
