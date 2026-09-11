@@ -637,6 +637,10 @@ body.svc-mode .svc-only{display:inline-flex!important;}
    （容器 line-height:1 → 高度等於字身；bottom:100% 貼齊字身頂端，
      再用 margin-bottom 微調貼近程度，不受字級換算影響、也不會壓到字） */
 .bt-bassn{position:relative;display:inline-block;line-height:1;}
+.bt-bass{display:inline;}
+/* 細分小節（格子窄）：「/低音」縮小、斜線收緊，例如 1add2/3 → add2 疊在上方、/3 小一號貼在右下，不跟隔壁格擠在一起 */
+.cbeatcols.cfit .bt-bass{font-size:0.72em;}
+.cbeatcols.cfit .bt-sl{margin:0 -0.03em 0 0.02em;opacity:.85;}
 .bt-bassn>.acc.acc-top{position:absolute;left:50%;bottom:100%;transform:translateX(-50%);
   font-size:0.62em;vertical-align:0;margin:0 0 -0.1em 0;line-height:1;white-space:nowrap;}
 /* 後綴（m7、maj9…）裡面的升降記號本來就是小字，維持原本行距不再上提 */
@@ -1507,6 +1511,10 @@ body.gated>*:not(#gate){filter:grayscale(.9) opacity(.32)!important;pointer-even
     <div class="cl-head"><span>📝 更新日誌 · Arranger 理譜人</span><button class="btn" onclick="hideChangelog()">✕</button></div>
     <div class="cl-body">
       <p class="cl-ver">開發時間軸：2026-06-17 ～ 2026-08-30（依使用回饋持續優化）</p>
+
+      <h4>「12/3」顯示成 1add2/3，細分小節的轉位低音縮小 <span class="cl-date">2026-09-11</span></h4>
+      <ul><li>和弦後綴只有一個「2」時（例如 12、12/3、C2/E）一律顯示成 add2，並跟 maj13、dim7 一樣疊在和弦上方，橫向不佔位置；譜裡存的內容不變</li>
+      <li>八分／十六分的小節格子比較窄，轉位的「/低音」改成小一號、貼在右下（例如 1add2/3 只佔「1/3」的寬度），相鄰兩格不會再擠在一起；四分小節維持原本大小</li></ul>
 
       <h4>手機版：範本｜歌曲庫｜使用者 同一排三等分 <span class="cl-date">2026-09-11</span></h4>
       <ul><li>手機版工具列把「🎵 歌曲庫」放在「範本」和「👤 使用者」中間，三個按鈕平分同一排；電腦與平板版面不變</li></ul>
@@ -5302,7 +5310,8 @@ function normSign(tok){ return String(tok||'').replace(/♭/g,'b').replace(/♯/
 function accSym(str){ return String(str).replace(/#/g,'<span class="acc">♯</span>').replace(/b/g,'<span class="acc">♭</span>'); }
 /* 轉位低音（/C#、/3b…）：升降記號改疊在低音音名的正上方，橫向不佔位 */
 function accChar(a){ return String(a).replace(/#/g,'♯').replace(/b/g,'♭'); }
-function bassHtml(bass){
+function bassHtml(bass){ const h=bassHtmlIn(bass); return /^\//.test(String(bass))?'<span class="bt-bass">'+h+'</span>':h; }   /* 包一層：細分小節可把「/低音」整組縮小 */
+function bassHtmlIn(bass){
   const m=String(bass).match(/^\/(.*)$/); if(!m)return accSym(esc(bass));
   const t=m[1];
   let note='',acc='',rest='';
@@ -5312,12 +5321,12 @@ function bassHtml(bass){
     mm=t.match(/^([#b]+)([1-7])(.*)$/);                   // 級數：記號在前 #1 / b3
     if(mm){ acc=mm[1]; note=mm[2]; rest=mm[3]||''; }
   }
-  if(!note)return '/'+accSym(esc(t));
+  if(!note)return '<span class="bt-sl">/</span>'+accSym(esc(t));
   /* 記號用絕對定位疊在正上方；DOM 順序照原本的寫法（音名在前 C♯、級數在後 ♯1），
      複製文字與螢幕閱讀器讀到的順序才正確 */
   const accEl='<span class="acc acc-top">'+accChar(acc)+'</span>';
   const inner=/^[1-7]$/.test(note) ? accEl+esc(note) : esc(note)+accEl;
-  return '/<span class="bt-bassn">'+inner+'</span>'+accSym(esc(rest));
+  return '<span class="bt-sl">/</span><span class="bt-bassn">'+inner+'</span>'+accSym(esc(rest));
 }
 /* 把「前綴升降」搬到音名後：#C→C#、bE→Eb（開頭是 #/b 且接大寫音名才換；級數 b3/#4 不受影響） */
 /* 音名大小寫容錯：手動輸入常打小寫（c#m、a/c#、bb、ebmaj9），
@@ -5379,7 +5388,7 @@ function splitChordDisplay(text){
 /* token → 顯示 HTML（休止 ✕ / 延續 · / 括號細分連音底線） */
 function renderBeatToken(tok,s){
   tok=String(tok||'').trim();
-  renderBeatToken.lastW=0;   // 最近一次渲染的和弦估算寬度（字寬單位，已含 bt-long 縮字）；細分小節據此決定字級
+  renderBeatToken.lastW=0; renderBeatToken.lastBW=0;   // 最近一次渲染的和弦估算寬度（字寬單位，已含 bt-long 縮字）；細分小節據此決定字級
   /* 聚會服事：若該段帶有獨立 Key（_dispMode/_dispKey）就用該段的，否則用全域顯示設定 */
   const mode=(s&&s._dispMode)?s._dispMode:chordDisp;
   const keyName=(s&&s._dispMode)?(s._dispKey||''):dispKeyName();
@@ -5397,7 +5406,8 @@ function renderBeatToken(tok,s){
     else disp=foldChordAcc(convChord(canon,keySemi,pf));
     const sp=splitChordDisplay(disp);
     // sus 一律以 sus4 為預設：輸入 sus 或 sus4 都統一顯示成「sus」（sus2 不受影響）
-    const sufStr=String(sp.suf||'').replace(/sus4/g,'sus'), upSuf=sufStr.length>=3;
+    /* 單獨一個「2」的後綴（12、C2/E）＝加二音，一律顯示成 add2：字數夠長會疊到上方，橫向只剩「1/3」，窄格也放得下 */
+    const sufStr=String(sp.suf||'').replace(/sus4/g,'sus').replace(/^2$/,'add2'), upSuf=sufStr.length>=3;
     const sufCls=upSuf?(' bt-suf-up s'+Math.min(6,sufStr.length)):'';
     // 估算顯示寬度：疊上去的後綴不佔橫向空間；右上標的後綴仍要計入（約 0.6 倍）
     /* 升降記號改為上標，橫向只佔約半個字寬 → 寬度估算跟著調小，長和弦才不會被誤判成要縮字 */
@@ -5407,7 +5417,8 @@ function renderBeatToken(tok,s){
                      : accW(sp.root)+bassW(sp.bass)+sufStr.length*0.6;
     const lc=wide>=4.4?' bt-xlong':wide>=2.8?' bt-long':'';
     { const k=wide>=4.4?0.64:wide>=2.8?0.8:1, sufSz=[0,0,0,0.58,0.5,0.43,0.37][Math.min(6,sufStr.length)]||0;
-      renderBeatToken.lastW=Math.max(wide*k, upSuf?sufStr.length*sufSz*0.77*k:0); }   // 疊在上方的後綴比字根寬時，以後綴寬度為準
+      renderBeatToken.lastW=Math.max(wide*k, upSuf?sufStr.length*sufSz*0.77*k:0);
+      renderBeatToken.lastBW=bassW(sp.bass)*k; }                        // 其中「/低音」佔的寬度（細分小節會把它縮小）   // 疊在上方的後綴比字根寬時，以後綴寬度為準
     return '<span class="bt-note'+lc+'">'+accSym(esc(sp.root))+(sufStr?'<span class="bt-suf'+sufCls+'">'+accSym(esc(sufStr))+'</span>':'')+(sp.bass?bassHtml(sp.bass):'')+'</span>';
   };
   if(tok.startsWith('(')){
@@ -5542,7 +5553,7 @@ function barOneHtml(s,i,beats,repX,rowStart){
       let tw=dup0?0:renderBeatToken.lastW;
       if(tw<0)hasSub=true;
       let rAttr=' class="beat-r"';
-      if(cfit&&tw>0){ if(arpOn)tw+=0.5; rAttr=` class="beat-r fit" style="--tw:${tw.toFixed(2)}"`; }
+      if(cfit&&tw>0){ tw-=0.3*(renderBeatToken.lastBW||0); if(arpOn)tw+=0.5; rAttr=` class="beat-r fit" style="--tw:${tw.toFixed(2)}"`; }
       const arp=arpOn?`<span class="kbarp charp" title="琶音">${kbArpSvg(2)}</span>`:'';
       const tsel=(_chTieSel&&_chTieSel.sid===s.id&&_chTieSel.bar===i&&_chTieSel.f===fine)?' tiesel':'';
       cols+=`<div class="cbeatcol ${bp}${tsel}" data-sid="${s.id}" data-bar="${i}" data-b="${b}" data-f="${fine}" onclick="beatEdit(this)"><span class="cbnum">${subdivLabel(b,fac)}</span><span${rAttr}>${arp}${tokHtml}</span><input class="beat-i" value="${esc(raw)}" style="display:none" onblur="beatSave(${s.id},${i},${b},this)" onkeydown="if(event.key==='Enter'){this.blur();}"></div>`;
