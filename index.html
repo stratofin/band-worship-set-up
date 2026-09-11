@@ -656,6 +656,18 @@ body.svc-mode .svc-only{display:inline-flex!important;}
 .beat-sub.beam-16{border-bottom:2.6px solid currentColor;box-shadow:0 4px 0 -1.2px currentColor;}
 .beat-sub.beam-3::after{content:'3';position:absolute;top:-0.9em;left:50%;transform:translateX(-50%);font-size:0.6em;opacity:.8;font-weight:400;}
 .ccard-note{font-size:0.76em;color:#b08fde;padding:0.35em 0.65em;border-top:1px solid rgba(155,114,207,0.2);background:rgba(155,114,207,0.05);}
+/* 段落底部備註：和弦譜／混合／KB 點一下就地編輯 */
+.ccard-note.note-ed{cursor:text;}
+.ccard-note.note-ed:hover{background:rgba(155,114,207,0.11);}
+.ccard-note.note-add{opacity:.45;font-style:italic;}
+.ccard-note.note-add:hover{opacity:.85;}
+.ccard-note.editing{display:flex;align-items:flex-start;gap:0.35em;background:rgba(155,114,207,0.12);cursor:default;opacity:1;font-style:normal;}
+.note-ta{flex:1;min-width:0;resize:none;overflow:hidden;background:var(--bg2);color:var(--text);border:1px solid rgba(155,114,207,0.55);border-radius:0.35em;font:inherit;font-size:1em;line-height:1.4;padding:0.2em 0.4em;outline:none;}
+@supports (-webkit-touch-callout:none){ .note-ta{font-size:max(16px,1em);} }   /* iPhone／iPad：16px 以下聚焦會自動放大畫面 */
+body.locked .ccard-note.note-ed{cursor:default;}
+body.locked .ccard-note.note-ed:hover{background:rgba(155,114,207,0.05);}
+body.locked .ccard-note.note-add,body.barpick .ccard-note.note-add,body[class*="print-"] .ccard-note.note-add{display:none!important;}
+@media print{ .ccard-note.note-add{display:none!important;} }
 .mix-ins{padding:0.4em 0.55em 0.55em;border-top:1px dashed var(--border2);display:flex;flex-direction:column;gap:0.3em;}
 /* 樂器配器區塊：依內容換行貼齊，不再固定兩欄留白 */
 .mix-ins .icchip-grid{display:flex;flex-wrap:wrap;gap:0.3em;}
@@ -671,6 +683,14 @@ body.svc-mode .svc-only{display:inline-flex!important;}
 /* 字級隨「每排」自動縮放（--bfs 依 bpr 計算）：每排=2 大字撐滿、每排=4 舒適 */
 .mixpage-stack.mixp .cbeatcols{padding:0.85em 0.18em 0.5em;min-height:calc(var(--bfs,1.2em) * 1.7);}
 .mixpage-stack.mixp .beat-r{font-size:var(--bfs,1.2em);}
+/* 細分小節的和弦字級：100cqw＝這一格的寬度；--tw＝和弦估算寬度（字寬單位）；--cr＝放大回一般大小的倍率 */
+.cbeatcols.cfit{--tk:0.86;--bm:1;}
+.cbeatcols.cfit .cbeatcol{container-type:inline-size;}
+.cbeatcols.cfit .beat-r.fit{font-size:max(1em, min(calc(1em * var(--cr,1)), calc(100cqw / (var(--tw,1) * var(--tk) * var(--bm)))));}   /* 最小不低於原本的縮法 */
+.mixpage-stack.mixp .cbeatcols.cfit .beat-r.fit{font-size:max(var(--bfs,1.2em), min(calc(var(--bfs,1.2em) * var(--cr,1)), calc(100cqw / (var(--tw,1) * var(--tk) * var(--bm)))));}
+.charp{margin-right:0.08em;}
+.cbeatcol.tiesel{outline:2px solid var(--accent);outline-offset:-2px;border-radius:4px;background:rgba(212,168,67,0.18);}
+body.chsym-on .cbeatcol{cursor:pointer;}
 .mixpage-stack.mixp .beat-i{font-size:calc(var(--bfs,1.2em) * 0.92);}
 .mixpage-stack.mixp .cbnum{font-size:0.72em;}
 .mixpage-stack.mixp .ccard-head{font-size:1.04em;padding:0.5em 0.8em;}
@@ -779,6 +799,7 @@ body.mode-phone .mixpage-stack.mixp{--barw:8.5em;}
 
 /* ── TEXT LIST ── */
 .tl{font-family:'Space Mono',monospace;font-size:0.85em;line-height:2;white-space:pre-wrap;background:var(--bg2);border:1px solid var(--border);border-radius:0.77em;padding:1.23em 1.38em;color:var(--text2);}
+.tl .tl-sep{border:none;border-top:1px solid var(--border2);margin:0.9em 0;}   /* 段落之間的分隔線 */
 
 /* ── EXPORT ── */
 .egrid{display:grid;grid-template-columns:1fr 1fr;gap:0.77em;margin-bottom:1.23em;}
@@ -988,6 +1009,10 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   body[class*="print-"] .cjump{font-size:6px!important;}
   *{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
   @page{size:A4 portrait;margin:11mm;}
+  /* KB 列印／PDF：每頁底部中央印「頁碼 / 總頁數」（Chrome／Edge 支援；Safari 目前不支援頁邊文字） */
+  body.print-staff #vp-staff{page:kbpages;}
+  @page kbpages{size:A4 portrait;margin:11mm;
+    @bottom-center{content:counter(page) " / " counter(pages);font-family:'Space Mono',ui-monospace,monospace;font-size:9pt;color:#666;}}
   /* ── 跨平台輸出一致：列印時一律採用電腦版規格，中和手機/平板專屬的版面設定 ── */
   body.mode-phone .mixpage-stack.mixp,body.mode-tablet .mixpage-stack.mixp{--barw:14em!important;}
   body[class*="print-"] .icpage-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;}
@@ -1159,6 +1184,9 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   body.print-mixp .mixpage-stack.mixp .cbeatcols.dn-b .beat-r{font-size:min(var(--bfs,1.2em),0.95em)!important;}
   body.print-mixp .mixpage-stack.mixp .cbeatcols.dn-c .beat-r{font-size:min(var(--bfs,1.2em),0.8em)!important;}
   body.print-mixp .mixpage-stack.mixp .cbeatcols.dn-d .beat-r{font-size:min(var(--bfs,1.2em),0.7em)!important;}
+  /* 細分小節：輸出時和弦字也以格寬決定（--bm＝列印時和弦字相對放大的倍率，保守取 1.3） */
+  body[class*="print-"] .cbeatcols.cfit{--bm:1.3;}
+  body.print-mixp .mixpage-stack.mixp .cbeatcols.cfit .beat-r.fit{font-size:min(calc(min(var(--bfs,1.2em),1.45em) * var(--cr,1)), calc(100cqw / (var(--tw,1) * var(--tk) * var(--bm))))!important;}
   body.print-fit .ccard{page-break-inside:avoid!important;break-inside:avoid!important;-webkit-column-break-inside:avoid!important;}
   /* 每個段落內部的每一排也不要被切開 */
   body[class*="print-"] .arr-rowblock{break-inside:avoid!important;page-break-inside:avoid!important;}
@@ -1317,6 +1345,8 @@ body.gated>*:not(#gate){filter:grayscale(.9) opacity(.32)!important;pointer-even
       <div class="icon-toolbar">
         <button class="stbtn" onclick="addSect()" title="在最後新增一個段落">＋ 新增段落</button>
         <button class="stbtn segdel-btn" onclick="toggleSegDelMode()" title="刪除模式：開啟後每個段落名稱旁會出現 ✕，按下即刪除">－ 刪除段落</button>
+        <button class="stbtn seg-undo icon-only" onclick="segUndo()" title="上一步（只回復最近的動作，不清除其他）" disabled>↩</button>
+        <button class="stbtn seg-redo icon-only" onclick="segRedo()" title="下一步（重做）" disabled>↪</button>
         <span class="ic-hint seg-tip">點段落展開編輯 · 右滑＝新增 · 左滑＝刪除 · 樂器鈕可拖到段落上</span>
       </div>
       <div class="ic-legend" id="seg-legend"></div>
@@ -1336,6 +1366,7 @@ body.gated>*:not(#gate){filter:grayscale(.9) opacity(.32)!important;pointer-even
         <label class="ic-hint">顯示 <select class="ic-sel" id="chord-disp" onchange="setChordDisp(this.value)"><option value="num">級數</option><option value="male">和弦名(男Key)</option><option value="female">和弦名(女Key)</option></select></label>
         <span class="key-step" title="半音微調 Key：依目前「顯示」調男/女 Key"><label>微調Key</label><button onclick="transposeKey(1)" title="升半音">▲</button><b class="keystep-lbl">—</b><button onclick="transposeKey(-1)" title="降半音">▼</button></span>
         <label class="ic-hint">和弦 <select class="ic-sel cp-acc" onchange="setPlaceAcc(this.value)" title="升降"><option value="">♮</option><option value="b">♭</option><option value="#">♯</option></select><select class="ic-sel cp-root" onchange="setPlaceRoot(this.value)" title="根音（級數）"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option></select><select class="ic-sel cp-qual" onchange="setPlaceQual(this.value)" title="和弦性質"><option value="">大三</option><option value="m">小三 m</option><option value="6">6</option><option value="m6">m6</option><option value="7">屬七 7</option><option value="maj7">maj7</option><option value="m7">m7</option><option value="9">9</option><option value="maj9">maj9</option><option value="m9">m9</option><option value="add9">add9</option><option value="11">11</option><option value="m11">m11</option><option value="13">13</option><option value="maj13">maj13</option><option value="m13">m13</option><option value="sus2">sus2</option><option value="sus">sus</option><option value="7sus">7sus</option><option value="dim">dim</option><option value="aug">aug</option></select><button class="stbtn chordplace-btn" onclick="toggleChordPlace()" title="放和弦模式：開啟後點格子填入所選和弦（存級數，顯示可切級數/男女Key）">🎹 放和弦</button></label>
+        <label class="ic-hint">符號 <select class="ic-sel ch-sym" onchange="setChSym(this.value)" title="琶音：點有音的格子加上／拿掉；連結線：先點第一個和弦（反黃），再點第二個就連起來"><option value="">—（不加）</option><option value="arp">琶音 ⌇</option><option value="tie">連結線 ⌒</option></select></label>
         <label class="ic-hint">全部每排 <select class="ic-sel" onchange="applyAllBPR(this)" title="一次設定所有段落每排小節數"><option value="__">套用…</option><option value="">自動</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option></select></label>
         <button class="stbtn chord-undo icon-only" onclick="chordUndo()" title="上一步（只回復最近的動作，不清除其他）" disabled>↩</button>
         <button class="stbtn chord-redo icon-only" onclick="chordRedo()" title="下一步（重做）" disabled>↪</button>
@@ -1360,6 +1391,7 @@ body.gated>*:not(#gate){filter:grayscale(.9) opacity(.32)!important;pointer-even
         <label class="ic-hint">顯示 <select class="ic-sel" id="mixp-disp" onchange="setChordDisp(this.value)"><option value="num">級數</option><option value="male">和弦名(男Key)</option><option value="female">和弦名(女Key)</option></select></label>
         <span class="key-step" title="半音微調 Key：依目前「顯示」調男/女 Key"><label>微調Key</label><button onclick="transposeKey(1)" title="升半音">▲</button><b class="keystep-lbl">—</b><button onclick="transposeKey(-1)" title="降半音">▼</button></span>
         <label class="ic-hint">和弦 <select class="ic-sel cp-acc" onchange="setPlaceAcc(this.value)" title="升降"><option value="">♮</option><option value="b">♭</option><option value="#">♯</option></select><select class="ic-sel cp-root" onchange="setPlaceRoot(this.value)" title="根音（級數）"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option></select><select class="ic-sel cp-qual" onchange="setPlaceQual(this.value)" title="和弦性質"><option value="">大三</option><option value="m">小三 m</option><option value="6">6</option><option value="m6">m6</option><option value="7">屬七 7</option><option value="maj7">maj7</option><option value="m7">m7</option><option value="9">9</option><option value="maj9">maj9</option><option value="m9">m9</option><option value="add9">add9</option><option value="11">11</option><option value="m11">m11</option><option value="13">13</option><option value="maj13">maj13</option><option value="m13">m13</option><option value="sus2">sus2</option><option value="sus">sus</option><option value="7sus">7sus</option><option value="dim">dim</option><option value="aug">aug</option></select><button class="stbtn chordplace-btn" onclick="toggleChordPlace()" title="放和弦模式：開啟後點格子填入所選和弦（存級數，顯示可切級數/男女Key）">🎹 放和弦</button></label>
+        <label class="ic-hint">符號 <select class="ic-sel ch-sym" onchange="setChSym(this.value)" title="琶音：點有音的格子加上／拿掉；連結線：先點第一個和弦（反黃），再點第二個就連起來"><option value="">—（不加）</option><option value="arp">琶音 ⌇</option><option value="tie">連結線 ⌒</option></select></label>
         <label class="ic-hint">全部每排 <select class="ic-sel" onchange="applyAllBPR(this)" title="一次設定所有段落每排小節數"><option value="__">套用…</option><option value="">自動</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option></select></label>
         <button class="stbtn chord-undo icon-only" onclick="chordUndo()" title="上一步（只回復最近的動作，不清除其他）" disabled>↩</button>
         <button class="stbtn chord-redo icon-only" onclick="chordRedo()" title="下一步（重做）" disabled>↪</button>
@@ -1382,6 +1414,7 @@ body.gated>*:not(#gate){filter:grayscale(.9) opacity(.32)!important;pointer-even
         <select class="ic-sel" id="kb-croot" title="和弦根音（級數）"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option></select>
         <select class="ic-sel" id="kb-cqual" title="和弦性質"><option value="maj">大三 major</option><option value="min">小三 minor</option><option value="6">6</option><option value="m6">m6</option><option value="7">屬七 7</option><option value="maj7">大七 maj7</option><option value="m7">小七 m7</option><option value="9">9</option><option value="maj9">maj9</option><option value="m9">m9</option><option value="add9">add9</option><option value="11">11</option><option value="m11">m11</option><option value="13">13</option><option value="maj13">maj13</option><option value="m13">m13</option><option value="sus2">sus2</option><option value="sus">sus</option><option value="7sus">7sus</option><option value="dim">減 dim</option><option value="aug">增 aug</option></select>
         <button class="stbtn" id="kb-chordmode" onclick="kbChordMode()" title="放和弦模式：開啟後，點任一格就把選好的和弦（整組級數）疊上去；再點一格可連續放">🎹 放和弦</button>
+        <button class="stbtn" id="kb-lroot" onclick="toggleKbLRoot()" title="放和弦時左手一起放根音：開＝右手疊和弦組成音、左手放根音（同一個位置）；關＝只在點的那一排疊和弦">左手根音 開</button>
         <button class="stbtn" id="kb-order" onclick="toggleKbOrder()" title="疊音的顯示順序：順序下＝先輸入的排在下面（輸入 1 3 5 顯示成 5 3 1）；順序上＝照輸入順序由上往下">↧ 順序下</button>
         <label class="ic-hint">符號 <select class="ic-sel" id="kb-sym" onchange="setKbSym(this.value)" title="琶音：點有音的格子加上／拿掉；連結線：先點第一個和弦（反黃），再點第二個就連起來"><option value="">—（不加）</option><option value="arp">琶音 ⌇</option><option value="tie">連結線 ⌒</option></select></label>
         <label class="ic-hint">全部每排 <select class="ic-sel" onchange="applyAllBPR(this)" title="一次設定所有段落每排小節數"><option value="__">套用…</option><option value="">自動</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option></select></label>
@@ -1390,7 +1423,7 @@ body.gated>*:not(#gate){filter:grayscale(.9) opacity(.32)!important;pointer-even
         <button class="stbtn icon-only" id="staff-redo" onclick="staffRedo()" title="下一步（重做）" disabled>↪</button>
         <button class="clear-btn" onclick="clearStaff()" title="清除 KB 數字：可選小節範圍或整個譜（可用上一步還原）">🗑 清除</button>
       </div>
-      <div class="chord-hint">KB 數字譜：每小節分「上排＝右手／下排＝左手」，點格子輸入級數，同一格用空白分隔可直向疊 1–3 個音（和弦）；或用右上「和弦」選根音級數＋性質，開「🎹 放和弦」後點格子整組疊上。時值＝簡譜底線（顯示在每格底部）：無＝四分、一條＝八分、兩條＝十六分。每一「拍」可各自切分：拍左上角的 ♩/♪/♬ 選單只切分那一拍（每拍等寬，切細只在該拍內部發生，不會讓整排縮小）；右手 R／左手 L 標在每列左上角。上方「顯示」可切級數↔男/女Key 和弦名。重複／接續／每排 全部沿用。長按任一小節→拖曳選取→複製→點目標小節左/右緣(藍線)→貼到任意位置。</div>
+      <div class="chord-hint">KB 數字譜：每小節分「上排＝右手／下排＝左手」，點格子輸入級數，同一格用空白分隔可直向疊 1–4 個音（和弦）；或用右上「和弦」選根音級數＋性質，開「🎹 放和弦」後點格子整組疊上。時值＝簡譜底線（顯示在每格底部）：無＝四分、一條＝八分、兩條＝十六分。每一「拍」可各自切分：拍左上角的 ♩/♪/♬ 選單只切分那一拍（每拍等寬，切細只在該拍內部發生，不會讓整排縮小）；右手 R／左手 L 標在每列左上角。上方「顯示」可切級數↔男/女Key 和弦名。重複／接續／每排 全部沿用。長按任一小節→拖曳選取→複製→點目標小節左/右緣(藍線)→貼到任意位置。</div>
       <div class="chord-content" id="staff-content"></div>
     </div>
 
@@ -1466,6 +1499,34 @@ body.gated>*:not(#gate){filter:grayscale(.9) opacity(.32)!important;pointer-even
     <div class="cl-head"><span>📝 更新日誌 · Arranger 理譜人</span><button class="btn" onclick="hideChangelog()">✕</button></div>
     <div class="cl-body">
       <p class="cl-ver">開發時間軸：2026-06-17 ～ 2026-08-30（依使用回饋持續優化）</p>
+
+      <h4>文字清單：段落之間加分隔線、拿掉段落顏色 <span class="cl-date">2026-09-11</span></h4>
+      <ul><li>每個段落之間加一條橫線，比較好分辨段落從哪裡開始</li>
+      <li>段落標題只留「[序號] 名稱  小節數」，後面的「黑（主要）／紅（高潮）」等顏色說明拿掉</li>
+      <li>「複製全部」貼出去的純文字，段落之間用一行「────」分隔</li></ul>
+
+      <h4>細分小節的和弦字級統一；和弦譜／混合也有「符號」（琶音／連結線） <span class="cl-date">2026-09-11</span></h4>
+      <ul><li>切成八分／十六分的小節，和弦字不再整排跟著縮小：依格子實際寬度決定，塞得下就和其他小節一樣大，塞不下才縮（不會比以前更小）；舊譜打開就套用，不必改資料</li>
+      <li>列印／存 PDF 也照同一套規則，後半拍的和弦（例如 4& 的 G）不會再印得特別小</li>
+      <li>和弦譜、混合頁「🎹 放和弦」右邊新增「符號」下拉，用法與 KB 頁相同：選「琶音 ⌇」後點有和弦的格子加上／拿掉；選「連結線 ⌒」後先點第一個和弦（反黃）、再點第二個就連起來，可跨小節、換排也畫得出來；點已連線的和弦＝移除</li>
+      <li>符號跟著小節走：複製貼上、刪除小節、存檔讀檔都會帶著；也可用「↩ 上一步」還原；與「🎹 放和弦」不會同時開</li>
+      <li>順手修正：刪除或插入小節後，連結線（含 KB 頁）的終點會跟著位移，不會連到錯的小節</li></ul>
+
+      <h4>KB 放和弦依組成音疊音、左手自動放根音；KB 列印加頁碼 <span class="cl-date">2026-09-11</span></h4>
+      <ul><li>「🎹 放和弦」照和弦的組成音決定疊幾個音：三和弦 3 個（Cm → 1 b3 5）、七和弦等四音和弦 4 個（Cm7 → 1 b3 5 b7）；每格最多顯示 4 個音</li>
+      <li>放和弦時左手同一個位置自動放根音（Cm → 1）；左手那一拍切分太粗時會自動切細，不會洗掉既有音符</li>
+      <li>「🎹 放和弦」右邊新增「左手根音 開／關」：關掉就回到只在點的那一排疊和弦；選擇會記住</li>
+      <li>放完之後左右手的音都可以再點格子自己改，也能用「↩ 上一步」還原</li>
+      <li>KB 列印／存 PDF：每頁底部中央印「頁碼 / 總頁數」（Chrome、Edge 可用；Safari 目前不支援頁邊文字，印出來不會有頁碼）</li></ul>
+
+      <h4>段落流程圖也有上一步；段落底部備註可直接編輯 <span class="cl-date">2026-09-11</span></h4>
+      <ul><li>段落流程圖工具列新增「↩ 上一步／↪ 下一步」，用法與和弦譜、混合、KB 頁一樣；最多回溯 60 步</li>
+      <li>會記錄的動作：改名稱／小節數／顏色／備註、樂器配置與內層、新增／刪除／複製／上下移動段落、把樂器鈕拖到段落上、辨識匯入</li>
+      <li>只回復段落本身的設定，不會把之後在和弦譜／KB 填的內容一起退回；被刪掉的段落會連同和弦與 KB 數字整段放回來</li>
+      <li>和弦譜、混合、KB 三頁段落底部的「⚑ 備註」點一下就能直接改：Enter 完成、Shift+Enter 換行、Esc 取消；清空就等於刪掉備註</li>
+      <li>還沒有備註的段落，在「控制項 開」時底部會出現淡淡的「＋ 備註」可點；列印、鎖定時不顯示</li>
+      <li>在這三頁改的備註，可用該頁的「↩ 上一步」還原；和段落流程圖的備註是同一份</li>
+      <li>換譜（讀檔、範本、雲端、開新檔案）時會清空各頁的上一步，避免把別首歌的內容還原到新譜</li></ul>
 
       <h4>和弦譜／混合頁也有上一步、KB 清除獨立 <span class="cl-date">2026-09-08</span></h4>
       <ul><li>和弦譜與混合頁的工具列新增「↩ 上一步／↪ 下一步」，用法與 KB 頁一樣</li>
@@ -2012,6 +2073,7 @@ const I18N={
  "清除 KB 數字：可選小節範圍或整個譜（可用上一步還原）":"Clear KB numbers: pick a bar range or the whole chart (use Undo to restore)",
  "🗑 清除":"🗑 Clear",
  "上一步（只回復最近的動作，不清除其他）":"Undo (reverts the last action only)","下一步（重做）":"Redo",
+ "＋ 備註":"＋ Note","左手根音 開":"LH root: on","左手根音 關":"LH root: off","放和弦時左手一起放根音：開＝右手疊和弦組成音、左手放根音（同一個位置）；關＝只在點的那一排疊和弦":"Place chord also puts the root in the left hand. On = right hand gets the chord tones, left hand the root (same spot). Off = the chord goes only into the row you tap.","點一下新增備註":"Tap to add a note","點一下編輯備註（Enter 完成、Shift+Enter 換行、Esc 取消）":"Tap to edit the note (Enter = done, Shift+Enter = new line, Esc = cancel)",
  /* ── 頂部工具列 title ── */
  "↓ PNG 段落圖":"↓ PNG Section Map",
  "切換版面：電腦 / 平板 / 手機":"Layout: desktop / tablet / phone",
@@ -2024,7 +2086,7 @@ const I18N={
  "細分(2音=八分、3音=三連音、4音=十六分)。右上橘徽章設本小節拍號、末小節選「→接續」。上方「顯示」可切級數↔和弦名(男/女Key)。長按任一小節→拖曳選取→複製→點目標小節左/右緣(藍線)→貼到任意位置。":"subdivision (2 = eighths, 3 = triplets, 4 = sixteenths). The orange badge sets the bar's meter; the last bar can pick \"→ continue\". \"Show\" above switches between degrees and chord names (M/F key). Long-press a bar → drag to select → Copy → tap a target bar's left/right edge (blue line) → paste anywhere.",
  "混合＋：用上方「樂器篩選鈕（ALL / Vocal / KB …）」挑要顯示哪些樂器的配器。配器在小節上方，可自由拖曳移位與調長度（不卡小節），內容與其他頁共用。長按任一小節→拖曳選取→複製→點目標小節左/右緣(藍線)→貼到任意位置。":"Mix+: use the instrument filter buttons above (ALL / Vocal / KB …) to choose which parts to show. Parts sit above the bars and can be dragged and resized freely; the content is shared with the other views. Long-press a bar → drag to select → Copy → tap a target bar's left/right edge (blue line) → paste anywhere.",
  "上方「樂器篩選鈕」挑要看的部位；拖 ⋮⋮ 移位、拖右緣調長度、✕刪除（清空文字＝各頁一起移除）":"Use the instrument filter above to choose parts; drag ⋮⋮ to move, drag the right edge to resize, ✕ to delete (clearing the text removes it from every view)",
- "KB 數字譜：每小節分「上排＝右手／下排＝左手」，點格子輸入級數，同一格用空白分隔可直向疊 1–3 個音（和弦）；或用右上「和弦」選根音級數＋性質，開「🎹 放和弦」後點格子整組疊上。時值＝簡譜底線（顯示在每格底部）：無＝四分、一條＝八分、兩條＝十六分。每一「拍」可各自切分：拍左上角的 ♩/♪/♬ 選單只切分那一拍（每拍等寬，切細只在該拍內部發生，不會讓整排縮小）；右手 R／左手 L 標在每列左上角。上方「顯示」可切級數↔男/女Key 和弦名。重複／接續／每排 全部沿用。長按任一小節→拖曳選取→複製→點目標小節左/右緣(藍線)→貼到任意位置。":"KB number chart: each bar has an upper row (right hand) and a lower row (left hand). Tap a cell to type degrees; separate them with spaces to stack 1–3 notes as a chord. Or pick a root degree and quality under \"Chord\" and turn on \"🎹 Place chord\" to drop the whole chord in. Duration is shown as underlines at the bottom of each cell: none = quarter, one = eighth, two = sixteenth. Each beat subdivides on its own via the ♩/♪/♬ menu in its corner (beats stay equal width; subdividing only affects that beat). R and L mark the rows. \"Show\" above switches degrees ↔ M/F key chord names. Repeats, continuations and bars-per-row all work as usual. Long-press a bar → drag to select → Copy → tap a target bar's left/right edge (blue line) → paste anywhere.",
+ "KB 數字譜：每小節分「上排＝右手／下排＝左手」，點格子輸入級數，同一格用空白分隔可直向疊 1–4 個音（和弦）；或用右上「和弦」選根音級數＋性質，開「🎹 放和弦」後點格子整組疊上。時值＝簡譜底線（顯示在每格底部）：無＝四分、一條＝八分、兩條＝十六分。每一「拍」可各自切分：拍左上角的 ♩/♪/♬ 選單只切分那一拍（每拍等寬，切細只在該拍內部發生，不會讓整排縮小）；右手 R／左手 L 標在每列左上角。上方「顯示」可切級數↔男/女Key 和弦名。重複／接續／每排 全部沿用。長按任一小節→拖曳選取→複製→點目標小節左/右緣(藍線)→貼到任意位置。":"KB number chart: each bar has an upper row (right hand) and a lower row (left hand). Tap a cell to type degrees; separate them with spaces to stack 1–4 notes as a chord. Or pick a root degree and quality under \"Chord\" and turn on \"🎹 Place chord\" to drop the whole chord in. Duration is shown as underlines at the bottom of each cell: none = quarter, one = eighth, two = sixteenth. Each beat subdivides on its own via the ♩/♪/♬ menu in its corner (beats stay equal width; subdividing only affects that beat). R and L mark the rows. \"Show\" above switches degrees ↔ M/F key chord names. Repeats, continuations and bars-per-row all work as usual. Long-press a bar → drag to select → Copy → tap a target bar's left/right edge (blue line) → paste anywhere.",
  /* ── 匯出頁卡片 ── */
  "🗂 段落流程圖 PDF":"🗂 Section Flow PDF",
  "段落順序、Bar 數與各段樂器配置一頁看完，適合團員快速掌握全曲架構":"Section order, bar counts and each section's parts on one page — a quick structural overview for the band",
@@ -2361,6 +2423,7 @@ const I18N_JA={
  "清除 KB 數字：可選小節範圍或整個譜（可用上一步還原）":"KB数字を消す：小節の範囲か楽譜全体を選べます（「元に戻す」で復元できます）",
  "🗑 清除":"🗑 クリア",
  "上一步（只回復最近的動作，不清除其他）":"元に戻す（直前の操作だけ）",
+ "＋ 備註":"＋ メモ","左手根音 開":"左手ルート ON","左手根音 關":"左手ルート OFF","放和弦時左手一起放根音：開＝右手疊和弦組成音、左手放根音（同一個位置）；關＝只在點的那一排疊和弦":"コード入力時に左手へルートも入れます。ON＝右手に構成音、左手にルート（同じ位置）。OFF＝タップした段だけにコードを入れます。","點一下新增備註":"タップしてメモを追加","點一下編輯備註（Enter 完成、Shift+Enter 換行、Esc 取消）":"タップしてメモを編集（Enter＝完了、Shift+Enter＝改行、Esc＝取消）",
  "下一步（重做）":"やり直し",
  "↓ PNG 段落圖":"↓ PNG セクション図",
  "切換版面：電腦 / 平板 / 手機":"レイアウト切替：PC / タブレット / スマホ",
@@ -2383,7 +2446,7 @@ const I18N_JA={
  "細分(2音=八分、3音=三連音、4音=十六分)。右上橘徽章設本小節拍號、末小節選「→接續」。上方「顯示」可切級數↔和弦名(男/女Key)。長按任一小節→拖曳選取→複製→點目標小節左/右緣(藍線)→貼到任意位置。":"分割（2音＝8分、3音＝3連符、4音＝16分）。右上のオレンジのバッジでこの小節の拍子を設定し、最後の小節では「→接続」を選べます。上の「表示」でディグリー↔コード名（男/女キー）を切り替えられます。小節を長押し→ドラッグで選択→コピー→貼り付け先の小節の左右の端（青い線）をタップ→どこにでも貼り付け。",
  "混合＋：用上方「樂器篩選鈕（ALL / Vocal / KB …）」挑要顯示哪些樂器的配器。配器在小節上方，可自由拖曳移位與調長度（不卡小節），內容與其他頁共用。長按任一小節→拖曳選取→複製→點目標小節左/右緣(藍線)→貼到任意位置。":"ミックス＋：上の楽器フィルター（ALL / Vocal / KB …）で表示するパートを選びます。パートは小節の上にあり、自由にドラッグして移動・長さ調整ができ、内容は他の画面と共通です。小節を長押し→ドラッグで選択→コピー→貼り付け先の小節の左右の端（青い線）をタップ→どこにでも貼り付け。",
  "上方「樂器篩選鈕」挑要看的部位；拖 ⋮⋮ 移位、拖右緣調長度、✕刪除（清空文字＝各頁一起移除）":"上の楽器フィルターで見たいパートを選択。⋮⋮ をドラッグで移動、右端をドラッグで長さ調整、✕ で削除（文字を空にすると全画面から消えます）",
- "KB 數字譜：每小節分「上排＝右手／下排＝左手」，點格子輸入級數，同一格用空白分隔可直向疊 1–3 個音（和弦）；或用右上「和弦」選根音級數＋性質，開「🎹 放和弦」後點格子整組疊上。時值＝簡譜底線（顯示在每格底部）：無＝四分、一條＝八分、兩條＝十六分。每一「拍」可各自切分：拍左上角的 ♩/♪/♬ 選單只切分那一拍（每拍等寬，切細只在該拍內部發生，不會讓整排縮小）；右手 R／左手 L 標在每列左上角。上方「顯示」可切級數↔男/女Key 和弦名。重複／接續／每排 全部沿用。長按任一小節→拖曳選取→複製→點目標小節左/右緣(藍線)→貼到任意位置。":"KB数字譜：各小節は上段＝右手、下段＝左手に分かれます。セルをタップしてディグリーを入力し、同じセル内はスペース区切りで1〜3音まで縦に重ねられます（コード）。または右上の「コード」でルートと種類を選び、「🎹 コード入力」をONにしてセルをタップすると和音がまとめて入ります。音価はセル下の下線で表します：なし＝4分、1本＝8分、2本＝16分。分割は「拍」ごとに独立していて、拍の左上の ♩/♪/♬ メニューはその拍だけを分割します（各拍は等幅のまま、細かくしても行全体は縮みません）。右手 R／左手 L は各行の左上に表示されます。上の「表示」でディグリー↔男/女キーのコード名を切り替えられます。リピート／接続／1行あたりの小節数もそのまま使えます。小節を長押し→ドラッグで選択→コピー→貼り付け先の小節の左右の端（青い線）をタップ→どこにでも貼り付け。",
+ "KB 數字譜：每小節分「上排＝右手／下排＝左手」，點格子輸入級數，同一格用空白分隔可直向疊 1–4 個音（和弦）；或用右上「和弦」選根音級數＋性質，開「🎹 放和弦」後點格子整組疊上。時值＝簡譜底線（顯示在每格底部）：無＝四分、一條＝八分、兩條＝十六分。每一「拍」可各自切分：拍左上角的 ♩/♪/♬ 選單只切分那一拍（每拍等寬，切細只在該拍內部發生，不會讓整排縮小）；右手 R／左手 L 標在每列左上角。上方「顯示」可切級數↔男/女Key 和弦名。重複／接續／每排 全部沿用。長按任一小節→拖曳選取→複製→點目標小節左/右緣(藍線)→貼到任意位置。":"KB数字譜：各小節は上段＝右手、下段＝左手に分かれます。セルをタップしてディグリーを入力し、同じセル内はスペース区切りで1〜4音まで縦に重ねられます（コード）。または右上の「コード」でルートと種類を選び、「🎹 コード入力」をONにしてセルをタップすると和音がまとめて入ります。音価はセル下の下線で表します：なし＝4分、1本＝8分、2本＝16分。分割は「拍」ごとに独立していて、拍の左上の ♩/♪/♬ メニューはその拍だけを分割します（各拍は等幅のまま、細かくしても行全体は縮みません）。右手 R／左手 L は各行の左上に表示されます。上の「表示」でディグリー↔男/女キーのコード名を切り替えられます。リピート／接続／1行あたりの小節数もそのまま使えます。小節を長押し→ドラッグで選択→コピー→貼り付け先の小節の左右の端（青い線）をタップ→どこにでも貼り付け。",
  "🗂 段落流程圖 PDF":"🗂 セクションフロー PDF",
  "段落順序、Bar 數與各段樂器配置一頁看完，適合團員快速掌握全曲架構":"セクションの順番・小節数・各セクションのパート構成が1ページで見渡せます。メンバーが曲の構成をつかむのに最適",
  "上傳和弦譜圖片或 PDF，瀏覽器內 OCR 辨識並自動拆成段落／和弦（實驗性，通常需人工修正；可選依男/女 Key 轉級數）":"コード譜の画像やPDFをアップロードすると、ブラウザ内のOCRでセクションとコードに自動で分割します（実験的機能・通常は手直しが必要。男/女キーでディグリーに変換も可）",
@@ -2718,6 +2781,7 @@ const I18N_KO={
  "清除 KB 數字：可選小節範圍或整個譜（可用上一步還原）":"KB 숫자 지우기: 마디 범위 또는 악보 전체를 고를 수 있습니다 (실행 취소로 복원 가능)",
  "🗑 清除":"🗑 지우기",
  "上一步（只回復最近的動作，不清除其他）":"실행 취소 (직전 동작만)",
+ "＋ 備註":"＋ 메모","左手根音 開":"왼손 루트 켬","左手根音 關":"왼손 루트 끔","放和弦時左手一起放根音：開＝右手疊和弦組成音、左手放根音（同一個位置）；關＝只在點的那一排疊和弦":"코드 입력 시 왼손에 루트도 넣습니다. 켬＝오른손 구성음, 왼손 루트 (같은 위치). 끔＝탭한 줄에만 코드를 넣습니다.","點一下新增備註":"탭하여 메모 추가","點一下編輯備註（Enter 完成、Shift+Enter 換行、Esc 取消）":"탭하여 메모 편집 (Enter＝완료, Shift+Enter＝줄바꿈, Esc＝취소)",
  "下一步（重做）":"다시 실행",
  "↓ PNG 段落圖":"↓ PNG 섹션 맵",
  "切換版面：電腦 / 平板 / 手機":"레이아웃 전환: PC / 태블릿 / 모바일",
@@ -2740,7 +2804,7 @@ const I18N_KO={
  "細分(2音=八分、3音=三連音、4音=十六分)。右上橘徽章設本小節拍號、末小節選「→接續」。上方「顯示」可切級數↔和弦名(男/女Key)。長按任一小節→拖曳選取→複製→點目標小節左/右緣(藍線)→貼到任意位置。":"분할 (2음＝8분, 3음＝셋잇단, 4음＝16분). 오른쪽 위 주황 배지로 이 마디의 박자를 설정하고, 마지막 마디에서는 「→연결」을 선택할 수 있습니다. 위쪽 「표시」로 디그리↔코드명(남/여 키)을 전환할 수 있습니다. 마디를 길게 누르고 → 드래그로 선택 → 복사 → 붙여넣을 마디의 좌우 가장자리(파란 선) 탭 → 어디든 붙여넣기.",
  "混合＋：用上方「樂器篩選鈕（ALL / Vocal / KB …）」挑要顯示哪些樂器的配器。配器在小節上方，可自由拖曳移位與調長度（不卡小節），內容與其他頁共用。長按任一小節→拖曳選取→複製→點目標小節左/右緣(藍線)→貼到任意位置。":"믹스＋: 위쪽 악기 필터 (ALL / Vocal / KB …)로 표시할 파트를 고릅니다. 파트는 마디 위에 있으며 자유롭게 드래그하여 이동·길이 조절이 가능하고, 내용은 다른 화면과 공유됩니다. 마디를 길게 누르고 → 드래그로 선택 → 복사 → 붙여넣을 마디의 좌우 가장자리(파란 선) 탭 → 어디든 붙여넣기.",
  "上方「樂器篩選鈕」挑要看的部位；拖 ⋮⋮ 移位、拖右緣調長度、✕刪除（清空文字＝各頁一起移除）":"위쪽 악기 필터로 볼 파트를 선택하세요. ⋮⋮ 를 드래그해 이동, 오른쪽 끝을 드래그해 길이 조절, ✕ 로 삭제 (텍스트를 비우면 모든 화면에서 제거)",
- "KB 數字譜：每小節分「上排＝右手／下排＝左手」，點格子輸入級數，同一格用空白分隔可直向疊 1–3 個音（和弦）；或用右上「和弦」選根音級數＋性質，開「🎹 放和弦」後點格子整組疊上。時值＝簡譜底線（顯示在每格底部）：無＝四分、一條＝八分、兩條＝十六分。每一「拍」可各自切分：拍左上角的 ♩/♪/♬ 選單只切分那一拍（每拍等寬，切細只在該拍內部發生，不會讓整排縮小）；右手 R／左手 L 標在每列左上角。上方「顯示」可切級數↔男/女Key 和弦名。重複／接續／每排 全部沿用。長按任一小節→拖曳選取→複製→點目標小節左/右緣(藍線)→貼到任意位置。":"KB 숫자 악보: 각 마디는 윗줄＝오른손, 아랫줄＝왼손으로 나뉩니다. 칸을 탭해 디그리를 입력하고, 같은 칸에서 공백으로 구분하면 1–3음까지 세로로 쌓을 수 있습니다 (코드). 또는 오른쪽 위 「코드」에서 루트와 성질을 고르고 「🎹 코드 입력」을 켠 뒤 칸을 탭하면 화음이 한꺼번에 들어갑니다. 음길이는 칸 아래 밑줄로 표시합니다: 없음＝4분, 한 줄＝8분, 두 줄＝16분. 분할은 「박」마다 독립적이며, 박 왼쪽 위의 ♩/♪/♬ 메뉴는 그 박만 분할합니다 (각 박은 같은 너비를 유지하며, 잘게 나눠도 줄 전체가 줄지 않습니다). 오른손 R／왼손 L 은 각 줄 왼쪽 위에 표시됩니다. 위쪽 「표시」로 디그리↔남/여 키 코드명을 전환할 수 있습니다. 반복／연결／한 줄당 마디 수도 그대로 사용됩니다. 마디를 길게 누르고 → 드래그로 선택 → 복사 → 붙여넣을 마디의 좌우 가장자리(파란 선) 탭 → 어디든 붙여넣기.",
+ "KB 數字譜：每小節分「上排＝右手／下排＝左手」，點格子輸入級數，同一格用空白分隔可直向疊 1–4 個音（和弦）；或用右上「和弦」選根音級數＋性質，開「🎹 放和弦」後點格子整組疊上。時值＝簡譜底線（顯示在每格底部）：無＝四分、一條＝八分、兩條＝十六分。每一「拍」可各自切分：拍左上角的 ♩/♪/♬ 選單只切分那一拍（每拍等寬，切細只在該拍內部發生，不會讓整排縮小）；右手 R／左手 L 標在每列左上角。上方「顯示」可切級數↔男/女Key 和弦名。重複／接續／每排 全部沿用。長按任一小節→拖曳選取→複製→點目標小節左/右緣(藍線)→貼到任意位置。":"KB 숫자 악보: 각 마디는 윗줄＝오른손, 아랫줄＝왼손으로 나뉩니다. 칸을 탭해 디그리를 입력하고, 같은 칸에서 공백으로 구분하면 1–4음까지 세로로 쌓을 수 있습니다 (코드). 또는 오른쪽 위 「코드」에서 루트와 성질을 고르고 「🎹 코드 입력」을 켠 뒤 칸을 탭하면 화음이 한꺼번에 들어갑니다. 음길이는 칸 아래 밑줄로 표시합니다: 없음＝4분, 한 줄＝8분, 두 줄＝16분. 분할은 「박」마다 독립적이며, 박 왼쪽 위의 ♩/♪/♬ 메뉴는 그 박만 분할합니다 (각 박은 같은 너비를 유지하며, 잘게 나눠도 줄 전체가 줄지 않습니다). 오른손 R／왼손 L 은 각 줄 왼쪽 위에 표시됩니다. 위쪽 「표시」로 디그리↔남/여 키 코드명을 전환할 수 있습니다. 반복／연결／한 줄당 마디 수도 그대로 사용됩니다. 마디를 길게 누르고 → 드래그로 선택 → 복사 → 붙여넣을 마디의 좌우 가장자리(파란 선) 탭 → 어디든 붙여넣기.",
  "🗂 段落流程圖 PDF":"🗂 섹션 플로우 PDF",
  "段落順序、Bar 數與各段樂器配置一頁看完，適合團員快速掌握全曲架構":"섹션 순서·마디 수·각 섹션의 파트 구성을 한 페이지에서 볼 수 있어 팀원이 곡 구조를 빠르게 파악하기 좋습니다",
  "上傳和弦譜圖片或 PDF，瀏覽器內 OCR 辨識並自動拆成段落／和弦（實驗性，通常需人工修正；可選依男/女 Key 轉級數）":"코드 악보 이미지나 PDF를 올리면 브라우저 내 OCR로 섹션과 코드로 자동 분리합니다 (실험적 기능·보통 수동 수정 필요, 남/여 키로 디그리 변환 가능)",
@@ -2825,11 +2889,11 @@ const I18N_CN={
  "刪除自定義樂器（預設樂器不會被刪除）":"删除自定义乐器（缺省乐器不会被删除）","藍（第二層）":"蓝（第二层）","紅（高潮）":"红（高潮）","屬七 7":"属七 7","減 dim":"减 dim","根音（級數）":"根音（级数）",
  "和弦性質":"和弦性质","和弦根音（級數）":"和弦根音（级数）","放和弦模式：開啟後點格子填入所選和弦（存級數，顯示可切級數/男女Key）":"放和弦模式：打开后点格子填入所选和弦（存级数，显示可切级数/男女Key）","放和弦模式：開啟後，點任一格就把選好的和弦（整組級數）疊上去；再點一格可連續放":"放和弦模式：打开后，点任一格就把选好的和弦（整组级数）叠上去；再点一格可连续放","在此段之後新增段落":"在此段之后添加段落","顯示/隱藏每個小節的控制鈕":"显示/隐藏每个小节的控制钮",
  "顯示/隱藏每個小節的控制鈕；隱藏時仍顯示已設定的值":"显示/隐藏每个小节的控制钮；隐藏时仍显示已设置的值","複製小節：進入複製模式（預設選整段，可再拖曳/長按調整）→ 複製 → 點目標小節左/右緣(藍線) → 貼到任意位置（可跨段）":"复制小节：进入复制模式（缺省选整段，可再拖曳/长按调整）→ 复制 → 点目标小节左/右缘(蓝线) → 贴到任意位置（可跨段）","收合/展開此段（收合只留標題，方便專注其他段）":"收合/展开此段（收合只留标题，方便专注其他段）","本小節重複次數":"本小节重复次数","鎖定：開＝只能看譜、禁止編輯；關＝可編輯":"锁定：开＝只能看谱、禁止编辑；关＝可编辑","鎖定：開＝只能看譜與左右滑頁、禁止任何編輯；關＝可編輯":"锁定：开＝只能看谱与左右滑页、禁止任何编辑；关＝可编辑",
- "聚會服事列印：開＝每首歌各自從新頁開始；關＝段落連續接著印":"聚会服事打印：开＝每首歌各自从新页开始；关＝段落连续接着印","半音微調 Key":"半音微调 Key","清除整個譜的和弦／分割／重複／拍號／接續資料（可再按一次復原）":"清除整个谱的和弦／分割／重复／拍号／接续数据（可再按一次复原）","清除整個譜的 KB 數字（可用上一步還原）":"清除整个谱的 KB 数字（可用上一步还原）","清除 KB 數字：可選小節範圍或整個譜（可用上一步還原）":"清除 KB 数字：可选小节范围或整个谱（可用上一步还原）","上一步（只回復最近的動作，不清除其他）":"上一步（只回复最近的动作，不清除其他）",
+ "聚會服事列印：開＝每首歌各自從新頁開始；關＝段落連續接著印":"聚会服事打印：开＝每首歌各自从新页开始；关＝段落连续接着印","半音微調 Key":"半音微调 Key","清除整個譜的和弦／分割／重複／拍號／接續資料（可再按一次復原）":"清除整个谱的和弦／分割／重复／拍号／接续数据（可再按一次复原）","清除整個譜的 KB 數字（可用上一步還原）":"清除整个谱的 KB 数字（可用上一步还原）","清除 KB 數字：可選小節範圍或整個譜（可用上一步還原）":"清除 KB 数字：可选小节范围或整个谱（可用上一步还原）","上一步（只回復最近的動作，不清除其他）":"上一步（只回复最近的动作，不清除其他）","＋ 備註":"＋ 备注","左手根音 開":"左手根音 开","左手根音 關":"左手根音 关","放和弦時左手一起放根音：開＝右手疊和弦組成音、左手放根音（同一個位置）；關＝只在點的那一排疊和弦":"放和弦时左手一起放根音：开＝右手叠和弦组成音、左手放根音（同一个位置）；关＝只在点的那一排叠和弦","點一下新增備註":"点一下添加备注","點一下編輯備註（Enter 完成、Shift+Enter 換行、Esc 取消）":"点一下编辑备注（Enter 完成、Shift+Enter 换行、Esc 取消）",
  "↓ PNG 段落圖":"↓ PNG 段落图","切換版面：電腦 / 平板 / 手機":"切换版面：电脑 / 平板 / 手机","電腦：側欄編輯 ＋ 寬版檢視":"电脑：侧栏编辑 ＋ 宽版查看","平板：編輯區移到上方、檢視全寬、圖示譜3欄":"平板：编辑区移到上方、查看全宽、图标谱3栏","手機：隱藏編輯區、圖示譜2欄":"手机：隐藏编辑区、图标谱2栏","介面配色（只影響螢幕，列印仍為白底原樣）":"接口配色（只影响屏幕，打印仍为白底原样）",
  "使用者登入 / 雲端歌庫":"用户登录 / 云端歌库","匯出 JSON 備份":"导出 JSON 备份","從 JSON 匯入":"从 JSON 导入","列印圖示譜（每頁4段，A4）":"打印图标谱（每页4段，A4）","點拍格可編輯。記號：":"点拍格可编辑。记号：","級數、":"级数、",
  "品質、":"品质、","轉位、":"转位、","延續、":"延续、","細分(2音=八分、3音=三連音、4音=十六分)。右上橘徽章設本小節拍號、末小節選「→接續」。上方「顯示」可切級數↔和弦名(男/女Key)。長按任一小節→拖曳選取→複製→點目標小節左/右緣(藍線)→貼到任意位置。":"细分(2音=八分、3音=三连音、4音=十六分)。右上橘徽章设本小节拍号、末小节选「→接续」。上方「显示」可切级数↔和弦名(男/女Key)。长按任一小节→拖曳选取→复制→点目标小节左/右缘(蓝线)→贴到任意位置。","混合＋：用上方「樂器篩選鈕（ALL / Vocal / KB …）」挑要顯示哪些樂器的配器。配器在小節上方，可自由拖曳移位與調長度（不卡小節），內容與其他頁共用。長按任一小節→拖曳選取→複製→點目標小節左/右緣(藍線)→貼到任意位置。":"混合＋：用上方「乐器筛选钮（ALL / Vocal / KB …）」挑要显示哪些乐器的配器。配器在小节上方，可自由拖曳移位与调长度（不卡小节），内容与其他页共用。长按任一小节→拖曳选取→复制→点目标小节左/右缘(蓝线)→贴到任意位置。","上方「樂器篩選鈕」挑要看的部位；拖 ⋮⋮ 移位、拖右緣調長度、✕刪除（清空文字＝各頁一起移除）":"上方「乐器筛选钮」挑要看的部位；拖 ⋮⋮ 移位、拖右缘调长度、✕删除（清空文本＝各页一起移除）",
- "KB 數字譜：每小節分「上排＝右手／下排＝左手」，點格子輸入級數，同一格用空白分隔可直向疊 1–3 個音（和弦）；或用右上「和弦」選根音級數＋性質，開「🎹 放和弦」後點格子整組疊上。時值＝簡譜底線（顯示在每格底部）：無＝四分、一條＝八分、兩條＝十六分。每一「拍」可各自切分：拍左上角的 ♩/♪/♬ 選單只切分那一拍（每拍等寬，切細只在該拍內部發生，不會讓整排縮小）；右手 R／左手 L 標在每列左上角。上方「顯示」可切級數↔男/女Key 和弦名。重複／接續／每排 全部沿用。長按任一小節→拖曳選取→複製→點目標小節左/右緣(藍線)→貼到任意位置。":"KB 数字谱：每小节分「上排＝右手／下排＝左手」，点格子输入级数，同一格用空白分隔可直向叠 1–3 个音（和弦）；或用右上「和弦」选根音级数＋性质，开「🎹 放和弦」后点格子整组叠上。时值＝简谱底线（显示在每格底部）：无＝四分、一条＝八分、两条＝十六分。每一「拍」可各自切分：拍左上角的 ♩/♪/♬ 菜单只切分那一拍（每拍等宽，切细只在该拍内部发生，不会让整排缩小）；右手 R／左手 L 标在每列左上角。上方「显示」可切级数↔男/女Key 和弦名。重复／接续／每排 全部沿用。长按任一小节→拖曳选取→复制→点目标小节左/右缘(蓝线)→贴到任意位置。","🗂 段落流程圖 PDF":"🗂 段落流程图 PDF","段落順序、Bar 數與各段樂器配置一頁看完，適合團員快速掌握全曲架構":"段落顺序、Bar 数与各段乐器配置一页看完，适合团员快速掌握全曲架构","上傳和弦譜圖片或 PDF，瀏覽器內 OCR 辨識並自動拆成段落／和弦（實驗性，通常需人工修正；可選依男/女 Key 轉級數）":"上传和弦谱图片或 PDF，浏览器内 OCR 辨识并自动拆成段落／和弦（实验性，通常需人工修正；可选依男/女 Key 转级数）","每段小節攤開、依拍號顯示拍點，A4 直式列印，適合主領 / 樂手看和弦進行":"每段小节摊开、依拍号显示拍点，A4 直式打印，适合主领 / 乐手看和弦进行","同一頁同時呈現和弦小節與各樂器部位，最完整的樂團總表":"同一页同时呈现和弦小节与各乐器部位，最完整的乐团总表",
+ "KB 數字譜：每小節分「上排＝右手／下排＝左手」，點格子輸入級數，同一格用空白分隔可直向疊 1–4 個音（和弦）；或用右上「和弦」選根音級數＋性質，開「🎹 放和弦」後點格子整組疊上。時值＝簡譜底線（顯示在每格底部）：無＝四分、一條＝八分、兩條＝十六分。每一「拍」可各自切分：拍左上角的 ♩/♪/♬ 選單只切分那一拍（每拍等寬，切細只在該拍內部發生，不會讓整排縮小）；右手 R／左手 L 標在每列左上角。上方「顯示」可切級數↔男/女Key 和弦名。重複／接續／每排 全部沿用。長按任一小節→拖曳選取→複製→點目標小節左/右緣(藍線)→貼到任意位置。":"KB 数字谱：每小节分「上排＝右手／下排＝左手」，点格子输入级数，同一格用空白分隔可直向叠 1–4 个音（和弦）；或用右上「和弦」选根音级数＋性质，开「🎹 放和弦」后点格子整组叠上。时值＝简谱底线（显示在每格底部）：无＝四分、一条＝八分、两条＝十六分。每一「拍」可各自切分：拍左上角的 ♩/♪/♬ 菜单只切分那一拍（每拍等宽，切细只在该拍内部发生，不会让整排缩小）；右手 R／左手 L 标在每列左上角。上方「显示」可切级数↔男/女Key 和弦名。重复／接续／每排 全部沿用。长按任一小节→拖曳选取→复制→点目标小节左/右缘(蓝线)→贴到任意位置。","🗂 段落流程圖 PDF":"🗂 段落流程图 PDF","段落順序、Bar 數與各段樂器配置一頁看完，適合團員快速掌握全曲架構":"段落顺序、Bar 数与各段乐器配置一页看完，适合团员快速掌握全曲架构","上傳和弦譜圖片或 PDF，瀏覽器內 OCR 辨識並自動拆成段落／和弦（實驗性，通常需人工修正；可選依男/女 Key 轉級數）":"上传和弦谱图片或 PDF，浏览器内 OCR 辨识并自动拆成段落／和弦（实验性，通常需人工修正；可选依男/女 Key 转级数）","每段小節攤開、依拍號顯示拍點，A4 直式列印，適合主領 / 樂手看和弦進行":"每段小节摊开、依拍号显示拍点，A4 直式打印，适合主领 / 乐手看和弦进行","同一頁同時呈現和弦小節與各樂器部位，最完整的樂團總表":"同一页同时呈现和弦小节与各乐器部位，最完整的乐团总表",
  "包含所有段落、Bar 數、顏色、樂器備註":"包含所有段落、Bar 数、颜色、乐器备注","純文字格式，可貼入 Notion / 筆記 App":"纯文本格式，可贴入 Notion / 笔记 App","完整存檔，可日後匯入繼續編輯":"完整保存，可日后导入继续编辑","在 Canva / Miro 快速還原（3 步驟）":"在 Canva / Miro 快速还原（3 步骤）","新增黑色畫布 → 每個段落用一個「圓形」（邊框顏色=段落色），內部疊加更小的彩色圓代表各樂器層次。節奏組 Drum+Bass 改用小方形置於圓底。":"添加黑色画布 → 每个段落用一个「圆形」（边框颜色=段落色），内部叠加更小的彩色圆代表各乐器层次。节奏组 Drum+Bass 改用小方形置于圆底。","段落圓由「左至右排列」，圓徑依 Bar 數等比縮放。段落間用虛線箭頭連接，標注轉場（Beat Switch、漸弱）。":"段落圆由「左至右排列」，圆径依 Bar 数等比缩放。段落间用虚线箭头连接，标注转场（Beat Switch、渐弱）。",
  "本工具展開示意圖的「截圖」可直接貼入 Canva 作參考底圖，再疊加說明卡片。":"本工具展开示意图的「截屏」可直接贴入 Canva 作参考底图，再叠加说明卡片。","本小節分割：♩四分(4格) / ♪八分(8格) / ♬十六分(16格)":"本小节分割：♩四分(4格) / ♪八分(8格) / ♬十六分(16格)","本小節重複次數（點擊循環 ·/×2/×4/×8）":"本小节重复次数（点击循环 ·/×2/×4/×8）","本小節拍號":"本小节拍号","預估長度":"预估长度","頁數(圖示譜)":"页数(图标谱)",
  "📂 讀檔":"📂 读取","📂 讀取譜":"📂 读取谱","請選擇讀取方式：":"请选择读取方式：","💾 從瀏覽器本機讀取":"💾 从浏览器本机读取","載入這台裝置上次存的譜":"加载这台设备上次存的谱","📁 從 .json 檔載入":"📁 从 .json 档加载",
@@ -3021,6 +3085,9 @@ function applyProjectData(data){
   iconPage=0;
   if(typeof refreshSvcMode==='function') refreshSvcMode();   /* 有歌名→顯示聚會專屬選項 */
   if(_locked && typeof toggleLock==='function') toggleLock();  /* 載入新譜自動解鎖，避免配器等編輯被鎖住而以為失效 */
+  /* 換譜就清空上一步／下一步：新譜的段落 id 會重新編號，留著舊步驟會把別首歌的內容蓋進來 */
+  try{ _segUndo.length=0; _segRedo.length=0; _segLastTag=null; _chUndo.length=0; _chRedo.length=0; _staffUndo.length=0; _staffRedo.length=0;
+       updateSegUndoBtns(); updateChordUndoBtns(); updateStaffUndoBtns(); }catch(e){}
   return true;
 }
 function saveProject(){
@@ -4113,6 +4180,7 @@ function insDragUp(e){
   const cur=s.layers[0].ins[d.name]||'';
   const v=prompt(Lf(`「${s.name}」的 ${d.name} 要怎麼彈？`,`How should ${d.name} play in "${s.name}"?`,`「${s.name}」の ${d.name} はどう弾きますか？`,`「${s.name}」의 ${d.name} 는 어떻게 연주하나요?`), cur);
   if(v===null)return;                                   // 取消
+  if(String(v).trim()!==String(cur))segPushHistory();
   if(String(v).trim())s.layers[0].ins[d.name]=String(v).trim();
   else delete s.layers[0].ins[d.name];                  // 清空＝移除該樂器
   autoSave(); renderSB(); renderSeg(); schedRender();
@@ -4189,6 +4257,7 @@ document.addEventListener('pointercancel',cardSwipeUp,true);
 function segSyncName(id,v){ const el=document.querySelector('.seg-item.open .seg-name'); if(el)el.textContent=v; }
 function setNotes(id,v){
   const s=sects.find(x=>x.id===id); if(!s)return;
+  if(String(s.notes||'')!==String(v)) segPushHistory('notes:'+id);
   s.notes=v; autoSave();
   /* 只即時更新方塊上的備註文字，不重建 DOM（重建會打斷輸入法組字） */
   const box=document.querySelector('.seg-item.open .seg-box'); if(!box)return;
@@ -4198,8 +4267,70 @@ function setNotes(id,v){
     n.textContent='⚑ '+v;
   } else if(n) n.remove();
 }
+/* ── 段落底部備註：和弦譜／混合／KB 點一下就地編輯（Enter 完成、Shift+Enter 換行、Esc 取消） ──
+   沒有備註的段落在「控制項 開」時顯示淡淡的「＋ 備註」，列印／鎖定時隱藏。
+   打字時直接寫回 s.notes（不重建譜面，避免打斷輸入法）；打第一個字時記一步，記在目前這一頁的上一步裡。 */
+function cardNoteHtml(s){
+  if(s.notes&&String(s.notes).trim())
+    return `<div class="ccard-note note-ed" data-sid="${s.id}" onclick="noteEdit(this,${s.id})" title="點一下編輯備註（Enter 完成、Shift+Enter 換行、Esc 取消）">⚑ ${esc(s.notes)}</div>`;
+  if(s.ctrlOff)return '';
+  return `<div class="ccard-note note-ed note-add" data-sid="${s.id}" onclick="noteEdit(this,${s.id})" title="點一下新增備註">＋ 備註</div>`;
+}
+let _noteEd=null;   // {id, el, ta, orig, stack, snap}
+function notePushHistory(){
+  if(currentView==='staff'){ staffPushHistory(); updateStaffUndoBtns(); return _staffUndo; }
+  if(currentView==='seg'){ segPushHistory(); return _segUndo; }
+  chordPushHistory(); return _chUndo;
+}
+function noteGrow(ta){ ta.style.height='auto'; ta.style.height=ta.scrollHeight+'px'; }
+function noteEdit(el,id){
+  if(_locked||document.body.classList.contains('barpick'))return;
+  if(el.classList.contains('editing'))return;
+  const s=sects.find(x=>x.id===id); if(!s)return;
+  if(_noteEd)noteCommit();                              // 另一段的備註還開著就先收掉
+  const orig=String(s.notes||'');
+  el.classList.remove('note-add'); el.classList.add('editing'); el.removeAttribute('title'); el.textContent='';
+  const flag=document.createElement('span'); flag.textContent='⚑';
+  const ta=document.createElement('textarea');
+  ta.className='note-ta'; ta.rows=1; ta.value=orig; ta.placeholder=L('段落備註…');
+  ta.setAttribute('lang','zh-Hant'); ta.setAttribute('enterkeyhint','done');
+  el.append(flag,ta);
+  const d={id,el,ta,orig,stack:null,snap:null}; _noteEd=d;
+  ta.addEventListener('input',()=>{
+    const s2=sects.find(x=>x.id===d.id); if(!s2)return;
+    if(!d.stack){ d.stack=notePushHistory(); d.snap=d.stack[d.stack.length-1]; }
+    s2.notes=ta.value; autoSave(); noteGrow(ta);
+  });
+  ta.addEventListener('keydown',e=>{
+    if(e.isComposing||e.keyCode===229)return;           // 注音／假名組字中的 Enter 不算完成
+    if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); noteCommit(); }
+    else if(e.key==='Escape'){ e.preventDefault(); noteCommit(true); }
+  });
+  ta.addEventListener('blur',()=>{ if(_noteEd===d)noteCommit(); });
+  noteGrow(ta); ta.focus();
+  try{ ta.setSelectionRange(ta.value.length,ta.value.length); }catch(e){}
+}
+function noteCommit(cancel){
+  const d=_noteEd; if(!d)return; _noteEd=null;
+  const s=sects.find(x=>x.id===d.id);
+  if(s){
+    s.notes=cancel?d.orig:String(d.ta.value).replace(/\s+$/,'');   // 尾端多打的空白／換行去掉
+    /* 取消、或改了又改回原樣＝沒改：把剛記的那一步拿掉，不佔上一步 */
+    if(s.notes===d.orig&&d.stack&&d.stack[d.stack.length-1]===d.snap)d.stack.pop();
+    autoSave();
+  }
+  try{ updateChordUndoBtns(); updateStaffUndoBtns(); updateSegUndoBtns(); }catch(e){}
+  /* 就地換回文字，不重建整個譜面（重建會吃掉使用者接著點下去的那一下） */
+  const el=d.el; if(!el||!el.isConnected)return;
+  el.classList.remove('editing');
+  const v=s?String(s.notes||''):'';
+  if(v.trim()){ el.classList.remove('note-add'); el.textContent='⚑ '+v; el.title=L('點一下編輯備註（Enter 完成、Shift+Enter 換行、Esc 取消）'); }
+  else if(!s||s.ctrlOff){ el.remove(); }
+  else { el.classList.add('note-add'); el.textContent=L('＋ 備註'); el.title=L('點一下新增備註'); }
+}
 function addSectAfter(id){
   const i=sects.findIndex(s=>s.id===id); if(i<0)return;
+  segPushHistory();
   const ns={id:nid++,name:'新段落',bars:4,color:'black',layers:[{color:'black',ins:{}}],notes:''};
   sects.splice(i+1,0,ns); _segOpen=ns.id;
   renderSB(); renderSeg(); schedRender();
@@ -4207,6 +4338,7 @@ function addSectAfter(id){
 function delSect(id){
   const s=sects.find(x=>x.id===id); if(!s)return;
   if(!confirm(Lf(`確定移除段落「${s.name}」？`,`Remove section "${s.name}"?`,`セクション「${s.name}」を削除しますか？`,`섹션 「${s.name}」을(를) 삭제할까요?`)))return;
+  segPushHistory();
   sects=sects.filter(x=>x.id!==id);
   if(_segOpen===id)_segOpen=null;
   renderSB(); renderSeg(); schedRender();
@@ -4420,7 +4552,7 @@ async function printView(name){
     // 一般列印可跨頁 → 直接放大字級（不必塞一頁），維持各段原本的每排設定
     const r=printFsRange();      // 依「輸出大小」取上限（固定值，確保各平台一致）
     document.documentElement.style.setProperty('--print-fs',r.max+'px');
-    showPrintFsTip(r.max,r.min,r.max,1,true,view);
+    showPrintFsTip(r.max,r.min,r.max,1,true,name);   // 原本傳 view（未定義）會讓 🖨 列印直接中斷
   }
   document.body.classList.add(cls);
   window._printCls=cls;
@@ -4835,6 +4967,7 @@ function parseOcr(){
     for(let bar=0;bar<bars;bar++){ const a=[]; for(let bt=0;bt<beats;bt++)a.push(list[bar*beats+bt]||''); cd.push(a); }
     return {id:nid++,name:g.name||'段落',bars,color:'black',layers:[{color:'black',ins:{}}],notes:'',chords:cd};
   });
+  segPushHistory();   // 辨識匯入也能在段落流程圖用「↩ 上一步」退回
   if(document.getElementById('ocr-replace').checked) sects=built; else sects=sects.concat(built);
   renderSB(); renderAll(); closeOcr();
   alert('已建立 '+built.length+' 個段落，請到編輯區 / 和弦譜檢查修正。');
@@ -4896,9 +5029,93 @@ function setPlaceAcc(v){ _placeAcc=v; _syncPlaceSelects(); }
 function setPlaceRoot(v){ _placeRoot=v; _syncPlaceSelects(); }
 function setPlaceQual(v){ _placeQual=v; _syncPlaceSelects(); }
 function placeChordToken(){ return (_placeAcc||'')+(_placeRoot||'1')+(_placeQual||''); }
+/* ── 和弦譜／混合：符號（琶音 ⌇／連結線 ⌒），用法與 KB 頁相同 ──
+   資料：s.chArp[bar][f]=1、s.chTie[bar][f]="終點小節,終點f"；f＝固定十六分格點（切分改變時位置不跑掉） */
+var _chSym='', _chTieSel=null;   /* var：barOneHtml 可能比宣告先執行 */
+function chGetArp(s,bar,f){ const a=s.chArp; const r=a&&a[bar]; return (r&&r[f])?1:0; }
+function chGetTie(s,bar,f){ const a=s.chTie; const r=a&&a[bar]; const v=r&&r[f]; return v?String(v):''; }
+function chSetSym(s,k,bar,f,v){ if(!Array.isArray(s[k]))s[k]=[]; while(s[k].length<=bar)s[k].push(undefined); if(!Array.isArray(s[k][bar]))s[k][bar]=[]; s[k][bar][f]=v; }
+function chTieEndOf(s,bar,f){
+  const a=s.chTie; if(!Array.isArray(a))return null; const want=bar+','+f;
+  for(let b=0;b<a.length;b++){ const r=a[b]; if(!Array.isArray(r))continue; for(let i=0;i<r.length;i++){ if(r[i]===want)return {bar:b,f:i}; } }
+  return null;
+}
+function setChSym(v){
+  _chSym=String(v||''); _chTieSel=null;
+  if(_chSym&&_chordPlaceOn)toggleChordPlace();          // 兩種模式不同時開
+  document.querySelectorAll('.ch-sym').forEach(sel=>{ if(sel.value!==_chSym)sel.value=_chSym; });
+  document.body.classList.toggle('chsym-on',!!_chSym);
+  renderCharts();
+}
+function chSymClick(cell){
+  const sid=+cell.dataset.sid, bar=+cell.dataset.bar, f=+cell.dataset.f;
+  const s=sects.find(x=>x.id===sid); if(!s||!isFinite(f))return;
+  const inp=cell.querySelector('.beat-i'), raw=String(inp?inp.value:'').trim();
+  const hasCh=!!(raw&&!/^(\.|x|X)$/.test(raw));
+  if(_chSym==='arp'){
+    if(!hasCh)return;                                   // 空格子不加記號
+    chordPushHistory(); chSetSym(s,'chArp',bar,f,chGetArp(s,bar,f)?0:1);
+    autoSave(); renderCharts(); return;
+  }
+  /* 連結線：第一次點＝選起點（反黃），第二次點＝連到終點；點已經有線的格子＝移除 */
+  if(!hasCh){ _chTieSel=null; renderCharts(); return; }
+  if(!_chTieSel){
+    if(chGetTie(s,bar,f)){ chordPushHistory(); chSetSym(s,'chTie',bar,f,''); autoSave(); renderCharts(); return; }
+    const st=chTieEndOf(s,bar,f);
+    if(st){ chordPushHistory(); chSetSym(s,'chTie',st.bar,st.f,''); autoSave(); renderCharts(); return; }
+    _chTieSel={sid,bar,f}; renderCharts(); return;
+  }
+  if(_chTieSel.sid===sid&&_chTieSel.bar===bar&&_chTieSel.f===f){ _chTieSel=null; renderCharts(); return; }
+  if(_chTieSel.sid!==sid){ _chTieSel={sid,bar,f}; renderCharts(); return; }   // 不同段 → 改選這一格當起點
+  const a=_chTieSel, b={bar,f};
+  const from=(a.bar<b.bar||(a.bar===b.bar&&a.f<b.f))?a:b, to=(from===a)?b:a;
+  chordPushHistory(); chSetSym(s,'chTie',from.bar,from.f,to.bar+','+to.f);
+  _chTieSel=null; autoSave(); renderCharts();
+}
+/* 連結線畫在和弦字上方（量測起訖和弦的實際位置，跨小節、換排都畫得出來） */
+function drawChTies(){
+  ['chord-content','mixp-content'].forEach(rid=>{
+    const root=document.getElementById(rid); if(!root)return;
+    root.querySelectorAll('.chtie-layer').forEach(el=>el.remove());
+    sects.forEach(s=>{
+      const arr=s.chTie; if(!Array.isArray(arr))return;
+      arr.forEach((rr,bar)=>{ if(!Array.isArray(rr))return;
+        rr.forEach((v,f)=>{
+          if(!v)return;
+          const m=String(v).split(','), tb=+m[0], tf=+m[1];
+          const q=(b,ff)=>{ const c=root.querySelector('.cbar2[data-sid="'+s.id+'"][data-bar="'+b+'"] .cbeatcol[data-f="'+ff+'"]');
+            return c?(c.querySelector('.bt-note')||c.querySelector('.beat-r')):null; };
+          const e1=q(bar,f), e2=q(tb,tf); if(!e1||!e2)return;
+          const card=e1.closest('.ccard'); if(!card||card!==e2.closest('.ccard'))return;
+          const cr=card.getBoundingClientRect(), r1=e1.getBoundingClientRect(), r2=e2.getBoundingClientRect();
+          if(!r1.width||!r2.width)return;
+          const b1=e1.closest('.cbar2').getBoundingClientRect(), b2=e2.closest('.cbar2').getBoundingClientRect();
+          const sameRow=Math.abs(b1.top-b2.top)<4;                    // 同一排：用小節的位置判斷（兩端字級不同時字的高度會不一樣）
+          let lay=card.querySelector(':scope > .chtie-layer');
+          if(!lay){ lay=document.createElement('div'); lay.className='kbtie-layer chtie-layer'; card.appendChild(lay); }
+          /* 兩端高度可以不同：弧線從起點字的上緣拱到終點字的上緣 */
+          const arc=(x1,ya,x2,yb)=>{
+            const w=Math.max(8,x2-x1), h=Math.max(5,Math.min(12,w*0.2));
+            const top=Math.min(ya,yb)-h-2, H=Math.max(ya,yb)-top;
+            const d=document.createElement('div'); d.className='kbtie';
+            d.style.cssText='left:'+x1+'px;top:'+top+'px;width:'+w+'px;height:'+H+'px;';
+            d.innerHTML='<svg width="'+w+'" height="'+H+'" viewBox="0 0 '+w+' '+H+'"><path d="M1 '+(ya-top)+' Q'+(w/2)+' '+(-h*0.6)+' '+(w-1)+' '+(yb-top)+'" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
+            lay.appendChild(d);
+          };
+          const mid=r=>r.left-cr.left+r.width*0.5, top=r=>r.top-cr.top+1;
+          if(sameRow) arc(mid(r1),top(r1),mid(r2),top(r2));
+          else { const L=Math.max(22,r1.width*1.8), R=Math.max(22,r2.width*1.8);   // 換排：兩端各畫半條
+            arc(mid(r1),top(r1),Math.min(mid(r1)+L,cr.width-3),top(r1)-4); arc(Math.max(3,mid(r2)-R),top(r2)-4,mid(r2),top(r2)); }
+        });
+      });
+    });
+  });
+}
+function chTiesSoon(){ try{ if(typeof requestAnimationFrame==='function')requestAnimationFrame(drawChTies); else drawChTies(); }catch(e){} }
 function toggleChordPlace(){
   _chordPlaceOn=!_chordPlaceOn;
   if(_chordPlaceOn && _barPickMode) toggleBarPick();      // 與複製小節模式互斥
+  if(_chordPlaceOn && _chSym) setChSym('');               // 與符號模式互斥
   document.querySelectorAll('.chordplace-btn').forEach(b=>b.classList.toggle('on',_chordPlaceOn));
 }
 function placeChordAt(cell){
@@ -5110,6 +5327,7 @@ function splitChordDisplay(text){
 /* token → 顯示 HTML（休止 ✕ / 延續 · / 括號細分連音底線） */
 function renderBeatToken(tok,s){
   tok=String(tok||'').trim();
+  renderBeatToken.lastW=0;   // 最近一次渲染的和弦估算寬度（字寬單位，已含 bt-long 縮字）；細分小節據此決定字級
   /* 聚會服事：若該段帶有獨立 Key（_dispMode/_dispKey）就用該段的，否則用全域顯示設定 */
   const mode=(s&&s._dispMode)?s._dispMode:chordDisp;
   const keyName=(s&&s._dispMode)?(s._dispKey||''):dispKeyName();
@@ -5136,12 +5354,16 @@ function renderBeatToken(tok,s){
     const wide=upSuf ? accW(sp.root)+bassW(sp.bass)
                      : accW(sp.root)+bassW(sp.bass)+sufStr.length*0.6;
     const lc=wide>=4.4?' bt-xlong':wide>=2.8?' bt-long':'';
+    { const k=wide>=4.4?0.64:wide>=2.8?0.8:1, sufSz=[0,0,0,0.58,0.5,0.43,0.37][Math.min(6,sufStr.length)]||0;
+      renderBeatToken.lastW=Math.max(wide*k, upSuf?sufStr.length*sufSz*0.77*k:0); }   // 疊在上方的後綴比字根寬時，以後綴寬度為準
     return '<span class="bt-note'+lc+'">'+accSym(esc(sp.root))+(sufStr?'<span class="bt-suf'+sufCls+'">'+accSym(esc(sufStr))+'</span>':'')+(sp.bass?bassHtml(sp.bass):'')+'</span>';
   };
   if(tok.startsWith('(')){
     const inner=tok.replace(/^\(|\)$/g,'').trim().split(/\s+/).filter(Boolean);
     const beam=inner.length>=4?'beam-16':inner.length===3?'beam-3':inner.length===2?'beam-8':'';
-    return `<span class="beat-sub ${beam}">${inner.map(one).join('')}</span>`;
+    const out=`<span class="beat-sub ${beam}">${inner.map(one).join('')}</span>`;
+    renderBeatToken.lastW=-1;   // 一格塞多個和弦：維持原本的縮字
+    return out;
   }
   return one(tok);
 }
@@ -5152,7 +5374,7 @@ function toggleLock(){
   document.body.classList.toggle('locked',_locked);
   document.querySelectorAll('.lock-btn').forEach(b=>{ b.innerHTML=_locked?'🔒 鎖定 開':'🔓 鎖定 關'; b.classList.toggle('btna',_locked); });
 }
-function beatEdit(cell){ if(_barPickMode)return;   /* 複製模式：小節選取/插入點由 pointer 事件處理 */ if(_locked)return; if(_chordPlaceOn){ placeChordAt(cell); return; }   /* 放和弦模式：點格子填入所選和弦 */ const r=cell.querySelector('.beat-r'), i=cell.querySelector('.beat-i'); if(!i||i.style.display!=='none')return; r.style.display='none'; i.style.display=''; i.focus(); i.select(); }
+function beatEdit(cell){ if(_barPickMode)return;   /* 複製模式：小節選取/插入點由 pointer 事件處理 */ if(_locked)return; if(_chSym){ chSymClick(cell); return; }   /* 符號模式：琶音／連結線 */ if(_chordPlaceOn){ placeChordAt(cell); return; }   /* 放和弦模式：點格子填入所選和弦 */ const r=cell.querySelector('.beat-r'), i=cell.querySelector('.beat-i'); if(!i||i.style.display!=='none')return; r.style.display='none'; i.style.display=''; i.focus(); i.select(); }
 function beatSave(id,bar,beat,inp){
   const v=askEnharmonic(normSign(inp.value));   // ♭/♯ 轉 ASCII；Cb/Fb/B#/E# → 彈窗選常用或保留
   if(v!==inp.value) inp.value=v;
@@ -5231,6 +5453,7 @@ function barCellsHtml(s,beats,bprHint){
   }
   return out.map(([i,rep],k)=>barOneHtml(s,i,beats,rep,(k%bpr===0))).join('');
 }
+const BEAT_CQ=(()=>{ try{ return !!(window.CSS&&CSS.supports&&CSS.supports('width','1cqw')); }catch(e){ return false; } })();   // 支援容器單位才啟用（iOS 16+／近年 Chrome）
 function barOneHtml(s,i,beats,repX,rowStart){
   const bars=Math.max(1,parseInt(s.bars)||1);
   const ctrlsOn=!s.ctrlOff;
@@ -5247,16 +5470,32 @@ function barOneHtml(s,i,beats,repX,rowStart){
     const cellsN=bb*fac;
     const fs = cellsN<=4?1 : cellsN<=6?0.82 : cellsN<=8?0.68 : cellsN<=12?0.54 : 0.44;
     // 密度分級：格子越多，和弦字要再壓一階，才不會溢出到隔壁格（輸出時特別明顯）
-    const dens = cellsN<=4?'dn-a' : cellsN<=8?'dn-b' : cellsN<=12?'dn-c' : 'dn-d';
+    let dens = cellsN<=4?'dn-a' : cellsN<=8?'dn-b' : cellsN<=12?'dn-c' : 'dn-d';
+    /* 細分小節（八分／十六分）：格子變窄，但和弦字不必跟著整排縮小 ——
+       每個和弦用 CSS 容器單位依「格子實際寬度 ÷ 和弦估算寬度」決定字級：塞得下就是一般大小，塞不下才縮。
+       螢幕、列印都以當下版面計算；舊譜只為了放一個後半拍和弦而切成八分時，字就不會忽大忽小 */
+    const cfit=(fs<1&&BEAT_CQ);
+    let hasSub=false;
     let cols='';
     for(let b=0;b<cellsN;b++){
       const raw=pb[b]||'';
+      const fine=Math.floor(b/fac)*4+(b%fac)*(4/fac);  // 固定十六分格點（與 KB 同一套），切分改變時符號位置不跑掉
       const bp=(b%fac===0)?'beatline':'';   // 拍點＝較明顯的虛線；拍內細分＝較淡虛線（小節前後粗實線由 CSS 處理）
       // 連續的「0」只顯示第一個（後面重複的 0 留白，看譜更乾淨）；編輯輸入框仍保留原值
       const _isZero=(v)=>String(v||'').trim()==='0';
       const dup0=_isZero(raw)&&b>0&&_isZero(pb[b-1]);
-      cols+=`<div class="cbeatcol ${bp}" data-sid="${s.id}" data-bar="${i}" data-b="${b}" onclick="beatEdit(this)"><span class="cbnum">${subdivLabel(b,fac)}</span><span class="beat-r">${dup0?'':renderBeatToken(raw,s)}</span><input class="beat-i" value="${esc(raw)}" style="display:none" onblur="beatSave(${s.id},${i},${b},this)" onkeydown="if(event.key==='Enter'){this.blur();}"></div>`;
+      const tokHtml=dup0?'':renderBeatToken(raw,s);
+      const hasCh=!!(raw&&!/^(\.|x|X)$/.test(String(raw).trim()));
+      const arpOn=hasCh&&chGetArp(s,i,fine);
+      let tw=dup0?0:renderBeatToken.lastW;
+      if(tw<0)hasSub=true;
+      let rAttr=' class="beat-r"';
+      if(cfit&&tw>0){ if(arpOn)tw+=0.5; rAttr=` class="beat-r fit" style="--tw:${tw.toFixed(2)}"`; }
+      const arp=arpOn?`<span class="kbarp charp" title="琶音">${kbArpSvg(2)}</span>`:'';
+      const tsel=(_chTieSel&&_chTieSel.sid===s.id&&_chTieSel.bar===i&&_chTieSel.f===fine)?' tiesel':'';
+      cols+=`<div class="cbeatcol ${bp}${tsel}" data-sid="${s.id}" data-bar="${i}" data-b="${b}" data-f="${fine}" onclick="beatEdit(this)"><span class="cbnum">${subdivLabel(b,fac)}</span><span${rAttr}>${arp}${tokHtml}</span><input class="beat-i" value="${esc(raw)}" style="display:none" onblur="beatSave(${s.id},${i},${b},this)" onkeydown="if(event.key==='Enter'){this.blur();}"></div>`;
     }
+    if(cfit&&!hasSub) dens='dn-a';   // 字級已由格寬決定，輸出時不必再按格數壓一階（一格多和弦的小節維持原本縮法）
     const m=barMeter(s,i);
     const isLast=(i===bars-1);
     const g=getBarGoto(s,i,bars);
@@ -5277,7 +5516,7 @@ function barOneHtml(s,i,beats,repX,rowStart){
       if(g){const t=sects.find(x=>x.id===g); badges+=`<span class="${isLast?'cgoto-badge':'cjump'} on static">→ ${t?esc(t.name):''}</span>`;}
     }
     const _selCls=barPickCls(s,i,bars);
-    return `<div class="cbar2${_selCls}${rowStart?' row-start':''}" data-sid="${s.id}" data-bar="${i}">${subSel}${repBadge}<div class="cbadges">${badges}</div><div class="cbeatcols ${dens}" style="font-size:${fs}em">${cols}</div></div>`;
+    return `<div class="cbar2${_selCls}${rowStart?' row-start':''}" data-sid="${s.id}" data-bar="${i}">${subSel}${repBadge}<div class="cbadges">${badges}</div><div class="cbeatcols ${dens}${cfit?' cfit':''}" style="font-size:${fs}em${cfit?';--cr:'+(1/fs).toFixed(3):''}">${cols}</div></div>`;
   }
 }
 function toggleCtrl(id){ const s=sects.find(x=>x.id===id); if(!s)return; s.ctrlOff=!s.ctrlOff; autoSave(); renderCharts(); }
@@ -5291,14 +5530,14 @@ function clearAll(){
   if(!confirm('清除整個譜的和弦／分割／重複／拍號／接續資料？（可再按一次「復原」還原）'))return;
   chordPushHistory();
   _clearBackup=JSON.parse(JSON.stringify(sects));
-  sects.forEach(s=>{ delete s.chords; delete s.subdiv; delete s.rep; delete s.meters; delete s.bargoto; delete s.goto; });
+  sects.forEach(s=>{ delete s.chords; delete s.subdiv; delete s.rep; delete s.meters; delete s.bargoto; delete s.goto; delete s.chArp; delete s.chTie; });
   autoSave(); renderSB(); renderAll(); updateClearBtns();
 }
 function updateClearBtns(){ document.querySelectorAll('.clear-btn').forEach(b=>{ b.textContent=_clearBackup?'↩ 復原':'🗑 全部清除'; b.classList.toggle('on',!!_clearBackup); }); }
 
 /* ── 單一段落清除：只清「填寫的數據」，小節格式全部保留 ── */
 /* 清掉：和弦、KB 上下行音符與時值；保留：小節數、分割(subdiv/kbUpSub/kbLoSub)、拍號、重複、接續、每排、段名、顏色、備註 */
-const SECT_DATA_KEYS=['chords','kbUp','kbLo','kbUpD','kbLoD'];
+const SECT_DATA_KEYS=['chords','kbUp','kbLo','kbUpD','kbLoD','chArp','chTie'];
 var _secClearBk=window._secClearBk||{};      // var：確保任何時機取值都不會踩到暫時性死區
 const SECT_KB_KEYS=['kbUp','kbLo','kbUpD','kbLoD','kbUpArp','kbLoArp','kbUpTie','kbLoTie'];
 /* 在 KB 頁按清除＝只清 KB 數字（和弦不動）；在和弦譜／混合頁＝清和弦與 KB（原本的行為） */
@@ -5328,15 +5567,16 @@ function clearSect(id){
 let _secClip=null;
 function copySection(id){
   const s=sects.find(x=>x.id===id); if(!s)return;
-  _secClip=JSON.parse(JSON.stringify({_name:s.name,bars:s.bars,color:s.color,layers:s.layers,notes:s.notes,chords:s.chords,subdiv:s.subdiv,rep:s.rep,meters:s.meters,bargoto:s.bargoto,goto:s.goto,barsPerRow:s.barsPerRow,ctrlOff:s.ctrlOff,arr:s.arr}));
+  _secClip=JSON.parse(JSON.stringify({_name:s.name,bars:s.bars,color:s.color,layers:s.layers,notes:s.notes,chords:s.chords,subdiv:s.subdiv,rep:s.rep,meters:s.meters,bargoto:s.bargoto,goto:s.goto,barsPerRow:s.barsPerRow,ctrlOff:s.ctrlOff,arr:s.arr,chArp:s.chArp,chTie:s.chTie}));
   renderCharts();
 }
 function pasteSection(id){
   if(!_secClip)return;
   const s=sects.find(x=>x.id===id); if(!s)return;
   if(!confirm(`把「${_secClip._name}」的內容貼到「${s.name}」？（會覆蓋此段，名稱保留）`))return;
+  segPushHistory(); chordPushHistory();
   const c=JSON.parse(JSON.stringify(_secClip));
-  ['bars','color','layers','notes','chords','subdiv','rep','meters','bargoto','goto','barsPerRow','ctrlOff','arr'].forEach(k=>{ s[k]=c[k]; });
+  ['bars','color','layers','notes','chords','subdiv','rep','meters','bargoto','goto','barsPerRow','ctrlOff','arr','chArp','chTie'].forEach(k=>{ s[k]=c[k]; });
   autoSave(); renderSB(); renderAll();
 }
 /* ── 小節／區塊 複製貼上：選範圍→複製→點目標小節插入其後（和弦譜／混合共用） ── */
@@ -5407,13 +5647,15 @@ function barPickCls(s,i,bars){
   return c;
 }
 const _BARKBK=['kbUp','kbLo','kbUpD','kbLoD','kbUpSub','kbLoSub','kbUpArp','kbLoArp','kbUpTie','kbLoTie'];
+const _BARCHK=['chArp','chTie'];               // 和弦譜／混合的符號（琶音／連結線），複製貼上、刪小節時跟著小節走
+const _BARXK=_BARKBK.concat(_BARCHK);
 function copyBars(){
   if(!_barSel)return; const s=sects.find(x=>x.id===_barSel.sid); if(!s)return;
   migrateKBSection(s);                     // 確保 KB 為 v2 格式再複製
   const lo=Math.min(_barSel.a,_barSel.b), hi=Math.max(_barSel.a,_barSel.b), out=[];
   for(let b=lo;b<=hi;b++){
-    const o={ chords:getBeatData(s,b,cellsForBar(s,b)).slice(), meter:barMeter(s,b), rep:repOf(s,b), subdiv:subdivFactor(s,b), kb:{} };
-    _BARKBK.forEach(k=>{ const bar=Array.isArray(s[k])?s[k][b]:undefined; o.kb[k]=(bar!=null)?JSON.parse(JSON.stringify(bar)):null; });
+    const o={ src:b, chords:getBeatData(s,b,cellsForBar(s,b)).slice(), meter:barMeter(s,b), rep:repOf(s,b), subdiv:subdivFactor(s,b), kb:{} };
+    _BARXK.forEach(k=>{ const bar=Array.isArray(s[k])?s[k][b]:undefined; o.kb[k]=(bar!=null)?JSON.parse(JSON.stringify(bar)):null; });
     out.push(o);
   }
   _barClip={sid:s.id, cols:out};
@@ -5430,17 +5672,19 @@ function pasteBarsAt(sid,index){
   chordPushHistory(); staffPushHistory();
   migrateKBSection(s);
   const bars=Math.max(1,parseInt(s.bars)||1), at=Math.max(0,Math.min(bars,index|0)), n=clip.length;
+  shiftTies(s,tb=>tb>=at?tb+n:tb);
   s.chords =_insArr(_padArr(s.chords,bars,''),at,clip.map(x=>x.chords.slice()));
   s.meters =_insArr(_padArr(s.meters,bars,''),at,clip.map(x=>x.meter||''));
   s.rep    =_insArr(_padArr(s.rep,bars,1),at,clip.map(x=>x.rep||1));
   s.subdiv =_insArr(_padArr(s.subdiv,bars,1),at,clip.map(x=>x.subdiv||1));
   s.bargoto=_insArr(_padArr(s.bargoto,bars,''),at,new Array(n).fill(''));
-  _BARKBK.forEach(k=>{
+  _BARXK.forEach(k=>{
     const anyKB=clip.some(x=>x.kb&&x.kb[k]!=null), existing=Array.isArray(s[k])&&s[k].length;
     if(!anyKB&&!existing)return;            // 來源與目標都沒有此 KB 資料 → 不動，避免無謂膨脹
     s[k]=_insArr(_padArr(s[k],bars,undefined),at,clip.map(x=>{const v=x.kb&&x.kb[k]; return v!=null?JSON.parse(JSON.stringify(v)):undefined;}));
     s._kbv=2;
   });
+  if(clip.length&&clip[0].src!=null&&(_barClip&&_barClip.sid===s.id))remapPastedTies(s,at,clip); else _TIEKEYS.forEach(k=>{ if(Array.isArray(s[k]))for(let i=0;i<n;i++)s[k][at+i]=undefined; });   // 跨段貼上：線不帶過去
   s.bars=bars+n;
   _barInsert={sid:s.id, index:at+n};        // 貼上後插入點移到新內容之後，方便連續貼
   autoSave(); renderSB(); renderCharts(); renderBarPickBar();
@@ -5489,19 +5733,36 @@ function clearBarsData(s,lo,hi,kind){
   const bars=Math.max(1,parseInt(s.bars)||1);
   if(kind!=='kb') s.chords=_padArr(s.chords,bars,'');
   for(let b=lo;b<=hi;b++){
-    if(kind!=='kb') s.chords[b]=[];
+    if(kind!=='kb'){ s.chords[b]=[]; _BARCHK.forEach(k=>{ if(Array.isArray(s[k])&&s[k].length>b) s[k][b]=undefined; }); }
     if(kind!=='chord') _BARKBK.forEach(k=>{ if(Array.isArray(s[k])&&s[k].length>b && !/Sub$/.test(k)) s[k][b]=undefined; });
   }
+}
+/* 連結線存的是「終點小節,格點」：小節被刪除／插入後，終點小節編號跟著位移；指到被刪掉小節的線一併拿掉 */
+const _TIEKEYS=['chTie','kbUpTie','kbLoTie'];
+function shiftTies(s,fn){
+  _TIEKEYS.forEach(k=>{ const a=s[k]; if(!Array.isArray(a))return;
+    a.forEach(r=>{ if(!Array.isArray(r))return;
+      for(let i=0;i<r.length;i++){ if(!r[i])continue; const m=String(r[i]).split(','); const nb=fn(+m[0]);
+        r[i]=(nb==null||nb<0)?'':(nb+','+m[1]); } }); });
+}
+/* 貼上的小節：線的終點若在同一批複製範圍內就跟著搬，指到範圍外的拿掉 */
+function remapPastedTies(s,at,clip){
+  const map={}; clip.forEach((c,i)=>{ if(c.src!=null)map[c.src]=at+i; });
+  _TIEKEYS.forEach(k=>{ const a=s[k]; if(!Array.isArray(a))return;
+    for(let i=0;i<clip.length;i++){ const r=a[at+i]; if(!Array.isArray(r))continue;
+      for(let j=0;j<r.length;j++){ if(!r[j])continue; const m=String(r[j]).split(','); const nb=map[+m[0]];
+        r[j]=(nb==null)?'':(nb+','+m[1]); } } });
 }
 /* 連小節刪除：整段抽掉，所有逐小節陣列一起縮短 */
 function deleteBarsRange(s,lo,hi){
   migrateKBSection(s);
   const bars=Math.max(1,parseInt(s.bars)||1), n=hi-lo+1;
   if(n>=bars){ clearBarsData(s,0,bars-1,'all'); return; }   // 不允許把整段刪成 0 小節 → 退回只清內容（結構操作兩頁共用，一律全清）
-  ['chords','meters','rep','subdiv','bargoto'].concat(_BARKBK).forEach(k=>{
+  ['chords','meters','rep','subdiv','bargoto'].concat(_BARXK).forEach(k=>{
     if(!Array.isArray(s[k]))return;
     const a=s[k].slice(); a.splice(lo,n); s[k]=a;
   });
+  shiftTies(s,tb=>tb<lo?tb:(tb>hi?tb-n:null));
   s.bars=bars-n;
   _barSel={sid:s.id,a:Math.min(lo,s.bars-1),b:Math.min(lo,s.bars-1),done:true};
 }
@@ -5606,13 +5867,14 @@ function overwriteBarsAt(sid,at){
     s.subdiv[b]=c.subdiv||1;
     s.bargoto[b]='';
   });
-  _BARKBK.forEach(k=>{
+  _BARXK.forEach(k=>{
     const anyKB=clip.some(x=>x.kb&&x.kb[k]!=null), existing=Array.isArray(s[k])&&s[k].length;
     if(!anyKB&&!existing)return;
     s[k]=_padArr(s[k],need,undefined);
     clip.forEach((c,i)=>{ const v=c.kb&&c.kb[k]; s[k][at+i]=(v!=null)?JSON.parse(JSON.stringify(v)):undefined; });
     s._kbv=2;
   });
+  if(clip.length&&clip[0].src!=null&&(_barClip&&_barClip.sid===s.id))remapPastedTies(s,at,clip); else _TIEKEYS.forEach(k=>{ if(Array.isArray(s[k]))for(let i=0;i<clip.length;i++)if(s[k][at+i])s[k][at+i]=undefined; });
   s.bars=need;
   _barInsert={sid:s.id, index:Math.min(need,at+n)};
   autoSave(); renderSB(); renderCharts(); renderBarPickBar();
@@ -5686,9 +5948,10 @@ function renderChord(){
     if(s.fold) return `<div class="ccard folded${ssc}" style="border-color:${col.stroke}">${head}</div>`;
     return `<div class="ccard${ssc}" style="border-color:${col.stroke}">${head}
       <div class="cbar-grid" ${barGridStyle(s,4)}>${barCellsHtml(s,beats)}</div>
-      ${s.notes?`<div class="ccard-note">⚑ ${esc(s.notes)}</div>`:''}
+      ${cardNoteHtml(s)}
     </div>`;
   }).join('');
+  chTiesSoon();
 }
 
 /* ── RENDER MIX (和弦 + 樂器，含分頁) ── */
@@ -5753,7 +6016,7 @@ function mixCardHtml(s,plus){
   const head=cardSwipeWrap(s,`<div class="ccard-head" data-sid="${s.id}" style="background:${col.fill};color:${col.stroke}">
         <span class="chead-l">${(s._song||window._printSongTitle)?`<span class="csong">🎵 ${esc(s._song||window._printSongTitle)}${(s._dispMode&&s._dispMode!=='num'&&s._dispKey)?' · '+(s._dispMode==='female'?'女':'男')+esc(s._dispKey):''}</span>`:''}<span class="cname">${esc(s.name)}</span>${bprSelect(s)}<button class="ctrl-toggle" onclick="toggleCtrl(${s.id})" title="顯示/隱藏每個小節的控制鈕；隱藏時仍顯示已設定的值">控制項 ${s.ctrlOff?'關':'開'}</button><button class="ctrl-toggle" onclick="barPickSection(${s.id})" title="複製小節：進入複製模式（預設選整段，可再拖曳/長按調整）→ 複製 → 點目標小節左/右緣(藍線) → 貼到任意位置（可跨段）">⧉ 複製</button><button class="ctrl-toggle secclr-btn" onclick="barPickSection(${s.id},'clear')" title="選要清除的小節範圍，再決定只清內容還是連小節一起刪除">${_secClearBk[s.id]?'↩ 復原':'🧹 清除'}</button><button class="ctrl-toggle" onclick="toggleFold(${s.id})" title="收合/展開此段（收合只留標題，方便專注其他段）">${s.fold?'▸ 展開':'▾ 收合'}</button></span><span class="cmeta">${bars} Bar · ${esc(gv('s-time'))}</span>
       </div>`);
-  const note=s.notes?`<div class="ccard-note">⚑ ${esc(s.notes)}</div>`:'';
+  const note=cardNoteHtml(s);
   const ssc=_songStartSet.has(s.id)?' song-start':'';
   if(s.fold) return `<div class="ccard folded${ssc}" style="border-color:${col.stroke}">${head}</div>`;
   if(plus){
@@ -5900,7 +6163,7 @@ function renderMixP(){
   if(mixpPage>=total)mixpPage=total-1; if(mixpPage<0)mixpPage=0;
   root.innerHTML=(pages.length?pages:[[]]).map((pg,pi)=>`<div class="icpage" data-page="${pi}"><div class="mixpage-stack mixp">${pg.map(s=>mixCardHtml(s,true)).join('')}</div></div>`).join('');
   root.scrollLeft=mixpPage*root.clientWidth;
-  mixpUpdateInd(); renderLegend();
+  mixpUpdateInd(); renderLegend(); chTiesSoon();
 }
 /* 小節控制鈕（分割/重複/拍號/接續/每排/控制項）統一重繪三種譜面，確保混合＋同步更新 */
 function renderCharts(){ renderChord(); renderMix(); renderMixP(); if(currentView==='staff')renderStaff(); try{updateChordUndoBtns();}catch(e){} }
@@ -5952,24 +6215,25 @@ function renderSB(){
 }
 
 function togE(id){const b=document.getElementById('ebo-'+id),a=document.getElementById('ea-'+id);if(!b||!a)return;const o=b.classList.toggle('o');a.classList.toggle('o',o);}
-function setSN(id,v){const s=sects.find(s=>s.id===id);if(!s)return;s.name=v;schedRender();}
+function setSN(id,v){const s=sects.find(s=>s.id===id);if(!s)return;if(s.name!==v)segPushHistory('name:'+id);s.name=v;schedRender();}
 /* 清掉超出目前 Bar 數的殘留小節資料（避免刪掉的格子還寫進 JSON、之後又跑出來） */
 function pruneSectionData(s){
   if(!s)return s;
   const bars=Math.max(1,parseInt(s.bars)||1);
-  ['chords','subdiv','rep','meters','bargoto','kbUp','kbLo','kbUpD','kbLoD','kbUpSub','kbLoSub'].forEach(k=>{
+  ['chords','subdiv','rep','meters','bargoto','kbUp','kbLo','kbUpD','kbLoD','kbUpSub','kbLoSub','chArp','chTie'].forEach(k=>{
     if(Array.isArray(s[k]) && s[k].length>bars) s[k].length=bars;
   });
   return s;
 }
-function setBars(id,v){const s=sects.find(s=>s.id===id);if(!s)return;s.bars=Math.max(1,parseInt(v)||1);pruneSectionData(s);const _eb=document.getElementById('eb-'+id);if(_eb)_eb.textContent=s.bars+'B';schedRender();}
-function setC(id,v){const s=sects.find(s=>s.id===id);if(!s)return;s.color=v;renderSB();schedRender();}
-function setI(id,li,k,v){const s=sects.find(s=>s.id===id);if(!s.layers[li])s.layers[li]={color:'black',ins:{}};s.layers[li].ins[k]=v;schedRender();}
-function setLC(id,li,v){sects.find(s=>s.id===id).layers[li].color=v;renderSB();schedRender();}
-function setN(id,v){const s=sects.find(s=>s.id===id);if(!s)return;s.notes=v;schedRender();}
-function delS(id){if(!confirm('確定刪除這個段落？'))return;sects=sects.filter(s=>s.id!==id);renderSB();schedRender();}
+function setBars(id,v){const s=sects.find(s=>s.id===id);if(!s)return;const nb=Math.max(1,parseInt(v)||1);if(nb!==(parseInt(s.bars)||1))segPushHistory();s.bars=nb;pruneSectionData(s);const _eb=document.getElementById('eb-'+id);if(_eb)_eb.textContent=s.bars+'B';schedRender();}
+function setC(id,v){const s=sects.find(s=>s.id===id);if(!s)return;if(s.color!==v)segPushHistory();s.color=v;renderSB();schedRender();}
+function setI(id,li,k,v){const s=sects.find(s=>s.id===id);if(!s)return;if(String(v)!==String((s.layers[li]&&s.layers[li].ins&&s.layers[li].ins[k])||''))segPushHistory();if(!s.layers[li])s.layers[li]={color:'black',ins:{}};s.layers[li].ins[k]=v;schedRender();}
+function setLC(id,li,v){const s=sects.find(s=>s.id===id);if(!s||!s.layers[li])return;if(s.layers[li].color!==v)segPushHistory();s.layers[li].color=v;renderSB();schedRender();}
+function setN(id,v){const s=sects.find(s=>s.id===id);if(!s)return;if(String(s.notes||'')!==String(v))segPushHistory('notes:'+id);s.notes=v;schedRender();}
+function delS(id){if(!confirm('確定刪除這個段落？'))return;segPushHistory();sects=sects.filter(s=>s.id!==id);renderSB();schedRender();}
 function dupS(id){
   const i=sects.findIndex(s=>s.id===id);if(i<0)return;
+  segPushHistory();
   const copy=JSON.parse(JSON.stringify(sects[i]));
   copy.id=nid++;copy.name=copy.name+' ✦';
   sects.splice(i+1,0,copy);
@@ -5978,10 +6242,11 @@ function dupS(id){
 function moveS(id,dir){
   const i=sects.findIndex(s=>s.id===id);const j=i+dir;
   if(i<0||j<0||j>=sects.length)return;
+  segPushHistory();
   [sects[i],sects[j]]=[sects[j],sects[i]];
   renderSB();schedRender();
 }
-function addSect(){sects.push({id:nid++,name:'新段落',bars:4,color:'black',layers:[{color:'black',ins:{}}],notes:''});renderSB();schedRender();}
+function addSect(){segPushHistory();sects.push({id:nid++,name:'新段落',bars:4,color:'black',layers:[{color:'black',ins:{}}],notes:''});renderSB();schedRender();}
 /* 開新檔案：清空成一份全新乾淨的譜（會先確認） */
 function newChart(){
   _secClearBk={};
@@ -5996,8 +6261,8 @@ function newChart(){
   renderSB(); renderAll();
   const t=document.getElementById('s-title'); if(t)t.focus();
 }
-function addL(id){sects.find(s=>s.id===id).layers.push({color:'blue',ins:{}});renderSB();}
-function delL(id,li){sects.find(s=>s.id===id).layers.splice(li,1);renderSB();schedRender();}
+function addL(id){const s=sects.find(s=>s.id===id);if(!s)return;segPushHistory();s.layers.push({color:'blue',ins:{}});renderSB();}
+function delL(id,li){const s=sects.find(s=>s.id===id);if(!s||!s.layers[li])return;segPushHistory();s.layers.splice(li,1);renderSB();schedRender();}
 
 /* 工具列「更多」展開 / 收起（手機 / 平板） */
 function toggleMore(){
@@ -6084,7 +6349,7 @@ const STAFF_S=9, STAFF_YTOP=16;
 let _staffSel=null;
 /* 和弦譜／混合頁 上一步/下一步：快照和弦相關欄位（依段落 id 對應，不動 KB 數字與其他頁設定） */
 let _chUndo=[], _chRedo=[];
-const CHORD_HKEYS=['chords','subdiv','rep','meters','bargoto','goto','bars','barsPerRow'];
+const CHORD_HKEYS=['chords','subdiv','rep','meters','bargoto','goto','bars','barsPerRow','notes','chArp','chTie'];   // notes：段落底部備註在此頁編輯也能上一步
 function chordSnapshot(){
   return JSON.stringify(sects.map(s=>{ const o={id:s.id}; CHORD_HKEYS.forEach(k=>{ o[k]=(s[k]!=null)?s[k]:null; }); return o; }));
 }
@@ -6115,13 +6380,54 @@ function updateChordUndoBtns(){
 /* 五線譜 上一步/下一步：快照整份 staff（不影響其他頁資料） */
 let _staffUndo=[], _staffRedo=[];
 const KB_KEYS=['kbUp','kbLo','kbUpD','kbLoD','kbUpSub','kbLoSub','kbUpArp','kbLoArp','kbUpTie','kbLoTie'];
-function staffSnapshot(){ return JSON.stringify(sects.map(s=>{const o={}; KB_KEYS.forEach(k=>o[k]=s[k]!=null?s[k]:null); return o;})); }
+const KB_HKEYS=KB_KEYS.concat(['notes']);   // 快照多記段落備註（KB_KEYS 本身還給「全部清除」用，不能直接加）
+/* 依段落 id 對應（段落流程圖可新增／刪除／排序，用順序對會蓋錯段） */
+function staffSnapshot(){ return JSON.stringify(sects.map(s=>{const o={id:s.id}; KB_HKEYS.forEach(k=>o[k]=s[k]!=null?s[k]:null); return o;})); }
 function staffPushHistory(){ _staffUndo.push(staffSnapshot()); if(_staffUndo.length>120)_staffUndo.shift(); _staffRedo.length=0; }
-function staffRestore(snap){ const arr=JSON.parse(snap); sects.forEach((s,i)=>{ const o=arr[i]||{}; KB_KEYS.forEach(k=>{ if(o[k]==null) delete s[k]; else s[k]=o[k]; }); }); }
+function staffRestore(snap){ const arr=JSON.parse(snap); arr.forEach((o,i)=>{ const s=(o&&o.id!=null)?sects.find(x=>x.id===o.id):sects[i]; if(!s||!o)return; KB_HKEYS.forEach(k=>{ if(o[k]==null) delete s[k]; else s[k]=o[k]; }); }); }
 function staffUndo(){ if(!_staffUndo.length)return; _staffRedo.push(staffSnapshot()); staffRestore(_staffUndo.pop()); _staffSel=null; autoSave(); renderStaff(); }
 function staffRedo(){ if(!_staffRedo.length)return; _staffUndo.push(staffSnapshot()); staffRestore(_staffRedo.pop()); _staffSel=null; autoSave(); renderStaff(); }
 function updateStaffUndoBtns(){ const u=document.getElementById('staff-undo'), r=document.getElementById('staff-redo'); if(u)u.disabled=!_staffUndo.length; if(r)r.disabled=!_staffRedo.length; }
-/* ── KB 數字譜：每小節 上排(右手)/下排(左手)，每格可疊 1–3 級數，時值＝簡譜底線 ── */
+/* 段落流程圖 上一步/下一步：名稱／小節／顏色／備註／樂器配置／內層、新增／刪除／複製／排序
+   快照整份段落；還原時「還在的段落」只蓋回段落層級欄位，不動和弦與 KB 數字（避免把其他頁之後的編輯一起倒回去）；
+   被刪掉的段落整段（含和弦／KB）放回來；小節數不同時該段以快照為準（以小節為單位的資料才對得上） */
+let _segUndo=[], _segRedo=[], _segLastTag=null;
+const SEG_HKEYS=['name','bars','color','notes','layers'];
+function segSnapshot(){ return JSON.stringify(sects); }
+function segPushHistory(tag){
+  if(tag&&tag===_segLastTag)return;                    // 同一個欄位連續打字只記一步
+  _segLastTag=tag||null;
+  try{ _segUndo.push(segSnapshot()); }catch(e){ return; }
+  if(_segUndo.length>60)_segUndo.shift(); _segRedo.length=0; updateSegUndoBtns();
+}
+document.addEventListener('focusin',()=>{ _segLastTag=null; },true);   // 換到別的欄位＝新的一步
+function segRestore(snap){
+  const list=JSON.parse(snap), cur=new Map(sects.map(s=>[s.id,s]));
+  sects=list.map(o=>{
+    const s=cur.get(o.id);
+    if(!s)return o;
+    if((parseInt(s.bars)||1)!==(parseInt(o.bars)||1))return o;
+    SEG_HKEYS.forEach(k=>{ if(o[k]==null) delete s[k]; else s[k]=o[k]; });
+    return s;
+  });
+  list.forEach(o=>{ if(o&&o.id>=nid)nid=o.id+1; });  // 段落 id 不重複使用
+  if(_segOpen!=null&&!sects.some(s=>s.id===_segOpen))_segOpen=null;
+}
+function segUndo(){
+  if(!_segUndo.length)return;
+  _segRedo.push(segSnapshot()); segRestore(_segUndo.pop()); _segLastTag=null;
+  _barSel=null; _barInsert=null; autoSave(); renderSeg(); schedRender(); updateSegUndoBtns();
+}
+function segRedo(){
+  if(!_segRedo.length)return;
+  _segUndo.push(segSnapshot()); segRestore(_segRedo.pop()); _segLastTag=null;
+  _barSel=null; _barInsert=null; autoSave(); renderSeg(); schedRender(); updateSegUndoBtns();
+}
+function updateSegUndoBtns(){
+  document.querySelectorAll('.seg-undo').forEach(b=>b.disabled=!_segUndo.length);
+  document.querySelectorAll('.seg-redo').forEach(b=>b.disabled=!_segRedo.length);
+}
+/* ── KB 數字譜：每小節 上排(右手)/下排(左手)，每格可疊 1–4 級數，時值＝簡譜底線 ── */
 function kbKey(row){ return 'kb'+(row==='up'?'Up':'Lo'); }
 function kbGet(s,row,bar,c){ const a=s[kbKey(row)]; const rr=a&&a[bar]; return (rr&&rr[c]!=null)?String(rr[c]):''; }
 function kbSet(s,row,bar,c,v){ const k=kbKey(row); if(!Array.isArray(s[k]))s[k]=[]; if(!Array.isArray(s[k][bar]))s[k][bar]=[]; s[k][bar][c]=v; s._kbv=2; }
@@ -6323,6 +6629,22 @@ async function kbLoadFromChords(){
   autoSave(); renderStaff();
   if(!n)alert(Lf('和弦譜還沒有任何和弦可以載入。','There are no chords to load yet.','読み込めるコードがまだありません。','불러올 코드가 아직 없습니다.'));
 }
+/* 放和弦時左手一起放根音（預設開；記住上次選擇） */
+let _kbLRoot=true; try{ if(localStorage.getItem('arranger_kblroot')==='0')_kbLRoot=false; }catch(e){}
+function syncKbLRootBtn(){ const b=document.getElementById('kb-lroot'); if(!b)return;
+  b.textContent=L(_kbLRoot?'左手根音 開':'左手根音 關'); b.classList.toggle('on',_kbLRoot); }
+function toggleKbLRoot(){ _kbLRoot=!_kbLRoot; try{ localStorage.setItem('arranger_kblroot',_kbLRoot?'1':'0'); }catch(e){} syncKbLRootBtn(); }
+/* 某一排這一拍的切分太粗、看不到細格點 c 時，把那一拍切細（和「⇩ 載入」同一套做法，不洗掉既有音符） */
+function kbShowFine(s,row,bar,c){
+  const beat=Math.floor(c/4), pos=c%4, sub=kbGetBeatSub(s,row,bar,beat);
+  if(pos%(4/sub)===0)return;                                   // 本來就看得到
+  const need=(pos%2===0)?2:4, bb=barBeats(s,bar), sk=kbSubKey(row);
+  if(!Array.isArray(s[sk]))s[sk]=[];
+  let ra=s[sk][bar];
+  if(!Array.isArray(ra)){ const base=[1,2,4].includes(ra)?ra:subdivFactor(s,bar); ra=new Array(bb).fill(base); }
+  else { while(ra.length<bb)ra.push(subdivFactor(s,bar)); }
+  ra[beat]=Math.max(need,ra[beat]||1); s[sk][bar]=ra; s._kbv=2;
+}
 function kbChordMode(){ _kbChordOn=!_kbChordOn; if(_kbChordOn)setKbSym('');
   const b=document.getElementById('kb-chordmode'); if(b)b.classList.toggle('on',_kbChordOn); }
 /* 疊音顯示順序：down＝先輸入的排在下面（輸入 1 3 5 → 由上而下 5 3 1，預設）；up＝照輸入順序由上往下 */
@@ -6412,7 +6734,7 @@ function kbArpSvg(n){
 function kbCellHtml(s,row,i,fine,beat,k,sub){
   const tok=kbGet(s,row,i,fine);
   const d=kbGetD(s,row,i,fine), eff=(d==null)?kbAutoDur(sub):d;
-  const nums=tok.trim()?tok.trim().split(/\s+/).slice(0,3):[];
+  const nums=tok.trim()?tok.trim().split(/\s+/).slice(0,4):[];   // 最多疊 4 個音（七、六、九和弦等四音和弦）
   const stack=nums.length?kbOrderNums(nums).map(t=>`<span class="kbn">${renderBeatToken(t,s)}</span>`).join(''):'<span class="kbn kbempty">·</span>';
   const arp=(nums.length&&kbGetArp(s,row,i,fine))?`<span class="kbarp" title="琶音">${kbArpSvg(nums.length)}</span>`:'';
   const tsel=(_tieSel&&_tieSel.sid===s.id&&_tieSel.row===row&&_tieSel.bar===i&&_tieSel.c===fine)?' tiesel':'';
@@ -6468,7 +6790,13 @@ function kbEdit(cell){
   if(_kbChordOn){
     const s=sects.find(x=>x.id===+cell.dataset.sid); if(!s)return;
     staffPushHistory();
-    kbSet(s,cell.dataset.row,+cell.dataset.bar,+cell.dataset.c, chordDegsKB(gv('kb-croot'),gv('kb-cqual'),gv('kb-cacc')).join(' '));
+    const bar=+cell.dataset.bar, c=+cell.dataset.c, root=gv('kb-croot'), acc=gv('kb-cacc');
+    const tones=chordDegsKB(root,gv('kb-cqual'),acc).join(' ');   // 組成音幾個就放幾個（三和弦 3 音、七和弦 4 音）
+    if(_kbLRoot){
+      /* 不論點右手或左手那一排：右手＝和弦組成音、左手＝根音，放在同一個時間點 */
+      kbSet(s,'up',bar,c,tones); kbSet(s,'lo',bar,c,(acc||'')+(parseInt(root)||1));
+      kbShowFine(s,'up',bar,c); kbShowFine(s,'lo',bar,c);
+    } else kbSet(s,cell.dataset.row,bar,c,tones);
     autoSave(); renderStaff(); return;
   }
   const r=cell.querySelector('.kbstk'), inp=cell.querySelector('.kb-i');
@@ -6503,7 +6831,7 @@ function kbCardHtml(s){
   // 每排第一個小節補起始線（與 kbBarGridStyle 同一套每排邏輯），各排線條位置才一致
   const kbpr=kbPerRow(s);
   for(let i=0;i<bars;i++) cells+=kbBarHtml(s,i,(i%kbpr===0));
-  return `<div class="ccard${ssc}" style="border-color:${col.stroke}">${head}<div class="cbar-grid" ${kbBarGridStyle(s)}>${cells}</div>${s.notes?`<div class="ccard-note">⚑ ${esc(s.notes)}</div>`:''}</div>`;
+  return `<div class="ccard${ssc}" style="border-color:${col.stroke}">${head}<div class="cbar-grid" ${kbBarGridStyle(s)}>${cells}</div>${cardNoteHtml(s)}</div>`;
 }
 function renderStaff(){
   const root=document.getElementById('staff-content'); if(!root)return;
@@ -6562,23 +6890,35 @@ function renderAll(){renderCurrent();renderTimeSelects();updatePrintHead();rende
 
 /* ── TEXT LIST ── */
 const TL_BARS_PER_ROW=4;   // 文字清單每行顯示幾個小節
+/* 文字清單：畫面上段落之間用橫線分隔（<hr>）；複製出去的純文字則用一行「─」分隔 */
 function buildTL(){
-  let t=`=== 編曲架構 ===\n曲目：${gv('s-title')}${gv('s-artist')?'／'+gv('s-artist'):''}  ${keyLabel().replace(/<[^>]+>/g,'')}  拍號：${gv('s-time')}  BPM：${gv('s-bpm')}\n${'─'.repeat(38)}\n\n`;
+  const head=`=== 編曲架構 ===\n曲目：${gv('s-title')}${gv('s-artist')?'／'+gv('s-artist'):''}  ${keyLabel().replace(/<[^>]+>/g,'')}  拍號：${gv('s-time')}  BPM：${gv('s-bpm')}\n${'─'.repeat(38)}\n\n`;
+  const blocks=[];
   let _prevSong=null;
   sects.forEach((s,i)=>{
-    if(s._song && s._song!==_prevSong){ t+=`\n🎵 ═══════ ${s._song} ═══════\n`; _prevSong=s._song; }
-    t+=`[${i+1}] ${s._song?'《'+s._song+'》 ':''}${s.name}  ${s.bars} Bar  ${COL[s.color].label}\n`;
+    let t='';
+    if(s._song && s._song!==_prevSong){ t+=`🎵 ═══════ ${s._song} ═══════\n`; _prevSong=s._song; }
+    t+=`[${i+1}] ${s._song?'《'+s._song+'》 ':''}${s.name}  ${s.bars} Bar\n`;   // 段落顏色（黑／紅…）在文字清單用不到，不列
     /* 和弦：每行四個小節，行首標小節編號；樂器配置不列（要看配器請用混合／圖示譜） */
     chordSummaryLines(s,TL_BARS_PER_ROW).forEach(ln=>{ t+=`    ${ln.text}\n`; });
     if(s.notes)t+=`  ⚑ ${s.notes}\n`;
     {const bars=Math.max(1,parseInt(s.bars)||1); for(let b=0;b<bars;b++){const gid=getBarGoto(s,b,bars); if(gid){const gt=sects.find(x=>x.id===gid); if(gt)t+=`  ▶ 小節${b+1} 接續到：${gt.name}\n`;}}}
-    t+='\n';
+    blocks.push(t.replace(/\n+$/,''));
   });
-  document.getElementById('tlc').textContent=t;
+  const el=document.getElementById('tlc');
+  if(el){
+    el.textContent='';
+    el.appendChild(document.createTextNode(head));
+    blocks.forEach((b,i)=>{
+      if(i>0){ const hr=document.createElement('hr'); hr.className='tl-sep'; el.appendChild(hr); }
+      el.appendChild(document.createTextNode(b));
+    });
+  }
+  return head+blocks.join('\n'+'─'.repeat(24)+'\n')+'\n';
 }
 function copyTL(btn){
-  buildTL();
-  navigator.clipboard.writeText(document.getElementById('tlc').textContent).then(()=>{
+  const txt=buildTL();
+  navigator.clipboard.writeText(txt).then(()=>{
     if(btn){const o=btn.textContent;btn.textContent='✓ 已複製';setTimeout(()=>btn.textContent=o,1500);}
   });
 }
@@ -6719,14 +7059,15 @@ applySvcPB();
 syncMaxiBtns();
 syncPrintSizeSel();
 try{ syncKbOrderBtn(); }catch(e){}
+try{ syncKbLRootBtn(); }catch(e){}
 applyLang();
 syncTopbarH();
 if(_langAsk){ try{ showLangPick(); }catch(e){} }   /* 國外使用者：先問語言再開始 */
 window.addEventListener('load',syncTopbarH);
-window.addEventListener('resize',()=>{ try{ if(currentView==='staff')drawKbTies(); }catch(e){} });
+window.addEventListener('resize',()=>{ try{ if(currentView==='staff')drawKbTies(); else drawChTies(); }catch(e){} });
 /* 列印前後版面會變，連結線是量測畫的 → 兩個時機都重畫一次 */
-window.addEventListener('beforeprint',()=>{ try{ drawKbTies(); }catch(e){} });
-window.addEventListener('afterprint',()=>{ try{ drawKbTies(); }catch(e){} });
+window.addEventListener('beforeprint',()=>{ try{ drawKbTies(); drawChTies(); }catch(e){} });
+window.addEventListener('afterprint',()=>{ try{ drawKbTies(); drawChTies(); }catch(e){} });
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <div class="cl-modal" id="save-modal" onclick="if(event.target===this)closeSaveMenu()">

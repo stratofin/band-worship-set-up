@@ -1,0 +1,25 @@
+# ── 不要進版控、更不要公開的檔案 ──────────────────
+# macOS
+.DS_Store
+
+# 編輯前的備份（含歷史版本原始碼）
+.ArrangerLIPU.bak-*
+ArrangerLIPU_backup_*.html
+ArrangerLIPU.html
+
+# 後端設定與內部文件（含資料表結構、金鑰設定步驟）
+supabase_setup.sql
+supabase_subscriptions.sql
+supabase_subscriptions_addon.sql
+supabase/
+SUPABASE_SETUP.md
+PADDLE_SETUP.md
+AGENTS.md
+.claude/
+
+# 打包檔與工作檔
+*.zip
+_專案瀏覽器.html
+Claude outputs/
+上架版設計藍圖*.md
+測試指南.md
