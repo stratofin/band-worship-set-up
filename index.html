@@ -454,6 +454,11 @@ html[lang="en"] .btn,html[lang="en"] .stbtn{letter-spacing:0.01em;}
 .bseg-body{padding:0.54em 0.6em;flex:1;display:flex;flex-direction:column;gap:0.23em;}
 .b-irow{display:flex;gap:0.3em;font-size:0.77em;align-items:baseline;}
 .b-iname{font-size:0.85em;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);min-width:2.2em;}
+/* 段落流程圖：樂器名稱做成和樂器篩選鈕同色的小標籤 */
+.seg-body .b-irow{align-items:center;margin:0.12em 0;}
+.seg-body .b-iname{display:inline-flex;align-items:center;gap:0.25em;border:1px solid;border-radius:0.9em;padding:0.08em 0.55em;line-height:1.35;white-space:nowrap;min-width:6.6em;box-sizing:border-box;}   /* 固定最小寬度，右邊的彈法才會對齊 */
+.seg-body .b-irow.b-inner{border-left:3px solid;padding-left:0.4em;}
+.seg-body .b-dbrow{color:var(--text2);}
 .b-ival{color:var(--text);line-height:1.3;}
 .b-dbrow{padding:0.3em 0.6em;text-align:center;font-size:0.69em;font-family:'Space Mono',monospace;color:#666;border-top:1px solid rgba(255,255,255,0.06);}
 .bconn{width:1.54em;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
@@ -693,6 +698,34 @@ body.locked .ccard-note.note-add,body.barpick .ccard-note.note-add,body[class*="
 .cbeatcols.cfit .beat-r.fit{font-size:max(1em, min(calc(1em * var(--cr,1)), calc(100cqw / (var(--tw,1) * var(--tk) * var(--bm)))));}   /* 最小不低於原本的縮法 */
 .mixpage-stack.mixp .cbeatcols.cfit .beat-r.fit{font-size:max(var(--bfs,1.2em), min(calc(var(--bfs,1.2em) * var(--cr,1)), calc(100cqw / (var(--tw,1) * var(--tk) * var(--bm)))));}
 .charp{margin-right:0.08em;}
+/* ── 音符譜（五線譜式：符桿／符尾／符桿連線都畫在和弦正上方；平常只有虛線外框，不佔版面） ── */
+.ntbar{position:relative;min-height:5.1em;padding:2.1em 0.5em 0.6em;}
+.nt-add{position:absolute;left:0.25em;top:0.2em;width:1.6em;height:1.4em;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);border-radius:0.35em;font-size:0.75em;line-height:1;cursor:pointer;z-index:3;}
+.nt-add:hover{color:var(--accent);border-color:var(--accent);}
+.nt-row{display:flex;flex-wrap:wrap;align-items:flex-end;gap:0.8em;min-height:2.7em;}
+.nt-grp{position:relative;display:inline-flex;align-items:flex-end;gap:0.6em;}
+.nt-note{position:relative;display:inline-flex;flex-direction:column;align-items:center;justify-content:flex-end;cursor:pointer;outline:1px dashed var(--border2);outline-offset:2px;}
+.nt-note:hover{outline-color:var(--accent);}
+.nt-note.editing{outline:1px solid var(--accent);}
+.nt-up{position:relative;display:block;width:100%;min-width:0.8em;height:1.5em;}
+.nt-sl{position:absolute;left:50%;top:0.08em;bottom:0;width:1.8px;margin-left:-0.9px;background:currentColor;border-radius:1px;}
+.nt-fl{position:absolute;left:50%;top:0.08em;margin-left:0.7px;color:currentColor;overflow:visible;}
+.nt-beam{position:absolute;top:0;height:2.3px;background:currentColor;border-radius:1px;pointer-events:none;}
+.nt-tup{position:absolute;top:-1.2em;text-align:center;font-size:0.64em;line-height:1;color:var(--text2);pointer-events:none;}
+.nt-r{display:inline-flex;align-items:flex-end;gap:0.04em;font-weight:700;line-height:1.15;white-space:nowrap;}
+.nt-br{color:var(--text2);font-weight:400;}
+.nt-ph{color:var(--text3);font-weight:400;}
+.nt-dot{color:var(--text2);font-size:1.3em;line-height:1;}
+.nt-empty{color:var(--text3);font-size:0.76em;}
+.ntbar.nt-editing{overflow:visible;z-index:6;}
+.nt-editbox{position:absolute;left:50%;top:100%;transform:translateX(-50%);margin-top:0.35em;z-index:20;display:flex;align-items:center;gap:0.2em;padding:0.2em 0.25em;background:var(--bg2);border:1px solid var(--accent);border-radius:0.45em;box-shadow:0 4px 14px rgba(0,0,0,0.35);white-space:nowrap;cursor:default;}
+.nt-dsel{background:var(--bg3);border:1px solid var(--border2);color:var(--text2);border-radius:0.3em;font-family:inherit;font-size:0.64em;padding:0.1em 0.05em;cursor:pointer;max-width:8em;}
+.nt-i{width:4.4em;background:var(--bg3);border:1px solid var(--accent);border-radius:0.3em;color:var(--text);font-family:inherit;font-size:0.86em;padding:0 0.2em;outline:none;}
+.nt-x{background:none;border:none;color:var(--text3);font-size:0.8em;line-height:1;padding:0 0.1em;cursor:pointer;}
+.nt-x:hover{color:#d4564a;}
+body.locked .nt-add,body.locked .nt-editbox{display:none!important;}
+body.locked .nt-note{cursor:default;outline:none;}
+body.barpick .nt-note{outline:none;}
 .cbeatcol.tiesel{outline:2px solid var(--accent);outline-offset:-2px;border-radius:4px;background:rgba(212,168,67,0.18);}
 body.chsym-on .cbeatcol{cursor:pointer;}
 .mixpage-stack.mixp .beat-i{font-size:calc(var(--bfs,1.2em) * 0.92);}
@@ -804,6 +837,13 @@ body.mode-phone .mixpage-stack.mixp{--barw:8.5em;}
 /* ── TEXT LIST ── */
 .tl{font-family:'Space Mono',monospace;font-size:0.85em;line-height:2;white-space:pre-wrap;background:var(--bg2);border:1px solid var(--border);border-radius:0.77em;padding:1.23em 1.38em;color:var(--text2);}
 .tl .tl-sep{border:none;border-top:1px solid var(--border2);margin:0.9em 0;}   /* 段落之間的分隔線 */
+/* 文字清單的節拍：八分一條底線、十六分兩條；反拍往上抬，正拍留在基線 */
+.tl .tl-c{display:inline-block;line-height:1.1;}
+.tl .tl-off1{vertical-align:0.45em;font-size:0.92em;color:var(--text2);}   /* 八分的反拍（&） */
+.tl .tl-off2{vertical-align:0.85em;font-size:0.86em;color:var(--text3);}   /* 十六分的細分位置 */
+.tl .tl-u1{border-bottom:1px solid currentColor;}
+.tl .tl-u2{border-bottom:1px solid currentColor;box-shadow:0 3px 0 -1px currentColor;}
+.tl .tl-tie{color:var(--accent);}   /* 連結線的頭尾括號 */
 
 /* ── EXPORT ── */
 .egrid{display:grid;grid-template-columns:1fr 1fr;gap:0.77em;margin-bottom:1.23em;}
@@ -1051,6 +1091,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   body[class*="print-"] #vp-block,
   body[class*="print-"] #vp-icon,
   body[class*="print-"] #vp-chord,
+  body[class*="print-"] #vp-note,
   body[class*="print-"] #vp-mix,
   body[class*="print-"] #vp-mixp,
   body[class*="print-"] #vp-text,
@@ -1059,6 +1100,12 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   body.print-seg #vp-seg{display:block!important;}
   body.print-seg .seg-flow{max-width:none!important;}
   body.print-chord #vp-chord{display:block!important;}
+  body.print-note #vp-note{display:block!important;}
+  body.print-note .ccard{background:#fff!important;break-inside:avoid!important;page-break-inside:avoid!important;border-width:2px;margin-bottom:6px;}
+  body.print-note .nt-add,body.print-note .nt-editbox,body.print-note .nt-empty{display:none!important;}
+  body.print-note .nt-note{outline:none!important;}
+  body.print-note .nt-sl,body.print-note .nt-beam{background:#000!important;}
+  body.print-note .nt-tup,body.print-note .nt-fl{color:#000!important;}
   body.print-mix #vp-mix{display:block!important;}
   body.print-mixp #vp-mixp{display:block!important;}
   body.print-staff #vp-staff{display:block!important;}
@@ -1342,6 +1389,7 @@ body.gated>*:not(#gate){filter:grayscale(.9) opacity(.32)!important;pointer-even
     <div class="vtabs">
       <button class="vtab a" onclick="sw('seg',this)">段落流程圖</button>
       <button class="vtab" onclick="sw('chord',this)">和弦譜</button>
+      <button class="vtab" onclick="sw('note',this)">音符譜</button>
       <button class="vtab" onclick="sw('mixp',this)">混合</button>
       <button class="vtab" onclick="sw('staff',this)">KB</button>
       <button class="vtab" onclick="sw('text',this)">文字清單</button>
@@ -1388,6 +1436,22 @@ body.gated>*:not(#gate){filter:grayscale(.9) opacity(.32)!important;pointer-even
       <div class="chord-content" id="chord-content"></div>
     </div>
 
+    <!-- NOTE VIEW（音符譜：小節內自由新增音符方塊，用五線譜的時值符號呈現節奏） -->
+    <div id="vp-note" style="display:none">
+      <div class="print-head"></div>
+      <div class="view-print"><button class="btn tbcollapse-btn" onclick="toggleToolbar()" title="收合/展開上方設定工具列">▾ 工具列</button><button class="btn lock-btn" onclick="toggleLock()" title="鎖定：開＝只能看譜、禁止編輯；關＝可編輯">🔓 鎖定 關</button><button class="btn" onclick="printFit('note')" title="自動縮放，盡量塞進一張 A4">📄 經典A4</button><button class="btn btna" onclick="printView('note')">🖨 列印 / 存 PDF</button></div>
+      <div class="icon-toolbar">
+        <label class="ic-hint">顯示 <select class="ic-sel" id="note-disp" onchange="setChordDisp(this.value)"><option value="num">級數</option><option value="male">和弦名(男Key)</option><option value="female">和弦名(女Key)</option></select></label>
+        <span class="key-step" title="半音微調 Key：依目前「顯示」調男/女 Key"><label>微調Key</label><button onclick="transposeKey(1)" title="升半音">▲</button><b class="keystep-lbl">—</b><button onclick="transposeKey(-1)" title="降半音">▼</button></span>
+        <label class="ic-hint">全部每排 <select class="ic-sel" onchange="applyAllBPR(this)" title="一次設定所有段落每排小節數"><option value="__">套用…</option><option value="">自動</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option></select></label>
+        <label class="ic-hint">和弦 <select class="ic-sel cp-acc" onchange="setPlaceAcc(this.value)" title="升降"><option value="">♮</option><option value="b">♭</option><option value="#">♯</option></select><select class="ic-sel cp-root" onchange="setPlaceRoot(this.value)" title="根音（級數）"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option></select><select class="ic-sel cp-qual" onchange="setPlaceQual(this.value)" title="和弦性質"><option value="">大三</option><option value="m">小三 m</option><option value="6">6</option><option value="m6">m6</option><option value="7">屬七 7</option><option value="maj7">maj7</option><option value="m7">m7</option><option value="9">9</option><option value="maj9">maj9</option><option value="m9">m9</option><option value="add9">add9</option><option value="11">11</option><option value="m11">m11</option><option value="13">13</option><option value="maj13">maj13</option><option value="m13">m13</option><option value="sus2">sus2</option><option value="sus">sus</option><option value="7sus">7sus</option><option value="dim">dim</option><option value="aug">aug</option></select><button class="stbtn chordplace-btn" onclick="toggleChordPlace()" title="放和弦模式：開啟後點音符直接填入所選和弦（存級數，顯示可切級數/男女Key）">🎹 放和弦</button></label>
+        <button class="stbtn" onclick="ntLoadFromChords()" title="把和弦譜／混合頁已填的和弦轉成音符譜的音符（時值＝該和弦到下一個和弦的長度）">⇩ 載入</button>
+        <button class="stbtn nt-undo icon-only" onclick="ntUndo()" title="上一步（音符譜自己的一組，不會動到和弦譜與 KB）" disabled>↩</button>
+        <button class="stbtn nt-redo icon-only" onclick="ntRedo()" title="下一步（重做）" disabled>↪</button>
+      </div>
+      <div class="chord-hint">音符譜：小節左上角「＋」新增音符；點音符打開設定（左邊選時值、中間輸入和弦、右邊 ✕ 刪除），平常只有虛線外框、不佔版面。節奏照五線譜畫在和弦正上方：全音符『和弦』、二分音符 {和弦} 加符桿、四分音符符桿、八分一條符尾、十六分兩條、二十四分三條、三十二分四條；連續同時值的音符會自動連成符桿連線，一組不是 2 或 4 個時在上方標連音數字（3＝三連音、5＝五連音）。選「·」＝這裡不顯示和弦。小節內不畫拍點虛線與拍點數字。</div>
+      <div class="chord-content" id="note-content"></div>
+    </div>
     <!-- MIX+ VIEW (大格 + 樂器指令在控制區) -->
     <div id="vp-mixp" style="display:none">
       <div class="print-head"></div>
@@ -1511,6 +1575,33 @@ body.gated>*:not(#gate){filter:grayscale(.9) opacity(.32)!important;pointer-even
     <div class="cl-head"><span>📝 更新日誌 · Arranger 理譜人</span><button class="btn" onclick="hideChangelog()">✕</button></div>
     <div class="cl-body">
       <p class="cl-ver">開發時間軸：2026-06-17 ～ 2026-08-30（依使用回饋持續優化）</p>
+
+      <h4>新增「音符譜」分頁 <span class="cl-date">2026-09-12</span></h4>
+      <ul><li>和弦譜右邊新增「音符譜」：架構與和弦譜相同（段落卡片、收合、複製／清除小節、列印、經典A4），但小節內不畫拍點虛線與拍點數字，節奏改用五線譜的音符符號表示；每排預設 2 個小節</li>
+      <li>小節左上角「＋」新增音符；點音符打開設定框——左邊選時值、中間輸入和弦、右邊 ✕ 刪除。平常只有虛線外框、不佔版面，排法比照五線譜</li>
+      <li>時值：全音符『和弦』、二分音符 {和弦} 加符桿、四分音符符桿、八分一條符尾、十六分兩條、二十四分三條、三十二分四條，以及「·」＝這裡不顯示和弦；符桿與符尾一律畫在和弦正上方</li>
+      <li>連續相同時值的音符（八分以下）會自動連成符桿連線；一組不是 2 或 4 個時在上方標連音數字，例如 3 個八分＝三連音、5 個十六分＝五連音</li>
+      <li>工具列加入和弦譜的「🎹 放和弦」（開啟後點音符直接填入所選和弦）與「📄 經典A4」，以及「⇩ 載入」：把和弦譜／混合頁已填的和弦轉成音符，時值＝該和弦到下一個和弦的長度</li>
+      <li>段落控制項加入「⧉ 複製」與「🧹 清除」；在音符譜按清除只清音符，和弦譜與 KB 的資料不動</li>
+      <li>和弦文字與其他頁共用「顯示」設定，級數 ↔ 男／女 Key 和弦名都會跟著切換</li>
+      <li>「↩ 上一步／↪ 下一步」是音符譜自己的一組：只回復音符（與段落備註），不會動到和弦譜與 KB；同樣地在和弦譜或 KB 按上一步也不會動到音符</li>
+      <li>音符會跟著小節走：複製貼上、刪除小節、段落清除、存檔讀檔都會帶著</li></ul>
+
+      <h4>文字清單標出連結線 <span class="cl-date">2026-09-12</span></h4>
+      <ul><li>和弦譜／混合頁畫的連結線 ⌒，文字清單用括號表示：起點加「(」、終點加「)」，例如 <code>| 1 · · · · · · (4 | 4) · · · |</code></li>
+      <li>「複製全部」出去的純文字也一起帶著括號</li>
+      <li>注意：一格塞多個和弦本來就是用括號寫（例如 <code>(1 5)</code>），跟連結線的括號長得像，看的時候以位置區分——連結線的括號在和弦外側、成對出現</li></ul>
+
+      <h4>載入和弦帶符號；文字清單標出正／反拍與音符時值 <span class="cl-date">2026-09-12</span></h4>
+      <ul><li>KB 頁「⇩ 載入」把和弦譜／混合頁的和弦轉成 KB 數字時，該格的琶音 ⌇ 與連結線 ⌒ 也一起帶到右手</li>
+      <li>文字清單：切成八分的小節，每個格子加一條底線；十六分加兩條（簡譜寫法）</li>
+      <li>文字清單：反拍（拍點之間的格子）往上抬一點、顏色淡一階，正拍留在基線，八分的正拍與反拍一眼分得出來</li>
+      <li>「複製全部」出去的純文字不變，仍是一行一行的等寬文字</li></ul>
+
+      <h4>段落流程圖：樂器名稱改成和樂器篩選鈕同色 <span class="cl-date">2026-09-11</span></h4>
+      <ul><li>段落方塊裡的樂器名稱（KB、PAD、VOCAL…）原本是灰色不好辨認，改成和上方樂器篩選鈕一樣的顏色小標籤（KB 黃、PAD 紫、VOCAL 橘、AG 綠、EG1 藍…），右邊的彈法對齊</li>
+      <li>內層（第二層、高潮等）的樂器，左側多一條該層顏色的直線</li>
+      <li>底部「D+B」的 D、B 與後面的內容分別用鼓（粉）、貝斯（紅）的顏色，鼓排在前面</li></ul>
 
       <h4>「12/3」顯示成 1add2/3，細分小節的轉位低音縮小 <span class="cl-date">2026-09-11</span></h4>
       <ul><li>和弦後綴只有一個「2」時（例如 12、12/3、C2/E）一律顯示成 add2，並跟 maj13、dim7 一樣疊在和弦上方，橫向不佔位置；譜裡存的內容不變</li>
@@ -2036,7 +2127,7 @@ const I18N={
  "彈法…":"Play…","段落備註…":"Section note…","辨識出的文字會出現在這裡，可手動修正後再解析…":"OCR text appears here; edit then parse…",
  "不轉（保留和弦名）":"Keep chord names","依男 Key 轉級數":"By M Key → degrees","依女 Key 轉級數":"By F Key → degrees","和弦轉級數：":"Chords → degrees:",
  "🔍 圖片 / PDF 辨識匯入":"🔍 Image / PDF OCR","🎼 圖示譜 PDF":"🎼 Icon Chart PDF","🎵 和弦譜 PDF":"🎵 Chord Chart PDF","🎼 混合 PDF（和弦＋樂器）":"🎼 Mix PDF (chords+parts)","🖼 PNG 展開示意圖":"🖼 PNG Flow Map","📦 PNG 方塊流程圖":"📦 PNG Block Flow","📊 CSV 樂器備註表":"📊 CSV Parts Table","📋 文字清單":"📋 Text List","↓ JSON 備份":"↓ JSON Backup","↓ Download JSON":"↓ Download JSON","↓ PNG 展開示意圖":"↓ PNG Flow Map","↓ PNG 方塊流程圖":"↓ PNG Block Flow",
- "👤 使用者登入":"👤 User Login","🎵 歌曲庫":"🎵 Library","歌曲庫：瀏覽、載入歌譜；敬拜使用者可用「聚會服事」、個人使用者可用「演奏模式」挑歌排成一份":"Library: browse and load charts; worship users can build a Service set, personal users a Practice Set","點「載入」打開單首；按「⛪ 聚會服事」可挑最多 10 首，排好順序後依序載入成一份。":"Tap “Load” to open one song, or use “⛪ Service” to pick up to 10 songs, order them, and load them as one set.","🔑 管理者登入":"🔑 Admin Login","👁 一般使用者：瀏覽歌譜":"👁 Guest: browse","⛪ 聚會服事":"⛪ Service","☁ 儲存目前到雲端":"☁ Save to cloud","一般使用者 · 瀏覽歌譜":"Guest · browse",
+ "👤 使用者登入":"👤 User Login","音符譜":"Note Chart","全音符":"Whole note","二分音符":"Half note","四分音符":"Quarter note","八分音符":"Eighth note","十六分音符":"16th note","二十四分音符":"24th note","三十二分音符":"32nd note","·（不顯示和弦）":"· (no chord)","按 ＋ 新增音符":"Tap ＋ to add a note","在這個小節新增一個音符":"Add a note to this bar","刪除這個音符":"Delete this note","時值":"Note value","音符譜：小節左上角「＋」新增音符；點音符打開設定（左邊選時值、中間輸入和弦、右邊 ✕ 刪除），平常只有虛線外框、不佔版面。節奏照五線譜畫在和弦正上方：全音符『和弦』、二分音符 {和弦} 加符桿、四分音符符桿、八分一條符尾、十六分兩條、二十四分三條、三十二分四條；連續同時值的音符會自動連成符桿連線，一組不是 2 或 4 個時在上方標連音數字（3＝三連音、5＝五連音）。選「·」＝這裡不顯示和弦。小節內不畫拍點虛線與拍點數字。":"Note Chart: tap ＋ at a bar's top-left to add a note; tap a note to open its settings (value on the left, chord in the middle, ✕ on the right) — otherwise it is only a dashed outline and takes no space. Rhythm is drawn above the chord like a staff: whole note 『chord』, half note {chord} with a stem, quarter note with a stem, eighth one flag, 16th two, 24th three, 32nd four; consecutive notes of the same value are beamed together, and a group that is not 2 or 4 notes gets a tuplet number above it (3 = triplet, 5 = quintuplet). Pick “·” to show no chord. Bars draw no beat dashes or beat numbers.","🎵 歌曲庫":"🎵 Library","歌曲庫：瀏覽、載入歌譜；敬拜使用者可用「聚會服事」、個人使用者可用「演奏模式」挑歌排成一份":"Library: browse and load charts; worship users can build a Service set, personal users a Practice Set","點「載入」打開單首；按「⛪ 聚會服事」可挑最多 10 首，排好順序後依序載入成一份。":"Tap “Load” to open one song, or use “⛪ Service” to pick up to 10 songs, order them, and load them as one set.","🔑 管理者登入":"🔑 Admin Login","👁 一般使用者：瀏覽歌譜":"👁 Guest: browse","⛪ 聚會服事":"⛪ Service","☁ 儲存目前到雲端":"☁ Save to cloud","一般使用者 · 瀏覽歌譜":"Guest · browse",
  "💾 儲存譜":"💾 Save Chart","請選擇儲存方式：":"Choose how to save:","💾 存到瀏覽器本機":"💾 Save to browser","📁 另存到資料夾（.json）":"📁 Save to folder (.json)","下次用同一台裝置開啟會自動載入":"Auto-loads next time on this device","可自選電腦資料夾位置存成檔案":"Pick a folder on your computer",
  "（此段尚未填樂器配置）":"(No parts set yet)","點段落圓圈 → 右邊展開該段樂器配置（再點一次收起）":"Tap a section circle → its parts expand on the right (tap again to close)","點樂器挑要看的部位":"Tap an instrument to filter",
  "升半音":"Semitone up","降半音":"Semitone down","拖曳移位":"Drag to move","拖曳調長度":"Drag to resize","接續到哪一段":"Continue to…","此小節接續到哪一段":"This bar continues to…","本小節拍號（點擊切換）":"Bar meter (click to cycle)","每排幾個小節":"Bars per row","放大檢視字級":"Increase font","縮小檢視字級":"Decrease font","展開更多功能":"More features","查看歷次更新內容":"View changelog","新增一條配器（內容與其他頁共用）":"Add a part (shared across views)","刪除此配器（各頁一起移除）":"Delete this part","一次設定所有段落每排小節數":"Set bars-per-row for all sections","自動縮放，盡量塞進一張 A4":"Auto-fit onto one A4",
@@ -2329,7 +2420,7 @@ const I18N_JA={
  "↓ Download JSON":"↓ JSONをダウンロード",
  "↓ PNG 展開示意圖":"↓ PNG 構成マップ",
  "↓ PNG 方塊流程圖":"↓ PNG ブロックフロー",
- "👤 使用者登入":"👤 ユーザーログイン","🎵 歌曲庫":"🎵 ライブラリ","歌曲庫：瀏覽、載入歌譜；敬拜使用者可用「聚會服事」、個人使用者可用「演奏模式」挑歌排成一份":"ライブラリ：譜の閲覧・読み込み。礼拝ユーザーは「礼拝」、個人ユーザーは「演奏モード」で曲を選んで1つにまとめられます","點「載入」打開單首；按「⛪ 聚會服事」可挑最多 10 首，排好順序後依序載入成一份。":"「読み込み」で1曲を開きます。「⛪ 礼拝」なら最大10曲を選んで順番を決め、まとめて読み込めます。",
+ "👤 使用者登入":"👤 ユーザーログイン","音符譜":"音符譜","全音符":"全音符","二分音符":"2分音符","四分音符":"4分音符","八分音符":"8分音符","十六分音符":"16分音符","二十四分音符":"24分音符","三十二分音符":"32分音符","·（不顯示和弦）":"·（コード非表示）","按 ＋ 新增音符":"＋ で音符を追加","在這個小節新增一個音符":"この小節に音符を追加","刪除這個音符":"この音符を削除","時值":"音価","音符譜：小節左上角「＋」新增音符；點音符打開設定（左邊選時值、中間輸入和弦、右邊 ✕ 刪除），平常只有虛線外框、不佔版面。節奏照五線譜畫在和弦正上方：全音符『和弦』、二分音符 {和弦} 加符桿、四分音符符桿、八分一條符尾、十六分兩條、二十四分三條、三十二分四條；連續同時值的音符會自動連成符桿連線，一組不是 2 或 4 個時在上方標連音數字（3＝三連音、5＝五連音）。選「·」＝這裡不顯示和弦。小節內不畫拍點虛線與拍點數字。":"音符譜：小節左上の「＋」で音符を追加。音符をタップすると設定が開きます（左＝音価、中央＝コード入力、右＝✕ 削除）。普段は破線の枠だけで場所を取りません。リズムは五線譜と同じようにコードの真上に描きます：全音符『コード』、2分音符 {コード}＋符幹、4分音符＋符幹、8分は符尾1本、16分は2本、24分は3本、32分は4本。同じ音価が続くと自動で符尾がつながり、1組が2個・4個でないときは上に連音の数字（3＝3連符、5＝5連符）を表示します。「·」を選ぶとコードを表示しません。小節内に拍の点線と拍番号は表示しません。","🎵 歌曲庫":"🎵 ライブラリ","歌曲庫：瀏覽、載入歌譜；敬拜使用者可用「聚會服事」、個人使用者可用「演奏模式」挑歌排成一份":"ライブラリ：譜の閲覧・読み込み。礼拝ユーザーは「礼拝」、個人ユーザーは「演奏モード」で曲を選んで1つにまとめられます","點「載入」打開單首；按「⛪ 聚會服事」可挑最多 10 首，排好順序後依序載入成一份。":"「読み込み」で1曲を開きます。「⛪ 礼拝」なら最大10曲を選んで順番を決め、まとめて読み込めます。",
  "🔑 管理者登入":"🔑 管理者ログイン",
  "👁 一般使用者：瀏覽歌譜":"👁 ゲスト：閲覧のみ",
  "⛪ 聚會服事":"⛪ 礼拝",
@@ -2687,7 +2778,7 @@ const I18N_KO={
  "↓ Download JSON":"↓ JSON 다운로드",
  "↓ PNG 展開示意圖":"↓ PNG 구성 맵",
  "↓ PNG 方塊流程圖":"↓ PNG 블록 플로우",
- "👤 使用者登入":"👤 사용자 로그인","🎵 歌曲庫":"🎵 라이브러리","歌曲庫：瀏覽、載入歌譜；敬拜使用者可用「聚會服事」、個人使用者可用「演奏模式」挑歌排成一份":"라이브러리: 악보 열람·불러오기. 예배 사용자는 「예배」, 개인 사용자는 「연주 모드」로 곡을 골라 하나로 묶을 수 있습니다","點「載入」打開單首；按「⛪ 聚會服事」可挑最多 10 首，排好順序後依序載入成一份。":"「불러오기」로 한 곡을 엽니다. 「⛪ 예배」에서는 최대 10곡을 골라 순서를 정한 뒤 한 번에 불러올 수 있습니다.",
+ "👤 使用者登入":"👤 사용자 로그인","音符譜":"음표 악보","全音符":"온음표","二分音符":"2분음표","四分音符":"4분음표","八分音符":"8분음표","十六分音符":"16분음표","二十四分音符":"24분음표","三十二分音符":"32분음표","·（不顯示和弦）":"·(코드 표시 없음)","按 ＋ 新增音符":"＋ 로 음표 추가","在這個小節新增一個音符":"이 마디에 음표 추가","刪除這個音符":"이 음표 삭제","時值":"음길이","音符譜：小節左上角「＋」新增音符；點音符打開設定（左邊選時值、中間輸入和弦、右邊 ✕ 刪除），平常只有虛線外框、不佔版面。節奏照五線譜畫在和弦正上方：全音符『和弦』、二分音符 {和弦} 加符桿、四分音符符桿、八分一條符尾、十六分兩條、二十四分三條、三十二分四條；連續同時值的音符會自動連成符桿連線，一組不是 2 或 4 個時在上方標連音數字（3＝三連音、5＝五連音）。選「·」＝這裡不顯示和弦。小節內不畫拍點虛線與拍點數字。":"음표 악보: 마디 왼쪽 위의 「＋」로 음표를 추가합니다. 음표를 누르면 설정이 열립니다(왼쪽＝음길이, 가운데＝코드 입력, 오른쪽＝✕ 삭제). 평소에는 점선 테두리만 있고 자리를 차지하지 않습니다. 리듬은 오선지처럼 코드 바로 위에 그립니다: 온음표 『코드』, 2분음표 {코드}＋기둥, 4분음표＋기둥, 8분 꼬리 1개, 16분 2개, 24분 3개, 32분 4개. 같은 음길이가 이어지면 자동으로 이어 붙이고, 한 묶음이 2개나 4개가 아니면 위에 잇단음표 숫자(3＝셋잇단, 5＝다섯잇단)를 표시합니다. 「·」를 고르면 코드를 표시하지 않습니다. 마디 안에 박 점선과 박 번호는 그리지 않습니다.","🎵 歌曲庫":"🎵 라이브러리","歌曲庫：瀏覽、載入歌譜；敬拜使用者可用「聚會服事」、個人使用者可用「演奏模式」挑歌排成一份":"라이브러리: 악보 열람·불러오기. 예배 사용자는 「예배」, 개인 사용자는 「연주 모드」로 곡을 골라 하나로 묶을 수 있습니다","點「載入」打開單首；按「⛪ 聚會服事」可挑最多 10 首，排好順序後依序載入成一份。":"「불러오기」로 한 곡을 엽니다. 「⛪ 예배」에서는 최대 10곡을 골라 순서를 정한 뒤 한 번에 불러올 수 있습니다.",
  "🔑 管理者登入":"🔑 관리자 로그인",
  "👁 一般使用者：瀏覽歌譜":"👁 게스트: 열람만",
  "⛪ 聚會服事":"⛪ 예배",
@@ -2901,7 +2992,7 @@ const I18N_CN={
  "準備中…":"准备中…","產生中…":"产生中…","讀取 PDF…":"读取 PDF…","載入服事清單…":"加载服事清单…","載入辨識引擎…":"加载辨识引擎…","彈法…":"弹法…",
  "段落備註…":"段落备注…","辨識出的文字會出現在這裡，可手動修正後再解析…":"辨识出的文本会出现在这里，可手动修正后再解析…","不轉（保留和弦名）":"不转（保留和弦名）","依男 Key 轉級數":"依男 Key 转级数","依女 Key 轉級數":"依女 Key 转级数","和弦轉級數：":"和弦转级数：",
  "🔍 圖片 / PDF 辨識匯入":"🔍 图片 / PDF 辨识导入","🎼 圖示譜 PDF":"🎼 图标谱 PDF","🎵 和弦譜 PDF":"🎵 和弦谱 PDF","🎼 混合 PDF（和弦＋樂器）":"🎼 混合 PDF（和弦＋乐器）","🖼 PNG 展開示意圖":"🖼 PNG 展开示意图","📦 PNG 方塊流程圖":"📦 PNG 方块流程图",
- "📊 CSV 樂器備註表":"📊 CSV 乐器备注表","📋 文字清單":"📋 文字清单","↓ JSON 備份":"↓ JSON 备份","↓ PNG 展開示意圖":"↓ PNG 展开示意图","↓ PNG 方塊流程圖":"↓ PNG 方块流程图","👤 使用者登入":"👤 用户登录","🎵 歌曲庫":"🎵 歌曲库","歌曲庫：瀏覽、載入歌譜；敬拜使用者可用「聚會服事」、個人使用者可用「演奏模式」挑歌排成一份":"歌曲库：浏览、载入歌谱；敬拜用户可用「聚会服事」、个人用户可用「演奏模式」挑歌排成一份","點「載入」打開單首；按「⛪ 聚會服事」可挑最多 10 首，排好順序後依序載入成一份。":"点「载入」打开单首；按「⛪ 聚会服事」可挑最多 10 首，排好顺序后依序载入成一份。",
+ "📊 CSV 樂器備註表":"📊 CSV 乐器备注表","📋 文字清單":"📋 文字清单","↓ JSON 備份":"↓ JSON 备份","↓ PNG 展開示意圖":"↓ PNG 展开示意图","↓ PNG 方塊流程圖":"↓ PNG 方块流程图","👤 使用者登入":"👤 用户登录","音符譜":"音符谱","全音符":"全音符","二分音符":"二分音符","四分音符":"四分音符","八分音符":"八分音符","十六分音符":"十六分音符","二十四分音符":"二十四分音符","三十二分音符":"三十二分音符","·（不顯示和弦）":"·（不显示和弦）","按 ＋ 新增音符":"按 ＋ 添加音符","在這個小節新增一個音符":"在这个小节添加一个音符","刪除這個音符":"删除这个音符","時值":"时值","音符譜：小節左上角「＋」新增音符；點音符打開設定（左邊選時值、中間輸入和弦、右邊 ✕ 刪除），平常只有虛線外框、不佔版面。節奏照五線譜畫在和弦正上方：全音符『和弦』、二分音符 {和弦} 加符桿、四分音符符桿、八分一條符尾、十六分兩條、二十四分三條、三十二分四條；連續同時值的音符會自動連成符桿連線，一組不是 2 或 4 個時在上方標連音數字（3＝三連音、5＝五連音）。選「·」＝這裡不顯示和弦。小節內不畫拍點虛線與拍點數字。":"音符谱：小节左上角「＋」添加音符；点音符打开设置（左边选时值、中间输入和弦、右边 ✕ 删除），平常只有虚线外框、不占版面。节奏照五线谱画在和弦正上方：全音符『和弦』、二分音符 {和弦} 加符杆、四分音符符杆、八分一条符尾、十六分两条、二十四分三条、三十二分四条；连续同时值的音符会自动连成符杆连线，一组不是 2 或 4 个时在上方标连音数字（3＝三连音、5＝五连音）。选「·」＝这里不显示和弦。小节内不画拍点虚线与拍点数字。","🎵 歌曲庫":"🎵 歌曲库","歌曲庫：瀏覽、載入歌譜；敬拜使用者可用「聚會服事」、個人使用者可用「演奏模式」挑歌排成一份":"歌曲库：浏览、载入歌谱；敬拜用户可用「聚会服事」、个人用户可用「演奏模式」挑歌排成一份","點「載入」打開單首；按「⛪ 聚會服事」可挑最多 10 首，排好順序後依序載入成一份。":"点「载入」打开单首；按「⛪ 聚会服事」可挑最多 10 首，排好顺序后依序载入成一份。",
  "🔑 管理者登入":"🔑 管理者登录","👁 一般使用者：瀏覽歌譜":"👁 一般用户：浏览歌谱","⛪ 聚會服事":"⛪ 聚会服事","☁ 儲存目前到雲端":"☁ 保存目前到云端","一般使用者 · 瀏覽歌譜":"一般用户 · 浏览歌谱","💾 儲存譜":"💾 保存谱",
  "請選擇儲存方式：":"请选择保存方式：","💾 存到瀏覽器本機":"💾 存到浏览器本机","📁 另存到資料夾（.json）":"📁 另存到文件夹（.json）","下次用同一台裝置開啟會自動載入":"下次用同一台设备打开会自动加载","可自選電腦資料夾位置存成檔案":"可自选电脑文件夹位置存成文件","（此段尚未填樂器配置）":"（此段尚未填乐器配置）",
  "點段落圓圈 → 右邊展開該段樂器配置（再點一次收起）":"点段落圆圈 → 右边展开该段乐器配置（再点一次收起）","點樂器挑要看的部位":"点乐器挑要看的部位","拖曳調長度":"拖曳调长度","接續到哪一段":"接续到哪一段","此小節接續到哪一段":"此小节接续到哪一段","本小節拍號（點擊切換）":"本小节拍号（点击切换）",
@@ -3122,7 +3213,7 @@ function applyProjectData(data){
   if(_locked && typeof toggleLock==='function') toggleLock();  /* 載入新譜自動解鎖，避免配器等編輯被鎖住而以為失效 */
   /* 換譜就清空上一步／下一步：新譜的段落 id 會重新編號，留著舊步驟會把別首歌的內容蓋進來 */
   try{ _segUndo.length=0; _segRedo.length=0; _segLastTag=null; _chUndo.length=0; _chRedo.length=0; _staffUndo.length=0; _staffRedo.length=0;
-       updateSegUndoBtns(); updateChordUndoBtns(); updateStaffUndoBtns(); }catch(e){}
+       updateSegUndoBtns(); updateChordUndoBtns(); updateNtUndoBtns(); updateStaffUndoBtns(); }catch(e){}
   return true;
 }
 function saveProject(){
@@ -4099,9 +4190,12 @@ function renderSeg(){
     const mel=rows.filter(x=>!RHYTHM.includes(x.k)), rhy=rows.filter(x=>RHYTHM.includes(x.k));
     let bodyHtml='';
     if(_segDisp==='ins'){
-      bodyHtml = mel.map(x=>`<div class="b-irow"><span class="b-iname" style="color:${x.li===0?'var(--text3)':x.lc.stroke}">${ICON[x.k]||''} ${x.k}</span><span class="b-ival">${esc(x.v)}</span></div>`).join('')
+      /* 樂器名稱配色＝上方樂器篩選鈕（外框／字色／底色）；內層（第二層、高潮…）在左側加一條該層顏色 */
+      const insSty=k=>{ const c=INSCOL[k]||{stroke:'#999',fill:'rgba(150,150,150,0.13)'}; return `color:${c.stroke};border-color:${c.stroke};background:${c.fill}`; };
+      bodyHtml = mel.map(x=>`<div class="b-irow${x.li>0?' b-inner':''}"${x.li>0?` style="border-left-color:${x.lc.stroke}" title="${esc(x.lc.label)}"`:''}><span class="b-iname" style="${insSty(x.k)}">${ICON[x.k]||''} ${x.k}</span><span class="b-ival">${esc(x.v)}</span></div>`).join('')
         || `<div class="seg-empty">（尚未填樂器配置）</div>`;
-      if(rhy.length) bodyHtml+=`<div class="b-dbrow">D+B: ${rhy.map(x=>esc(x.v)).filter(Boolean).join(' / ')}</div>`;
+      if(rhy.length){ const dc=(INSCOL.Drum||{}).stroke||'#cf7fa8', bc=(INSCOL.Bass||{}).stroke||'#d4564a';
+        bodyHtml+=`<div class="b-dbrow"><span style="color:${dc}">D</span>+<span style="color:${bc}">B</span>: ${rhy.slice().sort((a,b)=>(a.k==='Drum'?0:1)-(b.k==='Drum'?0:1)).map(x=>`<span style="color:${(INSCOL[x.k]||{}).stroke||'inherit'}" title="${x.k}">${esc(x.v)}</span>`).join(' / ')}</div>`; }   // 順序跟「D+B」一致：鼓在前
     } else if(_segDisp==='chord'){
       const cs=chordSummary(s);
       bodyHtml = cs?`<div class="seg-chords">${esc(cs)}</div>`:`<div class="seg-empty">（尚未填和弦）</div>`;
@@ -4340,6 +4434,7 @@ let _noteEd=null;   // {id, el, ta, orig, stack, snap}
 function notePushHistory(){
   if(currentView==='staff'){ staffPushHistory(); updateStaffUndoBtns(); return _staffUndo; }
   if(currentView==='seg'){ segPushHistory(); return _segUndo; }
+  if(currentView==='note'){ ntPushHistory(); return _ntUndo; }
   chordPushHistory(); return _chUndo;
 }
 function noteGrow(ta){ ta.style.height='auto'; ta.style.height=ta.scrollHeight+'px'; }
@@ -4379,7 +4474,7 @@ function noteCommit(cancel){
     if(s.notes===d.orig&&d.stack&&d.stack[d.stack.length-1]===d.snap)d.stack.pop();
     autoSave();
   }
-  try{ updateChordUndoBtns(); updateStaffUndoBtns(); updateSegUndoBtns(); }catch(e){}
+  try{ updateChordUndoBtns(); updateNtUndoBtns(); updateStaffUndoBtns(); updateSegUndoBtns(); }catch(e){}
   /* 就地換回文字，不重建整個譜面（重建會吃掉使用者接著點下去的那一下） */
   const el=d.el; if(!el||!el.isConnected)return;
   el.classList.remove('editing');
@@ -4599,11 +4694,11 @@ function bindSwipe(){
 /* ── PRINT ICON SHEET (A4, 4 segments / page) ── */
 async function printView(name){
   commitEdits();
-  const askable=['chord','mixp','staff'].includes(name);
+  const askable=['chord','note','mixp','staff'].includes(name);
   if(askable)_printMaxi=true;   // 輸出一律採極大化樣式
   forceDesktopForPrint();   // 跨平台一致：以電腦版規格輸出
   window._printMode=true;   /* 收合沒用到的八分/十六分空格 */
-  if(name==='icon')renderIcon(); else if(name==='chord')renderChord(); else if(name==='mix')renderMix(); else if(name==='mixp')renderMixP(); else if(name==='staff')renderStaff();
+  if(name==='icon')renderIcon(); else if(name==='note')renderNote(); else if(name==='chord')renderChord(); else if(name==='mix')renderMix(); else if(name==='mixp')renderMixP(); else if(name==='staff')renderStaff();
   if(document.fonts&&document.fonts.ready){ try{ await document.fonts.ready; }catch(e){} }
   const cls='print-'+name;
   const maxi=askable&&_printMaxi;
@@ -4736,8 +4831,8 @@ async function printFit(view){
   const cls='print-'+view;
   document.body.classList.toggle('print-maxi',_printMaxi);   // 極大化：先套用才量得準
   const PH=1040;   // A4 直式可列印高度（約 px @96dpi，已扣邊界）
-  const srcId=view==='chord'?'chord-content':view==='mixp'?'mixp-content':view==='staff'?'staff-content':'mix-content';
-  const renderView=()=>{ if(view==='chord')renderChord(); else if(view==='mix')renderMix(); else if(view==='mixp')renderMixP(); else if(view==='staff')renderStaff(); };
+  const srcId=view==='chord'?'chord-content':view==='note'?'note-content':view==='mixp'?'mixp-content':view==='staff'?'staff-content':'mix-content';
+  const renderView=()=>{ if(view==='chord')renderChord(); else if(view==='note')renderNote(); else if(view==='mix')renderMix(); else if(view==='mixp')renderMixP(); else if(view==='staff')renderStaff(); };
   const measureH=(fs)=>{ const src=document.getElementById(srcId); if(!src)return PH;
     const clone=src.cloneNode(true);
     clone.querySelectorAll('.beat-i').forEach(n=>n.remove());
@@ -5265,7 +5360,7 @@ function updateKeyStepLabels(){
   else { txt=gv('s-mkey')||gv('s-fkey')||'—'; sym=(gv('s-mkey')||!gv('s-fkey'))?Lf('男','M','男','남'):Lf('女','F','女','여'); }
   document.querySelectorAll('.keystep-lbl').forEach(e=>e.textContent=sym+' '+txt);
 }
-function syncDispSelects(){ ['chord-disp','mix-disp','mixp-disp'].forEach(id=>{const s=document.getElementById(id);if(s)s.value=chordDisp;}); }
+function syncDispSelects(){ ['chord-disp','note-disp','mix-disp','mixp-disp'].forEach(id=>{const s=document.getElementById(id);if(s)s.value=chordDisp;}); }
 function dispKeyName(){ return chordDisp==='male'?gv('s-mkey'):chordDisp==='female'?gv('s-fkey'):''; }
 const DEG_SEMI={1:0,2:2,3:4,4:5,5:7,6:9,7:11};
 const NOTE_SHARP=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
@@ -5591,20 +5686,21 @@ let _clearBackup=null;
 function clearAll(){
   if(_clearBackup){ sects=_clearBackup; _clearBackup=null; autoSave(); renderSB(); renderAll(); updateClearBtns(); return; }
   if(!confirm('清除整個譜的和弦／分割／重複／拍號／接續資料？（可再按一次「復原」還原）'))return;
-  chordPushHistory();
+  chordPushHistory(); ntPushHistory();
   _clearBackup=JSON.parse(JSON.stringify(sects));
-  sects.forEach(s=>{ delete s.chords; delete s.subdiv; delete s.rep; delete s.meters; delete s.bargoto; delete s.goto; delete s.chArp; delete s.chTie; });
+  sects.forEach(s=>{ delete s.chords; delete s.subdiv; delete s.rep; delete s.meters; delete s.bargoto; delete s.goto; delete s.chArp; delete s.chTie; delete s.nt; });
   autoSave(); renderSB(); renderAll(); updateClearBtns();
 }
 function updateClearBtns(){ document.querySelectorAll('.clear-btn').forEach(b=>{ b.textContent=_clearBackup?'↩ 復原':'🗑 全部清除'; b.classList.toggle('on',!!_clearBackup); }); }
 
 /* ── 單一段落清除：只清「填寫的數據」，小節格式全部保留 ── */
 /* 清掉：和弦、KB 上下行音符與時值；保留：小節數、分割(subdiv/kbUpSub/kbLoSub)、拍號、重複、接續、每排、段名、顏色、備註 */
-const SECT_DATA_KEYS=['chords','kbUp','kbLo','kbUpD','kbLoD','chArp','chTie'];
+const SECT_DATA_KEYS=['chords','kbUp','kbLo','kbUpD','kbLoD','chArp','chTie','nt'];
 var _secClearBk=window._secClearBk||{};      // var：確保任何時機取值都不會踩到暫時性死區
 const SECT_KB_KEYS=['kbUp','kbLo','kbUpD','kbLoD','kbUpArp','kbLoArp','kbUpTie','kbLoTie'];
-/* 在 KB 頁按清除＝只清 KB 數字（和弦不動）；在和弦譜／混合頁＝清和弦與 KB（原本的行為） */
-function sectClearKeys(){ return (currentView==='staff')?SECT_KB_KEYS:SECT_DATA_KEYS; }
+const SECT_NOTE_KEYS=['nt'];
+/* 在 KB 頁按清除＝只清 KB 數字（和弦不動）；音符譜＝只清音符；和弦譜／混合頁＝清和弦與 KB（原本的行為） */
+function sectClearKeys(){ return (currentView==='staff')?SECT_KB_KEYS:(currentView==='note')?SECT_NOTE_KEYS:SECT_DATA_KEYS; }
 function clearSect(id){
   const i=sects.findIndex(x=>x.id===id); if(i<0)return;
   const s=sects[i];
@@ -5613,12 +5709,14 @@ function clearSect(id){
     (bk._keys||SECT_DATA_KEYS).forEach(k=>{ if(bk[k]===undefined) delete s[k]; else s[k]=bk[k]; });
     autoSave(); renderSB(); renderAll(); return;
   }
-  const kbOnly=(currentView==='staff'), keys=sectClearKeys();
-  const msg=kbOnly
+  const kbOnly=(currentView==='staff'), ntOnly=(currentView==='note'), keys=sectClearKeys();
+  const msg=ntOnly
+    ? Lf(`清除段落「${s.name}」排好的音符？\n（和弦譜與 KB 不會被清掉；小節數、分割、拍號、重複、接續等格式也都保留；可再按一次「↩ 復原」還原）`,`Clear the notes arranged in "${s.name}"?\n(The chord chart and KB are left untouched. Bar count, subdivisions, meters, repeats and continuations are all kept. Press again to undo.)`,`「${s.name}」に並べた音符を消しますか？\n（和弦譜とKBは消えません。小節数・分割・拍子・リピート・接続などの書式もそのまま残ります。もう一度「↩ 元に戻す」を押すと復元できます）`,`「${s.name}」에 배치한 음표를 지울까요?\n(코드 악보와 KB는 지우지 않습니다. 마디 수·분할·박자·반복·연결 등 서식도 그대로 유지됩니다. 다시 「↩ 되돌리기」를 누르면 복원됩니다)`)
+    : kbOnly
     ? Lf(`清除段落「${s.name}」填寫的 KB 數字？\n（和弦不會被清掉；小節數、分割、拍號、重複、接續等格式也都保留；可再按一次「↩ 復原」還原）`,`Clear the KB numbers in "${s.name}"?\n(Chords are left untouched. Bar count, subdivisions, meters, repeats and continuations are all kept. Press again to undo.)`,`「${s.name}」のKB数字を消しますか？\n（コードは消えません。小節数・分割・拍子・リピート・接続などの書式もそのまま残ります。もう一度「↩ 元に戻す」を押すと復元できます）`,`「${s.name}」의 KB 숫자를 지울까요?\n(코드는 지우지 않습니다. 마디 수·분할·박자·반복·연결 등 서식도 그대로 유지됩니다. 다시 「↩ 되돌리기」를 누르면 복원됩니다)`)
     : Lf(`清除段落「${s.name}」填寫的和弦與 KB 數字？\n（小節數、分割、拍號、重複、接續等格式都會保留；可再按一次「↩ 復原」還原）`,`Clear the chords and KB numbers in "${s.name}"?\n(Bar count, subdivisions, meters, repeats and continuations are all kept. Press again to undo.)`,`「${s.name}」のコードとKB数字を消しますか？\n（小節数・分割・拍子・リピート・接続などの書式はそのまま残ります。もう一度「↩ 元に戻す」を押すと復元できます）`,`「${s.name}」의 코드와 KB 숫자를 지울까요?\n(마디 수·분할·박자·반복·연결 등 서식은 그대로 유지됩니다. 다시 「↩ 되돌리기」를 누르면 복원됩니다)`);
   if(!confirm(msg))return;
-  if(kbOnly) staffPushHistory(); else chordPushHistory();
+  if(kbOnly) staffPushHistory(); else if(ntOnly) ntPushHistory(); else { chordPushHistory(); ntPushHistory(); }
   const bk={_keys:keys};
   keys.forEach(k=>{ bk[k]=(s[k]!==undefined)?JSON.parse(JSON.stringify(s[k])):undefined; });
   _secClearBk[id]=bk;
@@ -5630,16 +5728,16 @@ function clearSect(id){
 let _secClip=null;
 function copySection(id){
   const s=sects.find(x=>x.id===id); if(!s)return;
-  _secClip=JSON.parse(JSON.stringify({_name:s.name,bars:s.bars,color:s.color,layers:s.layers,notes:s.notes,chords:s.chords,subdiv:s.subdiv,rep:s.rep,meters:s.meters,bargoto:s.bargoto,goto:s.goto,barsPerRow:s.barsPerRow,ctrlOff:s.ctrlOff,arr:s.arr,chArp:s.chArp,chTie:s.chTie}));
+  _secClip=JSON.parse(JSON.stringify({_name:s.name,bars:s.bars,color:s.color,layers:s.layers,notes:s.notes,chords:s.chords,subdiv:s.subdiv,rep:s.rep,meters:s.meters,bargoto:s.bargoto,goto:s.goto,barsPerRow:s.barsPerRow,ctrlOff:s.ctrlOff,arr:s.arr,chArp:s.chArp,chTie:s.chTie,nt:s.nt}));
   renderCharts();
 }
 function pasteSection(id){
   if(!_secClip)return;
   const s=sects.find(x=>x.id===id); if(!s)return;
   if(!confirm(`把「${_secClip._name}」的內容貼到「${s.name}」？（會覆蓋此段，名稱保留）`))return;
-  segPushHistory(); chordPushHistory();
+  segPushHistory(); chordPushHistory(); ntPushHistory();
   const c=JSON.parse(JSON.stringify(_secClip));
-  ['bars','color','layers','notes','chords','subdiv','rep','meters','bargoto','goto','barsPerRow','ctrlOff','arr','chArp','chTie'].forEach(k=>{ s[k]=c[k]; });
+  ['bars','color','layers','notes','chords','subdiv','rep','meters','bargoto','goto','barsPerRow','ctrlOff','arr','chArp','chTie','nt'].forEach(k=>{ s[k]=c[k]; });
   autoSave(); renderSB(); renderAll();
 }
 /* ── 小節／區塊 複製貼上：選範圍→複製→點目標小節插入其後（和弦譜／混合共用） ── */
@@ -5710,7 +5808,7 @@ function barPickCls(s,i,bars){
   return c;
 }
 const _BARKBK=['kbUp','kbLo','kbUpD','kbLoD','kbUpSub','kbLoSub','kbUpArp','kbLoArp','kbUpTie','kbLoTie'];
-const _BARCHK=['chArp','chTie'];               // 和弦譜／混合的符號（琶音／連結線），複製貼上、刪小節時跟著小節走
+const _BARCHK=['chArp','chTie','nt'];               // 和弦譜／混合的符號（琶音／連結線），複製貼上、刪小節時跟著小節走
 const _BARXK=_BARKBK.concat(_BARCHK);
 function copyBars(){
   if(!_barSel)return; const s=sects.find(x=>x.id===_barSel.sid); if(!s)return;
@@ -5732,7 +5830,7 @@ function _insArr(a,at,items){ a=a.slice(); a.splice(at,0,...items); return a; }
 function pasteBarsAt(sid,index){
   const clip=_barClip&&_barClip.cols; if(!clip||!clip.length)return;
   const s=sects.find(x=>x.id===sid); if(!s)return;
-  chordPushHistory(); staffPushHistory();
+  chordPushHistory(); staffPushHistory(); ntPushHistory();
   migrateKBSection(s);
   const bars=Math.max(1,parseInt(s.bars)||1), at=Math.max(0,Math.min(bars,index|0)), n=clip.length;
   shiftTies(s,tb=>tb>=at?tb+n:tb);
@@ -5758,12 +5856,17 @@ async function clearBarsAsk(){
   const s=sects.find(x=>x.id===_barSel.sid); if(!s)return;
   const lo=Math.min(_barSel.a,_barSel.b), hi=Math.max(_barSel.a,_barSel.b), n=hi-lo+1;
   const bars=Math.max(1,parseInt(s.bars)||1);
-  const kbOnly=(currentView==='staff');   // KB 頁只清 KB 數字，和弦保持不動
+  const kbOnly=(currentView==='staff'), ntOnly=(currentView==='note');   // KB 頁只清 KB 數字；音符譜只清音符；和弦保持不動
   const k=await askChoice(
     Lf('清除 '+n+' 個小節','Clear '+n+' bar(s)','小節 '+n+' 個をクリア',n+'개 마디 지우기'),
     [{key:'data',primary:true,
       title:Lf('只清除裡面的資料','Clear contents only','中身だけ消す','내용만 지우기'),
-      desc:kbOnly
+      desc:ntOnly
+        ? Lf('小節保留，只清空排好的音符（和弦譜與 KB 不動）；分割、拍號、重複、接續維持不變',
+             'Bars stay; only the arranged notes are removed (chord chart and KB untouched). Subdivisions, meters, repeats and continuations are kept.',
+             '小節は残し、並べた音符だけを消します（和弦譜とKBはそのまま）。分割・拍子・リピート・接続も変わりません。',
+             '마디는 남기고 배치한 음표만 지웁니다(코드 악보와 KB는 그대로). 분할·박자·반복·연결도 유지됩니다.')
+        : kbOnly
         ? Lf('小節保留，只清空 KB 數字（和弦不動）；分割、拍號、重複、接續維持不變',
              'Bars stay; only the KB numbers are emptied (chords untouched). Subdivisions, meters, repeats and continuations are kept.',
              '小節は残し、KB数字だけを空にします（コードはそのまま）。分割・拍子・リピート・接続も変わりません。',
@@ -5783,17 +5886,18 @@ async function clearBarsAsk(){
        '「'+s.name+'」の '+(lo+1)+'–'+(hi+1)+' 小節',
        '「'+s.name+'」의 '+(lo+1)+'–'+(hi+1)+' 마디'));
   if(!k)return;
-  if(k==='data'){ if(kbOnly) staffPushHistory(); else chordPushHistory(); clearBarsData(s,lo,hi); }
-  else { chordPushHistory(); staffPushHistory(); deleteBarsRange(s,lo,hi); }
+  if(k==='data'){ if(kbOnly) staffPushHistory(); else if(ntOnly) ntPushHistory(); else { chordPushHistory(); ntPushHistory(); } clearBarsData(s,lo,hi); }
+  else { chordPushHistory(); staffPushHistory(); ntPushHistory(); deleteBarsRange(s,lo,hi); }
   autoSave(); renderSB(); renderCharts(); renderBarPickBar();
 }
 /* 只清內容：格式（分割／拍號／重複／接續）保留
-   kind: 'kb'＝只清 KB 數字（KB 頁）／'chord'＝只清和弦／'all'＝兩者都清
-   不指定時依目前頁面決定：KB 頁只清 KB，和弦譜與混合頁維持原本的兩者都清 */
+   kind: 'kb'＝只清 KB 數字（KB 頁）／'note'＝只清音符譜的音符／'chord'＝只清和弦／'all'＝全部
+   不指定時依目前頁面決定：KB 頁只清 KB，音符譜只清音符，和弦譜與混合頁維持原本的兩者都清 */
 function clearBarsData(s,lo,hi,kind){
-  kind=kind||((currentView==='staff')?'kb':'all');
+  kind=kind||((currentView==='staff')?'kb':(currentView==='note')?'note':'all');
   migrateKBSection(s);
   const bars=Math.max(1,parseInt(s.bars)||1);
+  if(kind==='note'){ for(let b=lo;b<=hi;b++){ if(Array.isArray(s.nt)&&s.nt.length>b) s.nt[b]=undefined; } return; }
   if(kind!=='kb') s.chords=_padArr(s.chords,bars,'');
   for(let b=lo;b<=hi;b++){
     if(kind!=='kb'){ s.chords[b]=[]; _BARCHK.forEach(k=>{ if(Array.isArray(s[k])&&s[k].length>b) s[k][b]=undefined; }); }
@@ -5914,7 +6018,7 @@ async function doPasteAtInsert(){
 function overwriteBarsAt(sid,at){
   const clip=_barClip&&_barClip.cols; if(!clip||!clip.length)return;
   const s=sects.find(x=>x.id===sid); if(!s)return;
-  chordPushHistory(); staffPushHistory();
+  chordPushHistory(); staffPushHistory(); ntPushHistory();
   migrateKBSection(s);
   const bars=Math.max(1,parseInt(s.bars)||1), n=clip.length, need=Math.max(bars,at+n);
   s.chords =_padArr(s.chords,need,'');
@@ -5974,25 +6078,42 @@ function chordSummary(s){
   }
   return any?('| '+parts.join(' | ')+' |'):'';
 }
-/* 文字清單用：同樣的和弦內容，但切成每行 N 個小節（預設 4），螢幕上比較好對照 */
-function chordSummaryLines(s,perRow){
+/* 文字清單用：把每個小節的格子拆出來（含分割與正／反拍資訊），純文字與畫面兩種呈現共用 */
+function chordSummaryCells(s,perRow){
   const per=Math.max(1,parseInt(perRow)||4);
   const bars=Math.max(1,parseInt(s.bars)||1);
-  let any=false; const parts=[];
+  let any=false; const arr=[];
   for(let i=0;i<bars;i++){
-    const cn=cellsForBar(s,i); const pb=getBeatData(s,i,cn); const arr=[];
-    for(let b=0;b<cn;b++){ const v=String(pb[b]||'').trim(); if(v)any=true; arr.push(v||'·'); }
-    const m=barMeter(s,i), rep=repOf(s,i);
-    parts.push((m?`(${m}) `:'')+arr.join(' ')+(rep>1?` ×${rep}`:''));
+    const fac=subdivFactor(s,i), cn=cellsForBar(s,i), pb=getBeatData(s,i,cn), cells=[];
+    for(let b=0;b<cn;b++){ const v=String(pb[b]||'').trim(); if(v)any=true;
+      /* off：0＝正拍、1＝八分的反拍（&）、2＝十六分的細分位置，畫面上抬的高度不同 */
+      const m=(fac>1)?(b%fac):0;
+      const fine=Math.floor(b/fac)*4+m*(4/fac);                  // 固定十六分格點：符號（連結線）就存在這個位置
+      cells.push({tok:v||'·', off:(fac===2?(m?1:0):fac===4?(m===0?0:m===2?1:2):0),
+        tieS:!!(v&&chGetTie(s,i,fine)), tieE:!!(v&&chTieEndOf(s,i,fine))}); }   // 連結線的頭／尾
+    arr.push({meter:barMeter(s,i), rep:repOf(s,i), fac, cells});
   }
   if(!any)return [];
   const out=[];
-  for(let i=0;i<parts.length;i+=per){
-    const seg=parts.slice(i,i+per);
-    out.push({from:i+1,to:i+seg.length,text:'| '+seg.join(' | ')+' |'});
-  }
+  for(let i=0;i<arr.length;i+=per) out.push({from:i+1, to:Math.min(bars,i+per), bars:arr.slice(i,i+per)});
   return out;
 }
+/* 連結線在文字清單用括號表示：頭加「(」、尾加「)」，例如 … (4 | 4) … */
+function tlTok(c){ return (c.tieS?'(':'')+c.tok+(c.tieE?')':''); }
+function tlRowText(row){
+  return '| '+row.bars.map(b=>(b.meter?`(${b.meter}) `:'')+b.cells.map(tlTok).join(' ')+(b.rep>1?` ×${b.rep}`:'')).join(' | ')+' |';
+}
+/* 畫面用：八分加一條底線、十六分加兩條（簡譜寫法）；反拍的格子往上抬一點，一眼看得出正拍／反拍 */
+function tlRowHtml(row){
+  const u=f=>f===2?' tl-u1':f===4?' tl-u2':'';
+  return '| '+row.bars.map(b=>(b.meter?`(${esc(b.meter)}) `:'')
+      +b.cells.map(c=>c.tok==='·'?'·'                                     // 空格子維持原樣的小點，不加底線也不抬高，畫面才乾淨
+          :(c.tieS?'<span class="tl-tie">(</span>':'')
+           +`<span class="tl-c${c.off?' tl-off'+c.off:''}${u(b.fac)}">${esc(c.tok)}</span>`
+           +(c.tieE?'<span class="tl-tie">)</span>':'')).join(' ')
+      +(b.rep>1?` ×${b.rep}`:'')).join(' | ')+' |';
+}
+function chordSummaryLines(s,perRow){ return chordSummaryCells(s,perRow).map(r=>({from:r.from,to:r.to,text:tlRowText(r)})); }
 /* 聚會服事：標記每首歌的第一段（給「每首分頁」列印用） */
 let _songStartSet=new Set();
 function computeSongStarts(){ _songStartSet=new Set(); for(let i=1;i<sects.length;i++){ if(sects[i]._song && sects[i]._song!==sects[i-1]._song) _songStartSet.add(sects[i].id); } }
@@ -6017,6 +6138,217 @@ function renderChord(){
   chTiesSoon();
 }
 
+/* ── 音符譜：每小節自由新增「音符」，用五線譜的符桿／符尾／符桿連線呈現節奏 ──
+   資料：s.nt[bar] = [{d:時值, c:和弦}]；時值 w/h/q/8/16/24/32/dot
+   版面：符桿畫在和弦正上方；連續相同時值的音符（八分以下）自動連成一組符桿連線，
+   組內數量不是 2 或 4 時在上方標連音數字（3＝三連音、5＝五連音…）。
+   平常只有虛線外框，選單與刪除鈕要點開該音符才出現，不佔版面。 */
+const NT_DUR=[['w','全音符'],['h','二分音符'],['q','四分音符'],['8','八分音符'],['16','十六分音符'],['24','二十四分音符'],['32','三十二分音符'],['dot','·（不顯示和弦）']];
+const NT_FLAGS={'8':1,'16':2,'24':3,'32':4};
+function ntArr(s,bar){ if(!Array.isArray(s.nt))s.nt=[]; while(s.nt.length<=bar)s.nt.push(undefined); if(!Array.isArray(s.nt[bar]))s.nt[bar]=[]; return s.nt[bar]; }
+function ntList(s,bar){ const a=s.nt, r=Array.isArray(a)?a[bar]:null; return Array.isArray(r)?r:[]; }
+function ntItem(id,bar,i){ const s=sects.find(x=>x.id===id); if(!s)return null; return ntArr(s,bar)[i]||null; }
+var _ntEd=null;   /* 目前點開編輯的音符 {sid,bar,i}；var：render 可能比宣告先執行 */
+function ntIsEd(s,bar,i){ return !!(_ntEd&&_ntEd.sid===s.id&&_ntEd.bar===bar&&_ntEd.i===i); }
+function ntAdd(id,bar){
+  const s=sects.find(x=>x.id===id); if(!s||_locked)return;
+  ntPushHistory(); const a=ntArr(s,bar); a.push({d:'q',c:''});
+  _ntEd={sid:id,bar,i:a.length-1};                 // 新增後直接打開輸入
+  autoSave(); renderNote(); ntFocus();
+}
+function ntDel(id,bar,i){
+  const s=sects.find(x=>x.id===id); if(!s||_locked)return;
+  const a=ntArr(s,bar); if(!a[i])return;
+  ntPushHistory(); a.splice(i,1); _ntEd=null; autoSave(); renderNote();
+}
+function ntSetDur(id,bar,i,v){
+  const it=ntItem(id,bar,i); if(!it||_locked)return;
+  if(it.d!==v){ ntPushHistory(); it.d=v; autoSave(); }
+  renderNote(); ntFocus();
+}
+function ntFocus(){ ntClampEdit(); const inp=document.querySelector('#note-content .nt-note.editing .nt-i'); if(inp){ inp.focus(); try{inp.select();}catch(e){} } }
+function ntEdit(el){
+  if(_locked||_barPickMode)return;
+  const note=el.closest?el.closest('.nt-note'):null; if(!note)return;
+  const sid=+note.dataset.sid, bar=+note.dataset.bar, i=+note.dataset.i;
+  if(_chordPlaceOn){                               // 放和弦模式：直接填入所選和弦
+    const it=ntItem(sid,bar,i); if(!it)return;
+    const v=placeChordToken();
+    if(v!==String(it.c||'')){ ntPushHistory(); it.c=v; if(it.d==='dot')it.d='q'; autoSave(); }
+    renderNote(); return;
+  }
+  _ntEd={sid,bar,i}; renderNote(); ntFocus();
+}
+function ntSave(inp,close){
+  const note=inp.closest('.nt-note'); if(!note)return;
+  const it=ntItem(+note.dataset.sid,+note.dataset.bar,+note.dataset.i);
+  if(it){
+    const v=askEnharmonic(normSign(inp.value)).trim();   // ♭/♯ 轉 ASCII，同和弦譜的輸入規則
+    if(v!==String(it.c||'')){ ntPushHistory(); it.c=v; autoSave(); }
+  }
+  if(close){ _ntEd=null; renderNote(); }
+}
+function ntCloseEdit(){
+  const inp=document.querySelector('#note-content .nt-note.editing .nt-i');
+  if(inp) ntSave(inp,true); else { _ntEd=null; renderNote(); }
+}
+/* 點到編輯框以外的地方就收起來 */
+document.addEventListener('pointerdown',e=>{
+  if(!_ntEd)return;
+  const inEd=e.target&&e.target.closest?e.target.closest('.nt-note.editing'):null;
+  if(!inEd) ntCloseEdit();
+},true);
+/* 單獨一個音符的符尾（沒有跟別人連線時畫在符桿頂端） */
+function ntFlagSvg(n){
+  n=parseInt(n)||0; if(!n)return '';
+  const w=6+n*0.6, h=4+n*4;
+  let d='';
+  for(let i=0;i<n;i++){ const y=1+i*4; d+='M1 '+y+' q5 2.2 0 4.4 '; }
+  return '<svg class="nt-fl" viewBox="0 0 '+w+' '+h+'" width="'+w+'" height="'+h+'" aria-hidden="true">'
+    +'<path d="'+d+'" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>';
+}
+/* 一組（連續同時值）音符：k=組內數量，flags=符尾條數 */
+function ntGroupHtml(s,bar,items,startIdx){
+  const k=items.length, d=items[0].d, flags=NT_FLAGS[d]||0, beamed=(k>1&&flags>0);
+  let html='<span class="nt-grp'+(beamed?' beamed':'')+'" data-flags="'+flags+'" data-n="'+k+'">';
+  items.forEach((it,j)=>{ html+=ntNoteHtml(s,bar,startIdx+j,it,beamed); });
+  if(beamed){
+    for(let b=0;b<flags;b++) html+='<span class="nt-beam" style="top:'+(b*4.6)+'px"></span>';
+    if(k!==2&&k!==4) html+='<span class="nt-tup">'+k+'</span>';
+  }
+  html+='</span>';
+  return html;
+}
+function ntNoteHtml(s,bar,i,it,beamed){
+  const d=it.d||'q', dot=(d==='dot'), tok=String(it.c||''), open=!s.ctrlOff, ed=ntIsEd(s,bar,i);
+  const flags=NT_FLAGS[d]||0;
+  const stem=(dot||d==='w')?'' : '<span class="nt-sl"></span>'+((!beamed&&flags)?ntFlagSvg(flags):'');
+  const lb=d==='w'?'『':d==='h'?'{':'', rb=d==='w'?'』':d==='h'?'}':'';
+  const body=dot?'<span class="nt-dot">·</span>'
+    :(lb?'<span class="nt-br">'+lb+'</span>':'')
+     +(tok.trim()?renderBeatToken(tok,s):'<span class="nt-ph">—</span>')
+     +(rb?'<span class="nt-br">'+rb+'</span>':'');
+  const edBox=(ed&&open)?'<span class="nt-editbox" onclick="event.stopPropagation()">'
+      +'<select class="nt-dsel" onchange="ntSetDur('+s.id+','+bar+','+i+',this.value)" title="'+L('時值')+'">'
+      +NT_DUR.map(o=>'<option value="'+o[0]+'"'+(d===o[0]?' selected':'')+'>'+esc(L(o[1]))+'</option>').join('')
+      +'</select>'
+      +'<input class="nt-i" value="'+esc(tok)+'" placeholder="'+Lf('和弦','Chord','コード','코드')+'" onkeydown="if(event.key===\'Enter\'){ntCloseEdit();}else if(event.key===\'Escape\'){_ntEd=null;renderNote();}" oninput="ntSave(this,false)">'
+      +'<button class="nt-x" onclick="ntDel('+s.id+','+bar+','+i+')" title="'+L('刪除這個音符')+'">✕</button>'
+      +'</span>':'';
+  return '<span class="nt-note'+(ed?' editing':'')+(dot?' nt-isdot':'')+'" data-sid="'+s.id+'" data-bar="'+bar+'" data-i="'+i+'" onclick="ntEdit(this)">'
+    +'<span class="nt-up">'+stem+'</span>'
+    +'<span class="nt-r">'+body+'</span>'+edBox+'</span>';
+}
+function ntBarHtml(s,i,bars){
+  const open=!s.ctrlOff, list=ntList(s,i);
+  const editing=!!(_ntEd&&_ntEd.sid===s.id&&_ntEd.bar===i);   // 編輯框可以超出小節（小節本來是 overflow:hidden）
+  const add=open?'<button class="nt-add" onclick="event.stopPropagation();ntAdd('+s.id+','+i+')" title="'+L('在這個小節新增一個音符')+'">＋</button>':'';
+  let body='';
+  if(!list.length) body=open?'<span class="nt-empty">'+esc(L('按 ＋ 新增音符'))+'</span>':'';
+  else {
+    let j=0;
+    while(j<list.length){
+      const d=list[j].d||'q'; let k=j+1;
+      if(NT_FLAGS[d]) while(k<list.length && (list[k].d||'q')===d) k++;   // 同時值就連成一組
+      body+=ntGroupHtml(s,i,list.slice(j,k),j); j=k;
+    }
+  }
+  const m=barMeter(s,i), rep=repOf(s,i);
+  const badges=(m?'<span class="cmeter on static">'+esc(m)+'</span>':'')+(rep>1?'<span class="cbrep on static">×'+rep+'</span>':'');
+  return '<div class="cbar2 ntbar'+(editing?' nt-editing':'')+barPickCls(s,i,bars)+'" data-sid="'+s.id+'" data-bar="'+i+'">'+add
+    +'<div class="cbadges">'+badges+'</div><div class="nt-row">'+body+'</div></div>';
+}
+function renderNote(){
+  const root=document.getElementById('note-content'); if(!root)return;
+  computeSongStarts();
+  root.innerHTML=sects.map(s=>{
+    const col=COL[s.color]||COL.black;
+    const bars=Math.max(1,parseInt(s.bars)||1);
+    const ssc=_songStartSet.has(s.id)?' song-start':'';
+    const song=(s._song||window._printSongTitle);
+    const head=cardSwipeWrap(s,'<div class="ccard-head" data-sid="'+s.id+'" style="background:'+col.fill+';color:'+col.stroke+'"><span class="chead-l">'
+      +(song?'<span class="csong">🎵 '+esc(song)+'</span>':'')
+      +'<span class="cname">'+esc(s.name)+'</span>'+bprSelect(s)
+      +'<button class="ctrl-toggle" onclick="toggleCtrl('+s.id+')" title="'+L('顯示/隱藏每個小節的控制鈕；隱藏時仍顯示已設定的值')+'">'+L('控制項')+' '+(s.ctrlOff?L('關'):L('開'))+'</button>'
+      +'<button class="ctrl-toggle" onclick="barPickSection('+s.id+')" title="'+L('複製小節：進入複製模式（預設選整段，可再拖曳/長按調整）→ 複製 → 點目標小節左/右緣(藍線) → 貼到任意位置（可跨段）')+'">⧉ '+L('複製')+'</button>'
+      +'<button class="ctrl-toggle secclr-btn" onclick="barPickSection('+s.id+',\'clear\')" title="'+L('選要清除的小節範圍，再決定只清內容還是連小節一起刪除')+'">'+(_secClearBk[s.id]?'↩ '+L('復原'):'🧹 '+L('清除'))+'</button>'
+      +'<button class="ctrl-toggle" onclick="toggleFold('+s.id+')" title="'+L('收合/展開此段（收合只留標題，方便專注其他段）')+'">'+(s.fold?'▸ '+L('展開'):'▾ '+L('收合'))+'</button>'
+      +'</span><span class="cmeta">'+bars+' Bar · '+esc(gv('s-time'))+'</span></div>');
+    if(s.fold) return '<div class="ccard folded'+ssc+'" style="border-color:'+col.stroke+'">'+head+'</div>';
+    let cells=''; for(let i=0;i<bars;i++) cells+=ntBarHtml(s,i,bars);
+    return '<div class="ccard'+ssc+'" style="border-color:'+col.stroke+'">'+head
+      +'<div class="cbar-grid" '+barGridStyle(s,2)+'>'+cells+'</div>'+cardNoteHtml(s)+'</div>';   // 音符譜預設每排 2 個小節
+  }).join('');
+  ntBeamsSoon();
+}
+/* 符桿連線：量測每個音符符桿的實際位置，把連線畫在第一根到最後一根之間 */
+function ntBeams(){
+  document.querySelectorAll('#note-content .nt-grp.beamed').forEach(g=>{
+    const sl=[...g.querySelectorAll('.nt-sl')]; if(sl.length<2)return;
+    const gr=g.getBoundingClientRect();
+    const x1=sl[0].getBoundingClientRect().left-gr.left;
+    const x2=sl[sl.length-1].getBoundingClientRect().left-gr.left;
+    const w=Math.max(4,x2-x1+1.6);
+    g.querySelectorAll('.nt-beam').forEach(b=>{ b.style.left=x1+'px'; b.style.width=w+'px'; });
+    const t=g.querySelector('.nt-tup'); if(t){ t.style.left=x1+'px'; t.style.width=w+'px'; }
+  });
+}
+function ntBeamsSoon(){ try{ if(typeof requestAnimationFrame==='function')requestAnimationFrame(()=>{ntBeams();ntClampEdit();}); else {ntBeams();ntClampEdit();} }catch(e){} }
+/* 編輯框置中在音符下方，但不要超出段落卡片左右緣 */
+function ntClampEdit(){
+  const box=document.querySelector('#note-content .nt-editbox'); if(!box)return;
+  box.style.marginLeft='';
+  const card=box.closest('.ccard'); if(!card)return;
+  const r=box.getBoundingClientRect(), cr=card.getBoundingClientRect();
+  let dx=0;
+  if(r.left<cr.left+6) dx=cr.left+6-r.left; else if(r.right>cr.right-6) dx=cr.right-6-r.right;
+  if(dx) box.style.marginLeft=dx+'px';
+}
+window.addEventListener('resize',()=>{ try{ if(currentView==='note')ntBeams(); }catch(e){} });
+window.addEventListener('beforeprint',()=>{ try{ ntBeams(); }catch(e){} });
+window.addEventListener('afterprint',()=>{ try{ ntBeams(); }catch(e){} });
+/* ⇩ 載入：把和弦譜／混合頁的和弦轉成音符譜的音符（時值＝到下一個和弦的長度） */
+async function ntLoadFromChords(){
+  const has=sects.some(s=>Array.isArray(s.nt)&&s.nt.some(r=>Array.isArray(r)&&r.length));
+  let mode='fill';
+  if(has){
+    const k=await askChoice(
+      Lf('載入和弦到音符譜','Load chords into the Note Chart','コードを音符譜に読み込む','코드를 음표 악보로 불러오기'),
+      [{key:'fill',primary:true,
+        title:Lf('只填還沒有音符的小節','Fill empty bars only','音符がない小節だけ埋める','음표가 없는 마디만 채우기'),
+        desc:Lf('已經排好音符的小節保留不動','Bars that already have notes are kept as they are.','すでに音符がある小節はそのまま残します。','이미 음표가 있는 마디는 그대로 둡니다.')},
+       {key:'over',
+        title:Lf('覆蓋所有小節','Overwrite every bar','すべての小節を上書き','모든 마디 덮어쓰기'),
+        desc:Lf('照和弦重新排一次（可用「↩ 上一步」還原）','Rebuilds every bar from the chords (use Undo to restore).','コードから並べ直します（「元に戻す」で復元できます）。','코드로 다시 배치합니다 (실행 취소로 복원 가능).')}],
+      Lf('時值＝該和弦到下一個和弦的長度（十六分格點換算）',
+         'Each note lasts until the next chord (measured in sixteenth steps).',
+         '音価は次のコードまでの長さ（16分単位）で決めます。',
+         '음길이는 다음 코드까지의 길이(16분 단위)로 정합니다.'));
+    if(!k)return; mode=k;
+  }
+  ntPushHistory();
+  let n=0;
+  sects.forEach(s=>{
+    const bars=Math.max(1,parseInt(s.bars)||1);
+    for(let bar=0;bar<bars;bar++){
+      if(mode==='fill' && ntList(s,bar).length) continue;
+      const fac=subdufSafe(s,bar), cn=cellsForBar(s,bar), pb=getBeatData(s,bar,cn), step=4/fac;
+      const hits=[];
+      for(let b=0;b<cn;b++){ const v=String(pb[b]||'').trim(); if(v&&v!=='.'&&v!=='x'&&v!=='X')hits.push({b,v}); }
+      if(!hits.length){ if(mode==='over'&&Array.isArray(s.nt))s.nt[bar]=undefined; continue; }
+      const total=cn*step;                              // 這個小節的十六分格數
+      const out=hits.map((h,i)=>{
+        const span=((i+1<hits.length?hits[i+1].b:cn)-h.b)*step;
+        const d=span>=16?'w':span>=8?'h':span>=4?'q':span>=2?'8':'16';
+        return {d, c:h.v};
+      });
+      ntArr(s,bar).length=0; out.forEach(o=>ntArr(s,bar).push(o)); n+=out.length;
+    }
+  });
+  autoSave(); renderNote();
+  if(!n)alert(Lf('和弦譜還沒有任何和弦可以載入。','There are no chords to load yet.','読み込めるコードがまだありません。','불러올 코드가 아직 없습니다.'));
+}
+function subdufSafe(s,bar){ const f=subdivFactor(s,bar); return [1,2,4].includes(f)?f:1; }
 /* ── RENDER MIX (和弦 + 樂器，含分頁) ── */
 let mixPage=0;
 let MIX_PER_PAGE=4;
@@ -6229,7 +6561,7 @@ function renderMixP(){
   mixpUpdateInd(); renderLegend(); chTiesSoon();
 }
 /* 小節控制鈕（分割/重複/拍號/接續/每排/控制項）統一重繪三種譜面，確保混合＋同步更新 */
-function renderCharts(){ renderChord(); renderMix(); renderMixP(); if(currentView==='staff')renderStaff(); try{updateChordUndoBtns();}catch(e){} }
+function renderCharts(){ renderChord(); renderNote(); renderMix(); renderMixP(); if(currentView==='staff')renderStaff(); try{updateChordUndoBtns();updateNtUndoBtns();}catch(e){} }
 
 /* ── RENDER SIDEBAR ── */
 function renderSB(){
@@ -6283,7 +6615,7 @@ function setSN(id,v){const s=sects.find(s=>s.id===id);if(!s)return;if(s.name!==v
 function pruneSectionData(s){
   if(!s)return s;
   const bars=Math.max(1,parseInt(s.bars)||1);
-  ['chords','subdiv','rep','meters','bargoto','kbUp','kbLo','kbUpD','kbLoD','kbUpSub','kbLoSub','chArp','chTie'].forEach(k=>{
+  ['chords','subdiv','rep','meters','bargoto','kbUp','kbLo','kbUpD','kbLoD','kbUpSub','kbLoSub','chArp','chTie','nt'].forEach(k=>{
     if(Array.isArray(s[k]) && s[k].length>bars) s[k].length=bars;
   });
   return s;
@@ -6412,7 +6744,7 @@ const STAFF_S=9, STAFF_YTOP=16;
 let _staffSel=null;
 /* 和弦譜／混合頁 上一步/下一步：快照和弦相關欄位（依段落 id 對應，不動 KB 數字與其他頁設定） */
 let _chUndo=[], _chRedo=[];
-const CHORD_HKEYS=['chords','subdiv','rep','meters','bargoto','goto','bars','barsPerRow','notes','chArp','chTie'];   // notes：段落底部備註在此頁編輯也能上一步
+const CHORD_HKEYS=['chords','subdiv','rep','meters','bargoto','goto','bars','barsPerRow','notes','chArp','chTie'];   // notes：段落底部備註在此頁編輯也能上一步；nt 由音符譜自己的一組管
 function chordSnapshot(){
   return JSON.stringify(sects.map(s=>{ const o={id:s.id}; CHORD_HKEYS.forEach(k=>{ o[k]=(s[k]!=null)?s[k]:null; }); return o; }));
 }
@@ -6439,6 +6771,34 @@ function chordRedo(){
 function updateChordUndoBtns(){
   document.querySelectorAll('.chord-undo').forEach(b=>b.disabled=!_chUndo.length);
   document.querySelectorAll('.chord-redo').forEach(b=>b.disabled=!_chRedo.length);
+}
+/* 音符譜 上一步/下一步：只快照音符（與段落備註），和弦譜、KB 各自獨立不互相影響 */
+let _ntUndo=[], _ntRedo=[];
+const NT_HKEYS=['nt','notes'];
+function ntSnapshot(){ return JSON.stringify(sects.map(s=>{ const o={id:s.id}; NT_HKEYS.forEach(k=>{ o[k]=(s[k]!=null)?s[k]:null; }); return o; })); }
+function ntPushHistory(){
+  try{ _ntUndo.push(ntSnapshot()); }catch(e){ return; }
+  if(_ntUndo.length>80)_ntUndo.shift(); _ntRedo.length=0; updateNtUndoBtns();
+}
+function ntRestore(snap){
+  JSON.parse(snap).forEach(o=>{
+    const s=sects.find(x=>x.id===o.id); if(!s)return;                 // 段落被刪掉就略過
+    NT_HKEYS.forEach(k=>{ if(o[k]==null) delete s[k]; else s[k]=o[k]; });
+  });
+}
+function ntUndo(){
+  if(!_ntUndo.length)return;
+  _ntRedo.push(ntSnapshot()); ntRestore(_ntUndo.pop());
+  _ntEd=null; _barSel=null; _barInsert=null; autoSave(); renderSB(); renderCharts();
+}
+function ntRedo(){
+  if(!_ntRedo.length)return;
+  _ntUndo.push(ntSnapshot()); ntRestore(_ntRedo.pop());
+  _ntEd=null; _barSel=null; _barInsert=null; autoSave(); renderSB(); renderCharts();
+}
+function updateNtUndoBtns(){
+  document.querySelectorAll('.nt-undo').forEach(b=>b.disabled=!_ntUndo.length);
+  document.querySelectorAll('.nt-redo').forEach(b=>b.disabled=!_ntRedo.length);
 }
 /* 五線譜 上一步/下一步：快照整份 staff（不影響其他頁資料） */
 let _staffUndo=[], _staffRedo=[];
@@ -6652,10 +7012,10 @@ async function kbLoadFromChords(){
        {key:'over',
         title:Lf('覆蓋既有的 KB 數字','Overwrite existing KB numbers','既存のKB数字を上書き','기존 KB 숫자 덮어쓰기'),
         desc:Lf('有和弦的格子一律重新填入（可用「↩ 上一步」還原）','Every cell with a chord is refilled (use Undo to restore).','コードがあるマスをすべて入れ直します（「元に戻す」で復元できます）。','코드가 있는 칸을 모두 다시 채웁니다 (실행 취소로 복원 가능).')}],
-      Lf('右手＝和弦組成音由上往下疊，左手＝根音（轉位和弦用低音）',
-         'Right hand: the chord tones stacked top-down. Left hand: the root (or the slash bass).',
-         '右手＝コード構成音を上から順に、左手＝ルート（分数コードはベース音）。',
-         '오른손＝코드 구성음을 위에서 아래로, 왼손＝루트(분수 코드는 베이스음).'));
+      Lf('右手＝和弦組成音由上往下疊，左手＝根音（轉位和弦用低音）；和弦譜的琶音 ⌇／連結線 ⌒ 也會一起帶過來',
+         'Right hand: the chord tones stacked top-down. Left hand: the root (or the slash bass). Arpeggio ⌇ and tie ⌒ marks come across too.',
+         '右手＝コード構成音を上から順に、左手＝ルート（分数コードはベース音）。アルペジオ ⌇ とタイ ⌒ も一緒に取り込みます。',
+         '오른손＝코드 구성음을 위에서 아래로, 왼손＝루트(분수 코드는 베이스음). 아르페지오 ⌇ 와 이음줄 ⌒ 도 함께 가져옵니다.'));
     if(!k)return; mode=k;
   }
   staffPushHistory();
@@ -6673,8 +7033,14 @@ async function kbLoadFromChords(){
           const fine=kbFine(beat,k,f);
           const up=chordDegsKB(p.root,p.qual,p.acc).join(' ');   // 高音在上
           const lo=p.bass||((p.acc||'')+p.root);
-          if(mode==='over'||!kbGet(s,'up',bar,fine)) kbSet(s,'up',bar,fine,up);
+          const wroteUp=(mode==='over'||!kbGet(s,'up',bar,fine));
+          if(wroteUp) kbSet(s,'up',bar,fine,up);
           if(mode==='over'||!kbGet(s,'lo',bar,fine)) kbSet(s,'lo',bar,fine,lo);
+          /* 和弦譜／混合頁的符號一起帶過來：琶音、連結線都放在右手（右手才是和弦組成音） */
+          if(wroteUp){
+            if(chGetArp(s,bar,fine)) kbSetArp(s,'up',bar,fine,1);
+            const tv=chGetTie(s,bar,fine); if(tv) kbSetTie(s,'up',bar,fine,tv);
+          }
           usedFine=true; n++;
         }
         /* 和弦這一拍有切分時，KB 的同一拍也跟著切，載入的音才看得到 */
@@ -6943,6 +7309,7 @@ async function clearStaff(){
 function renderCurrent(){
   if(currentView==='seg')renderSeg();
   else if(currentView==='chord')renderChord();
+  else if(currentView==='note')renderNote();
   else if(currentView==='mix')renderMix();
   else if(currentView==='mixp')renderMixP();
   else if(currentView==='staff')renderStaff();
@@ -6956,28 +7323,24 @@ const TL_BARS_PER_ROW=4;   // 文字清單每行顯示幾個小節
 /* 文字清單：畫面上段落之間用橫線分隔（<hr>）；複製出去的純文字則用一行「─」分隔 */
 function buildTL(){
   const head=`=== 編曲架構 ===\n曲目：${gv('s-title')}${gv('s-artist')?'／'+gv('s-artist'):''}  ${keyLabel().replace(/<[^>]+>/g,'')}  拍號：${gv('s-time')}  BPM：${gv('s-bpm')}\n${'─'.repeat(38)}\n\n`;
-  const blocks=[];
+  const blocks=[];       // 每段一筆：{text: 複製用純文字, html: 畫面用}
   let _prevSong=null;
   sects.forEach((s,i)=>{
-    let t='';
-    if(s._song && s._song!==_prevSong){ t+=`🎵 ═══════ ${s._song} ═══════\n`; _prevSong=s._song; }
-    t+=`[${i+1}] ${s._song?'《'+s._song+'》 ':''}${s.name}  ${s.bars} Bar\n`;   // 段落顏色（黑／紅…）在文字清單用不到，不列
-    /* 和弦：每行四個小節，行首標小節編號；樂器配置不列（要看配器請用混合／圖示譜） */
-    chordSummaryLines(s,TL_BARS_PER_ROW).forEach(ln=>{ t+=`    ${ln.text}\n`; });
-    if(s.notes)t+=`  ⚑ ${s.notes}\n`;
-    {const bars=Math.max(1,parseInt(s.bars)||1); for(let b=0;b<bars;b++){const gid=getBarGoto(s,b,bars); if(gid){const gt=sects.find(x=>x.id===gid); if(gt)t+=`  ▶ 小節${b+1} 接續到：${gt.name}\n`;}}}
-    blocks.push(t.replace(/\n+$/,''));
+    let t='', h='';
+    const add=(txt,html)=>{ t+=txt; h+=(html!=null?html:esc(txt)); };
+    if(s._song && s._song!==_prevSong){ add(`🎵 ═══════ ${s._song} ═══════\n`); _prevSong=s._song; }
+    add(`[${i+1}] ${s._song?'《'+s._song+'》 ':''}${s.name}  ${s.bars} Bar\n`);   // 段落顏色（黑／紅…）在文字清單用不到，不列
+    /* 和弦：每行四個小節；樂器配置不列（要看配器請用混合／圖示譜） */
+    chordSummaryCells(s,TL_BARS_PER_ROW).forEach(r=>{ add('    '+tlRowText(r)+'\n','    '+tlRowHtml(r)+'\n'); });
+    if(s.notes)add(`  ⚑ ${s.notes}\n`);
+    {const bars=Math.max(1,parseInt(s.bars)||1); for(let b=0;b<bars;b++){const gid=getBarGoto(s,b,bars); if(gid){const gt=sects.find(x=>x.id===gid); if(gt)add(`  ▶ 小節${b+1} 接續到：${gt.name}\n`);}}}
+    blocks.push({text:t.replace(/\n+$/,''), html:h.replace(/\n+$/,'')});
   });
   const el=document.getElementById('tlc');
   if(el){
-    el.textContent='';
-    el.appendChild(document.createTextNode(head));
-    blocks.forEach((b,i)=>{
-      if(i>0){ const hr=document.createElement('hr'); hr.className='tl-sep'; el.appendChild(hr); }
-      el.appendChild(document.createTextNode(b));
-    });
+    el.innerHTML=esc(head)+blocks.map((b,i)=>(i>0?'<hr class="tl-sep">':'')+b.html).join('');
   }
-  return head+blocks.join('\n'+'─'.repeat(24)+'\n')+'\n';
+  return head+blocks.map(b=>b.text).join('\n'+'─'.repeat(24)+'\n')+'\n';
 }
 function copyTL(btn){
   const txt=buildTL();
@@ -7068,7 +7431,7 @@ async function expPNG(view){
 }
 
 /* ── TABS ── */
-const PANELS=['seg','chord','mixp','staff','text','export'];
+const PANELS=['seg','chord','note','mixp','staff','text','export'];
 function sw(name,btn){
   currentView=name;
   document.querySelectorAll('.vtab').forEach(t=>t.classList.remove('a'));
