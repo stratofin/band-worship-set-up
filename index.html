@@ -748,7 +748,7 @@ body.chsym-on .nt-note{cursor:pointer;}
 .nt-note.tiesel{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px;background:rgba(212,168,67,0.18);}
 .nt-r .kbarp{width:0.32em;margin-right:0.1em;}
 .nt-nsel{align-self:center;max-width:9.5em;}
-.nt-slots.n8 .nt-slot,.nt-slots.n6 .nt-slot{width:2.7em;}
+.nt-slots.n8 .nt-slot,.nt-slots.n6 .nt-slot,.nt-slots.n5 .nt-slot{width:2.7em;}
 .cbeatcol.tiesel{outline:2px solid var(--accent);outline-offset:-2px;border-radius:4px;background:rgba(212,168,67,0.18);}
 body.chsym-on .cbeatcol{cursor:pointer;}
 .mixpage-stack.mixp .beat-i{font-size:calc(var(--bfs,1.2em) * 0.92);}
@@ -1474,7 +1474,7 @@ body.gated>*:not(#gate){filter:grayscale(.9) opacity(.32)!important;pointer-even
         <button class="stbtn nt-undo icon-only" onclick="ntUndo()" title="上一步（音符譜自己的一組，不會動到和弦譜與 KB）" disabled>↩</button>
         <button class="stbtn nt-redo icon-only" onclick="ntRedo()" title="下一步（重做）" disabled>↪</button>
       </div>
-      <div class="chord-hint">音符譜：小節左上角「＋」新增一個音符（時值自己選，含附點二分／四分／八分與休止符）；「＆」新增可細分的方塊——格數可選 4 格（一拍）、6 格（一拍半，寫附點四分音符用）、8 格（兩拍，可以一次寫出「附點四分＋八分」），另外還有 3 格（八分三連音）與 5 格（十六分五連音），格子標成 1 e & a（連音則標 1 2 3…）。只填 1 格＝整塊的時值；填 1 和 & ＝兩個八分；四格都填＝四個十六分；填 1、&、a ＝八分＋兩個十六分。空著＝不畫、按「休」＝休止符。點方塊打開設定：左邊選時值與格數、中間輸入和弦、右邊 ✕ 刪除。符桿與符尾畫在和弦正上方，同一個方塊（或連續的同時值音符）自動連成符桿連線；連音方塊會在上方標 3 或 5。工具列的「符號」可以加琶音 ⌇，或先點第一個和弦再點第二個連出連結線（線畫在音符下方）。小節內不畫拍點虛線與拍點數字。</div>
+      <div class="chord-hint">音符譜：小節左上角「＋」新增一個音符（時值自己選，含附點二分／四分／八分與休止符）；「＆」新增可細分的方塊——預設是一拍兩個八分格（標 1 &）；分割下拉可換成 4 格（一拍，十六分 1 e & a）、3 格（一拍半，八分 1 & 2）、6 格（一拍半，十六分）、4 格（兩拍，八分 1 & 2 &）、8 格（兩拍，十六分），還有 3 格（八分三連音）與 5 格（十六分五連音）。音符會一路延長到下一個有東西的格子：只填 1 格＝佔滿整塊；八分格填「1」和「&」＝兩個八分；十六分格四格都填＝四個十六分、填 1、&、a ＝八分＋兩個十六分。空著＝不畫、按「休」＝休止符。點方塊打開設定：左邊選時值與格數、中間輸入和弦、右邊 ✕ 刪除。符桿與符尾畫在和弦正上方，同一個方塊（或連續的同時值音符）自動連成符桿連線；連音方塊會在上方標 3 或 5。工具列的「符號」可以加琶音 ⌇，或先點第一個和弦再點第二個連出連結線（線畫在音符下方）。小節內不畫拍點虛線與拍點數字。</div>
       <div class="chord-content" id="note-content"></div>
     </div>
     <!-- MIX+ VIEW (大格 + 樂器指令在控制區) -->
@@ -1600,6 +1600,12 @@ body.gated>*:not(#gate){filter:grayscale(.9) opacity(.32)!important;pointer-even
     <div class="cl-head"><span>📝 更新日誌 · Arranger 理譜人</span><button class="btn" onclick="hideChangelog()">✕</button></div>
     <div class="cl-body">
       <p class="cl-ver">開發時間軸：2026-06-17 ～ 2026-08-30（依使用回饋持續優化）</p>
+
+      <h4>音符譜：八分格與休止符修正 <span class="cl-date">2026-09-14</span></h4>
+      <ul><li><b>修正</b>：「＆」方塊的<b>第一格</b>設了休止符，關掉編輯框後會被清掉（關閉時只存了第一格，而休止符的輸入框本來就是空的）。現在關閉時每一格都會存，休止符也不會被空字串蓋掉</li>
+      <li>「＆」方塊新增<b>八分格</b>：預設就是一拍兩個八分格，格子標成 <b>1 &amp;</b>（比十六分常用）</li>
+      <li>分割下拉現在有：2 格·一拍（八分）、4 格·一拍（十六分）、3 格·八分三連音、5 格·十六分五連音、3 格·一拍半（八分 1 &amp; 2）、6 格·一拍半（十六分）、4 格·兩拍（八分 1 &amp; 2 &amp;）、8 格·兩拍（十六分）</li>
+      <li>時值一樣是「延長到下一個有東西的格子」，只是每一格從十六分改成八分，所以八分格填「1」和「&amp;」就是兩個八分、只填「1」就是四分音符</li></ul>
 
       <h4>音符譜：三連音與五連音 <span class="cl-date">2026-09-13</span></h4>
       <ul><li>「＆」方塊的分割下拉新增 <b>3 格 · 八分三連音</b> 與 <b>5 格 · 十六分五連音</b>：整拍平均切成 3 或 5 份，格子標成 1 2 3…</li>
@@ -2175,7 +2181,7 @@ const I18N={
  "彈法…":"Play…","段落備註…":"Section note…","辨識出的文字會出現在這裡，可手動修正後再解析…":"OCR text appears here; edit then parse…",
  "不轉（保留和弦名）":"Keep chord names","依男 Key 轉級數":"By M Key → degrees","依女 Key 轉級數":"By F Key → degrees","和弦轉級數：":"Chords → degrees:",
  "🔍 圖片 / PDF 辨識匯入":"🔍 Image / PDF OCR","🎼 圖示譜 PDF":"🎼 Icon Chart PDF","🎵 和弦譜 PDF":"🎵 Chord Chart PDF","🎼 混合 PDF（和弦＋樂器）":"🎼 Mix PDF (chords+parts)","🖼 PNG 展開示意圖":"🖼 PNG Flow Map","📦 PNG 方塊流程圖":"📦 PNG Block Flow","📊 CSV 樂器備註表":"📊 CSV Parts Table","📋 文字清單":"📋 Text List","↓ JSON 備份":"↓ JSON Backup","↓ Download JSON":"↓ Download JSON","↓ PNG 展開示意圖":"↓ PNG Flow Map","↓ PNG 方塊流程圖":"↓ PNG Block Flow",
- "👤 使用者登入":"👤 User Login","音符譜":"Note Chart","全音符":"Whole note","二分音符":"Half note","四分音符":"Quarter note","八分音符":"Eighth note","十六分音符":"16th note","一拍（1 e & a）":"One beat (1 e & a)","三十二分音符":"32nd note","附點二分音符":"Dotted half note","附點四分音符":"Dotted quarter note","附點八分音符":"Dotted eighth note","4 格 · 一拍":"4 slots · one beat","6 格 · 一拍半（附點）":"6 slots · a beat and a half (dotted)","8 格 · 兩拍":"8 slots · two beats","這一拍要切成幾格（含連音）":"How this box is divided (tuplets included)","3 格 · 八分三連音":"3 slots · eighth-note triplet","5 格 · 十六分五連音":"5 slots · sixteenth-note quintuplet","休止符":"Rest","這一格放休止符":"Put a rest in this slot","按 ＋ 新增音符、按 ＆ 新增可細分的一拍":"Tap ＋ for a note, ＆ for a beat you can split","在這個小節新增一個音符":"Add a note to this bar","在這個小節新增一拍，拍內可細分 1 e & a":"Add a beat you can split into 1 e & a","刪除這個音符方塊":"Delete this beat box","時值":"Note value","音符譜：小節左上角「＋」新增一個音符（時值自己選，含附點二分／四分／八分與休止符）；「＆」新增可細分的方塊——格數可選 4 格（一拍）、6 格（一拍半，寫附點四分音符用）、8 格（兩拍，可以一次寫出「附點四分＋八分」），另外還有 3 格（八分三連音）與 5 格（十六分五連音），格子標成 1 e & a（連音則標 1 2 3…）。只填 1 格＝整塊的時值；填 1 和 & ＝兩個八分；四格都填＝四個十六分；填 1、&、a ＝八分＋兩個十六分。空著＝不畫、按「休」＝休止符。點方塊打開設定：左邊選時值與格數、中間輸入和弦、右邊 ✕ 刪除。符桿與符尾畫在和弦正上方，同一個方塊（或連續的同時值音符）自動連成符桿連線；連音方塊會在上方標 3 或 5。工具列的「符號」可以加琶音 ⌇，或先點第一個和弦再點第二個連出連結線（線畫在音符下方）。小節內不畫拍點虛線與拍點數字。":"Note Chart: ＋ at a bar's top-left adds one note (pick its value, dotted half/quarter/eighth and rests included); ＆ adds a box you can split — choose 4 slots (one beat), 6 slots (a beat and a half, for a dotted quarter) 8 slots (two beats, so a dotted quarter plus an eighth fits in one box), 3 slots (eighth-note triplet) or 5 slots (sixteenth-note quintuplet); slots are labelled 1 e & a, or 1 2 3… for tuplets. One slot filled = the whole box's value; 1 and & = two eighths; all four = four sixteenths; 1, & and a = an eighth plus two sixteenths. An empty slot draws nothing; the 休 button makes it a rest. Tap a box to open its settings: value and slot count on the left, chord in the middle, ✕ on the right. Stems and flags are drawn above the chord, and notes in the same box (or a run of equal values) are beamed together; a tuplet box prints 3 or 5 above its beam. The toolbar's Symbol menu adds an arpeggio ⌇, or a tie: tap the first chord, then the second — the curve is drawn below the notes. Bars draw no beat dashes or beat numbers.","🎵 歌曲庫":"🎵 Library","歌曲庫：瀏覽、載入歌譜；敬拜使用者可用「聚會服事」、個人使用者可用「演奏模式」挑歌排成一份":"Library: browse and load charts; worship users can build a Service set, personal users a Practice Set","點「載入」打開單首；按「⛪ 聚會服事」可挑最多 10 首，排好順序後依序載入成一份。":"Tap “Load” to open one song, or use “⛪ Service” to pick up to 10 songs, order them, and load them as one set.","🔑 管理者登入":"🔑 Admin Login","👁 一般使用者：瀏覽歌譜":"👁 Guest: browse","⛪ 聚會服事":"⛪ Service","☁ 儲存目前到雲端":"☁ Save to cloud","一般使用者 · 瀏覽歌譜":"Guest · browse",
+ "👤 使用者登入":"👤 User Login","音符譜":"Note Chart","全音符":"Whole note","二分音符":"Half note","四分音符":"Quarter note","八分音符":"Eighth note","十六分音符":"16th note","一拍（1 e & a）":"One beat (1 e & a)","三十二分音符":"32nd note","附點二分音符":"Dotted half note","附點四分音符":"Dotted quarter note","附點八分音符":"Dotted eighth note","4 格 · 一拍（十六分）":"4 slots · one beat (16ths)","2 格 · 一拍（八分）":"2 slots · one beat (8ths)","3 格 · 一拍半（八分）":"3 slots · a beat and a half (8ths)","4 格 · 兩拍（八分）":"4 slots · two beats (8ths)","6 格 · 一拍半（十六分）":"6 slots · a beat and a half (16ths)","8 格 · 兩拍（十六分）":"8 slots · two beats (16ths)","這一拍要切成幾格（含連音）":"How this box is divided (tuplets included)","3 格 · 八分三連音":"3 slots · eighth-note triplet","5 格 · 十六分五連音":"5 slots · sixteenth-note quintuplet","休止符":"Rest","這一格放休止符":"Put a rest in this slot","按 ＋ 新增音符、按 ＆ 新增可細分的一拍":"Tap ＋ for a note, ＆ for a beat you can split","在這個小節新增一個音符":"Add a note to this bar","在這個小節新增一拍，拍內可細分 1 e & a":"Add a beat you can split into 1 e & a","刪除這個音符方塊":"Delete this beat box","時值":"Note value","音符譜：小節左上角「＋」新增一個音符（時值自己選，含附點二分／四分／八分與休止符）；「＆」新增可細分的方塊——預設是一拍兩個八分格（標 1 &）；分割下拉可換成 4 格（一拍，十六分 1 e & a）、3 格（一拍半，八分 1 & 2）、6 格（一拍半，十六分）、4 格（兩拍，八分 1 & 2 &）、8 格（兩拍，十六分），還有 3 格（八分三連音）與 5 格（十六分五連音）。音符會一路延長到下一個有東西的格子：只填 1 格＝佔滿整塊；八分格填「1」和「&」＝兩個八分；十六分格四格都填＝四個十六分、填 1、&、a ＝八分＋兩個十六分。空著＝不畫、按「休」＝休止符。點方塊打開設定：左邊選時值與格數、中間輸入和弦、右邊 ✕ 刪除。符桿與符尾畫在和弦正上方，同一個方塊（或連續的同時值音符）自動連成符桿連線；連音方塊會在上方標 3 或 5。工具列的「符號」可以加琶音 ⌇，或先點第一個和弦再點第二個連出連結線（線畫在音符下方）。小節內不畫拍點虛線與拍點數字。":"Note Chart: ＋ at a bar's top-left adds one note (pick its value, dotted half/quarter/eighth and rests included); ＆ adds a box you can split — it defaults to one beat of two eighth slots (labelled 1 &), and the division menu also offers 4 slots (one beat of 16ths, 1 e & a), 3 or 6 slots (a beat and a half), 4 or 8 slots (two beats), plus 3 slots (eighth-note triplet) and 5 slots (sixteenth-note quintuplet). A note lasts until the next filled slot, so one slot filled fills the box, 1 and & give two eighths, and four sixteenth slots give four sixteenths. An empty slot draws nothing; the 休 button makes it a rest. Tap a box to open its settings: value and slot count on the left, chord in the middle, ✕ on the right. Stems and flags are drawn above the chord, and notes in the same box (or a run of equal values) are beamed together; a tuplet box prints 3 or 5 above its beam. The toolbar's Symbol menu adds an arpeggio ⌇, or a tie: tap the first chord, then the second — the curve is drawn below the notes. Bars draw no beat dashes or beat numbers.","🎵 歌曲庫":"🎵 Library","歌曲庫：瀏覽、載入歌譜；敬拜使用者可用「聚會服事」、個人使用者可用「演奏模式」挑歌排成一份":"Library: browse and load charts; worship users can build a Service set, personal users a Practice Set","點「載入」打開單首；按「⛪ 聚會服事」可挑最多 10 首，排好順序後依序載入成一份。":"Tap “Load” to open one song, or use “⛪ Service” to pick up to 10 songs, order them, and load them as one set.","🔑 管理者登入":"🔑 Admin Login","👁 一般使用者：瀏覽歌譜":"👁 Guest: browse","⛪ 聚會服事":"⛪ Service","☁ 儲存目前到雲端":"☁ Save to cloud","一般使用者 · 瀏覽歌譜":"Guest · browse",
  "💾 儲存譜":"💾 Save Chart","請選擇儲存方式：":"Choose how to save:","💾 存到瀏覽器本機":"💾 Save to browser","📁 另存到資料夾（.json）":"📁 Save to folder (.json)","下次用同一台裝置開啟會自動載入":"Auto-loads next time on this device","可自選電腦資料夾位置存成檔案":"Pick a folder on your computer",
  "（此段尚未填樂器配置）":"(No parts set yet)","點段落圓圈 → 右邊展開該段樂器配置（再點一次收起）":"Tap a section circle → its parts expand on the right (tap again to close)","點樂器挑要看的部位":"Tap an instrument to filter",
  "升半音":"Semitone up","降半音":"Semitone down","拖曳移位":"Drag to move","拖曳調長度":"Drag to resize","接續到哪一段":"Continue to…","此小節接續到哪一段":"This bar continues to…","本小節拍號（點擊切換）":"Bar meter (click to cycle)","每排幾個小節":"Bars per row","放大檢視字級":"Increase font","縮小檢視字級":"Decrease font","展開更多功能":"More features","查看歷次更新內容":"View changelog","新增一條配器（內容與其他頁共用）":"Add a part (shared across views)","刪除此配器（各頁一起移除）":"Delete this part","一次設定所有段落每排小節數":"Set bars-per-row for all sections","自動縮放，盡量塞進一張 A4":"Auto-fit onto one A4",
@@ -2468,7 +2474,7 @@ const I18N_JA={
  "↓ Download JSON":"↓ JSONをダウンロード",
  "↓ PNG 展開示意圖":"↓ PNG 構成マップ",
  "↓ PNG 方塊流程圖":"↓ PNG ブロックフロー",
- "👤 使用者登入":"👤 ユーザーログイン","音符譜":"音符譜","全音符":"全音符","二分音符":"2分音符","四分音符":"4分音符","八分音符":"8分音符","十六分音符":"16分音符","一拍（1 e & a）":"1拍（1 e & a）","三十二分音符":"32分音符","附點二分音符":"付点2分音符","附點四分音符":"付点4分音符","附點八分音符":"付点8分音符","4 格 · 一拍":"4マス・1拍","6 格 · 一拍半（附點）":"6マス・1拍半（付点）","8 格 · 兩拍":"8マス・2拍","這一拍要切成幾格（含連音）":"このボックスの分割（連符を含む）","3 格 · 八分三連音":"3マス・8分3連符","5 格 · 十六分五連音":"5マス・16分5連符","休止符":"休符","這一格放休止符":"このマスを休符にする","按 ＋ 新增音符、按 ＆ 新增可細分的一拍":"＋ で音符、＆ で分割できる1拍を追加","在這個小節新增一個音符":"この小節に音符を追加","在這個小節新增一拍，拍內可細分 1 e & a":"1 e & a に分割できる1拍を追加","刪除這個音符方塊":"このボックスを削除","時值":"音価","音符譜：小節左上角「＋」新增一個音符（時值自己選，含附點二分／四分／八分與休止符）；「＆」新增可細分的方塊——格數可選 4 格（一拍）、6 格（一拍半，寫附點四分音符用）、8 格（兩拍，可以一次寫出「附點四分＋八分」），另外還有 3 格（八分三連音）與 5 格（十六分五連音），格子標成 1 e & a（連音則標 1 2 3…）。只填 1 格＝整塊的時值；填 1 和 & ＝兩個八分；四格都填＝四個十六分；填 1、&、a ＝八分＋兩個十六分。空著＝不畫、按「休」＝休止符。點方塊打開設定：左邊選時值與格數、中間輸入和弦、右邊 ✕ 刪除。符桿與符尾畫在和弦正上方，同一個方塊（或連續的同時值音符）自動連成符桿連線；連音方塊會在上方標 3 或 5。工具列的「符號」可以加琶音 ⌇，或先點第一個和弦再點第二個連出連結線（線畫在音符下方）。小節內不畫拍點虛線與拍點數字。":"音符譜：小節左上の「＋」で音符を1つ追加（音価は付点2分・4分・8分や休符も選べます）。「＆」は分割できるボックスを追加——マス数は4マス（1拍）、6マス（1拍半・付点4分音符用）、8マス（2拍。付点4分＋8分を1つのボックスで書けます）、3マス（8分3連符）、5マス（16分5連符）から選べ、マスは 1 e & a（連符は 1 2 3…）と表示されます。1マスだけ＝ボックス全体の音価、1 と & ＝8分2つ、4マス全部＝16分4つ、1・&・a ＝8分＋16分2つ。空のマスは何も描かず、「休」ボタンで休符になります。ボックスをタップすると設定が開きます（左＝音価とマス数、中央＝コード、右＝✕ 削除）。符幹と符尾はコードの真上に描き、同じボックス内（または同じ音価が続くとき）は自動でつながります。連符のボックスは上に 3 や 5 を表示します。ツールバーの「記号」でアルペジオ ⌇、またはタイ（最初のコード→次のコードの順にタップ。線は音符の下に描かれます）を付けられます。小節内に拍の点線と拍番号は表示しません。","🎵 歌曲庫":"🎵 ライブラリ","歌曲庫：瀏覽、載入歌譜；敬拜使用者可用「聚會服事」、個人使用者可用「演奏模式」挑歌排成一份":"ライブラリ：譜の閲覧・読み込み。礼拝ユーザーは「礼拝」、個人ユーザーは「演奏モード」で曲を選んで1つにまとめられます","點「載入」打開單首；按「⛪ 聚會服事」可挑最多 10 首，排好順序後依序載入成一份。":"「読み込み」で1曲を開きます。「⛪ 礼拝」なら最大10曲を選んで順番を決め、まとめて読み込めます。",
+ "👤 使用者登入":"👤 ユーザーログイン","音符譜":"音符譜","全音符":"全音符","二分音符":"2分音符","四分音符":"4分音符","八分音符":"8分音符","十六分音符":"16分音符","一拍（1 e & a）":"1拍（1 e & a）","三十二分音符":"32分音符","附點二分音符":"付点2分音符","附點四分音符":"付点4分音符","附點八分音符":"付点8分音符","4 格 · 一拍（十六分）":"4マス・1拍（16分）","2 格 · 一拍（八分）":"2マス・1拍（8分）","3 格 · 一拍半（八分）":"3マス・1拍半（8分）","4 格 · 兩拍（八分）":"4マス・2拍（8分）","6 格 · 一拍半（十六分）":"6マス・1拍半（16分）","8 格 · 兩拍（十六分）":"8マス・2拍（16分）","這一拍要切成幾格（含連音）":"このボックスの分割（連符を含む）","3 格 · 八分三連音":"3マス・8分3連符","5 格 · 十六分五連音":"5マス・16分5連符","休止符":"休符","這一格放休止符":"このマスを休符にする","按 ＋ 新增音符、按 ＆ 新增可細分的一拍":"＋ で音符、＆ で分割できる1拍を追加","在這個小節新增一個音符":"この小節に音符を追加","在這個小節新增一拍，拍內可細分 1 e & a":"1 e & a に分割できる1拍を追加","刪除這個音符方塊":"このボックスを削除","時值":"音価","音符譜：小節左上角「＋」新增一個音符（時值自己選，含附點二分／四分／八分與休止符）；「＆」新增可細分的方塊——預設是一拍兩個八分格（標 1 &）；分割下拉可換成 4 格（一拍，十六分 1 e & a）、3 格（一拍半，八分 1 & 2）、6 格（一拍半，十六分）、4 格（兩拍，八分 1 & 2 &）、8 格（兩拍，十六分），還有 3 格（八分三連音）與 5 格（十六分五連音）。音符會一路延長到下一個有東西的格子：只填 1 格＝佔滿整塊；八分格填「1」和「&」＝兩個八分；十六分格四格都填＝四個十六分、填 1、&、a ＝八分＋兩個十六分。空著＝不畫、按「休」＝休止符。點方塊打開設定：左邊選時值與格數、中間輸入和弦、右邊 ✕ 刪除。符桿與符尾畫在和弦正上方，同一個方塊（或連續的同時值音符）自動連成符桿連線；連音方塊會在上方標 3 或 5。工具列的「符號」可以加琶音 ⌇，或先點第一個和弦再點第二個連出連結線（線畫在音符下方）。小節內不畫拍點虛線與拍點數字。":"音符譜：小節左上の「＋」で音符を1つ追加（音価は付点2分・4分・8分や休符も選べます）。「＆」は分割できるボックスを追加——既定は1拍を8分2マス（1 &）に分けます。分割メニューで4マス（1拍・16分 1 e & a）、3／6マス（1拍半）、4／8マス（2拍）、3マス（8分3連符）、5マス（16分5連符）にも変更できます。音符は次に埋まっているマスまで伸びるので、1マスだけならボックス全体、8分マスの 1 と & で8分2つ、16分マス4つで16分4つになります。空のマスは何も描かず、「休」ボタンで休符になります。ボックスをタップすると設定が開きます（左＝音価とマス数、中央＝コード、右＝✕ 削除）。符幹と符尾はコードの真上に描き、同じボックス内（または同じ音価が続くとき）は自動でつながります。連符のボックスは上に 3 や 5 を表示します。ツールバーの「記号」でアルペジオ ⌇、またはタイ（最初のコード→次のコードの順にタップ。線は音符の下に描かれます）を付けられます。小節内に拍の点線と拍番号は表示しません。","🎵 歌曲庫":"🎵 ライブラリ","歌曲庫：瀏覽、載入歌譜；敬拜使用者可用「聚會服事」、個人使用者可用「演奏模式」挑歌排成一份":"ライブラリ：譜の閲覧・読み込み。礼拝ユーザーは「礼拝」、個人ユーザーは「演奏モード」で曲を選んで1つにまとめられます","點「載入」打開單首；按「⛪ 聚會服事」可挑最多 10 首，排好順序後依序載入成一份。":"「読み込み」で1曲を開きます。「⛪ 礼拝」なら最大10曲を選んで順番を決め、まとめて読み込めます。",
  "🔑 管理者登入":"🔑 管理者ログイン",
  "👁 一般使用者：瀏覽歌譜":"👁 ゲスト：閲覧のみ",
  "⛪ 聚會服事":"⛪ 礼拝",
@@ -2826,7 +2832,7 @@ const I18N_KO={
  "↓ Download JSON":"↓ JSON 다운로드",
  "↓ PNG 展開示意圖":"↓ PNG 구성 맵",
  "↓ PNG 方塊流程圖":"↓ PNG 블록 플로우",
- "👤 使用者登入":"👤 사용자 로그인","音符譜":"음표 악보","全音符":"온음표","二分音符":"2분음표","四分音符":"4분음표","八分音符":"8분음표","十六分音符":"16분음표","一拍（1 e & a）":"한 박 (1 e & a)","三十二分音符":"32분음표","附點二分音符":"점2분음표","附點四分音符":"점4분음표","附點八分音符":"점8분음표","4 格 · 一拍":"4칸 · 한 박","6 格 · 一拍半（附點）":"6칸 · 한 박 반(점)","8 格 · 兩拍":"8칸 · 두 박","這一拍要切成幾格（含連音）":"이 상자의 분할(잇단음표 포함)","3 格 · 八分三連音":"3칸 · 8분 셋잇단음표","5 格 · 十六分五連音":"5칸 · 16분 다섯잇단음표","休止符":"쉼표","這一格放休止符":"이 칸을 쉼표로","按 ＋ 新增音符、按 ＆ 新增可細分的一拍":"＋ 는 음표, ＆ 는 나눌 수 있는 한 박","在這個小節新增一個音符":"이 마디에 음표 추가","在這個小節新增一拍，拍內可細分 1 e & a":"1 e & a 로 나눌 수 있는 한 박 추가","刪除這個音符方塊":"이 상자 삭제","時值":"음길이","音符譜：小節左上角「＋」新增一個音符（時值自己選，含附點二分／四分／八分與休止符）；「＆」新增可細分的方塊——格數可選 4 格（一拍）、6 格（一拍半，寫附點四分音符用）、8 格（兩拍，可以一次寫出「附點四分＋八分」），另外還有 3 格（八分三連音）與 5 格（十六分五連音），格子標成 1 e & a（連音則標 1 2 3…）。只填 1 格＝整塊的時值；填 1 和 & ＝兩個八分；四格都填＝四個十六分；填 1、&、a ＝八分＋兩個十六分。空著＝不畫、按「休」＝休止符。點方塊打開設定：左邊選時值與格數、中間輸入和弦、右邊 ✕ 刪除。符桿與符尾畫在和弦正上方，同一個方塊（或連續的同時值音符）自動連成符桿連線；連音方塊會在上方標 3 或 5。工具列的「符號」可以加琶音 ⌇，或先點第一個和弦再點第二個連出連結線（線畫在音符下方）。小節內不畫拍點虛線與拍點數字。":"음표 악보: 마디 왼쪽 위의 「＋」는 음표 하나를 추가합니다(점2분·점4분·점8분음표와 쉼표도 고를 수 있습니다). 「＆」는 나눌 수 있는 상자를 추가합니다 — 칸 수는 4칸(한 박), 6칸(한 박 반, 점4분음표용), 8칸(두 박, 점4분＋8분을 한 상자에), 3칸(8분 셋잇단음표), 5칸(16분 다섯잇단음표)에서 고르며 칸은 1 e & a(잇단음표는 1 2 3…)로 표시됩니다. 한 칸만 채우면 상자 전체의 음길이, 1과 & 는 8분음표 둘, 네 칸 모두는 16분음표 넷, 1·&·a 는 8분음표와 16분음표 둘이 됩니다. 빈 칸은 그리지 않고, 「休」 버튼을 누르면 쉼표가 됩니다. 상자를 누르면 설정이 열립니다(왼쪽＝음길이와 칸 수, 가운데＝코드, 오른쪽＝✕ 삭제). 기둥과 꼬리는 코드 바로 위에 그리고, 같은 상자 안(또는 같은 음길이가 이어질 때)은 자동으로 이어 붙입니다. 잇단음표 상자는 위에 3 또는 5 를 표시합니다. 툴바의 「기호」로 아르페지오 ⌇ 를 넣거나, 첫 코드→다음 코드 순으로 눌러 이음줄을 그릴 수 있습니다(선은 음표 아래에 그려집니다). 마디 안에 박 점선과 박 번호는 그리지 않습니다.","🎵 歌曲庫":"🎵 라이브러리","歌曲庫：瀏覽、載入歌譜；敬拜使用者可用「聚會服事」、個人使用者可用「演奏模式」挑歌排成一份":"라이브러리: 악보 열람·불러오기. 예배 사용자는 「예배」, 개인 사용자는 「연주 모드」로 곡을 골라 하나로 묶을 수 있습니다","點「載入」打開單首；按「⛪ 聚會服事」可挑最多 10 首，排好順序後依序載入成一份。":"「불러오기」로 한 곡을 엽니다. 「⛪ 예배」에서는 최대 10곡을 골라 순서를 정한 뒤 한 번에 불러올 수 있습니다.",
+ "👤 使用者登入":"👤 사용자 로그인","音符譜":"음표 악보","全音符":"온음표","二分音符":"2분음표","四分音符":"4분음표","八分音符":"8분음표","十六分音符":"16분음표","一拍（1 e & a）":"한 박 (1 e & a)","三十二分音符":"32분음표","附點二分音符":"점2분음표","附點四分音符":"점4분음표","附點八分音符":"점8분음표","4 格 · 一拍（十六分）":"4칸 · 한 박(16분)","2 格 · 一拍（八分）":"2칸 · 한 박(8분)","3 格 · 一拍半（八分）":"3칸 · 한 박 반(8분)","4 格 · 兩拍（八分）":"4칸 · 두 박(8분)","6 格 · 一拍半（十六分）":"6칸 · 한 박 반(16분)","8 格 · 兩拍（十六分）":"8칸 · 두 박(16분)","這一拍要切成幾格（含連音）":"이 상자의 분할(잇단음표 포함)","3 格 · 八分三連音":"3칸 · 8분 셋잇단음표","5 格 · 十六分五連音":"5칸 · 16분 다섯잇단음표","休止符":"쉼표","這一格放休止符":"이 칸을 쉼표로","按 ＋ 新增音符、按 ＆ 新增可細分的一拍":"＋ 는 음표, ＆ 는 나눌 수 있는 한 박","在這個小節新增一個音符":"이 마디에 음표 추가","在這個小節新增一拍，拍內可細分 1 e & a":"1 e & a 로 나눌 수 있는 한 박 추가","刪除這個音符方塊":"이 상자 삭제","時值":"음길이","音符譜：小節左上角「＋」新增一個音符（時值自己選，含附點二分／四分／八分與休止符）；「＆」新增可細分的方塊——預設是一拍兩個八分格（標 1 &）；分割下拉可換成 4 格（一拍，十六分 1 e & a）、3 格（一拍半，八分 1 & 2）、6 格（一拍半，十六分）、4 格（兩拍，八分 1 & 2 &）、8 格（兩拍，十六分），還有 3 格（八分三連音）與 5 格（十六分五連音）。音符會一路延長到下一個有東西的格子：只填 1 格＝佔滿整塊；八分格填「1」和「&」＝兩個八分；十六分格四格都填＝四個十六分、填 1、&、a ＝八分＋兩個十六分。空著＝不畫、按「休」＝休止符。點方塊打開設定：左邊選時值與格數、中間輸入和弦、右邊 ✕ 刪除。符桿與符尾畫在和弦正上方，同一個方塊（或連續的同時值音符）自動連成符桿連線；連音方塊會在上方標 3 或 5。工具列的「符號」可以加琶音 ⌇，或先點第一個和弦再點第二個連出連結線（線畫在音符下方）。小節內不畫拍點虛線與拍點數字。":"음표 악보: 마디 왼쪽 위의 「＋」는 음표 하나를 추가합니다(점2분·점4분·점8분음표와 쉼표도 고를 수 있습니다). 「＆」는 나눌 수 있는 상자를 추가합니다 — 기본은 한 박을 8분 2칸(1 &)으로 나눕니다. 분할 메뉴에서 4칸(한 박·16분 1 e & a), 3/6칸(한 박 반), 4/8칸(두 박), 3칸(8분 셋잇단음표), 5칸(16분 다섯잇단음표)으로도 바꿀 수 있습니다. 음표는 다음에 채워진 칸까지 이어지므로, 한 칸만 채우면 상자 전체, 8분 칸의 1과 & 는 8분음표 둘, 16분 네 칸은 16분음표 넷이 됩니다. 빈 칸은 그리지 않고, 「休」 버튼을 누르면 쉼표가 됩니다. 상자를 누르면 설정이 열립니다(왼쪽＝음길이와 칸 수, 가운데＝코드, 오른쪽＝✕ 삭제). 기둥과 꼬리는 코드 바로 위에 그리고, 같은 상자 안(또는 같은 음길이가 이어질 때)은 자동으로 이어 붙입니다. 잇단음표 상자는 위에 3 또는 5 를 표시합니다. 툴바의 「기호」로 아르페지오 ⌇ 를 넣거나, 첫 코드→다음 코드 순으로 눌러 이음줄을 그릴 수 있습니다(선은 음표 아래에 그려집니다). 마디 안에 박 점선과 박 번호는 그리지 않습니다.","🎵 歌曲庫":"🎵 라이브러리","歌曲庫：瀏覽、載入歌譜；敬拜使用者可用「聚會服事」、個人使用者可用「演奏模式」挑歌排成一份":"라이브러리: 악보 열람·불러오기. 예배 사용자는 「예배」, 개인 사용자는 「연주 모드」로 곡을 골라 하나로 묶을 수 있습니다","點「載入」打開單首；按「⛪ 聚會服事」可挑最多 10 首，排好順序後依序載入成一份。":"「불러오기」로 한 곡을 엽니다. 「⛪ 예배」에서는 최대 10곡을 골라 순서를 정한 뒤 한 번에 불러올 수 있습니다.",
  "🔑 管理者登入":"🔑 관리자 로그인",
  "👁 一般使用者：瀏覽歌譜":"👁 게스트: 열람만",
  "⛪ 聚會服事":"⛪ 예배",
@@ -3040,7 +3046,7 @@ const I18N_CN={
  "準備中…":"准备中…","產生中…":"产生中…","讀取 PDF…":"读取 PDF…","載入服事清單…":"加载服事清单…","載入辨識引擎…":"加载辨识引擎…","彈法…":"弹法…",
  "段落備註…":"段落备注…","辨識出的文字會出現在這裡，可手動修正後再解析…":"辨识出的文本会出现在这里，可手动修正后再解析…","不轉（保留和弦名）":"不转（保留和弦名）","依男 Key 轉級數":"依男 Key 转级数","依女 Key 轉級數":"依女 Key 转级数","和弦轉級數：":"和弦转级数：",
  "🔍 圖片 / PDF 辨識匯入":"🔍 图片 / PDF 辨识导入","🎼 圖示譜 PDF":"🎼 图标谱 PDF","🎵 和弦譜 PDF":"🎵 和弦谱 PDF","🎼 混合 PDF（和弦＋樂器）":"🎼 混合 PDF（和弦＋乐器）","🖼 PNG 展開示意圖":"🖼 PNG 展开示意图","📦 PNG 方塊流程圖":"📦 PNG 方块流程图",
- "📊 CSV 樂器備註表":"📊 CSV 乐器备注表","📋 文字清單":"📋 文字清单","↓ JSON 備份":"↓ JSON 备份","↓ PNG 展開示意圖":"↓ PNG 展开示意图","↓ PNG 方塊流程圖":"↓ PNG 方块流程图","👤 使用者登入":"👤 用户登录","音符譜":"音符谱","全音符":"全音符","二分音符":"二分音符","四分音符":"四分音符","八分音符":"八分音符","十六分音符":"十六分音符","一拍（1 e & a）":"一拍（1 e & a）","三十二分音符":"三十二分音符","附點二分音符":"附点二分音符","附點四分音符":"附点四分音符","附點八分音符":"附点八分音符","4 格 · 一拍":"4 格 · 一拍","6 格 · 一拍半（附點）":"6 格 · 一拍半（附点）","8 格 · 兩拍":"8 格 · 两拍","這一拍要切成幾格（含連音）":"这一拍要切成几格（含连音）","3 格 · 八分三連音":"3 格 · 八分三连音","5 格 · 十六分五連音":"5 格 · 十六分五连音","休止符":"休止符","這一格放休止符":"这一格放休止符","按 ＋ 新增音符、按 ＆ 新增可細分的一拍":"按 ＋ 添加音符、按 ＆ 添加可细分的一拍","在這個小節新增一個音符":"在这个小节添加一个音符","在這個小節新增一拍，拍內可細分 1 e & a":"在这个小节添加一拍，拍内可细分 1 e & a","刪除這個音符方塊":"删除这个音符方块","時值":"时值","音符譜：小節左上角「＋」新增一個音符（時值自己選，含附點二分／四分／八分與休止符）；「＆」新增可細分的方塊——格數可選 4 格（一拍）、6 格（一拍半，寫附點四分音符用）、8 格（兩拍，可以一次寫出「附點四分＋八分」），另外還有 3 格（八分三連音）與 5 格（十六分五連音），格子標成 1 e & a（連音則標 1 2 3…）。只填 1 格＝整塊的時值；填 1 和 & ＝兩個八分；四格都填＝四個十六分；填 1、&、a ＝八分＋兩個十六分。空著＝不畫、按「休」＝休止符。點方塊打開設定：左邊選時值與格數、中間輸入和弦、右邊 ✕ 刪除。符桿與符尾畫在和弦正上方，同一個方塊（或連續的同時值音符）自動連成符桿連線；連音方塊會在上方標 3 或 5。工具列的「符號」可以加琶音 ⌇，或先點第一個和弦再點第二個連出連結線（線畫在音符下方）。小節內不畫拍點虛線與拍點數字。":"音符谱：小节左上角「＋」添加一个音符（时值自己选，含附点二分／四分／八分与休止符）；「＆」添加可细分的方块——格数可选 4 格（一拍）、6 格（一拍半，写附点四分音符用）、8 格（两拍，可以一次写出「附点四分＋八分」），另外还有 3 格（八分三连音）与 5 格（十六分五连音），格子标成 1 e & a（连音则标 1 2 3…）。只填 1 格＝整块的时值；填 1 和 & ＝两个八分；四格都填＝四个十六分；填 1、&、a ＝八分＋两个十六分。空着＝不画、按「休」＝休止符。点方块打开设置：左边选时值与格数、中间输入和弦、右边 ✕ 删除。符杆与符尾画在和弦正上方，同一个方块（或连续的同时值音符）自动连成符杆连线；连音方块会在上方标 3 或 5。工具栏的「符号」可以加琶音 ⌇，或先点第一个和弦再点第二个连出连结线（线画在音符下方）。小节内不画拍点虚线与拍点数字。","🎵 歌曲庫":"🎵 歌曲库","歌曲庫：瀏覽、載入歌譜；敬拜使用者可用「聚會服事」、個人使用者可用「演奏模式」挑歌排成一份":"歌曲库：浏览、载入歌谱；敬拜用户可用「聚会服事」、个人用户可用「演奏模式」挑歌排成一份","點「載入」打開單首；按「⛪ 聚會服事」可挑最多 10 首，排好順序後依序載入成一份。":"点「载入」打开单首；按「⛪ 聚会服事」可挑最多 10 首，排好顺序后依序载入成一份。",
+ "📊 CSV 樂器備註表":"📊 CSV 乐器备注表","📋 文字清單":"📋 文字清单","↓ JSON 備份":"↓ JSON 备份","↓ PNG 展開示意圖":"↓ PNG 展开示意图","↓ PNG 方塊流程圖":"↓ PNG 方块流程图","👤 使用者登入":"👤 用户登录","音符譜":"音符谱","全音符":"全音符","二分音符":"二分音符","四分音符":"四分音符","八分音符":"八分音符","十六分音符":"十六分音符","一拍（1 e & a）":"一拍（1 e & a）","三十二分音符":"三十二分音符","附點二分音符":"附点二分音符","附點四分音符":"附点四分音符","附點八分音符":"附点八分音符","4 格 · 一拍（十六分）":"4 格 · 一拍（十六分）","2 格 · 一拍（八分）":"2 格 · 一拍（八分）","3 格 · 一拍半（八分）":"3 格 · 一拍半（八分）","4 格 · 兩拍（八分）":"4 格 · 两拍（八分）","6 格 · 一拍半（十六分）":"6 格 · 一拍半（十六分）","8 格 · 兩拍（十六分）":"8 格 · 两拍（十六分）","這一拍要切成幾格（含連音）":"这一拍要切成几格（含连音）","3 格 · 八分三連音":"3 格 · 八分三连音","5 格 · 十六分五連音":"5 格 · 十六分五连音","休止符":"休止符","這一格放休止符":"这一格放休止符","按 ＋ 新增音符、按 ＆ 新增可細分的一拍":"按 ＋ 添加音符、按 ＆ 添加可细分的一拍","在這個小節新增一個音符":"在这个小节添加一个音符","在這個小節新增一拍，拍內可細分 1 e & a":"在这个小节添加一拍，拍内可细分 1 e & a","刪除這個音符方塊":"删除这个音符方块","時值":"时值","音符譜：小節左上角「＋」新增一個音符（時值自己選，含附點二分／四分／八分與休止符）；「＆」新增可細分的方塊——預設是一拍兩個八分格（標 1 &）；分割下拉可換成 4 格（一拍，十六分 1 e & a）、3 格（一拍半，八分 1 & 2）、6 格（一拍半，十六分）、4 格（兩拍，八分 1 & 2 &）、8 格（兩拍，十六分），還有 3 格（八分三連音）與 5 格（十六分五連音）。音符會一路延長到下一個有東西的格子：只填 1 格＝佔滿整塊；八分格填「1」和「&」＝兩個八分；十六分格四格都填＝四個十六分、填 1、&、a ＝八分＋兩個十六分。空著＝不畫、按「休」＝休止符。點方塊打開設定：左邊選時值與格數、中間輸入和弦、右邊 ✕ 刪除。符桿與符尾畫在和弦正上方，同一個方塊（或連續的同時值音符）自動連成符桿連線；連音方塊會在上方標 3 或 5。工具列的「符號」可以加琶音 ⌇，或先點第一個和弦再點第二個連出連結線（線畫在音符下方）。小節內不畫拍點虛線與拍點數字。":"音符谱：小节左上角「＋」添加一个音符（时值自己选，含附点二分／四分／八分与休止符）；「＆」添加可细分的方块——默认是一拍两个八分格（标 1 &）；分割下拉可换成 4 格（一拍，十六分 1 e & a）、3 格（一拍半，八分 1 & 2）、6 格（一拍半，十六分）、4 格（两拍，八分 1 & 2 &）、8 格（两拍，十六分），还有 3 格（八分三连音）与 5 格（十六分五连音）。音符会一路延长到下一个有东西的格子：只填 1 格＝占满整块；八分格填「1」和「&」＝两个八分；十六分格四格都填＝四个十六分、填 1、&、a ＝八分＋两个十六分。空着＝不画、按「休」＝休止符。点方块打开设置：左边选时值与格数、中间输入和弦、右边 ✕ 删除。符杆与符尾画在和弦正上方，同一个方块（或连续的同时值音符）自动连成符杆连线；连音方块会在上方标 3 或 5。工具栏的「符号」可以加琶音 ⌇，或先点第一个和弦再点第二个连出连结线（线画在音符下方）。小节内不画拍点虚线与拍点数字。","🎵 歌曲庫":"🎵 歌曲库","歌曲庫：瀏覽、載入歌譜；敬拜使用者可用「聚會服事」、個人使用者可用「演奏模式」挑歌排成一份":"歌曲库：浏览、载入歌谱；敬拜用户可用「聚会服事」、个人用户可用「演奏模式」挑歌排成一份","點「載入」打開單首；按「⛪ 聚會服事」可挑最多 10 首，排好順序後依序載入成一份。":"点「载入」打开单首；按「⛪ 聚会服事」可挑最多 10 首，排好顺序后依序载入成一份。",
  "🔑 管理者登入":"🔑 管理者登录","👁 一般使用者：瀏覽歌譜":"👁 一般用户：浏览歌谱","⛪ 聚會服事":"⛪ 聚会服事","☁ 儲存目前到雲端":"☁ 保存目前到云端","一般使用者 · 瀏覽歌譜":"一般用户 · 浏览歌谱","💾 儲存譜":"💾 保存谱",
  "請選擇儲存方式：":"请选择保存方式：","💾 存到瀏覽器本機":"💾 存到浏览器本机","📁 另存到資料夾（.json）":"📁 另存到文件夹（.json）","下次用同一台裝置開啟會自動載入":"下次用同一台设备打开会自动加载","可自選電腦資料夾位置存成檔案":"可自选电脑文件夹位置存成文件","（此段尚未填樂器配置）":"（此段尚未填乐器配置）",
  "點段落圓圈 → 右邊展開該段樂器配置（再點一次收起）":"点段落圆圈 → 右边展开该段乐器配置（再点一次收起）","點樂器挑要看的部位":"点乐器挑要看的部位","拖曳調長度":"拖曳调长度","接續到哪一段":"接续到哪一段","此小節接續到哪一段":"此小节接续到哪一段","本小節拍號（點擊切換）":"本小节拍号（点击切换）",
@@ -6198,18 +6204,32 @@ const NT_DUR=[['w','全音符'],['hd','附點二分音符'],['h','二分音符']
 const NT_FL={'8':1,'8d':1,'16':2,'32':3};        // 符尾條數
 const NT_SLBL=['1','e','&','a','2','e','&','a'];  // 十六分格點的習慣念法（最多兩拍）
 /* ＆ 方塊的分割：key＝'格數'或'格數t'（t＝連音，整拍平均切成 n 份） */
-const NT_NOPT=[['4',4,0,'4 格 · 一拍'],['3t',3,3,'3 格 · 八分三連音'],['5t',5,5,'5 格 · 十六分五連音'],['6',6,0,'6 格 · 一拍半（附點）'],['8',8,0,'8 格 · 兩拍']];
+/* [key, 格數, 連音數, 每格幾個十六分(1＝十六分格、2＝八分格), 標籤] */
+const NT_NOPT=[
+  ['2e',2,0,2,'2 格 · 一拍（八分）'],
+  ['4',4,0,1,'4 格 · 一拍（十六分）'],
+  ['3t',3,3,0,'3 格 · 八分三連音'],
+  ['5t',5,5,0,'5 格 · 十六分五連音'],
+  ['3e',3,0,2,'3 格 · 一拍半（八分）'],
+  ['6',6,0,1,'6 格 · 一拍半（十六分）'],
+  ['4e',4,0,2,'4 格 · 兩拍（八分）'],
+  ['8',8,0,1,'8 格 · 兩拍（十六分）']];
 function ntT(b){ const t=parseInt(b&&b.t)||0; return (t===3||t===5)?t:0; }
-function ntN(b){ const t=ntT(b); if(t)return t; const n=parseInt(b&&b.n)||4; return (n===6||n===8)?n:4; }
-function ntKey(b){ const t=ntT(b); return t?(t+'t'):String(ntN(b)); }
+function ntU(b){ return (parseInt(b&&b.u)===2)?2:1; }
+function ntN(b){ const t=ntT(b); if(t)return t; const n=parseInt(b&&b.n)||4; return (n>=1&&n<=8)?n:4; }
+function ntKey(b){ const t=ntT(b); if(t)return t+'t'; const n=ntN(b); return (ntU(b)===2)?(n+'e'):String(n); }
 function ntSlots(b){ const n=ntN(b), a=[]; for(let i=0;i<n;i++)a.push(String((b.s&&b.s[i])==null?'':b.s[i])); return a; }
 /* 連音方塊的時值：基準＝三連音 8 分、五連音 16 分；佔到 g 格就往上進一級 */
 function ntTupDur(t,g){
   if(t===3) return (g<=1)?'8':'q';                 // 2 格或 3 格都畫成四分音符（上面有 3 就看得懂）
   return (g<=1)?'16':(g===2)?'8':(g===3)?'8d':'q';
 }
-/* 連音的格子標成 1 2 3…，一般格子標 1 e & a */
-function ntSlotLbl(b,k){ return ntT(b)?String(k+1):(NT_SLBL[k]||String(k+1)); }
+/* 連音標 1 2 3…；八分格標 1 & 2 &；十六分格標 1 e & a */
+function ntSlotLbl(b,k){
+  if(ntT(b))return String(k+1);
+  if(ntU(b)===2)return (k%2===0)?String(k/2+1):'&';
+  return NT_SLBL[k]||String(k+1);
+}
 /* 格數（十六分）→ 時值 */
 function ntDurOfLen(len){ return len>=16?'w':len>=12?'hd':len>=8?'h':len>=6?'qd':len>=4?'q':(len===3)?'8d':(len===2)?'8':'16'; }
 function ntIsDot(d){ return d==='hd'||d==='qd'||d==='8d'; }
@@ -6223,10 +6243,10 @@ function ntNorm(it){
   if(d==='24')d='16';
   if(d==='r')return {d:'r'};
   if(d==='q4'||(d==='q'&&Array.isArray(it.s))){                    // 舊版的 {d:'q',s:[…]} 就是現在的 q4
-    const t=(it.t===3||it.t===5)?it.t:0;
-    const n=t?t:((it.n===6||it.n===8)?it.n:4), a=[];
+    const t=(it.t===3||it.t===5)?it.t:0, u=(parseInt(it.u)===2)?2:1;
+    const ni=parseInt(it.n), n=t?t:((ni>=1&&ni<=8)?ni:4), a=[];
     for(let i=0;i<n;i++)a.push(String((it.s&&it.s[i])==null?'':it.s[i]));
-    const o={d:'q4',n,s:a}; if(t)o.t=t; return o;
+    const o={d:'q4',n,s:a}; if(t)o.t=t; if(u===2)o.u=2; return o;
   }
   return {d,c:String(it.c||'')};
 }
@@ -6244,7 +6264,7 @@ function ntIsEd(s,bar,i){ return !!(_ntEd&&_ntEd.sid===s.id&&_ntEd.bar===bar&&_n
 function ntAdd(id,bar,four){
   const s=sects.find(x=>x.id===id); if(!s||_locked)return;
   ntPushHistory(); const a=ntArr(s,bar);
-  a.push(four?{d:'q4',n:4,s:['','','','']}:{d:'q',c:''});
+  a.push(four?{d:'q4',n:2,u:2,s:['','']}:{d:'q',c:''});
   _ntEd={sid:id,bar,bi:a.length-1};                 // 新增後直接打開輸入
   autoSave(); renderNote(); ntFocus();
 }
@@ -6258,7 +6278,7 @@ function ntSetDur(id,bar,i,v){
   if(b.d===v){ renderNote(); ntFocus(); return; }
   ntPushHistory();
   const cur=(b.d==='q4')?String((b.s&&b.s[0])||''):String(b.c||'');
-  if(v==='q4'){ b.d='q4'; b.n=ntN(b); b.s=[cur==='r'?'':cur]; while(b.s.length<b.n)b.s.push(''); delete b.c; }
+  if(v==='q4'){ b.d='q4'; b.n=2; b.u=2; delete b.t; b.s=[cur==='r'?'':cur,'']; delete b.c; }
   else if(v==='r'){ b.d='r'; delete b.c; delete b.s; }
   else { b.d=v; b.c=(cur==='r')?'':cur; delete b.s; }
   autoSave(); renderNote(); ntFocus();
@@ -6290,7 +6310,9 @@ function ntSlotSave(inp,close){
   const b=ntBox(+bx.dataset.sid,+bx.dataset.bar,+bx.dataset.bi); if(!b)return;
   const k=+inp.dataset.slot;
   const v=askEnharmonic(normSign(inp.value)).trim();   // ♭/♯ 轉 ASCII，同和弦譜的輸入規則
-  if(b.d==='q4'){ const sl=ntSlots(b); if(v!==String(sl[k]||'')){ ntPushHistory(); sl[k]=v; b.s=sl; autoSave(); } }
+  if(b.d==='q4'){ const sl=ntSlots(b);
+    if(String(sl[k]||'')==='r'&&v===''){ if(close){_ntEd=null;renderNote();} return; }   // 休止符的輸入框本來就是空的，不要被空字串蓋掉
+    if(v!==String(sl[k]||'')){ ntPushHistory(); sl[k]=v; b.s=sl; autoSave(); } }
   else if(v!==String(b.c||'')){ ntPushHistory(); b.c=v; autoSave(); }
   if(close){ _ntEd=null; renderNote(); }
 }
@@ -6298,7 +6320,7 @@ function ntSlotSave(inp,close){
 function ntSlotRest(id,bar,i,k){
   const b=ntBox(id,bar,i); if(!b||_locked)return;
   ntPushHistory();
-  if(b.d!=='q4'){ b.d='q4'; b.n=4; b.s=[String(b.c||''),'','','']; delete b.c; }
+  if(b.d!=='q4'){ b.d='q4'; b.n=2; b.u=2; b.s=[String(b.c||''),'']; delete b.c; }
   b.s=ntSlots(b);
   b.s[k]=(String(b.s[k]||'')==='r')?'':'r';
   autoSave(); renderNote(); ntFocus();
@@ -6308,13 +6330,16 @@ function ntSetN(id,bar,i,v){
   const key=String(v||'4'); if(ntKey(b)===key){ renderNote(); ntFocus(); return; }
   const opt=NT_NOPT.find(o=>o[0]===key)||NT_NOPT[0];
   ntPushHistory();
-  const old=ntSlots(b); b.n=opt[1]; if(opt[2])b.t=opt[2]; else delete b.t;
+  const old=ntSlots(b); b.n=opt[1];
+  if(opt[2])b.t=opt[2]; else delete b.t;
+  if(opt[3]===2)b.u=2; else delete b.u;
   b.s=[]; for(let k=0;k<opt[1];k++)b.s.push(old[k]||'');
   autoSave(); renderNote(); ntFocus();
 }
 function ntCloseEdit(){
-  const inp=document.querySelector('#note-content .nt-editbox .nt-i');
-  if(inp) ntSlotSave(inp,true); else { _ntEd=null; renderNote(); }
+  const bx=document.querySelector('#note-content .nt-editbox');
+  if(bx) bx.querySelectorAll('.nt-i').forEach(i=>ntSlotSave(i,false));   // 每一格都存，不能只存第一格
+  _ntEd=null; renderNote();
 }
 /* 點到編輯框以外的地方就收起來 */
 document.addEventListener('pointerdown',e=>{
@@ -6438,11 +6463,11 @@ function ntUnits(list){
       const sl=ntSlots(b), n=ntN(b), hits=[];
       for(let i=0;i<n;i++){ if(String(sl[i]||'').trim()!=='')hits.push(i); }
       if(!hits.length){ out.push({bi,empty:true}); return; }
-      const tp=ntT(b);
+      const tp=ntT(b), un=ntU(b);
       hits.forEach((i,j)=>{
         const len=((j+1<hits.length)?hits[j+1]:n)-i;
         const v=String(sl[i]);
-        out.push({bi,slot:i,d:tp?ntTupDur(tp,len):ntDurOfLen(len),rest:(v==='r'),c:(v==='r')?'':v});
+        out.push({bi,slot:i,d:tp?ntTupDur(tp,len):ntDurOfLen(len*un),rest:(v==='r'),c:(v==='r')?'':v});
       });
     }
     else if(b.d==='r') out.push({bi,slot:0,d:'q',rest:true});
@@ -6524,7 +6549,7 @@ function ntEditBoxHtml(s,bar,bi,b){
     const sl=ntSlots(b), n=ntN(b);
     const nk=ntKey(b);
     mid='<select class="nt-dsel nt-nsel" onchange="ntSetN('+s.id+','+bar+','+bi+',this.value)" title="'+esc(L('這一拍要切成幾格（含連音）'))+'">'
-      +NT_NOPT.map(o=>'<option value="'+o[0]+'"'+(nk===o[0]?' selected':'')+'>'+esc(L(o[3]))+'</option>').join('')+'</select>';
+      +NT_NOPT.map(o=>'<option value="'+o[0]+'"'+(nk===o[0]?' selected':'')+'>'+esc(L(o[4]))+'</option>').join('')+'</select>';
     mid+='<span class="nt-slots n'+n+'">'+sl.map((_x,k)=>{
       const v=String(sl[k]||''), isr=(v==='r');
       return '<span class="nt-slot'+(isr?' isr':'')+'">'
