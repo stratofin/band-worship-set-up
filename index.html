@@ -876,11 +876,30 @@ body.mode-phone .mixpage-stack.mixp{--barw:8.5em;}
 .mixpage-stack{display:flex;flex-direction:column;gap:0.7em;}
 
 /* ── TEXT LIST ── */
-.tl{font-family:'Space Mono',monospace;font-size:0.85em;line-height:2;white-space:pre;overflow-x:auto;background:var(--bg2);border:1px solid var(--border);border-radius:0.77em;padding:1.23em 1.38em;color:var(--text2);}   /* pre＋橫向捲動：整行不折，小節線才會上下對齊 */
+.tl{font-family:'Space Mono',monospace;font-size:0.85em;line-height:2;background:var(--bg2);border:1px solid var(--border);border-radius:0.77em;padding:1.23em 1.38em;color:var(--text2);}
+.tl .tl-t{white-space:pre-wrap;}   /* 標題、備註等純文字行 */
 .tl .tl-sep{border:none;border-top:1px solid var(--border2);margin:0.9em 0;}   /* 段落之間的分隔線 */
-body.mode-phone .tl{font-size:0.7em;padding:1em 1.1em;}   /* 手機：字小一點，一行塞得下比較多小節 */
+body.mode-phone .tl{font-size:0.78em;padding:1em 1.1em;}
+/* 和弦行：每一個小節各佔一欄（grid），小節線永遠在同一個位置；細分的小節字自動縮小 */
+.tl .tl-row{display:grid;align-items:center;padding-left:1.2em;}
+.tl .tl-bar{position:relative;display:flex;align-items:center;min-width:0;}
+.tl .tl-bl{flex:none;font-weight:400;opacity:.75;padding:0 .3em;}
+.tl .tl-cells{flex:1;min-width:0;display:grid;align-items:center;}
+.tl .tl-cell{min-width:0;text-align:center;white-space:nowrap;}
+.tl .tl-cells.n6{font-size:0.9em;}
+.tl .tl-cells.n8{font-size:0.82em;}
+.tl .tl-cells.n12{font-size:0.7em;}
+.tl .tl-cells.n16{font-size:0.6em;}
+.tl .tl-m,.tl .tl-r{position:absolute;top:-0.8em;font-size:0.62em;font-style:normal;color:var(--text3);}
+.tl .tl-m{left:0.9em;}
+.tl .tl-r{right:1.1em;}
+.tl .tl-dot{opacity:.62;}
 /* 文字清單的節拍：八分一條底線、十六分兩條；反拍往上抬，正拍留在基線 */
 .tl .tl-c{display:inline-block;line-height:1.1;}
+.tl .tl-c.l3{font-size:0.94em;}
+.tl .tl-c.l4{font-size:0.86em;}
+.tl .tl-c.l5{font-size:0.78em;}
+.tl .tl-c.l6{font-size:0.7em;}
 .tl .tl-off1{vertical-align:0.45em;font-size:0.92em;color:var(--text2);}   /* 八分的反拍（&） */
 .tl .tl-off2{vertical-align:0.85em;font-size:0.86em;color:var(--text3);}   /* 十六分的細分位置 */
 .tl .tl-u1{border-bottom:1px solid currentColor;}
@@ -1614,10 +1633,11 @@ body.gated>*:not(#gate){filter:grayscale(.9) opacity(.32)!important;pointer-even
     <div class="cl-body">
       <p class="cl-ver">開發時間軸：2026-06-17 ～ 2026-08-30（依使用回饋持續優化）</p>
 
-      <h4>文字清單：小節線對齊 <span class="cl-date">2026-09-16</span></h4>
-      <ul><li>每一格的和弦都補到<b>一樣的寬度</b>，所以不管是 <code>1</code>、<code>6m</code> 還是 <code>1maj7</code>，<b>小節線都會上下對齊</b>，不會被長和弦擠得跑掉</li>
-      <li>欄寬會看整份譜最長的和弦自動調整（最少 3 個字寬、最多 7 個），複製出去的純文字也一樣補好空白</li>
-      <li>整行不再折行，改成需要時可左右捲；<b>手機自動改成每行 2 個小節</b>，不用捲就看得完</li></ul>
+      <h4>文字清單：小節線完全對齊、<code>12/3</code> 寫成 <code>1add2/3</code> <span class="cl-date">2026-09-16</span></h4>
+      <ul><li>和弦行改成<b>每一個小節各佔一欄</b>（等寬），不管這一小節是 4 格、8 格還是 16 格，<b>小節線永遠在同一個位置</b>，段落跟段落之間也對得齊</li>
+      <li>格子多或和弦長（<code>4maj13</code>、<code>b7maj9/1</code>）的小節，<b>字會自動縮小</b>而不是把小節線擠開；簡單的小節不會跟著變鬆散</li>
+      <li>一行放幾個小節改成<b>自動</b>：標準 4 格的每行 4 個（手機 2 個），有八分細分的手機自動改成每行 1 個，不用左右捲</li>
+      <li>後綴只有一個「2」的和弦在文字清單也跟和弦譜一樣寫成 <b>add2</b>（<code>12/3</code> → <code>1add2/3</code>），<code>sus4</code> 統一寫成 <code>sus</code></li></ul>
 
       <h4>長音自動拆成連結的兩個音符；手機編輯框修正 <span class="cl-date">2026-09-16</span></h4>
       <ul><li>音符譜：音符拉長後如果<b>畫不成單一個音符</b>（例如 3.5 拍），會自動拆成「<b>附點二分音符 ⌣ 八分音符</b>」兩個用連結線接起來的音符；第二個不重複寫和弦名，並且會跟同一拍的其他音符連成符桿連線</li>
@@ -6208,14 +6228,20 @@ function chordSummary(s){
   }
   return any?('| '+parts.join(' | ')+' |'):'';
 }
+/* 顯示用的和弦寫法：sus4→sus、後綴只有一個「2」→add2（例如 12/3 寫成 1add2/3），跟和弦譜畫面一致 */
+function tlNorm(t){
+  t=String(t||'').trim(); if(!t||t==='·'||t==='.')return t;
+  if(/[\s()]/.test(t)) return t.replace(/[^\s()]+/g,x=>tlNorm(x));
+  const sp=splitChordDisplay(t); if(!sp.suf)return t;
+  return sp.root+String(sp.suf).replace(/sus4/g,'sus').replace(/^2$/,'add2')+(sp.bass||'');
+}
 /* 文字清單用：把每個小節的格子拆出來（含分割與正／反拍資訊），純文字與畫面兩種呈現共用 */
-function chordSummaryCells(s,perRow){
-  const per=Math.max(1,parseInt(perRow)||4);
+function chordSummaryBars(s){
   const bars=Math.max(1,parseInt(s.bars)||1);
   let any=false; const arr=[];
   for(let i=0;i<bars;i++){
     const fac=subdivFactor(s,i), cn=cellsForBar(s,i), pb=getBeatData(s,i,cn), cells=[];
-    for(let b=0;b<cn;b++){ const v=String(pb[b]||'').trim(); if(v)any=true;
+    for(let b=0;b<cn;b++){ const v=tlNorm(String(pb[b]||'').trim()); if(v)any=true;
       /* off：0＝正拍、1＝八分的反拍（&）、2＝十六分的細分位置，畫面上抬的高度不同 */
       const m=(fac>1)?(b%fac):0;
       const fine=Math.floor(b/fac)*4+m*(4/fac);                  // 固定十六分格點：符號（連結線）就存在這個位置
@@ -6223,11 +6249,15 @@ function chordSummaryCells(s,perRow){
         tieS:!!(v&&chGetTie(s,i,fine)), tieE:!!(v&&chTieEndOf(s,i,fine))}); }   // 連結線的頭／尾
     arr.push({meter:barMeter(s,i), rep:repOf(s,i), fac, cells});
   }
-  if(!any)return [];
-  const out=[];
-  for(let i=0;i<arr.length;i+=per) out.push({from:i+1, to:Math.min(bars,i+per), bars:arr.slice(i,i+per)});
+  return any?arr:[];
+}
+/* 把小節分行：一行 per 個小節 */
+function tlGroup(arr,per){
+  per=Math.max(1,parseInt(per)||4); const out=[];
+  for(let i=0;i<(arr||[]).length;i+=per) out.push({from:i+1, to:Math.min(arr.length,i+per), bars:arr.slice(i,i+per)});
   return out;
 }
+function chordSummaryCells(s,perRow){ return tlGroup(chordSummaryBars(s),perRow); }
 /* 連結線在文字清單用括號表示：頭加「(」、尾加「)」，例如 … (4 | 4) … */
 function tlTok(c){ return (c.tieS?'(':'')+c.tok+(c.tieE?')':''); }
 /* 每一格都補到同樣寬度，小節線才會對齊（Cm 和 Cmaj7 佔一樣的位置） */
@@ -6246,19 +6276,30 @@ function tlRowText(row,w){
     +b.cells.map(c=>{ const t=tlTok(c), p=tlPad(t,w); return p[0]+t+p[1]; }).join(' ')
     +(b.rep>1?` ×${b.rep}`:'')).join(' | ')+' |';
 }
-/* 畫面用：八分加一條底線、十六分加兩條（簡譜寫法）；反拍的格子往上抬一點，一眼看得出正拍／反拍 */
-function tlRowHtml(row,w){
+/* 畫面用：每個小節佔一個 grid 欄，小節線完全對齊；格子多或和弦長的小節，字自動縮小不擠到小節線。
+   八分加一條底線、十六分加兩條（簡譜寫法）；反拍的格子往上抬一點，一眼看得出正拍／反拍 */
+function tlRowHtml(row,per){
   const u=f=>f===2?' tl-u1':f===4?' tl-u2':'';
-  return '| '+row.bars.map(b=>(b.meter?`(${esc(b.meter)}) `:'')
-      +b.cells.map(c=>{
-          const p=tlPad(tlTok(c),w);                                      // 補白放在外面，底線才不會跟著拉長
-          const body=(c.tok==='·')?'·'                                    // 空格子維持原樣的小點，不加底線也不抬高，畫面才乾淨
-            :(c.tieS?'<span class="tl-tie">(</span>':'')
-             +`<span class="tl-c${c.off?' tl-off'+c.off:''}${u(b.fac)}">${esc(c.tok)}</span>`
-             +(c.tieE?'<span class="tl-tie">)</span>':'');
-          return p[0]+body+p[1];
-        }).join(' ')
-      +(b.rep>1?` ×${b.rep}`:'')).join(' | ')+' |';
+  const last=row.bars.length-1;
+  const body=row.bars.map((b,bi)=>{
+    const cn=Math.max(1,b.cells.length);
+    const nc=cn>=16?' n16':cn>=12?' n12':cn>=8?' n8':cn>=6?' n6':'';
+    const cells=b.cells.map(c=>{
+      const t=c.tok, n=t.length;
+      const lc=n>=6?' l6':n>=5?' l5':n>=4?' l4':n>=3?' l3':'';
+      const inner=(t==='·')?'<span class="tl-dot">·</span>'   // 空格子維持原樣的小點，不加底線也不抬高
+        :(c.tieS?'<span class="tl-tie">(</span>':'')
+         +`<span class="tl-c${lc}${c.off?' tl-off'+c.off:''}${u(b.fac)}">${esc(t)}</span>`
+         +(c.tieE?'<span class="tl-tie">)</span>':'');
+      return '<span class="tl-cell">'+inner+'</span>';
+    }).join('');
+    return '<div class="tl-bar"><b class="tl-bl">|</b>'
+      +`<div class="tl-cells${nc}" style="grid-template-columns:repeat(${cn},1fr)">${cells}</div>`
+      +(b.meter?`<i class="tl-m">(${esc(b.meter)})</i>`:'')
+      +(b.rep>1?`<i class="tl-r">×${b.rep}</i>`:'')
+      +(bi===last?'<b class="tl-bl">|</b>':'')+'</div>';
+  }).join('');
+  return `<div class="tl-row" style="grid-template-columns:repeat(${Math.max(1,per|0)||1},1fr)">${body}</div>`;
 }
 function chordSummaryLines(s,perRow){
   const rows=chordSummaryCells(s,perRow), w=tlColW(rows);
@@ -7854,31 +7895,44 @@ function renderCurrent(){
 function renderAll(){renderCurrent();renderTimeSelects();updatePrintHead();renderSummary();updateKeyStepLabels();i18nMaybe();autoSave();}
 
 /* ── TEXT LIST ── */
-const TL_BARS_PER_ROW=4;   // 文字清單每行顯示幾個小節（手機放不下 4 個，自動變 2 個）
-function tlBarsPerRow(){ try{ return (currentMode()==='phone')?2:TL_BARS_PER_ROW; }catch(e){ return TL_BARS_PER_ROW; } }
+const TL_BARS_PER_ROW=4;   // 文字清單每行顯示幾個小節
+function tlIsPhone(){ try{ return currentMode()==='phone'; }catch(e){ return false; } }
+/* 一個小節裡的格子越多，一行就放越少小節，每一格才有空間（不用把字縮到看不見） */
+function tlBarsPerRow(maxN){
+  const n=Math.max(1,parseInt(maxN)||4);
+  if(tlIsPhone()) return n>4?1:2;
+  return n>8?2:TL_BARS_PER_ROW;
+}
 /* 文字清單：畫面上段落之間用橫線分隔（<hr>）；複製出去的純文字則用一行「─」分隔 */
 function buildTL(){
   const head=`=== 編曲架構 ===\n曲目：${gv('s-title')}${gv('s-artist')?'／'+gv('s-artist'):''}  ${keyLabel().replace(/<[^>]+>/g,'')}  拍號：${gv('s-time')}  BPM：${gv('s-bpm')}\n${'─'.repeat(38)}\n\n`;
   const blocks=[];       // 每段一筆：{text: 複製用純文字, html: 畫面用}
   let _prevSong=null;
-  /* 先掃一遍全部的和弦，取最長的當欄寬 → 每一格都一樣寬，小節線才會上下對齊 */
-  const _tlPer=tlBarsPerRow();
-  const _tlRows=sects.map(s=>chordSummaryCells(s,_tlPer));
-  let _tlW=TL_COLW_MIN; _tlRows.forEach(rs=>{ const w=tlColW(rs); if(w>_tlW)_tlW=w; });
+  /* 先掃一遍全部的和弦：最長的和弦決定欄寬，最多的格數決定一行放幾個小節 */
+  const _all=sects.map(s=>chordSummaryBars(s));
+  let _tlW=TL_COLW_MIN, _maxN=1;
+  _all.forEach(bs=>bs.forEach(b=>{ if(b.cells.length>_maxN)_maxN=b.cells.length;
+    b.cells.forEach(c=>{ const n=tlTok(c).length; if(n>_tlW)_tlW=n; }); }));
+  _tlW=Math.min(TL_COLW_MAX,_tlW);
+  const _hPer=tlBarsPerRow(_maxN);
+  /* 複製出去的純文字：一行別太長，貼到備忘錄才不會被折行折壞 */
+  const _barW=_maxN*_tlW+(_maxN-1);
+  let _tPer=TL_BARS_PER_ROW; while(_tPer>1 && 4+_tPer*(_barW+3)+1>80) _tPer--;
   sects.forEach((s,i)=>{
     let t='', h='';
-    const add=(txt,html)=>{ t+=txt; h+=(html!=null?html:esc(txt)); };
+    const add=(txt,html)=>{ t+=txt; h+=(html!=null?html:'<div class="tl-t">'+esc(txt.replace(/\n+$/,''))+'</div>'); };
     if(s._song && s._song!==_prevSong){ add(`🎵 ═══════ ${s._song} ═══════\n`); _prevSong=s._song; }
     add(`[${i+1}] ${s._song?'《'+s._song+'》 ':''}${s.name}  ${s.bars} Bar\n`);   // 段落顏色（黑／紅…）在文字清單用不到，不列
     /* 和弦：每行四個小節；樂器配置不列（要看配器請用混合／圖示譜） */
-    (_tlRows[i]||[]).forEach(r=>{ add('    '+tlRowText(r,_tlW)+'\n','    '+tlRowHtml(r,_tlW)+'\n'); });
+    tlGroup(_all[i]||[],_tPer).forEach(r=>{ t+='    '+tlRowText(r,_tlW)+'\n'; });        // 複製用的純文字
+    tlGroup(_all[i]||[],_hPer).forEach(r=>{ h+=tlRowHtml(r,_hPer); });                     // 畫面用的等寬小節
     if(s.notes)add(`  ⚑ ${s.notes}\n`);
     {const bars=Math.max(1,parseInt(s.bars)||1); for(let b=0;b<bars;b++){const gid=getBarGoto(s,b,bars); if(gid){const gt=sects.find(x=>x.id===gid); if(gt)add(`  ▶ 小節${b+1} 接續到：${gt.name}\n`);}}}
     blocks.push({text:t.replace(/\n+$/,''), html:h.replace(/\n+$/,'')});
   });
   const el=document.getElementById('tlc');
   if(el){
-    el.innerHTML=esc(head)+blocks.map((b,i)=>(i>0?'<hr class="tl-sep">':'')+b.html).join('');
+    el.innerHTML='<div class="tl-t">'+esc(head)+'</div>'+blocks.map((b,i)=>(i>0?'<hr class="tl-sep">':'')+b.html).join('');
   }
   return head+blocks.map(b=>b.text).join('\n'+'─'.repeat(24)+'\n')+'\n';
 }
