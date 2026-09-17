@@ -566,6 +566,11 @@ body.svc-mode .svc-only{display:inline-flex!important;}
 .icon-toolbar .ic-sel{padding:0 0.5em;line-height:1;}
 .icon-toolbar .key-step{height:1.85rem;box-sizing:border-box;padding:0 0.4em;border-radius:0.45em;}
 .icon-toolbar .key-step button{width:1.45rem;height:1.45rem;}
+.view-print .key-step{height:1.85rem;box-sizing:border-box;padding:0 0.4em;border-radius:0.45em;}
+.view-print .key-step button{width:1.45rem;height:1.45rem;}
+body.mode-phone .view-print .key-step{height:1.7rem;padding:0 0.3em;}
+body.mode-phone .view-print .key-step>label{font-size:0.62rem;}
+body.mode-phone .view-print .key-step button{width:1.25rem;height:1.25rem;}
 .icon-toolbar .ic-navbtn{height:1.85rem;width:1.85rem;box-sizing:border-box;font-size:1rem;border-radius:0.45em;}   /* 混合頁換頁 ‹ › 也對齊統一高度 */
 .clear-btn:hover{border-color:#d4564a;color:#d4564a;}
 .clear-btn.on{background:var(--accent);color:#0d0d0d;border-color:var(--accent);}
@@ -885,7 +890,7 @@ body.mode-phone .tl{font-size:0.78em;padding:1em 1.1em;}
 .tl .tl-bar{position:relative;display:flex;align-items:center;min-width:0;}
 .tl .tl-bl{flex:none;font-weight:400;opacity:.75;padding:0 .3em;}
 .tl .tl-cells{flex:1;min-width:0;display:grid;align-items:center;}
-.tl .tl-cell{min-width:0;text-align:center;white-space:nowrap;}
+.tl .tl-cell{min-width:0;display:flex;align-items:center;justify-content:center;white-space:nowrap;}   /* flex 置中：字比格子寬時左右均匀溢出，不會全溢到右邊 */
 .tl .tl-cells.n6{font-size:0.9em;}
 .tl .tl-cells.n8{font-size:0.82em;}
 .tl .tl-cells.n12{font-size:0.7em;}
@@ -898,10 +903,13 @@ body.mode-phone .tl{font-size:0.78em;padding:1em 1.1em;}
 .tl .tl-c{display:inline-block;line-height:1.1;}
 .tl .tl-c.l3{font-size:0.94em;}
 .tl .tl-c.l4{font-size:0.86em;}
-.tl .tl-c.l5{font-size:0.78em;}
-.tl .tl-c.l6{font-size:0.7em;}
-.tl .tl-off1{vertical-align:0.45em;font-size:0.92em;color:var(--text2);}   /* 八分的反拍（&） */
-.tl .tl-off2{vertical-align:0.85em;font-size:0.86em;color:var(--text3);}   /* 十六分的細分位置 */
+.tl .tl-c.l5{font-size:0.76em;}
+.tl .tl-c.l6{font-size:0.67em;}
+.tl .tl-c.l7{font-size:0.59em;}
+.tl .tl-c.l8{font-size:0.52em;}
+.tl .tl-c.l9{font-size:0.46em;}
+.tl .tl-off1{position:relative;bottom:0.45em;font-size:0.92em;color:var(--text2);}   /* 八分的反拍（&） */
+.tl .tl-off2{position:relative;bottom:0.85em;font-size:0.86em;color:var(--text3);}   /* 十六分的細分位置 */
 .tl .tl-u1{border-bottom:1px solid currentColor;}
 .tl .tl-u2{border-bottom:1px solid currentColor;box-shadow:0 3px 0 -1px currentColor;}
 .tl .tl-tie{color:var(--accent);}   /* 連結線的頭尾括號 */
@@ -1172,6 +1180,13 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   body.print-mix #vp-mix{display:block!important;}
   body.print-mixp #vp-mixp{display:block!important;}
   body.print-staff #vp-staff{display:block!important;}
+  /* 文字清單：白底黑字輸出，每一段儘量不跨頁切斷 */
+  body.print-text #vp-text{display:block!important;}
+  body.print-text .tl{background:#fff!important;border:none!important;color:#111!important;line-height:1.9!important;}
+  body.print-text .tl .tl-sep{border-top:1px solid #bbb!important;}
+  body.print-text .tl .tl-blk{page-break-inside:avoid;break-inside:avoid;}
+  body.print-text .tl .tl-off1,body.print-text .tl .tl-off2,body.print-text .tl .tl-dot{color:#444!important;opacity:1!important;}
+  body.print-text .tl .tl-tie{color:#b8860b!important;}
   body.print-staff .ccard{background:#fff!important;page-break-inside:avoid!important;break-inside:avoid!important;-webkit-column-break-inside:avoid!important;border-width:2px;margin-bottom:6px;}
   body.print-staff .cbar2{background:#fff!important;border-top-color:#999!important;border-bottom-color:#999!important;border-left-color:transparent!important;border-right-color:#333!important;}
   body.print-staff .staffsvg{--staffline:#333;}
@@ -1428,8 +1443,8 @@ body.gated>*:not(#gate){filter:grayscale(.9) opacity(.32)!important;pointer-even
         <span id="font-size-label">13</span>
         <button class="fbtn" onclick="bumpFont(2)" title="放大檢視字級">＋</button>
       </div>
-      <div class="pill"><label>男</label><input id="s-mkey" value="" placeholder="—" oninput="schedRender()" style="width:30px"></div>
-      <div class="pill"><label>女</label><input id="s-fkey" value="" placeholder="—" oninput="schedRender()" style="width:30px"></div>
+      <div class="pill"><label>男</label><input id="s-mkey" value="" placeholder="—" oninput="keyEdited('m')" style="width:30px"></div>
+      <div class="pill"><label>女</label><input id="s-fkey" value="" placeholder="—" oninput="keyEdited('f')" style="width:30px"></div>
       
       
     </div>
@@ -1562,9 +1577,7 @@ body.gated>*:not(#gate){filter:grayscale(.9) opacity(.32)!important;pointer-even
 
     <!-- TEXT VIEW -->
     <div id="vp-text" style="display:none">
-      <div style="display:flex;justify-content:flex-end;margin-bottom:8px">
-        <button class="btn" onclick="copyTL(this)">複製全部</button>
-      </div>
+      <div class="view-print"><button class="btn btna" onclick="printView('text')">🖨 列印 / 存 PDF</button><label class="ic-hint">顯示 <select class="ic-sel" id="text-disp" onchange="setChordDisp(this.value)"><option value="num">級數</option><option value="male">和弦名(男Key)</option><option value="female">和弦名(女Key)</option></select></label><span class="key-step" title="半音微調 Key"><label>微調Key</label><button onclick="transposeKey(1)" title="升半音">▲</button><b class="keystep-lbl">—</b><button onclick="transposeKey(-1)" title="降半音">▼</button></span><button class="btn" onclick="copyTL(this)">複製全部</button></div>
       <div class="tl" id="tlc"></div>
     </div>
 
@@ -1632,6 +1645,23 @@ body.gated>*:not(#gate){filter:grayscale(.9) opacity(.32)!important;pointer-even
     <div class="cl-head"><span>📝 更新日誌 · Arranger 理譜人</span><button class="btn" onclick="hideChangelog()">✕</button></div>
     <div class="cl-body">
       <p class="cl-ver">開發時間軸：2026-06-17 ～ 2026-08-30（依使用回饋持續優化）</p>
+
+      <h4>上一步／下一步：段落裡的<b>任何</b>調整都收進來了 <span class="cl-date">2026-09-17</span></h4>
+      <ul><li>以前只有「格子裡的和弦／音」有記步數，現在改成<b>自動偵測變動</b>，段落裡改什麼都回得來</li>
+      <li>包含：<b>全曲拍號（4/4 ↔ 3/4…）</b>、每小節拍號、本小節分割（♩♪♬）、重複 ×2、接續到哪一段、小節數、每排小節數、段落名稱與顏色、樂器配置、備註、混合頁每小節的譜式…</li>
+      <li>同一個格子連續打字一樣只算一步；別頁已經還原過的步數會自動跳過，不會按了沒反應</li>
+      <li>和弦譜、音符譜、鍵盤、段落流程圖四組↑↓依然各自獨立，但四組都含段落層級的調整</li></ul>
+
+      <h4>修正：改男／女 Key 時，用「音名」記的譜沒有跟著轉調 <span class="cl-date">2026-09-17</span></h4>
+      <ul><li>以前男 Key 既是「原始 Key」也是「顯示 Key」，所以譜裡如果存的是和弦名（C、Am…），改 Key 時一轉一回又變回原樣，<b>看起來就像沒反應</b></li>
+      <li>現在改 Key（或按微調Key ▲▼）時，會<b>先依舊的 Key 把音名和弦固定成級數</b>，之後換到任何 Key 都會正確移調；和弦譜、音符譜、混合、文字清單全部同步，可用「上一步」還原</li>
+      <li>聚會服事：清單裡每一首改拿<b>那首歌自己的原始 Key</b> 做基準，所以每首單獨改 Key 也會真的轉調</li>
+      <li>原本就存級數的譜（大多數情況）不受影響，行為完全不變</li></ul>
+
+      <h4>文字清單：加上列印、顯示級數／男女 Key、微調 Key <span class="cl-date">2026-09-17</span></h4>
+      <ul><li>文字清單頁面上方新增一排功能鈕：<b>🖨 列印 / 存 PDF</b>、<b>顯示（級數 / 和弦名男Key / 和弦名女Key）</b>、<b>微調Key ▲▼</b>、複製全部</li>
+      <li>文字清單的和弦現在跟和弦譜一樣會換算：選男／女 Key 就顯示和弦名，按 ▲▼ 半音升降也會跟著變</li>
+      <li>列印：白底黑字、以 A4 內容寬度排版，每一段儘量不跨頁切斷</li></ul>
 
       <h4>文字清單：小節線完全對齊、<code>12/3</code> 寫成 <code>1add2/3</code> <span class="cl-date">2026-09-16</span></h4>
       <ul><li>和弦行改成<b>每一個小節各佔一欄</b>（等寬），不管這一小節是 4 格、8 格還是 16 格，<b>小節線永遠在同一個位置</b>，段落跟段落之間也對得齊</li>
@@ -3329,6 +3359,7 @@ function applyProjectData(data){
   if(_us){ const v=data.meta?.usage||''; _us.dataset.val=v; _us.value=v; renderUsageSelect(); }
   document.getElementById('s-mkey').value=data.meta?.mkey||'';
   document.getElementById('s-fkey').value=data.meta?.fkey||'';
+  syncKeyPrev();                     // 載入新譜：基準 Key 重新認定，不算成「改 Key」
   if(data.meta?.fontSize) setFontSize(data.meta.fontSize);
   customIns=Array.isArray(data.meta&&data.meta.customIns)?data.meta.customIns:[];
   rebuildINS();
@@ -3339,7 +3370,9 @@ function applyProjectData(data){
   if(typeof refreshSvcMode==='function') refreshSvcMode();   /* 有歌名→顯示聚會專屬選項 */
   if(_locked && typeof toggleLock==='function') toggleLock();  /* 載入新譜自動解鎖，避免配器等編輯被鎖住而以為失效 */
   /* 換譜就清空上一步／下一步：新譜的段落 id 會重新編號，留著舊步驟會把別首歌的內容蓋進來 */
-  try{ _segUndo.length=0; _segRedo.length=0; _segLastTag=null; _chUndo.length=0; _chRedo.length=0; _staffUndo.length=0; _staffRedo.length=0;
+  try{ _segUndo.length=0; _segRedo.length=0; _segLastTag=null; _chUndo.length=0; _chRedo.length=0;
+       _ntUndo.length=0; _ntRedo.length=0; _staffUndo.length=0; _staffRedo.length=0;
+       histSync();                       // 新譜的狀態當成基準，載入本身不算一步
        updateSegUndoBtns(); updateChordUndoBtns(); updateNtUndoBtns(); updateStaffUndoBtns(); }catch(e){}
   return true;
 }
@@ -4006,6 +4039,7 @@ async function startService(){
       c._song=r.title||('歌'+(si+1));   // 每段標記所屬歌名，標題列顯示，避免翻頁搞混
       c._dispMode=it.mode||'num';       // 每首獨立調性顯示（級數/男/女）
       c._dispKey=(it.mode==='num')?'':(it.key||'');   // 每首獨立 Key
+      c._baseKey=(r.data.meta&&(r.data.meta.mkey||r.data.meta.fkey))||'';   // 那首歌自己的原始 Key（音名→級數的基準）
       sects.push(c);
     });
   });
@@ -4055,6 +4089,7 @@ async function cloudDelete(id,btn){
 }
 /* auto-save: silently keep a backup on every change */
 function autoSave(){
+  try{ histCommit(); }catch(e){}                 // 每次存檔前先把「變動」記進上一步
   try{localStorage.setItem('arranger_project',JSON.stringify(getProjectData()));}catch(e){}
 }
 /* ── 對外可讀的完整 JSON：附規格說明、色碼、排版設定，以及已解析好的和弦（級數＋男/女Key 實際和弦名）
@@ -4572,11 +4607,11 @@ function cardNoteHtml(s){
   return `<div class="ccard-note note-ed note-add" data-sid="${s.id}" onclick="noteEdit(this,${s.id})" title="點一下新增備註">＋ 備註</div>`;
 }
 let _noteEd=null;   // {id, el, ta, orig, stack, snap}
-function notePushHistory(){
-  if(currentView==='staff'){ staffPushHistory(); updateStaffUndoBtns(); return _staffUndo; }
-  if(currentView==='seg'){ segPushHistory(); return _segUndo; }
-  if(currentView==='note'){ ntPushHistory(); return _ntUndo; }
-  chordPushHistory(); return _chUndo;
+function notePushHistory(){   /* 回傳目前這一頁的堆疊（步數已由 autoSave 自動記下） */
+  if(currentView==='staff')return _staffUndo;
+  if(currentView==='seg')return _segUndo;
+  if(currentView==='note')return _ntUndo;
+  return _chUndo;
 }
 function noteGrow(ta){ ta.style.height='auto'; ta.style.height=ta.scrollHeight+'px'; }
 function noteEdit(el,id){
@@ -4594,8 +4629,8 @@ function noteEdit(el,id){
   const d={id,el,ta,orig,stack:null,snap:null}; _noteEd=d;
   ta.addEventListener('input',()=>{
     const s2=sects.find(x=>x.id===d.id); if(!s2)return;
-    if(!d.stack){ d.stack=notePushHistory(); d.snap=d.stack[d.stack.length-1]; }
-    s2.notes=ta.value; autoSave(); noteGrow(ta);
+    s2.notes=ta.value; autoSave(); noteGrow(ta);                        // autoSave 里面會自動記一步
+    if(!d.stack){ d.stack=notePushHistory(); d.snap=d.stack[d.stack.length-1]; }   // 記住剛剛那一步，改回原樣時好拿掉
   });
   ta.addEventListener('keydown',e=>{
     if(e.isComposing||e.keyCode===229)return;           // 注音／假名組字中的 Enter 不算完成
@@ -4839,7 +4874,7 @@ async function printView(name){
   if(askable)_printMaxi=true;   // 輸出一律採極大化樣式
   forceDesktopForPrint();   // 跨平台一致：以電腦版規格輸出
   window._printMode=true;   /* 收合沒用到的八分/十六分空格 */
-  if(name==='icon')renderIcon(); else if(name==='note')renderNote(); else if(name==='chord')renderChord(); else if(name==='mix')renderMix(); else if(name==='mixp')renderMixP(); else if(name==='staff')renderStaff();
+  if(name==='icon')renderIcon(); else if(name==='note')renderNote(); else if(name==='chord')renderChord(); else if(name==='mix')renderMix(); else if(name==='mixp')renderMixP(); else if(name==='staff')renderStaff(); else if(name==='text'){ const _t=document.getElementById('tlc'); if(_t){ _t.style.width='700px'; _t.style.fontSize='10.5px'; } buildTL(); }
   if(document.fonts&&document.fonts.ready){ try{ await document.fonts.ready; }catch(e){} }
   const cls='print-'+name;
   const maxi=askable&&_printMaxi;
@@ -5492,6 +5527,7 @@ function transposeKey(dir){
   semi=(((semi+dir)%12)+12)%12;
   const flat=/b/.test(String(el.value));   // 維持原本的升/降記號偏好，預設用升記號
   el.value=(flat?NOTE_FLAT:NOTE_SHARP)[semi];
+  keyBaseGuard();                      // 升降半音前先把音名和弦固定成級數，譜才會真的跟著移調
   schedRender(); updateKeyStepLabels();
 }
 function updateKeyStepLabels(){
@@ -5501,7 +5537,7 @@ function updateKeyStepLabels(){
   else { txt=gv('s-mkey')||gv('s-fkey')||'—'; sym=(gv('s-mkey')||!gv('s-fkey'))?Lf('男','M','男','남'):Lf('女','F','女','여'); }
   document.querySelectorAll('.keystep-lbl').forEach(e=>e.textContent=sym+' '+txt);
 }
-function syncDispSelects(){ ['chord-disp','note-disp','mix-disp','mixp-disp'].forEach(id=>{const s=document.getElementById(id);if(s)s.value=chordDisp;}); }
+function syncDispSelects(){ ['chord-disp','note-disp','mix-disp','mixp-disp','staff-disp','text-disp'].forEach(id=>{const s=document.getElementById(id);if(s)s.value=chordDisp;}); }
 function dispKeyName(){ return chordDisp==='male'?gv('s-mkey'):chordDisp==='female'?gv('s-fkey'):''; }
 const DEG_SEMI={1:0,2:2,3:4,4:5,5:7,6:9,7:11};
 const NOTE_SHARP=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
@@ -5598,10 +5634,56 @@ function askEnharmonic(tok){
 }
 /* 譜的原始 Key（男 Key 優先，其次女 Key）供音名→級數換算的基準 */
 function baseKeySemi(s){
+  if(s&&s._baseKey){ const bk=keyRootSemi(s._baseKey); if(bk!=null)return bk; }   // 聚會服事：用每首歌自己的原始 Key，換 Key 才會真的移調
   const mk=(s&&s._dispMode)?(s._dispMode==='female'?'':s._dispKey):gv('s-mkey');
   const fk=(s&&s._dispMode)?(s._dispMode==='female'?s._dispKey:''):gv('s-fkey');
   let k=keyRootSemi(mk); if(k==null)k=keyRootSemi(fk); return k;
 }
+/* 改 Key 之前：把譜裡用「音名」記的和弦，依「舊的基準 Key」先轉成級數，
+   之後换 Key 才會跟著移調（不然基準 Key 會跟著顯示 Key 一起變，字面上看起來就像沒改） */
+function chordsToDegrees(keyName){
+  const keySemi=keyRootSemi(keyName);
+  if(keySemi==null||!Array.isArray(sects))return false;
+  let hit=false;
+  const conv=t=>{ const v=String(t||'').trim(); if(!v)return t;
+    if(/[\s()]/.test(v)) return v.replace(/[^\s()]+/g,x=>conv(x));
+    const o=chordToNum(v,keySemi); if(o!==v)hit=true; return o; };
+  /* noteToDeg() 會去讀目前輸入框的 Key 字母決定拼法，
+     所以轉換期間先把輸入框改回舊的基準 Key，轉完再還原 */
+  const mk=document.getElementById('s-mkey'), fk=document.getElementById('s-fkey');
+  const om=mk?mk.value:'', of=fk?fk.value:'';
+  if(mk)mk.value=keyName; if(fk)fk.value='';
+  try{
+    sects.forEach(sec=>{
+      if(Array.isArray(sec.chords)) sec.chords=sec.chords.map(r=>{
+        if(Array.isArray(r)) return r.map(v=>(v&&typeof v==='object')?Object.assign({},v,{c:conv(v.c)}):conv(v));
+        return (typeof r==='string')?conv(r):r; });
+      if(Array.isArray(sec.nt)) sec.nt.forEach(box=>{ if(!Array.isArray(box))return;
+        box.forEach(o=>{ if(!o||typeof o!=='object')return;
+          if(typeof o.c==='string') o.c=conv(o.c);
+          if(Array.isArray(o.s)) o.s=o.s.map(v=>(typeof v==='string'&&v!=='r')?conv(v):v); }); });
+    });
+  } finally { if(mk)mk.value=om; if(fk)fk.value=of; }
+  return hit;
+}
+/* 記住上一個男／女 Key，才知道「舊的基準 Key」是什麼 */
+let _keyPrev={m:'',f:''};
+function syncKeyPrev(){ try{ _keyPrev.m=gv('s-mkey'); _keyPrev.f=gv('s-fkey'); }catch(e){} }
+/* 基準 Key（男優先、其次女）要被改掉之前，先把音名和弦固定成級數；
+   回傳是否真的改動了譜的內容 */
+function keyBaseGuard(){
+  /* 聚會服事：每首歌有自己的原始 Key（_baseKey），不能拿全域 Key 去轉 */
+  if(Array.isArray(sects)&&sects.some(x=>x&&x._dispMode)){ syncKeyPrev(); return false; }
+  const oldBase=_keyPrev.m||_keyPrev.f, newBase=gv('s-mkey')||gv('s-fkey');
+  let done=false;
+  if(oldBase && oldBase!==newBase){
+    if(keyRootSemi(oldBase)!=null){ try{ chordPushHistory(); ntPushHistory(); }catch(e){}
+      done=chordsToDegrees(oldBase); }
+  }
+  syncKeyPrev();
+  return done;
+}
+function keyEdited(w){ keyBaseGuard(); schedRender(); }
 /* 任何 token → 級數 token（音名用譜原始 Key 轉；已是級數/特殊記號原樣）。轉換失敗一律保留原符號。 */
 function normToNum(tok,s){ const ks=baseKeySemi(s); return (ks==null)?tok:chordToNum(tok,ks); }
 /* 記號化簡：把音名字母後相鄰的升降記號相抵（D#＋b→D、E#＋b→E）；淨值±1保留單一記號 */
@@ -6235,13 +6317,32 @@ function tlNorm(t){
   const sp=splitChordDisplay(t); if(!sp.suf)return t;
   return sp.root+String(sp.suf).replace(/sus4/g,'sus').replace(/^2$/,'add2')+(sp.bass||'');
 }
+/* 文字清單的和弦顯示：跟和弦譜畫面同一套規則（級數 ↔ 男／女 Key 和弦名），
+   所以上方「顯示」選單跟「微調Key」在這一頁也會生效 */
+function tlChordText(t,s){
+  t=String(t||'').trim(); if(!t||t==='·'||t==='.')return t;
+  if(t==='x'||t==='X')return '✕';
+  if(/[\s()]/.test(t)) return t.replace(/[^\s()]+/g,x=>tlChordText(x,s));
+  try{
+    const mode=(s&&s._dispMode)?s._dispMode:chordDisp;
+    const keyName=(s&&s._dispMode)?(s._dispKey||''):dispKeyName();
+    const keySemi=(mode==='num')?null:keyRootSemi(keyName);
+    const pf=preferFlatForKey(keyName);
+    const _NA=normAccPos(t), canon=normToNum(_NA,s);
+    let disp;
+    if(mode==='num') disp=canon;
+    else if(/^(Cb|Fb|B#|E#)/.test(_NA) && keySemi===baseKeySemi(s)) disp=foldChordAcc(_NA);
+    else disp=foldChordAcc(convChord(canon,keySemi,pf));
+    return tlNorm(disp);
+  }catch(e){ return tlNorm(t); }
+}
 /* 文字清單用：把每個小節的格子拆出來（含分割與正／反拍資訊），純文字與畫面兩種呈現共用 */
 function chordSummaryBars(s){
   const bars=Math.max(1,parseInt(s.bars)||1);
   let any=false; const arr=[];
   for(let i=0;i<bars;i++){
     const fac=subdivFactor(s,i), cn=cellsForBar(s,i), pb=getBeatData(s,i,cn), cells=[];
-    for(let b=0;b<cn;b++){ const v=tlNorm(String(pb[b]||'').trim()); if(v)any=true;
+    for(let b=0;b<cn;b++){ const v=tlChordText(String(pb[b]||'').trim(),s); if(v)any=true;
       /* off：0＝正拍、1＝八分的反拍（&）、2＝十六分的細分位置，畫面上抬的高度不同 */
       const m=(fac>1)?(b%fac):0;
       const fine=Math.floor(b/fac)*4+m*(4/fac);                  // 固定十六分格點：符號（連結線）就存在這個位置
@@ -6278,28 +6379,34 @@ function tlRowText(row,w){
 }
 /* 畫面用：每個小節佔一個 grid 欄，小節線完全對齊；格子多或和弦長的小節，字自動縮小不擠到小節線。
    八分加一條底線、十六分加兩條（簡譜寫法）；反拍的格子往上抬一點，一眼看得出正拍／反拍 */
-function tlRowHtml(row,per){
+function tlRowHtml(row,per,m){
   const u=f=>f===2?' tl-u1':f===4?' tl-u2':'';
   const last=row.bars.length-1;
   const body=row.bars.map((b,bi)=>{
     const cn=Math.max(1,b.cells.length);
-    const nc=cn>=16?' n16':cn>=12?' n12':cn>=8?' n8':cn>=6?' n6':'';
-    const cells=b.cells.map(c=>{
-      const t=c.tok, n=t.length;
-      const lc=n>=6?' l6':n>=5?' l5':n>=4?' l4':n>=3?' l3':'';
+    const nc=m?'':(cn>=16?' n16':cn>=12?' n12':cn>=8?' n8':cn>=6?' n6':'');   // 量不到寬度時才用 CSS 粗略縮字
+    const cell=m?((m.bar-m.bl*(bi===last?2:1))/cn):0;                          // 這一格實際可用的像素寬
+    const cw=m?m.chw*m.base:0;
+    const fits=(m&&cell>0)?tlFits(b.cells,cell,cw):null;
+    const cells=b.cells.map((c,ci)=>{
+      const t=c.tok, n=t.length+(c.tieS?1:0)+(c.tieE?1:0);
+      const lc=m?'':(n>=9?' l9':n>=8?' l8':n>=7?' l7':n>=6?' l6':n>=5?' l5':n>=4?' l4':n>=3?' l3':'');
+      let st='';
+      if(fits){ const fit=fits[ci];
+        if(fit<0.995) st=' style="font-size:'+Math.max(0.3,fit).toFixed(3)+'em"'; }
       const inner=(t==='·')?'<span class="tl-dot">·</span>'   // 空格子維持原樣的小點，不加底線也不抬高
         :(c.tieS?'<span class="tl-tie">(</span>':'')
          +`<span class="tl-c${lc}${c.off?' tl-off'+c.off:''}${u(b.fac)}">${esc(t)}</span>`
          +(c.tieE?'<span class="tl-tie">)</span>':'');
-      return '<span class="tl-cell">'+inner+'</span>';
+      return '<span class="tl-cell"'+((t==='·')?'':st)+'>'+inner+'</span>';
     }).join('');
     return '<div class="tl-bar"><b class="tl-bl">|</b>'
-      +`<div class="tl-cells${nc}" style="grid-template-columns:repeat(${cn},1fr)">${cells}</div>`
+      +`<div class="tl-cells${nc}" style="grid-template-columns:repeat(${cn},minmax(0,1fr))">${cells}</div>`
       +(b.meter?`<i class="tl-m">(${esc(b.meter)})</i>`:'')
       +(b.rep>1?`<i class="tl-r">×${b.rep}</i>`:'')
       +(bi===last?'<b class="tl-bl">|</b>':'')+'</div>';
   }).join('');
-  return `<div class="tl-row" style="grid-template-columns:repeat(${Math.max(1,per|0)||1},1fr)">${body}</div>`;
+  return `<div class="tl-row" style="grid-template-columns:repeat(${Math.max(1,per|0)||1},minmax(0,1fr))">${body}</div>`;
 }
 function chordSummaryLines(s,perRow){
   const rows=chordSummaryCells(s,perRow), w=tlColW(rows);
@@ -6836,6 +6943,9 @@ function ntClampEdit(){
 window.addEventListener('resize',()=>{ try{ if(currentView==='note'){ntBeams();drawNtTies();} }catch(e){} });
 window.addEventListener('beforeprint',()=>{ try{ ntBeams(); drawNtTies(); }catch(e){} });
 window.addEventListener('afterprint',()=>{ try{ ntBeams(); drawNtTies(); }catch(e){} });
+/* 文字清單：列印前暫時改成 A4 內容寬量測，印完還原 */
+window.addEventListener('afterprint',()=>{ const t=document.getElementById('tlc');
+  if(t&&(t.style.width||t.style.fontSize)){ t.style.width=''; t.style.fontSize=''; try{ if(currentView==='text')buildTL(); }catch(e){} } });
 
 /* ⇩ 載入：把和弦譜／混合頁的和弦轉成音符譜（一拍一個方塊，拍內用十六分格點） */
 async function ntLoadFromChords(){
@@ -7133,7 +7243,7 @@ function renderMixPInner(root){
   try{ updateChordUndoBtns(); }catch(e){}
 }
 /* 小節控制鈕（分割/重複/拍號/接續/每排/控制項）統一重繪三種譜面，確保混合＋同步更新 */
-function renderCharts(){ renderChord(); renderNote(); renderMix(); renderMixP(); if(currentView==='staff')renderStaff(); try{updateChordUndoBtns();updateNtUndoBtns();}catch(e){} }
+function renderCharts(){ renderChord(); renderNote(); renderMix(); renderMixP(); if(currentView==='staff')renderStaff(); if(currentView==='text')buildTL(); try{updateChordUndoBtns();updateNtUndoBtns();}catch(e){} }
 
 /* ── RENDER SIDEBAR ── */
 function renderSB(){
@@ -7316,29 +7426,34 @@ const STAFF_S=9, STAFF_YTOP=16;
 let _staffSel=null;
 /* 和弦譜／混合頁 上一步/下一步：快照和弦相關欄位（依段落 id 對應，不動 KB 數字與其他頁設定） */
 let _chUndo=[], _chRedo=[];
-const CHORD_HKEYS=['chords','subdiv','rep','meters','bargoto','goto','bars','barsPerRow','notes','chArp','chTie','mixv'];   // notes：段落底部備註在此頁編輯也能上一步；nt 由音符譜自己的一組管
+/* 段落層級的設定：名稱、顏色、小節數、每小節拍號／重複／接續、每排小節、細分、樂器配置、備註…
+   四個頁面的「上一步」都含這一組，所以段落裡任何調整（例如把某一小節改成 3/4）都回得來 */
+const SEC_HKEYS=['name','color','bars','barsPerRow','meters','rep','bargoto','goto','subdiv','layers','arr','notes','mixv'];
+const CHORD_HKEYS=SEC_HKEYS.concat(['chords','chArp','chTie']);
+function histTime(){ try{ return gv('s-time')||'4/4'; }catch(e){ return '4/4'; } }
+function histApplyTime(v){
+  if(v==null)return; const el=document.getElementById('s-time'); if(!el)return;
+  if((el.dataset.val||el.value)===v)return;
+  el.dataset.val=v; el.value=v; try{ syncTimeSelect(); }catch(e){}
+}
 function chordSnapshot(){
-  return JSON.stringify(sects.map(s=>{ const o={id:s.id}; CHORD_HKEYS.forEach(k=>{ o[k]=(s[k]!=null)?s[k]:null; }); return o; }));
+  return JSON.stringify([histTime(), sects.map(s=>{ const o={id:s.id}; CHORD_HKEYS.forEach(k=>{ o[k]=(s[k]!=null)?s[k]:null; }); return o; })]);
 }
-function chordPushHistory(){
-  try{ _chUndo.push(chordSnapshot()); }catch(e){ return; }
-  if(_chUndo.length>80)_chUndo.shift(); _chRedo.length=0; updateChordUndoBtns();
-}
+function chordPushHistory(){ try{ histCommit(); }catch(e){} }   // 改用自動偵測（見下方 histCommit），這裡只負責結算還沒記的變動
 function chordRestore(snap){
-  JSON.parse(snap).forEach(o=>{
+  const _a=JSON.parse(snap); histApplyTime(_a[0]);
+  _a[1].forEach(o=>{
     const s=sects.find(x=>x.id===o.id); if(!s)return;                 // 段落已被刪掉就略過，不會炸掉
     CHORD_HKEYS.forEach(k=>{ if(o[k]==null) delete s[k]; else s[k]=o[k]; });
   });
 }
 function chordUndo(){
-  if(!_chUndo.length)return;
-  _chRedo.push(chordSnapshot()); chordRestore(_chUndo.pop());
-  _barSel=null; _barInsert=null; autoSave(); renderSB(); renderCharts();
+  if(!histStep(_chUndo,_chRedo,chordSnapshot,chordRestore))return;
+  _barSel=null; _barInsert=null; autoSave(); renderSB(); renderCharts(); updateChordUndoBtns();
 }
 function chordRedo(){
-  if(!_chRedo.length)return;
-  _chUndo.push(chordSnapshot()); chordRestore(_chRedo.pop());
-  _barSel=null; _barInsert=null; autoSave(); renderSB(); renderCharts();
+  if(!histStep(_chRedo,_chUndo,chordSnapshot,chordRestore))return;
+  _barSel=null; _barInsert=null; autoSave(); renderSB(); renderCharts(); updateChordUndoBtns();
 }
 function updateChordUndoBtns(){
   document.querySelectorAll('.chord-undo').forEach(b=>b.disabled=!_chUndo.length);
@@ -7346,27 +7461,23 @@ function updateChordUndoBtns(){
 }
 /* 音符譜 上一步/下一步：只快照音符（與段落備註），和弦譜、KB 各自獨立不互相影響 */
 let _ntUndo=[], _ntRedo=[];
-const NT_HKEYS=['nt','ntArp','ntTie','notes'];
-function ntSnapshot(){ return JSON.stringify(sects.map(s=>{ const o={id:s.id}; NT_HKEYS.forEach(k=>{ o[k]=(s[k]!=null)?s[k]:null; }); return o; })); }
-function ntPushHistory(){
-  try{ _ntUndo.push(ntSnapshot()); }catch(e){ return; }
-  if(_ntUndo.length>80)_ntUndo.shift(); _ntRedo.length=0; updateNtUndoBtns();
-}
+const NT_HKEYS=SEC_HKEYS.concat(['nt','ntArp','ntTie']);
+function ntSnapshot(){ return JSON.stringify([histTime(), sects.map(s=>{ const o={id:s.id}; NT_HKEYS.forEach(k=>{ o[k]=(s[k]!=null)?s[k]:null; }); return o; })]); }
+function ntPushHistory(){ try{ histCommit(); }catch(e){} }
 function ntRestore(snap){
-  JSON.parse(snap).forEach(o=>{
+  const _a=JSON.parse(snap); histApplyTime(_a[0]);
+  _a[1].forEach(o=>{
     const s=sects.find(x=>x.id===o.id); if(!s)return;                 // 段落被刪掉就略過
     NT_HKEYS.forEach(k=>{ if(o[k]==null) delete s[k]; else s[k]=o[k]; });
   });
 }
 function ntUndo(){
-  if(!_ntUndo.length)return;
-  _ntRedo.push(ntSnapshot()); ntRestore(_ntUndo.pop());
-  _ntEd=null; _barSel=null; _barInsert=null; autoSave(); renderSB(); renderCharts();
+  if(!histStep(_ntUndo,_ntRedo,ntSnapshot,ntRestore))return;
+  _ntEd=null; _barSel=null; _barInsert=null; autoSave(); renderSB(); renderCharts(); updateNtUndoBtns();
 }
 function ntRedo(){
-  if(!_ntRedo.length)return;
-  _ntUndo.push(ntSnapshot()); ntRestore(_ntRedo.pop());
-  _ntEd=null; _barSel=null; _barInsert=null; autoSave(); renderSB(); renderCharts();
+  if(!histStep(_ntRedo,_ntUndo,ntSnapshot,ntRestore))return;
+  _ntEd=null; _barSel=null; _barInsert=null; autoSave(); renderSB(); renderCharts(); updateNtUndoBtns();
 }
 function updateNtUndoBtns(){
   document.querySelectorAll('.nt-undo').forEach(b=>b.disabled=!_ntUndo.length);
@@ -7375,13 +7486,13 @@ function updateNtUndoBtns(){
 /* 五線譜 上一步/下一步：快照整份 staff（不影響其他頁資料） */
 let _staffUndo=[], _staffRedo=[];
 const KB_KEYS=['kbUp','kbLo','kbUpD','kbLoD','kbUpSub','kbLoSub','kbUpArp','kbLoArp','kbUpTie','kbLoTie'];
-const KB_HKEYS=KB_KEYS.concat(['notes']);   // 快照多記段落備註（KB_KEYS 本身還給「全部清除」用，不能直接加）
+const KB_HKEYS=KB_KEYS.concat(SEC_HKEYS);   // 快照多記段落設定（KB_KEYS 本身還給「全部清除」用，不能直接加）
 /* 依段落 id 對應（段落流程圖可新增／刪除／排序，用順序對會蓋錯段） */
-function staffSnapshot(){ return JSON.stringify(sects.map(s=>{const o={id:s.id}; KB_HKEYS.forEach(k=>o[k]=s[k]!=null?s[k]:null); return o;})); }
-function staffPushHistory(){ _staffUndo.push(staffSnapshot()); if(_staffUndo.length>120)_staffUndo.shift(); _staffRedo.length=0; }
-function staffRestore(snap){ const arr=JSON.parse(snap); arr.forEach((o,i)=>{ const s=(o&&o.id!=null)?sects.find(x=>x.id===o.id):sects[i]; if(!s||!o)return; KB_HKEYS.forEach(k=>{ if(o[k]==null) delete s[k]; else s[k]=o[k]; }); }); }
-function staffUndo(){ if(!_staffUndo.length)return; _staffRedo.push(staffSnapshot()); staffRestore(_staffUndo.pop()); _staffSel=null; autoSave(); renderStaff(); }
-function staffRedo(){ if(!_staffRedo.length)return; _staffUndo.push(staffSnapshot()); staffRestore(_staffRedo.pop()); _staffSel=null; autoSave(); renderStaff(); }
+function staffSnapshot(){ return JSON.stringify([histTime(), sects.map(s=>{const o={id:s.id}; KB_HKEYS.forEach(k=>o[k]=s[k]!=null?s[k]:null); return o;})]); }
+function staffPushHistory(){ try{ histCommit(); }catch(e){} }
+function staffRestore(snap){ const _a=JSON.parse(snap); histApplyTime(_a[0]); const arr=_a[1]; arr.forEach((o,i)=>{ const s=(o&&o.id!=null)?sects.find(x=>x.id===o.id):sects[i]; if(!s||!o)return; KB_HKEYS.forEach(k=>{ if(o[k]==null) delete s[k]; else s[k]=o[k]; }); }); }
+function staffUndo(){ if(!histStep(_staffUndo,_staffRedo,staffSnapshot,staffRestore))return; _staffSel=null; autoSave(); renderSB(); renderStaff(); updateStaffUndoBtns(); }
+function staffRedo(){ if(!histStep(_staffRedo,_staffUndo,staffSnapshot,staffRestore))return; _staffSel=null; autoSave(); renderSB(); renderStaff(); updateStaffUndoBtns(); }
 function updateStaffUndoBtns(){
   document.querySelectorAll('.staff-undo').forEach(b=>b.disabled=!_staffUndo.length);
   document.querySelectorAll('.staff-redo').forEach(b=>b.disabled=!_staffRedo.length);
@@ -7391,35 +7502,92 @@ function updateStaffUndoBtns(){
    被刪掉的段落整段（含和弦／KB）放回來；小節數不同時該段以快照為準（以小節為單位的資料才對得上） */
 let _segUndo=[], _segRedo=[], _segLastTag=null;
 const SEG_HKEYS=['name','bars','color','notes','layers'];
-function segSnapshot(){ return JSON.stringify(sects); }
-function segPushHistory(tag){
-  if(tag&&tag===_segLastTag)return;                    // 同一個欄位連續打字只記一步
-  _segLastTag=tag||null;
-  try{ _segUndo.push(segSnapshot()); }catch(e){ return; }
-  if(_segUndo.length>60)_segUndo.shift(); _segRedo.length=0; updateSegUndoBtns();
-}
+function segSnapshot(){ return JSON.stringify([histTime(), sects]); }
+function segPushHistory(tag){ _segLastTag=tag||null; try{ histCommit(); }catch(e){} }
 document.addEventListener('focusin',()=>{ _segLastTag=null; },true);   // 換到別的欄位＝新的一步
 function segRestore(snap){
-  const list=JSON.parse(snap), cur=new Map(sects.map(s=>[s.id,s]));
-  sects=list.map(o=>{
-    const s=cur.get(o.id);
-    if(!s)return o;
-    if((parseInt(s.bars)||1)!==(parseInt(o.bars)||1))return o;
-    SEG_HKEYS.forEach(k=>{ if(o[k]==null) delete s[k]; else s[k]=o[k]; });
-    return s;
-  });
+  const _a=JSON.parse(snap); histApplyTime(_a[0]); const list=_a[1];
+  sects=list;                                        // 整份還原（含新增／刪除／排序與所有欄位）
   list.forEach(o=>{ if(o&&o.id>=nid)nid=o.id+1; });  // 段落 id 不重複使用
   if(_segOpen!=null&&!sects.some(s=>s.id===_segOpen))_segOpen=null;
 }
 function segUndo(){
-  if(!_segUndo.length)return;
-  _segRedo.push(segSnapshot()); segRestore(_segUndo.pop()); _segLastTag=null;
-  _barSel=null; _barInsert=null; autoSave(); renderSeg(); schedRender(); updateSegUndoBtns();
+  if(!histStep(_segUndo,_segRedo,segSnapshot,segRestore))return;
+  _segLastTag=null; _barSel=null; _barInsert=null; autoSave(); renderSB(); renderSeg(); schedRender(); updateSegUndoBtns();
 }
 function segRedo(){
-  if(!_segRedo.length)return;
-  _segUndo.push(segSnapshot()); segRestore(_segRedo.pop()); _segLastTag=null;
-  _barSel=null; _barInsert=null; autoSave(); renderSeg(); schedRender(); updateSegUndoBtns();
+  if(!histStep(_segRedo,_segUndo,segSnapshot,segRestore))return;
+  _segLastTag=null; _barSel=null; _barInsert=null; autoSave(); renderSB(); renderSeg(); schedRender(); updateSegUndoBtns();
+}
+/* ── 上一步／下一步：自動偵測變動 ──
+   不再依賴「每個修改的地方都要記得手動 push」（這是以前改拍號、接續等沒被記錄的原因）：
+   每次 autoSave() 時拿目前狀態跟上一次比對，有差異就把「變動前」的快照推進堆疊。
+   同一個輸入格連續打字只算一步（以 activeElement 為記號）。 */
+let _histOn=true, _histFull=null;
+const _histLast={}, _histRaw={}, _histTag={};
+/* 比對用的「歸一化」：空陣列、空字串、末尾的空值一律當沒有，
+   避免畫面初始化（例如 s.arr=[]）被當成使用者的一步 */
+function histNorm(v){
+  if(v==null)return null;
+  if(Array.isArray(v)){ const a=v.map(histNorm); while(a.length&&a[a.length-1]==null)a.pop(); return a.length?a:null; }
+  if(typeof v==='string')return v===''?null:v;
+  if(typeof v==='object'){ const o={}; let n=0; Object.keys(v).forEach(k=>{ const x=histNorm(v[k]); if(x!=null){o[k]=x;n++;} }); return n?o:null; }
+  return v;
+}
+function histKey(raw){ try{ return JSON.stringify(histNorm(JSON.parse(raw))); }catch(e){ return raw; } }
+function histFullKey(){ try{ return histKey(segSnapshot()); }catch(e){ return ''; } }
+function histBanks(){ return [
+  {k:'ch', u:_chUndo, r:_chRedo, snap:chordSnapshot, max:80,  upd:updateChordUndoBtns},
+  {k:'nt', u:_ntUndo, r:_ntRedo, snap:ntSnapshot,    max:80,  upd:updateNtUndoBtns},
+  {k:'kb', u:_staffUndo, r:_staffRedo, snap:staffSnapshot, max:120, upd:updateStaffUndoBtns},
+  {k:'seg',u:_segUndo, r:_segRedo, snap:segSnapshot,  max:60,  upd:updateSegUndoBtns}
+]; }
+function histTagNow(){
+  const a=document.activeElement;
+  if(!a||!/^(INPUT|TEXTAREA)$/.test(a.tagName))return null;    // 不是在打字（按鈕、下拉選單）→ 每一次都算一步
+  let d=''; try{ d=JSON.stringify(a.dataset||{}); }catch(e){}
+  return (a.id||'')+'#'+(a.className||'')+'#'+d;
+}
+/* 重新對齊基準（不記步數）：載入新譜、或剛按完上一步／下一步後呼叫 */
+function histSync(){
+  if(!Array.isArray(sects))return;
+  let full=null; try{ full=segSnapshot(); }catch(e){}
+  _histFull=full;
+  histBanks().forEach(h=>{ try{ const raw=(h.k==='seg'&&full!=null)?full:h.snap();
+    _histRaw[h.k]=raw; _histLast[h.k]=histKey(raw); }catch(e){} _histTag[h.k]=null; });
+}
+function histCommit(){
+  if(!_histOn||!Array.isArray(sects))return;
+  let full; try{ full=segSnapshot(); }catch(e){ return; }
+  if(full===_histFull)return;              // 整份都沒變 → 直接跳過（一般情況只花一次 stringify）
+  _histFull=full;
+  const tag=histTagNow();
+  histBanks().forEach(h=>{
+    let raw; try{ raw=(h.k==='seg')?full:h.snap(); }catch(e){ return; }
+    if(raw===_histRaw[h.k])return;                      // 這一頁的資料沒動 → 連歸一化都不用算
+    const key=histKey(raw), prevKey=_histLast[h.k], prevRaw=_histRaw[h.k];
+    if(prevKey==null||prevRaw==null){ _histLast[h.k]=key; _histRaw[h.k]=raw; return; }
+    if(key===prevKey){ _histRaw[h.k]=raw; return; }     // 只是空值初始化 → 不算一步
+    if(!(tag&&_histTag[h.k]===tag)){       // 換了編輯對象 → 新的一步
+      h.u.push(prevRaw); if(h.u.length>h.max)h.u.shift(); h.r.length=0;
+    }
+    _histTag[h.k]=tag; _histLast[h.k]=key; _histRaw[h.k]=raw;
+    try{ h.upd&&h.upd(); }catch(e){}
+  });
+}
+/* 還原：遇到「還原了也沒任何變化」的步數（別頁已經還過了）自動跳過 */
+function histStep(u,r,snap,restore){
+  let moved=false;
+  _histOn=false;
+  try{
+    while(u.length){
+      const before=histFullKey();
+      r.push(snap()); restore(u.pop());
+      if(histFullKey()!==before){ moved=true; break; }
+      r.pop();                            // 這一步還原後沒任何變化（別頁已經還過）→ 繼續往前
+    }
+  } finally { histSync(); _histOn=true; }
+  return moved;
 }
 function updateSegUndoBtns(){
   document.querySelectorAll('.seg-undo').forEach(b=>b.disabled=!_segUndo.length);
@@ -7897,11 +8065,63 @@ function renderAll(){renderCurrent();renderTimeSelects();updatePrintHead();rende
 /* ── TEXT LIST ── */
 const TL_BARS_PER_ROW=4;   // 文字清單每行顯示幾個小節
 function tlIsPhone(){ try{ return currentMode()==='phone'; }catch(e){ return false; } }
-/* 一個小節裡的格子越多，一行就放越少小節，每一格才有空間（不用把字縮到看不見） */
-function tlBarsPerRow(maxN){
-  const n=Math.max(1,parseInt(maxN)||4);
-  if(tlIsPhone()) return n>4?1:2;
-  return n>8?2:TL_BARS_PER_ROW;
+/* 量一次容器寬度，算出每一格能用幾像素（等寬字：一個字元 = chw × 字級） */
+let _tlChW=0, _tlBlEm=0, _tlCalib=false;
+function tlMetrics(per){
+  const tl=document.getElementById('tlc'); if(!tl)return null;
+  const cs=getComputedStyle(tl), base=parseFloat(cs.fontSize)||14;
+  const w=tl.clientWidth-(parseFloat(cs.paddingLeft)||0)-(parseFloat(cs.paddingRight)||0)-1.2*base;   // clientWidth 不含邊框
+  if(!(w>40))return null;                      // 頁面還沒顯示就量不到，改用 CSS 預設
+  if(!_tlChW){
+    const pr=document.createElement('span');
+    pr.style.cssText='position:absolute;visibility:hidden;white-space:pre;font-size:100px;';
+    pr.textContent='M'.repeat(20); tl.appendChild(pr);
+    const pw=pr.getBoundingClientRect().width; pr.remove();
+    _tlChW=pw?pw/2000:0.602;
+  }
+  return {base, chw:_tlChW, W:w, bar:w/Math.max(1,per), bl:base*(_tlBlEm||(_tlChW+0.6))};   // bl = 小節線「|」加左右內距
+}
+/* 第一次畫完後量一下小節線的真實寬度，不準就重畫一次（之後都用量到的值） */
+function tlCalibrate(){
+  const tl=document.getElementById('tlc'); if(!tl)return false;
+  const bl=tl.querySelector('.tl-bl'); if(!bl)return false;
+  const base=parseFloat(getComputedStyle(tl).fontSize)||14;
+  const v=bl.getBoundingClientRect().width/base;
+  if(!(v>0.2&&v<4))return false;
+  if(Math.abs(v-_tlBlEm)<0.01)return false;
+  _tlBlEm=v; return true;
+}
+/* 一個小節裡每一格要縮到原字級的幾倍：
+   基本可用半寬＝半格，旁邊用不到的空位可以借（字是置中的，所以取兩側較小者） */
+function tlFits(cells,cell,cw){
+  const cn=cells.length;
+  const nat=cells.map(c=>((c.tok==='·')?1:(c.tok.length+(c.tieS?1:0)+(c.tieE?1:0)))*cw);
+  const halfB=cell/2-cw*0.14, half=nat.map(w=>Math.min(w,cell*2)/2);
+  const freeOf=i=>(i<0||i>=cn)?cw*0.25:Math.max(0,halfB-half[i]);   // 小節線兩側只能借一點點
+  return nat.map((w,i)=>w>0?Math.min(1,(halfB+Math.min(freeOf(i-1),freeOf(i+1)))*2/w):1);
+}
+/* 一行放幾個小節：從實際寬度反推，選最多的一種（但字不能小於可讀下限） */
+function tlPickPer(all,maxN,maxLen){
+  const m=tlMetrics(1); if(!m)return tlBarsPerRow(maxN,maxLen);
+  const ph=tlIsPhone(), maxPer=ph?2:TL_BARS_PER_ROW, MINF=ph?0.55:0.5, cw=m.chw*m.base;
+  const bars=[]; (all||[]).forEach(bs=>bs.forEach(b=>bars.push(b)));
+  if(!bars.length)return maxPer;
+  for(let per=maxPer;per>1;per--){
+    let ok=true;
+    for(const b of bars){
+      const cn=Math.max(1,b.cells.length), cell=(m.W/per-m.bl)/cn;
+      if(cell<=0){ ok=false; break; }
+      if(tlFits(b.cells,cell,cw).some(f=>f<MINF)){ ok=false; break; }
+    }
+    if(ok)return per;
+  }
+  return 1;
+}
+/* 一個小節裡的格子越多、和弦越長，一行就放越少小節，每一格才有空間（不用把字縮到看不見） */
+function tlBarsPerRow(maxN,maxLen){
+  const n=Math.max(1,parseInt(maxN)||4), w=Math.max(1,parseInt(maxLen)||1), d=n*(w+1);
+  if(tlIsPhone()) return (n>=12||d>40)?1:2;
+  return d<=26?TL_BARS_PER_ROW:(d<=54?3:2);
 }
 /* 文字清單：畫面上段落之間用橫線分隔（<hr>）；複製出去的純文字則用一行「─」分隔 */
 function buildTL(){
@@ -7910,14 +8130,15 @@ function buildTL(){
   let _prevSong=null;
   /* 先掃一遍全部的和弦：最長的和弦決定欄寬，最多的格數決定一行放幾個小節 */
   const _all=sects.map(s=>chordSummaryBars(s));
-  let _tlW=TL_COLW_MIN, _maxN=1;
+  let _tlW=TL_COLW_MIN, _maxN=1, _maxLen=1;
   _all.forEach(bs=>bs.forEach(b=>{ if(b.cells.length>_maxN)_maxN=b.cells.length;
-    b.cells.forEach(c=>{ const n=tlTok(c).length; if(n>_tlW)_tlW=n; }); }));
+    b.cells.forEach(c=>{ const n=tlTok(c).length; if(n>_maxLen)_maxLen=n; if(n>_tlW)_tlW=n; }); }));
   _tlW=Math.min(TL_COLW_MAX,_tlW);
-  const _hPer=tlBarsPerRow(_maxN);
+  const _hPer=tlPickPer(_all,_maxN,_maxLen);
   /* 複製出去的純文字：一行別太長，貼到備忘錄才不會被折行折壞 */
   const _barW=_maxN*_tlW+(_maxN-1);
   let _tPer=TL_BARS_PER_ROW; while(_tPer>1 && 4+_tPer*(_barW+3)+1>80) _tPer--;
+  const _m=tlMetrics(_hPer);
   sects.forEach((s,i)=>{
     let t='', h='';
     const add=(txt,html)=>{ t+=txt; h+=(html!=null?html:'<div class="tl-t">'+esc(txt.replace(/\n+$/,''))+'</div>'); };
@@ -7925,14 +8146,15 @@ function buildTL(){
     add(`[${i+1}] ${s._song?'《'+s._song+'》 ':''}${s.name}  ${s.bars} Bar\n`);   // 段落顏色（黑／紅…）在文字清單用不到，不列
     /* 和弦：每行四個小節；樂器配置不列（要看配器請用混合／圖示譜） */
     tlGroup(_all[i]||[],_tPer).forEach(r=>{ t+='    '+tlRowText(r,_tlW)+'\n'; });        // 複製用的純文字
-    tlGroup(_all[i]||[],_hPer).forEach(r=>{ h+=tlRowHtml(r,_hPer); });                     // 畫面用的等寬小節
+    tlGroup(_all[i]||[],_hPer).forEach(r=>{ h+=tlRowHtml(r,_hPer,_m); });                     // 畫面用的等寬小節
     if(s.notes)add(`  ⚑ ${s.notes}\n`);
     {const bars=Math.max(1,parseInt(s.bars)||1); for(let b=0;b<bars;b++){const gid=getBarGoto(s,b,bars); if(gid){const gt=sects.find(x=>x.id===gid); if(gt)add(`  ▶ 小節${b+1} 接續到：${gt.name}\n`);}}}
     blocks.push({text:t.replace(/\n+$/,''), html:h.replace(/\n+$/,'')});
   });
   const el=document.getElementById('tlc');
   if(el){
-    el.innerHTML='<div class="tl-t">'+esc(head)+'</div>'+blocks.map((b,i)=>(i>0?'<hr class="tl-sep">':'')+b.html).join('');
+    el.innerHTML='<div class="tl-t">'+esc(head)+'</div>'+blocks.map((b,i)=>(i>0?'<hr class="tl-sep">':'')+'<div class="tl-blk">'+b.html+'</div>').join('');
+    if(!_tlCalib){ _tlCalib=true; if(_m&&tlCalibrate()){ const r=buildTL(); _tlCalib=false; return r; } _tlCalib=false; }
   }
   return head+blocks.map(b=>b.text).join('\n'+'─'.repeat(24)+'\n')+'\n';
 }
