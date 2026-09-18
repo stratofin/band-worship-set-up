@@ -817,6 +817,13 @@ body.chsym-on .cbeatcol{cursor:pointer;}
 .cl-row{display:flex;align-items:center;justify-content:space-between;gap:0.6em;padding:0.4em 0.5em;border:1px solid var(--border);border-radius:0.45em;margin-bottom:0.35em;}
 .cl-row.on{border-color:var(--accent);background:rgba(212,168,67,0.06);}
 .cl-stitle{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.cl-title{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+/* 歌名一行、用途與「最後更新時間」放第二行，窄螢幕才不會擠成一團 */
+.cl-rowmain{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:0.08em;}
+.cl-sub{display:flex;align-items:center;gap:0.5em;min-width:0;}
+.cl-usage{flex:0 0 auto;font-size:0.8em;color:var(--text2);}
+.cl-time{flex:0 0 auto;font-size:0.72em;color:var(--text3);white-space:nowrap;font-family:'Space Mono',monospace;letter-spacing:-.02em;}
+.cl-rowacts,.cl-sacts{flex:0 0 auto;}
 .cl-sacts{display:flex;gap:0.35em;flex:0 0 auto;}
 .cl-sacts .btn{font-size:0.78em;padding:0.25em 0.6em;}
 .cl-catsel{appearance:none;-webkit-appearance:none;-moz-appearance:none;cursor:pointer;}
@@ -1645,6 +1652,11 @@ body.gated>*:not(#gate){filter:grayscale(.9) opacity(.32)!important;pointer-even
     <div class="cl-head"><span>📝 更新日誌 · Arranger 理譜人</span><button class="btn" onclick="hideChangelog()">✕</button></div>
     <div class="cl-body">
       <p class="cl-ver">開發時間軸：2026-06-17 ～ 2026-08-30（依使用回饋持續優化）</p>
+
+      <h4>歌曲庫：歌名旁邊顯示最後更新時間 <span class="cl-date">2026-09-18</span></h4>
+      <ul><li>雲端歌庫與我的歌庫的每一首，都會在歌名下方顯示 <b>↻ 最後更新時間</b>，不用再猜自己到底有沒有存回去</li>
+      <li>今年的顯示「月/日 時:分」，去年以前會帶上年份；滑鼠停在上面可看到完整日期時間</li>
+      <li>列表改成「歌名一行、用途與時間第二行」，手機上長歌名不會把按鈕擠成兩排</li></ul>
 
       <h4>上一步／下一步：段落裡的<b>任何</b>調整都收進來了 <span class="cl-date">2026-09-17</span></h4>
       <ul><li>以前只有「格子裡的和弦／音」有記步數，現在改成<b>自動偵測變動</b>，段落裡改什麼都回得來</li>
@@ -3893,6 +3905,19 @@ function onUsageChange(el){
   }
   el.dataset.val=v; schedRender();
 }
+/* 歌庫列表：歌名後面附上最後更新時間（今年只顯示 月/日 時:分） */
+function clTime(v){
+  if(!v)return '';
+  const d=new Date(v); if(isNaN(d.getTime()))return '';
+  const p=n=>String(n).padStart(2,'0');
+  const y=d.getFullYear(), now=new Date().getFullYear();
+  return (y===now?'':y+'/')+p(d.getMonth()+1)+'/'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes());
+}
+function clTimeHtml(v){
+  const t=clTime(v); if(!t)return '';
+  let full=t; try{ full=new Date(v).toLocaleString(); }catch(e){}
+  return `<span class="cl-time" title="${esc(Lf('最後更新','Last updated','最終更新','마지막 업데이트'))}：${esc(full)}">↻ ${esc(t)}</span>`;
+}
 let _cloudCat='';   // '' = 全部 / 短歌 / 讚美 / 敬拜
 let _cloudSongs=[];
 function cloudCat(c,btn){ _cloudCat=c; if(btn){ document.querySelectorAll('#cl-cats .cl-cat').forEach(b=>b.classList.remove('on')); btn.classList.add('on'); } cloudList(); }
@@ -3904,7 +3929,7 @@ async function cloudList(){
   if(error){ box.innerHTML='讀取失敗：'+esc(error.message); return; }
   _cloudSongs=data||[];
   if(!_cloudSongs.length){ box.innerHTML='<div class="cl-empty">此分類目前沒有歌曲'+(_supaAdmin?'（管理員可設好「用途」後儲存）。':'。')+'</div>'; return; }
-  box.innerHTML=_cloudSongs.map(s=>`<div class="cl-row${s.id===_cloudId?' on':''}"><span class="cl-stitle">${esc(s.title||'未命名')}${s.usage?`<span class="cl-tag">${esc(s.usage)}</span>`:''}</span><span class="cl-sacts">${
+  box.innerHTML=_cloudSongs.map(s=>`<div class="cl-row${s.id===_cloudId?' on':''}"><span class="cl-rowmain"><span class="cl-stitle">${esc(s.title||'未命名')}${s.usage?`<span class="cl-tag">${esc(s.usage)}</span>`:''}</span>${clTimeHtml(s.updated_at)?`<span class="cl-sub">${clTimeHtml(s.updated_at)}</span>`:''}</span><span class="cl-sacts">${
     _serviceMode
       ? `<button class="btn" onclick="setlistAdd('${s.id}')"${_setlist.some(x=>x.id===s.id)?' disabled':''}>＋ 加入</button>`
       : `<button class="btn" onclick="cloudLoad('${s.id}')">載入</button>`
@@ -3915,9 +3940,9 @@ let myLib=[]; try{ myLib=JSON.parse(localStorage.getItem('arranger_mylib')||'[]'
 function saveMyLib(){ try{ localStorage.setItem('arranger_mylib',JSON.stringify(myLib)); }catch(e){ alert(Lf('本機空間不足，儲存失敗。','Out of local storage space.','ローカル容量が足りず保存できません。','로컬 저장 공간이 부족합니다.')); } }
 function myLibHtml(){
   const rows=myLib.length
-    ? myLib.map((r,i)=>`<div class="cl-row"><span class="cl-title">${esc(r.title||L('未命名'))}</span>`
-        +`<span class="cl-usage">${esc(r.usage||'')}</span>`
-        +`<span class="cl-rowacts">`
+    ? myLib.map((r,i)=>`<div class="cl-row"><span class="cl-rowmain"><span class="cl-title">${esc(r.title||L('未命名'))}</span>`
+        +((r.usage||r.updated)?`<span class="cl-sub"><span class="cl-usage">${esc(r.usage||'')}</span>${clTimeHtml(r.updated)}</span>`:'')
+        +`</span><span class="cl-rowacts">`
         +(_serviceMode?`<button class="btn" onclick="setlistAdd('${r.id}')"${_setlist.some(x=>x.id===r.id)?' disabled':''}>${L('＋ 加入')}</button>`
                       :`<button class="btn" onclick="myLibLoad('${r.id}')">${L('載入')}</button>`)
         +`<button class="btn" onclick="myLibDel('${r.id}')">${L('刪除')}</button></span></div>`).join('')
@@ -3936,9 +3961,9 @@ function myLibAdd(){
   const i=myLib.findIndex(r=>r.title===title);
   if(i>=0){
     if(!confirm(Lf('「'+title+'」已在歌庫裡，要覆蓋嗎？','"'+title+'" is already saved. Overwrite?','「'+title+'」はすでにあります。上書きしますか？','「'+title+'」이(가) 이미 있습니다. 덮어쓸까요?')))return;
-    myLib[i]={...myLib[i],title,usage:gv('s-usage')||'',data};
+    myLib[i]={...myLib[i],title,usage:gv('s-usage')||'',data,updated:new Date().toISOString()};
   } else {
-    myLib.push({id:'my'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),title,usage:gv('s-usage')||'',data});
+    myLib.push({id:'my'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),title,usage:gv('s-usage')||'',data,updated:new Date().toISOString()});
   }
   saveMyLib(); myLibRefresh();
 }
