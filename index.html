@@ -1682,6 +1682,11 @@ body.gated>*:not(#gate){filter:grayscale(.9) opacity(.32)!important;pointer-even
     <div class="cl-body">
       <p class="cl-ver">開發時間軸：2026-06-17 ～ 2026-08-30（依使用回饋持續優化）</p>
 
+      <h4>升降記號寫前面或後面都認（1/7b → D/C） <span class="cl-date">2026-09-22</span></h4>
+      <ul><li>級數的升降寫在後面也可以：<b>7b ＝ b7、4# ＝ #4</b>，根音跟「/低音」都適用（例如女 Key D 打 <code>1/7b</code> 會正確顯示 <b>D/C</b>）</li>
+      <li>音名的升降寫在前面也可以：<b>bE ＝ Eb、#f ＝ F#</b>（以前 bE 會變成 BE）</li>
+      <li>和弦譜、混合、音符譜、文字清單、轉調全部同一套規則；2m7b5 這類後綴裡的 b5 不受影響</li></ul>
+
       <h4>工具列「🗑 清除」：可以選要清哪一種，譜上先黃色標示 <span class="cl-date">2026-09-20</span></h4>
       <ul><li>和弦譜、音符譜、鍵盤、混合頁的「全部清除」改成<b>「🗑 清除」</b>：按下去從下方勾選要清的項目——
       <b>和弦、音符、鍵盤 KB、小節格式（分割／拍號／重複／接續／每排）、段落備註、樂器配置、整份段落</b>，可以複選</li>
@@ -5686,10 +5691,21 @@ function bassHtmlIn(bass){
 function normNoteCase(tok){
   return String(tok||'').split('/').map(p=>{
     if(/^\s*[#b]?[1-7]/.test(p)) return p;                                     // 級數：b7 / #4 / 3 → 不動
+    if(/^\s*[#b][A-Ga-g]/.test(p)) return p.replace(/^(\s*)([#b])([A-Ga-g])/, (m,sp,a,L)=>sp+a+L.toUpperCase());   // bE、bB、#f → 前綴升降＋音名（下一步搬到後面）
     return p.replace(/^(\s*)([#b]?)([a-g])/, (m,sp,a,L)=>sp+a+L.toUpperCase()); // c#m→C#m、bb→bB（下一步搬成 Bb）
   }).join('/');
 }
-function normAccPos(tok){ return normNoteCase(normSign(tok)).replace(/^([#b])([A-G])/, (m,a,L)=>L+a); }
+/* 升降記號寫在前面或後面都認：
+   音名一律放後面（bE→Eb）、級數一律放前面（7b→b7、4#→#4）；根音與「/低音」都適用。
+   級數後面緊接數字的（例如 7b5）不動，避免跟「降五音」這類後綴混淆 */
+function normAccPos(tok){
+  return normNoteCase(normSign(tok)).split('/').map((p,i)=>{
+    let q=p.replace(/^(\s*)([#b])([A-G])/, (m,sp,a,L)=>sp+L+a);
+    q=(i===0)?q.replace(/^(\s*)([1-7])([#b]+)(?![0-9])/, (m,sp,d,a)=>sp+a+d)
+             :q.replace(/^(\s*)([1-7])([#b]+)(\s*)$/, (m,sp,d,a,e)=>sp+a+d+e);
+    return q;
+  }).join('/');
+}
 function chordToNum(tok,keySemi){
   if(keySemi==null)return tok;
   tok=normAccPos(tok);                                                // #C / bE 也納入辨識
