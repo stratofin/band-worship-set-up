@@ -650,6 +650,8 @@ body.mode-phone .view-print .key-step button{width:1.25rem;height:1.25rem;}
 .acc{font-size:0.72em;vertical-align:0.62em;line-height:1;letter-spacing:-0.04em;margin:0 0 0 -0.1em;display:inline-block;}
 /* 只有「記號後面緊接短後綴」時才把後綴收到記號下方；B♭/D 這種後面接斜線的不受影響 */
 .acc + .bt-suf{margin-left:-0.34em;}
+.acc + .bt-bass,.acc + .bt-suf-up + .bt-bass{margin-left:0.1em;}
+.bt-bassn>.acc:first-child{margin-left:0.14em;margin-right:0.01em;}
 /* 轉位低音的記號：疊在低音音名正上方，不推開後面的字
    （容器 line-height:1 → 高度等於字身；bottom:100% 貼齊字身頂端，
      再用 margin-bottom 微調貼近程度，不受字級換算影響、也不會壓到字） */
@@ -763,6 +765,8 @@ body.mode-phone .nt-cell{padding:0 0.22em;}
 .nt-note.isrest .nt-r{align-items:center;}
 .nt-mt{display:inline-flex;align-items:center;justify-content:center;min-width:2.2em;height:1.6em;border:1px dashed var(--border2);border-radius:0.35em;color:var(--text3);font-size:0.8em;cursor:pointer;}
 .nt-mt:hover{border-color:var(--accent);color:var(--accent);}
+.nt-mt.nt-mtc{min-width:1.5em;height:1.3em;font-size:0.68em;opacity:0.55;}   /* 被長音蓋住的空方塊：縮小當編輯把手 */
+body.mode-phone .nt-mt.nt-mtc{min-width:1.05em;height:1.1em;font-size:0.58em;border-radius:0.3em;}
 body.mode-phone .nt-mt{min-width:1.5em;height:1.4em;font-size:0.7em;}   /* 手機：空方塊窄一點，小節內比較不會換行 */
 .nt-editbox{position:absolute;left:0;top:0;z-index:20;display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:center;gap:0.25em;width:max-content;padding:0.25em 0.3em;background:var(--bg2);border:1px solid var(--accent);border-radius:0.45em;box-shadow:0 4px 14px rgba(0,0,0,0.35);white-space:nowrap;cursor:default;}
 .nt-dsel{align-self:center;background:var(--bg3);border:1px solid var(--border2);color:var(--text2);border-radius:0.3em;font-family:inherit;font-size:0.62em;padding:0.1em 0.05em;cursor:pointer;max-width:11em;}
@@ -1681,6 +1685,16 @@ body.gated>*:not(#gate){filter:grayscale(.9) opacity(.32)!important;pointer-even
     <div class="cl-head"><span>📝 更新日誌 · Arranger 理譜人</span><button class="btn" onclick="hideChangelog()">✕</button></div>
     <div class="cl-body">
       <p class="cl-ver">開發時間軸：2026-06-17 ～ 2026-08-30（依使用回饋持續優化）</p>
+
+      <h4>音符譜：長音照拍點拆開畫，拍子一眼看得出來 <span class="cl-date">2026-09-25</span></h4>
+      <ul><li>從反拍開始、又長過一拍半的音，改成「先補到下一拍 ⌒ 再從拍點畫長音」。例：3 在第 1 拍、2 從 1& 唱到第 4 拍前 → 以前畫成 <b>八分 3、二分 2 ⌒ 八分</b>，現在畫成 <b>3 2 連成一拍的八分 ⌒ 二分（第 2–3 拍）</b>，第 4 拍再接 4</li>
+      <li>只改畫法，實際長度完全不變；附點八分、反拍四分、八分＋附點四分、3+3+2 這類常見切分維持原本寫法</li>
+      <li>被長音蓋住的空白 ＆ 方塊縮小成編輯把手，不再把長音擠在旁邊；列印時長音會落在正確的拍子位置</li></ul>
+
+      <h4>輸出統一升降位置：級數在左（♭7）、音名在右（E♭） <span class="cl-date">2026-09-25</span></h4>
+      <ul><li>不管輸入時升降寫在哪一邊，顯示與輸出一律照譜面慣例：<b>級數記號在左</b>（♭7、♯4、1/♭7、♭7m7），<b>和弦音名記號在右</b>（E♭、C♯、D/C♯）</li>
+      <li>「/低音」的升降不再疊在音名正上方，改成跟根音同一種寫法並排，和斜線之間留一點空隙不會黏在一起</li>
+      <li>和弦譜、混合、音符譜、鍵盤、文字清單、列印 / PDF 全部一致</li></ul>
 
       <h4>升降記號寫前面或後面都認（1/7b → D/C） <span class="cl-date">2026-09-22</span></h4>
       <ul><li>級數的升降寫在後面也可以：<b>7b ＝ b7、4# ＝ #4</b>，根音跟「/低音」都適用（例如女 Key D 打 <code>1/7b</code> 會正確顯示 <b>D/C</b>）</li>
@@ -5663,6 +5677,13 @@ function noteToDeg(note,keySemi){
 /* 輸入辨識：把樂譜符號 ♭/♯/♮ 正規化成 ASCII（資料一律存 b/#，JSON 與各項解析維持相容） */
 function normSign(tok){ return String(tok||'').replace(/♭/g,'b').replace(/♯/g,'#').replace(/♮/g,''); }
 /* 顯示：把 ASCII 的 b/# 換成真正的降/升記號（♭/♯），字體略小；大寫音名 B 不受影響 */
+/* 輸出一律把升降記號放在右邊（國際習慣）：b7→7b、#4→4#；根音與「/低音」都適用。
+   資料裡還是存 b7（換算用），這裡只管呈現 */
+function accRight(str){
+  return String(str||'').split('/').map((p,i)=>(i===0)
+    ? p.replace(/^(\s*)([#b]+)([1-7])/, (m,sp,a,d)=>sp+d+a)
+    : p.replace(/^(\s*)([#b]+)([1-7])(\s*)$/, (m,sp,a,d,e)=>sp+d+a+e)).join('/');
+}
 function accSym(str){ return String(str).replace(/#/g,'<span class="acc">♯</span>').replace(/b/g,'<span class="acc">♭</span>'); }
 /* 轉位低音（/C#、/3b…）：升降記號改疊在低音音名的正上方，橫向不佔位 */
 function accChar(a){ return String(a).replace(/#/g,'♯').replace(/b/g,'♭'); }
@@ -5680,8 +5701,9 @@ function bassHtmlIn(bass){
   if(!note)return '<span class="bt-sl">/</span>'+accSym(esc(t));
   /* 記號用絕對定位疊在正上方；DOM 順序照原本的寫法（音名在前 C♯、級數在後 ♯1），
      複製文字與螢幕閱讀器讀到的順序才正確 */
-  const accEl='<span class="acc acc-top">'+accChar(acc)+'</span>';
-  const inner=/^[1-7]$/.test(note) ? accEl+esc(note) : esc(note)+accEl;
+  const accEl='<span class="acc">'+accChar(acc)+'</span>';
+  const isDeg=/[1-7]/.test(note);
+  const inner=isDeg?(accEl+esc(note)):(esc(note)+accEl); /* 輸出慣例：級數記號在左（♭7），音名記號在右（C♯） */
   return '<span class="bt-sl">/</span><span class="bt-bassn">'+inner+'</span>'+accSym(esc(rest));
 }
 /* 把「前綴升降」搬到音名後：#C→C#、bE→Eb（開頭是 #/b 且接大寫音名才換；級數 b3/#4 不受影響） */
@@ -5825,7 +5847,7 @@ function renderBeatToken(tok,s){
     // 估算顯示寬度：疊上去的後綴不佔橫向空間；右上標的後綴仍要計入（約 0.6 倍）
     /* 升降記號改為上標，橫向只佔約半個字寬 → 寬度估算跟著調小，長和弦才不會被誤判成要縮字 */
     const accW=t2=>String(t2).replace(/[#b]/g,'').length+(String(t2).match(/[#b]/g)||[]).length*0.5;
-    const bassW=t2=>String(t2).replace(/[#b]/g,'').length;   // 低音的升降記號疊在正上方，不佔橫向
+    const bassW=t2=>String(t2).replace(/[#b]/g,'').length+(String(t2).match(/[#b]/g)||[]).length*0.5;   // 低音的升降記號放右上，約佔半個字
     const wide=upSuf ? accW(sp.root)+bassW(sp.bass)
                      : accW(sp.root)+bassW(sp.bass)+sufStr.length*0.6;
     const lc=wide>=4.4?' bt-xlong':wide>=2.8?' bt-long':'';
@@ -6909,7 +6931,23 @@ function ntSplit32(n){
   while(left>0&&out.length<3){ const hit=NT_SPLIT.find(o=>o[0]<=left); if(!hit)break; out.push(hit[1]); left-=hit[0]; }
   return out.length?out:['q'];
 }
-function ntUnits(list){
+/* 一拍有幾個三十二分刻度：6/8、9/8、12/8 以附點四分為一拍（12），其他以四分為一拍（8） */
+function ntBeatLen(s,bar){
+  const m=String((s&&barMeter(s,bar))||gv('s-time')||'4/4').match(/(\d+)\s*\/\s*(\d+)/);
+  return (m&&+m[2]===8&&+m[1]>3&&(+m[1])%3===0)?12:8;
+}
+/* 依拍點拆時值（只改畫法，總長度不變）：
+   從反拍開始、又長過一拍的音，先補到下一個拍點，再從拍點開始畫長音，中間用連結線接。
+   例：1& 開始、長 2.5 拍 → 八分（跟前一個八分連成一拍）⌒ 二分，讀譜時一眼看得出拍子在哪。
+   一拍半以內、本身就是單一時值的切分（附點八分、反拍的四分、八分＋附點四分、3+3+2）維持原本寫法，不拆。 */
+function ntBeatSplit(p,len,beat){
+  beat=beat||8; len=Math.max(1,Math.round(len));
+  const off=((p%beat)+beat)%beat;
+  const single=NT_SPLIT.some(o=>o[0]===len);                 // 本身就是一個標準時值（附點四分、四分…）
+  if(off&&len>beat&&!(single&&len<=beat*1.5)){ const r=beat-off; return ntSplit32(r).concat(ntSplit32(len-r)); }
+  return ntSplit32(len);
+}
+function ntUnits(list,beat){
   const raw=[], span=[]; let pos=0;              // pos＝從小節開頭算起的三十二分刻度；span＝每個方塊的範圍
   list.forEach((b,bi)=>{
     const p0=pos;
@@ -6933,11 +6971,15 @@ function ntUnits(list){
      自己選過時值的方塊（＋ 加的）維持使用者選的，不自動延長。 */
   const end=pos, real=raw.filter(u=>!u.empty);
   real.forEach((u,k)=>{
-    if(u.fix){ u.d=u.fix; return; }
+    if(u.fix){ u.d=u.fix;
+      const fl=NT_D32[u.fix]||8, bt=beat||8;
+      if(u.pos%bt&&fl>bt*1.5){ const parts=ntBeatSplit(u.pos,fl,bt); u.d=parts[0];   // 自選時值落在反拍又超過一拍：同樣照拍點拆開畫
+        if(parts.length>1){ u._more=[]; let at=u.pos+(NT_D32[parts[0]]||8); for(let i=1;i<parts.length;i++){ u._more.push({d:parts[i],pos:at}); at+=(NT_D32[parts[i]]||8); } } }
+      return; }
     if(u.tp){ u.d=ntTupDur(u.tp,u.inLen); return; }
     if(u.rest){ u.d=ntDurOf32(Math.max(1,u.own)); return; }   // 休止符維持你給的長度，不自動延長
     const nextPos=(k+1<real.length)?real[k+1].pos:end;
-    const parts=ntSplit32(Math.max(1,nextPos-u.pos));         // 例如 3.5 拍＝附點二分＋（連結線）八分
+    const parts=ntBeatSplit(u.pos,Math.max(1,nextPos-u.pos),beat);   // 例如 3.5 拍＝附點二分＋（連結線）八分；反拍開始的長音照拍點拆
     u.d=parts[0];
     if(parts.length>1){ u._more=[]; let at=u.pos+(NT_D32[parts[0]]||8);
       for(let i=1;i<parts.length;i++){ u._more.push({d:parts[i],pos:at}); at+=(NT_D32[parts[i]]||8); } }
@@ -7057,12 +7099,21 @@ function ntBarHtml(s,i,bars){
   let body='';
   if(!list.length) body=open?'<span class="nt-empty">'+esc(L('按 ＋ 新增音符、按 ＆ 新增可細分的一拍'))+'</span>':'';
   else {
-    const units=ntUnits(list);
+    const units=ntUnits(list,ntBeatLen(s,i));
     const bl=b=>(b.d==='q4')?(ntT(b)?8:ntN(b)*ntU(b)*2):((b.d==='r')?8:(NT_D32[b.d]||8));
     const total=list.reduce((a,b)=>a+bl(b),0)||32;
     const gs=ntGroups(units,list);
     const at=gs.map(g=>{ let p=Infinity; g.items.forEach(u=>{ if(u.pos<p)p=u.pos; }); return isFinite(p)?p:0; });
-    body=gs.map((g,k)=>ntGroupHtml(s,i,g,Math.max(1,((k+1<at.length)?at[k+1]:total)-at[k]))).join('');
+    /* 被前面長音蓋住的空白方塊（例如 2 拍的二分音符底下那兩格 ＆）只當編輯把手，不佔拍子寬度；
+       音符的寬度照實際時值算到下一個「真的有東西」的位置，列印時長音才會落在正確的拍子上 */
+    const sound=units.filter(u=>!u.empty);
+    const covered=gs.map(g=>{ const u=g.items[0]; if(!u||!u.empty)return false;
+      return sound.some(v=>v.pos<=u.pos&&u.pos<v.pos+(NT_D32[v.d]||8)); });
+    body=gs.map((g,k)=>{
+      if(covered[k]) return ntGroupHtml(s,i,g,0).replace('class="nt-mt"','class="nt-mt nt-mtc"');
+      let n=k+1; while(n<gs.length&&covered[n])n++;
+      return ntGroupHtml(s,i,g,Math.max(1,((n<at.length)?at[n]:total)-at[k]));
+    }).join('');
   }
   const ed=(editing>=0&&open&&list[editing])?ntEditBoxHtml(s,i,editing,list[editing]):'';
   const m=barMeter(s,i), rep=repOf(s,i);
