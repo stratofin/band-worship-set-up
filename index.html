@@ -1686,6 +1686,14 @@ body.gated>*:not(#gate){filter:grayscale(.9) opacity(.32)!important;pointer-even
     <div class="cl-body">
       <p class="cl-ver">開發時間軸：2026-06-17 ～ 2026-08-30（依使用回饋持續優化）</p>
 
+      <h4>修正：和弦譜自己多出和弦／0、音符譜載入多出和弦 <span class="cl-date">2026-09-28</span></h4>
+      <ul><li>和弦譜在「控制項 關」（或列印後畫面還停在列印收合狀態）時，八分／十六分小節會收合顯示；這時只要點一下格子再點開，和弦就會被寫到錯的格子，多出 0 或和弦。現在點進點出不會改資料，輸入的和弦也會放在正確的拍點</li>
+      <li>iPhone／iPad 列印完沒有正常結束列印狀態時，會自動恢復一般畫面</li>
+      <li>「⇩ 載入」：和弦延續到下一小節，只在那個小節和弦譜上有寫東西時才接過去；整小節空白就維持空白，不會自己多出一個和弦</li>
+      <li>「⇩ 載入」：和弦譜的 x（休止）會變成休止符，前一個和弦停在這裡，不再被延長蓋過去</li>
+      <li>把小節分割改粗（例如八分改四分）時，落在反拍的和弦不會再被推到下一拍、蓋掉原本的和弦；有和弦要移動或放不下時會先問你</li>
+      <li>段落流程圖的「↩ 上一步」只還原段落名稱、顏色、備註、樂器這些段落設定，不會把和弦譜／音符譜／KB 的編輯一起倒回去</li></ul>
+
       <h4>全面檢查：各頁面之間資料連動的修正 <span class="cl-date">2026-09-27</span></h4>
       <ul><li>段落「複製 → 貼上」：以前鍵盤 KB 的內容（數字、琶音、連結線、切分）沒有跟著複製，現在整段完整帶過去</li>
       <li>清除小節內容或減少小節數後，從別的小節連過來的連結線一併拿掉，不會再連到空格子或出現幽靈連結線</li>
@@ -5188,6 +5196,9 @@ async function printFit(view){
   window._printCls=cls;
   setTimeout(()=>window.print(),60);
 }
+/* iPhone／iPad 的 Safari 有時不送 afterprint：列印樣式一離開就自己補做收尾，避免畫面一直停在「列印收合」狀態 */
+try{ const _mqp=window.matchMedia&&window.matchMedia('print');
+  if(_mqp&&_mqp.addEventListener) _mqp.addEventListener('change',e=>{ if(!e.matches) setTimeout(()=>{ if(window._printCls||window._printMode) window.dispatchEvent(new Event('afterprint')); },400); }); }catch(e){}
 window.addEventListener('afterprint',()=>{ restorePrintPick(); restoreModeAfterPrint(); document.body.classList.remove('print-tight','print-xtight'); if(window._printCls){ document.body.classList.remove(window._printCls); } document.body.classList.remove('print-fit','print-maxi'); window._printCls=null; const was=window._printMode||window._printRepeat||window._printBPR||window._printSongTitle; window._printMode=false; window._printRepeat=false; window._printBPR=null; window._printSongTitle=''; if(was){ try{renderCharts();}catch(e){} } });
 
 /* ── OCR 圖片/PDF 辨識匯入 ── */
@@ -5912,7 +5923,8 @@ function beatSave(id,bar,beat,inp){
   /* 內容真的有變才記一步，避免點進點出就塞滿上一步 */
   try{ const s0=sects.find(x=>x.id===id);
        const old=s0?String((getBeatData(s0,bar,cellsForBar(s0,bar))||[])[beat]||''):'';
-       if(String(v||'')!==old) chordPushHistory(); }catch(e){}
+       if(String(v||'')===old){ const cell=inp.closest('.cbeatcol'), r=cell&&cell.querySelector('.beat-r'); if(r){ r.style.display=''; inp.style.display='none'; } return; }   // 沒改就不寫回（只是點進點出）
+       chordPushHistory(); }catch(e){}
   setBeat(id,bar,beat,v);
   const cell=inp.closest('.cbeatcol'), r=cell.querySelector('.beat-r');
   r.innerHTML=renderBeatToken(v,sects.find(x=>x.id===id)); r.style.display=''; inp.style.display='none';
@@ -5935,7 +5947,19 @@ function setSubdiv(id,bar,f){
   // 換分割時把和弦重新對到相同拍位（不洗掉、不錯位）
   const old=getBeatData(s,bar,bb*oldFac);
   const newLen=bb*newFac, nw=new Array(newLen).fill('');
-  old.forEach((v,i)=>{ if(!String(v||'').trim())return; const ni=Math.round(i*newFac/oldFac); if(ni>=0&&ni<newLen)nw[ni]=v; });
+  /* 先放剛好對得上新格點的，再放對不上的（往前歸到所在的那一拍／半拍，不會跑到下一拍）；
+     位置已經有和弦就不蓋掉。有和弦會移動或放不下時先問使用者 */
+  const moved=[], lost=[];
+  old.forEach((v,i)=>{ if(!String(v||'').trim())return; const x=i*newFac/oldFac; if(Number.isInteger(x)&&x<newLen)nw[x]=v; });
+  old.forEach((v,i)=>{ if(!String(v||'').trim())return; const x=i*newFac/oldFac; if(Number.isInteger(x))return;
+    const ni=Math.floor(x); if(ni<newLen&&!String(nw[ni]||'').trim()){ nw[ni]=v; moved.push(v); } else lost.push(v); });
+  if((moved.length||lost.length)&&typeof confirm==='function'){
+    const msg=Lf('這個小節有和弦落在更細的格點上，改成較粗的分割後：','Some chords sit on a finer grid than the new subdivision:','このセクションには細かい位置のコードがあります。粗い分割にすると：','이 마디에는 더 세밀한 위치의 코드가 있습니다. 분할을 줄이면:')
+      +(moved.length?'\n• '+Lf('往前移到所在的拍點：','moved back to their beat: ','拍の頭へ移動：','박 머리로 이동: ')+moved.join('、'):'')
+      +(lost.length?'\n• '+Lf('位置已經有和弦、會被拿掉：','removed (position already taken): ','位置が重なるため削除：','위치가 겹쳐 삭제: ')+lost.join('、'):'')
+      +'\n\n'+Lf('確定要改嗎？','Continue?','変更しますか？','변경할까요?');
+    if(!confirm(msg)){ renderCharts(); return; }
+  }
   if(!Array.isArray(s.chords))s.chords=[];
   s.chords[bar]=nw;
   if(!Array.isArray(s.subdiv))s.subdiv=[];
@@ -5991,6 +6015,7 @@ function barOneHtml(s,i,beats,repX,rowStart){
   {
     const bb=barBeats(s,i);
     let fac=subdivFactor(s,i);
+    const ofac=fac;                              // 資料本身的分割（收合顯示時格號要換回這個刻度）
     let pb=getBeatData(s,i,bb*fac);
     /* 列印/輸出時，或「控制項關閉」看譜時：把沒用到細分的小節收合，不顯示空的八分/十六分格，
        讓和弦字維持大、線條長度與四分一致（有實際細分內容的小節照常完整呈現） */
@@ -5999,6 +6024,7 @@ function barOneHtml(s,i,beats,repX,rowStart){
       if(cf<fac){ const step=fac/cf, np=[]; for(let j=0;j<bb*cf;j++)np.push(pb[j*step]||''); pb=np; fac=cf; }
     }
     const cellsN=bb*fac;
+    const bstep=ofac/fac;                        // 收合後第 b 格＝資料裡的第 b×bstep 格
     const fs = cellsN<=4?1 : cellsN<=6?0.82 : cellsN<=8?0.68 : cellsN<=12?0.54 : 0.44;
     // 密度分級：格子越多，和弦字要再壓一階，才不會溢出到隔壁格（輸出時特別明顯）
     let dens = cellsN<=4?'dn-a' : cellsN<=8?'dn-b' : cellsN<=12?'dn-c' : 'dn-d';
@@ -6024,7 +6050,7 @@ function barOneHtml(s,i,beats,repX,rowStart){
       if(cfit&&tw>0){ tw-=0.3*(renderBeatToken.lastBW||0); if(arpOn)tw+=0.5; rAttr=` class="beat-r fit" style="--tw:${tw.toFixed(2)}"`; }
       const arp=arpOn?`<span class="kbarp charp" title="琶音">${kbArpSvg(2)}</span>`:'';
       const tsel=(_chTieSel&&_chTieSel.sid===s.id&&_chTieSel.bar===i&&_chTieSel.f===fine)?' tiesel':'';
-      cols+=`<div class="cbeatcol ${bp}${tsel}" data-sid="${s.id}" data-bar="${i}" data-b="${b}" data-f="${fine}" onclick="beatEdit(this)"><span class="cbnum">${subdivLabel(b,fac)}</span><span${rAttr}>${arp}${tokHtml}</span><input class="beat-i" value="${esc(raw)}" style="display:none" onblur="beatSave(${s.id},${i},${b},this)" onkeydown="if(event.key==='Enter'){this.blur();}"></div>`;
+      cols+=`<div class="cbeatcol ${bp}${tsel}" data-sid="${s.id}" data-bar="${i}" data-b="${b*bstep}" data-f="${fine}" onclick="beatEdit(this)"><span class="cbnum">${subdivLabel(b,fac)}</span><span${rAttr}>${arp}${tokHtml}</span><input class="beat-i" value="${esc(raw)}" style="display:none" onblur="beatSave(${s.id},${i},${b*bstep},this)" onkeydown="if(event.key==='Enter'){this.blur();}"></div>`;
     }
     if(cfit&&!hasSub) dens='dn-a';   // 字級已由格寬決定，輸出時不必再按格數壓一階（一格多和弦的小節維持原本縮法）
     const m=barMeter(s,i);
@@ -7274,13 +7300,16 @@ async function ntLoadFromChords(){
     /* 1) 把整段的和弦排成一條「十六分格」時間軸，和弦的長度可以跨小節 */
     const barLen=[], barAt=[]; let tot=0;
     for(let b=0;b<bars;b++){ barLen[b]=Math.max(1,barBeats(s,b))*4; barAt[b]=tot; tot+=barLen[b]; }
-    const on=[];
+    const on=[], used=[];                        // used[b]：和弦譜這個小節有沒有填任何東西（和弦、. 延續、x 休止都算）
     for(let b=0;b<bars;b++){
       const fac=subdufSafe(s,b), cn=cellsForBar(s,b), pb=getBeatData(s,b,cn), step=4/fac;
       for(let i=0;i<cn;i++){ const v=String(pb[i]||'').trim();
-        if(!v||v==='.'||v==='x'||v==='X')continue;
+        if(v)used[b]=true;
+        if(!v||v==='.')continue;
         const f=Math.floor(i/fac)*4+(i%fac)*step;
-        if(f<barLen[b]) on.push({p:barAt[b]+f,c:v,bar:b,f}); }
+        if(f>=barLen[b])continue;
+        if(v==='x'||v==='X') on.push({p:barAt[b]+f,c:'',rest:true,bar:b,f});   // 休止：前一個和弦到這裡結束，這一格放休止符
+        else on.push({p:barAt[b]+f,c:v,bar:b,f}); }
     }
     on.sort((a,b)=>a.p-b.p);
     if(!on.length){ if(mode==='over'){ ['nt','ntArp','ntTie'].forEach(k=>{ if(Array.isArray(s[k]))for(let b=0;b<bars;b++)s[k][b]=undefined; }); } return; }
@@ -7291,8 +7320,11 @@ async function ntLoadFromChords(){
       let b=0; while(b+1<bars && barAt[b+1]<=o.p) b++;
       let at=o.p, first=true;
       while(at<endA && b<bars){
+        /* 延續到下一小節：只有那個小節在和弦譜上有填東西才延續（整小節空白＝和弦譜沒寫，音符譜也不自己多生一個和弦出來）；
+           休止符不跨小節 */
+        if(!first && (o.rest || !used[b])) break;
         const to=Math.min(endA,barAt[b]+barLen[b]);
-        seg.push({bar:b,f:at-barAt[b],dur:to-at,c:o.c,cont:!first});
+        seg.push({bar:b,f:at-barAt[b],dur:to-at,c:o.c,cont:!first,rest:!!o.rest});
         o.last=seg[seg.length-1];                            // 這個和弦最後一段（連結線要從這裡出發）
         first=false; at=to; b++;
       }
@@ -7305,13 +7337,13 @@ async function ntLoadFromChords(){
       const mine=seg.filter(x=>x.bar===b);
       if(!mine.length){ if(mode==='over'){ ['nt','ntArp','ntTie'].forEach(k=>{ if(Array.isArray(s[k]))s[k][b]=undefined; }); dropTiesInto(s,['ntTie'],b,b); } continue; }
       const gc=new Array(barLen[b]).fill(''), st={};
-      mine.forEach(x=>{ gc[x.f]=x.c; st[x.f]=x; });
+      mine.forEach(x=>{ gc[x.f]=x.rest?'r':x.c; st[x.f]=x; });
       const out=[]; let f=0;
       while(f<barLen[b]){
         const x=st[f];
-        if(x && f%4===0 && NT_FIXDUR[x.dur]){ pos[b+'|'+f]=ntIdx(out.length,0); out.push({d:NT_FIXDUR[x.dur],c:x.c}); f+=x.dur; n++; continue; }
+        if(x && !x.rest && f%4===0 && NT_FIXDUR[x.dur]){ pos[b+'|'+f]=ntIdx(out.length,0); out.push({d:NT_FIXDUR[x.dur],c:x.c}); f+=x.dur; n++; continue; }
         const sl=['','','',''];
-        for(let t=0;t<4;t++){ const g=f+t; if(g<barLen[b]&&gc[g]){ sl[t]=gc[g]; pos[b+'|'+g]=ntIdx(out.length,t); n++; } }
+        for(let t=0;t<4;t++){ const g=f+t; if(g<barLen[b]&&gc[g]){ sl[t]=gc[g]; if(gc[g]!=='r'){ pos[b+'|'+g]=ntIdx(out.length,t); n++; } } }
         out.push({d:'q4',s:sl}); f+=4;
       }
       ntArr(s,b).length=0; out.forEach(o=>ntArr(s,b).push(o));
@@ -7859,9 +7891,16 @@ const SEG_HKEYS=['name','bars','color','notes','layers'];
 function segSnapshot(){ return JSON.stringify([histTime(), sects]); }
 function segPushHistory(tag){ _segLastTag=tag||null; try{ histCommit(); }catch(e){} }
 document.addEventListener('focusin',()=>{ _segLastTag=null; },true);   // 換到別的欄位＝新的一步
+const SEG_RKEYS=['name','color','notes','layers','arr'];
 function segRestore(snap){
   const _a=JSON.parse(snap); histApplyTime(_a[0]); const list=_a[1];
-  sects=list;                                        // 整份還原（含新增／刪除／排序與所有欄位）
+  /* 還在的段落（小節數也沒變）只蓋回段落層級的欄位，和弦／音符／KB 維持現況（別的頁面自己有上一步）；
+     被刪掉的段落、或小節數不同的段落，整段以快照為準；新增／刪除／排序照快照 */
+  const cur=new Map(sects.map(s=>[s.id,s]));
+  sects=list.map(o=>{ const c=cur.get(o&&o.id); if(!c)return o;
+    if((parseInt(c.bars)||1)!==(parseInt(o.bars)||1))return o;
+    SEG_RKEYS.forEach(k=>{ if(o[k]===undefined) delete c[k]; else c[k]=o[k]; });
+    return c; });
   list.forEach(o=>{ if(o&&o.id>=nid)nid=o.id+1; });  // 段落 id 不重複使用
   if(_segOpen!=null&&!sects.some(s=>s.id===_segOpen))_segOpen=null;
 }
