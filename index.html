@@ -1514,8 +1514,8 @@ body.gated>*:not(#gate){filter:grayscale(.9) opacity(.32)!important;pointer-even
       <button class="vtab a" onclick="sw('seg',this)">段落流程圖</button>
       <button class="vtab" onclick="sw('chord',this)">和弦譜</button>
       <button class="vtab" onclick="sw('note',this)">音符譜</button>
-      <button class="vtab" onclick="sw('staff',this)">鍵盤</button>
-      <button class="vtab" onclick="sw('mixp',this)">混合</button>
+      <button class="vtab" onclick="sw('staff',this)">鍵盤譜</button>
+      <button class="vtab" onclick="sw('mixp',this)">混合譜</button>
       <button class="vtab" onclick="sw('text',this)">文字清單</button>
       <button class="vtab" onclick="sw('export',this)">匯出</button>
     </div>
@@ -1691,6 +1691,11 @@ body.gated>*:not(#gate){filter:grayscale(.9) opacity(.32)!important;pointer-even
     <div class="cl-head"><span>📝 更新日誌 · Arranger 理譜人</span><button class="btn" onclick="hideChangelog()">✕</button></div>
     <div class="cl-body">
       <p class="cl-ver">目前版本 <b class="app-ver-txt">—</b>　·　開發時間軸：2026-06-17 起（依使用回饋持續優化）</p>
+
+      <h4>分頁改名、混合譜小節選單、頁尾人次計數器 <span class="cl-date">2026-09-30</span></h4>
+      <ul><li>分頁名稱：「鍵盤」改為「鍵盤譜」、「混合」改為「混合譜」</li>
+      <li>混合譜：小節左下角選擇呈現方式的選單，原本顯示「@」的選項改成「和弦譜」，跟「音符譜」「鍵盤譜」一致</li>
+      <li>頁尾「© 2026 Arranger 理譜人」右邊顯示人次計數器，例如「0000999 人理過譜」（同一次開啟只算一次，重新整理不會重複加）</li></ul>
 
       <h4>0 與 x 分開：0＝休止、x＝悶音 <span class="cl-date">2026-09-29</span></h4>
       <ul><li><b>0</b>＝休止：「⇩ 載入」到音符譜變成休止符</li>
@@ -2402,7 +2407,7 @@ const I18N={
  "🎧 個人使用者 · 我的歌庫":"🎧 Personal user · My Library",
  "「用途」下拉最後有「＋ 新增分類…／－ 移除分類…」可自訂分類；「🎵 演奏模式」可從我的歌庫挑最多 10 首排成一份。":"The Use dropdown ends with “＋ Add category… / － Remove category…”; “🎵 Practice Set” builds a set of up to 10 songs from My Library.",
  "演奏模式":"Practice Set",
- "清單（最多 10 首，可排序）":" list (up to 10, sortable)","載入後顯示":"Open in","鍵盤":"Keyboard","鍵盤譜":"Keyboard","這個小節要用哪一種譜面呈現":"Which chart style this bar uses","依序載入後要打開哪一個檢視頁面":"Which view to open after the set is loaded",
+ "清單（最多 10 首，可排序）":" list (up to 10, sortable)","載入後顯示":"Open in","鍵盤":"Keyboard","鍵盤譜":"Keyboard","混合譜":"Mix","人理過譜":"people have charted here","這個小節要用哪一種譜面呈現":"Which chart style this bar uses","依序載入後要打開哪一個檢視頁面":"Which view to open after the set is loaded",
  "🎵 演奏模式":"🎵 Practice Set",
  "⛪ 敬拜使用者：瀏覽歌譜":"⛪ Worship user: browse",
  "🎧 個人使用者：自訂分類":"🎧 Personal user: custom categories",
@@ -2571,7 +2576,7 @@ const I18N_JA={
  "「用途」下拉最後有「＋ 新增分類…／－ 移除分類…」可自訂分類；「🎵 演奏模式」可從我的歌庫挑最多 10 首排成一份。":"「用途」のプルダウン最後に「＋ カテゴリ追加…／－ カテゴリ削除…」があります。「🎵 演奏モード」ではマイライブラリから最大10曲を選んで1つにまとめられます。",
  "演奏モード":"演奏モード",
  "演奏模式":"演奏モード",
- "清單（最多 10 首，可排序）":"リスト（最大10曲・並べ替え可）","載入後顯示":"読み込み後に表示","鍵盤":"キーボード","鍵盤譜":"キーボード譜","這個小節要用哪一種譜面呈現":"この小節をどの譜面で表示するか","依序載入後要打開哪一個檢視頁面":"読み込んだあとに開くビュー",
+ "清單（最多 10 首，可排序）":"リスト（最大10曲・並べ替え可）","載入後顯示":"読み込み後に表示","鍵盤":"キーボード","鍵盤譜":"キーボード譜","混合譜":"ミックス譜","人理過譜":"人が譜面を作りました","這個小節要用哪一種譜面呈現":"この小節をどの譜面で表示するか","依序載入後要打開哪一個檢視頁面":"読み込んだあとに開くビュー",
  "🎵 演奏模式":"🎵 演奏モード",
  "⛪ 敬拜使用者：瀏覽歌譜":"⛪ 礼拝ユーザー：閲覧",
  "🎧 個人使用者：自訂分類":"🎧 個人ユーザー：カテゴリ自由",
@@ -2929,7 +2934,7 @@ const I18N_KO={
  "🎧 個人使用者 · 我的歌庫":"🎧 개인 사용자 · 내 라이브러리",
  "「用途」下拉最後有「＋ 新增分類…／－ 移除分類…」可自訂分類；「🎵 演奏模式」可從我的歌庫挑最多 10 首排成一份。":"「용도」 드롭다운 맨 아래에 「＋ 카테고리 추가…／－ 카테고리 삭제…」가 있습니다. 「🎵 연주 모드」에서는 내 라이브러리에서 최대 10곡을 골라 하나로 묶을 수 있습니다.",
  "演奏模式":"연주 모드",
- "清單（最多 10 首，可排序）":" 목록 (최대 10곡, 순서 변경 가능)","載入後顯示":"불러온 뒤 표시","鍵盤":"건반","鍵盤譜":"건반 악보","這個小節要用哪一種譜面呈現":"이 마디를 어떤 악보로 표시할지","依序載入後要打開哪一個檢視頁面":"불러온 뒤 열 화면",
+ "清單（最多 10 首，可排序）":" 목록 (최대 10곡, 순서 변경 가능)","載入後顯示":"불러온 뒤 표시","鍵盤":"건반","鍵盤譜":"건반 악보","混合譜":"믹스 악보","人理過譜":"명이 악보를 만들었어요","這個小節要用哪一種譜面呈現":"이 마디를 어떤 악보로 표시할지","依序載入後要打開哪一個檢視頁面":"불러온 뒤 열 화면",
  "🎵 演奏模式":"🎵 연주 모드",
  "⛪ 敬拜使用者：瀏覽歌譜":"⛪ 예배 사용자: 열람",
  "🎧 個人使用者：自訂分類":"🎧 개인 사용자: 카테고리 자유",
@@ -3284,7 +3289,7 @@ const I18N_CN={
  /* 訂閱 */ "已排定取消，可用到":"已排定取消，可用到","已排定取消":"已排定取消","試用中，首次扣款":"试用中，首次扣款","試用中":"试用中","下次續訂":"下次续订","訂閱 ＋ 歌庫":"订阅 ＋ 歌库","訂閱中":"订阅中","＋ 加購敬拜雲端歌庫":"＋ 加购敬拜云端歌库","移除歌庫加購":"移除歌库加购","扣款失敗，訂閱暫停中":"扣款失败，订阅暂停中","重新訂閱":"重新订阅","訂閱後可使用雲端帳號與多裝置同步":"订阅后可使用云端帐号与多设备同步","訂閱":"订阅","訂閱 ＋ 敬拜雲端歌庫":"订阅 ＋ 敬拜云端歌库","請先登入。":"请先登录。","移除歌庫加購後，下一期起不再收取歌庫費用，歌庫內容也會關閉。確定？":"移除歌库加购后，下一期起不再收取歌库费用，歌库内容也会关闭。确定？","操作失敗：":"操作失败：","已送出，稍候更新…":"已送出，稍候更新…","訂閱功能尚未設定（見 PADDLE_SETUP.md）。":"订阅功能尚未设置（见 PADDLE_SETUP.md）。","請先登入再訂閱。":"请先登录再订阅。","結帳視窗開啟失敗：":"结账窗口打开失败：",
  "選要清除的小節範圍，再決定只清內容還是連小節一起刪除":"选要清除的小节范围，再决定只清内容还是连小节一起删除","按住小節左右拖曳，選要清除的範圍":"按住小节左右拖曳，选要清除的范围","服務條款":"服务条款","隱私權政策":"隐私权政策","聯絡我們":"联系我们","個人使用者範本：小星星":"个人用户范本：小星星",
  "敬拜使用者範本：You are good":"敬拜用户范本：You are good","我的歌庫":"我的歌库","＋ 收藏目前這份":"＋ 收藏目前这份","我的歌庫還是空的，按「＋ 收藏目前這份」把現在編輯的譜存進來。":"我的歌库还是空的，按「＋ 收藏目前这份」把现在编辑的谱存进来。","個人使用者不使用雲端歌庫，歌曲只存在這台裝置上。":"个人用户不使用云端歌库，歌曲只存在这台设备上。","🎧 個人使用者 · 我的歌庫":"🎧 个人用户 · 我的歌库",
- "「用途」下拉最後有「＋ 新增分類…／－ 移除分類…」可自訂分類；「🎵 演奏模式」可從我的歌庫挑最多 10 首排成一份。":"「用途」下拉最后有「＋ 添加分类…／－ 移除分类…」可自订分类；「🎵 演奏模式」可从我的歌库挑最多 10 首排成一份。","清單（最多 10 首，可排序）":"清单（最多 10 首，可排序）","載入後顯示":"载入后显示","鍵盤":"键盘","鍵盤譜":"键盘谱","這個小節要用哪一種譜面呈現":"这个小节要用哪一种谱面呈现","依序載入後要打開哪一個檢視頁面":"依序载入后要打开哪一个检视页面","⛪ 敬拜使用者：瀏覽歌譜":"⛪ 敬拜用户：浏览歌谱","🎧 個人使用者：自訂分類":"🎧 个人用户：自订分类","⛪ 敬拜使用者 · 瀏覽歌譜":"⛪ 敬拜用户 · 浏览歌谱","🎧 個人使用者 · 自訂分類":"🎧 个人用户 · 自订分类",
+ "「用途」下拉最後有「＋ 新增分類…／－ 移除分類…」可自訂分類；「🎵 演奏模式」可從我的歌庫挑最多 10 首排成一份。":"「用途」下拉最后有「＋ 添加分类…／－ 移除分类…」可自订分类；「🎵 演奏模式」可从我的歌库挑最多 10 首排成一份。","清單（最多 10 首，可排序）":"清单（最多 10 首，可排序）","載入後顯示":"载入后显示","鍵盤":"键盘","鍵盤譜":"键盘谱","混合譜":"混合谱","人理過譜":"人理过谱","這個小節要用哪一種譜面呈現":"这个小节要用哪一种谱面呈现","依序載入後要打開哪一個檢視頁面":"依序载入后要打开哪一个检视页面","⛪ 敬拜使用者：瀏覽歌譜":"⛪ 敬拜用户：浏览歌谱","🎧 個人使用者：自訂分類":"🎧 个人用户：自订分类","⛪ 敬拜使用者 · 瀏覽歌譜":"⛪ 敬拜用户 · 浏览歌谱","🎧 個人使用者 · 自訂分類":"🎧 个人用户 · 自订分类",
  "＋ 新增分類…":"＋ 添加分类…","－ 移除分類…":"－ 移除分类…","用途分類（可自行新增／移除）":"用途分类（可自行添加／移除）","用途分類（敬拜使用者固定為短歌／讚美／敬拜）":"用途分类（敬拜用户固定为短歌／赞美／敬拜）","許願":"许愿","教學":"教学","教學影片：在 YouTube 開啟教學播放清單":"教学视频：在 YouTube 打开教学播放列表","🖥 電腦":"🖥 电脑",
  "📱 手機":"📱 手机","📝 更新日誌":"📝 更新日志","意見回饋：寫信告訴我們你的建議或遇到的問題":"意见反馈：写信告诉我们你的建议或遇到的问题","拍號":"拍号","字級":"字级","主題":"主题",
  "微調Key":"微调Key","💾 存檔":"💾 保存","範本":"范本","👤 使用者":"👤 用户","↓ PNG 示意圖":"↓ PNG 示意图","↓ PNG 方塊圖":"↓ PNG 方块图",
@@ -3476,7 +3481,7 @@ function refreshSvcMode(){
 
 /* ── SAVE / LOAD ── */
 /* ── 版本：每次更新改這裡（格式 年.月.日，同一天第二版加 -2）；顯示在標題旁與更新日誌，存檔／匯出也會記錄 ── */
-const APP_VERSION='2026.09.29-2';
+const APP_VERSION='2026.09.30';
 function showAppVersion(){ try{ const t='v'+APP_VERSION; const a=document.getElementById('app-ver'); if(a)a.textContent=t; document.querySelectorAll('.app-ver-txt').forEach(e=>e.textContent=t); }catch(e){} }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',showAppVersion); else setTimeout(showAppVersion,0);
 function getProjectData(){
@@ -7751,7 +7756,7 @@ function mixpBarHtml(s,i,beats,rowStart){
   if(v==='note'&&rowStart) h=h.replace('class="cbar2 ','class="cbar2 row-start ');   // 換排起始線（音符譜小節自己沒有；鍵盤譜已經有）
   if(!s.ctrlOff){
     const sel='<select class="mixv-sel" onclick="event.stopPropagation()" onmousedown="event.stopPropagation()" onpointerdown="event.stopPropagation()" onchange="setMixV('+s.id+','+i+',this.value)" title="'+esc(L('這個小節要用哪一種譜面呈現'))+'">'
-      +MIXV_OPT.map(o=>'<option value="'+o[0]+'"'+(v===o[0]?' selected':'')+'>'+(o[0]?esc(L(o[1])):'@')+'</option>').join('')
+      +MIXV_OPT.map(o=>'<option value="'+o[0]+'"'+(v===o[0]?' selected':'')+'>'+esc(L(o[1]))+'</option>').join('')
       +'</select>';
     h=h.replace(/<\/div>\s*$/,'')+sel+'</div>';
   }
@@ -8922,6 +8927,24 @@ if(SUPA_URL && SUPA_KEY) document.body.classList.add('gated');
 try{ if(sessionStorage.getItem('arranger_guest')==='1') _guest=true; }catch(e){}
 try{ syncGate(); }catch(e){}
 cloudInit();
+/* ── 頁尾人次計數器：「0000999 人理過譜」──
+   資料在 Supabase 的 site_counter 表（建立方式見 supabase_counter.sql）。
+   同一個瀏覽器分頁階段只算一次（重新整理不會重複加）；資料庫還沒建立或連不上時整個隱藏，不影響其他功能。 */
+async function siteCounter(){
+  try{
+    for(let i=0;i<30&&!_supa;i++) await new Promise(r=>setTimeout(r,200));   // 等雲端連線準備好（最多 6 秒）
+    if(!_supa)return;
+    let counted=false; try{ counted=sessionStorage.getItem('arranger_counted')==='1'; }catch(e){}
+    let n=null;
+    if(!counted){ const {data,error}=await _supa.rpc('bump_visits'); if(!error&&data!=null){ n=Number(Array.isArray(data)?data[0]:data); try{ sessionStorage.setItem('arranger_counted','1'); }catch(e){} } }
+    if(n==null){ const {data,error}=await _supa.from('site_counter').select('visits').eq('id',1).maybeSingle(); if(!error&&data)n=Number(data.visits); }
+    if(n==null||!isFinite(n))return;
+    const el=document.getElementById('sf-num'), box=document.getElementById('sf-count'); if(!el||!box)return;
+    el.textContent=String(Math.max(0,Math.floor(n))).padStart(7,'0');
+    box.hidden=false;
+  }catch(e){}
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>siteCounter()); else setTimeout(siteCounter,0);
 paddleInit();
 initMode();
 syncDispSelects();
@@ -8976,11 +8999,16 @@ window.addEventListener('afterprint',redrawMeasured);
 }
 .site-footer a{color:var(--text2);text-decoration:none;}
 .site-footer a:hover{color:var(--accent);text-decoration:underline;}
-.site-footer .sf-copy{margin-right:auto;}
+.site-footer .sf-copy{margin-right:0;}
+.site-footer .sf-count{margin-right:auto;display:inline-flex;align-items:baseline;gap:.35em;color:var(--text3);}
+.site-footer .sf-count[hidden]{display:none;}
+.site-footer .sf-num{font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:700;letter-spacing:.08em;color:var(--accent);
+  background:var(--bg3,rgba(255,255,255,.04));border:1px solid var(--border);border-radius:.3em;padding:.05em .4em;}
 @media print{.site-footer{display:none;}}
 </style>
 <footer class="site-footer">
   <span class="sf-copy">© 2026 Arranger 理譜人</span>
+  <span class="sf-count" id="sf-count" hidden><span class="sf-num" id="sf-num">0000000</span><span>人理過譜</span></span>
   <a class="sf-link" data-page="pricing" href="./pricing.html">定價</a>
   <a class="sf-link" data-page="terms" href="./terms.html">服務條款</a>
   <a class="sf-link" data-page="refund" href="./refund.html">退款政策</a>
