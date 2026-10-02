@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Arranger 理譜人 v3.5</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js" integrity="sha384-Rj26LVGvoeRVR6+mwQmFfcR3QOBEwT+ZmuCWpuiqeTzJpCs0ER4ITAWGb4Hiy3Ok" crossorigin="anonymous"></script>
 <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyBpZD0iX+WcluWxpF8xIiBkYXRhLW5hbWU9IuWcluWxpCAxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDI0IDEwMjQiPgogIDxkZWZzPgogICAgPHN0eWxlPgogICAgICAuY2xzLTEgewogICAgICAgIGZpbGw6ICNmY2M5MTg7CiAgICAgIH0KICAgIDwvc3R5bGU+CiAgPC9kZWZzPgogIDxnIGlkPSJf55Sf5oiQ5byP54mp5Lu2IiBkYXRhLW5hbWU9IueUn+aIkOW8j+eJqeS7tiI+CiAgICA8cGF0aCBjbGFzcz0iY2xzLTEiIGQ9Ik00ODQuMDgsMzUxLjY2bC0yLjcyLDkxLjg1LTQuMjcsMTEzLjYtNC4wNywxMDIuNDctMy40LDEwMS4wMmMtLjUsMTQuODUtNC4zMywyNy45NC05Ljg5LDQxLjQxLTkuODIsMjMuNzktMjQuMjIsNDMuNDktNDIuNjMsNjEuNDQtNTUuMDYsNTMuNjktMTMyLjQ1LDc4Ljk1LTIwOC45NCw3Mi45Ny0zOS45NS0zLjEyLTgzLjE5LTIxLjAxLTEwMi41Ni01Ni44LTYuODctMTIuNy0xMS40Ny0yNy4zNC0xMS4yMS00Mi4xLDEuNTgtODYuNjEsOTcuMTEtMTU1LjM2LDE3NS4xOS0xNzYuODksNDIuNjMtMTEuODEsODYuNDYtMTQuMzQsMTMxLjMtM2wtNi45NC0yMDMuNjItMi42OS04MS4xOS05My4yNSwyNC4xLTg5LjMyLDIzLjk2LTYuMjMtMTMxLjA2LDkyLjUxLTIyLjYxLDkyLjY4LTIxLjU2LTUuMzctMTMxLjk4LDExNC4wOS0yNi45Ni03LjMyLDEzNy4zMyw4My42Ny0xNy45Miw4NS4xNi0xNy45MSwxNTguMDctMjYuNjksNjQuNDQtOC4xOS0zLjM2LDYxLjk3LTcuODcsMTYyLjY2LTEwLjc4LDI1MC4yMy00LjA5LDU4LjcyYy0xLjQ1LDIwLjc0LTExLjA5LDM5LjA5LTIyLjk0LDU2LjAyLTE4LjAyLDI1Ljc2LTQyLjAxLDQ1LjI3LTY5LjQ1LDYwLjM4LTI5LjQ0LDE2LjIxLTYwLjQ3LDI1LjQ0LTkzLjkxLDI4LjQ1LTIxLjg5LDEuOTctNDIuODgsMi4xNS02NC4zNS0zLjAyLTQzLjk4LTEwLjYtNzcuNTMtNDQuMzMtNzQuMi05MS4yMywzLjk1LTU1LjYsNTEuNjMtOTkuMTgsOTguNzYtMTI0LjEyLDQ0LjIyLTIzLjQsOTkuNDQtMzMuNjgsMTQ4LjE1LTIyLjYxbC4xLTQ4LjkzLS4wNi0yMTEuNzguMjUtMzguMTYtMTAzLjcsMTkuNzctNzEuOTMsMTQuNzUtMTE2Ljg2LDI1LjI1WiIvPgogIDwvZz4KPC9zdmc+">
 <style>
@@ -28,6 +28,28 @@ body.theme-light{
   --text:#1f1d18; --text2:#6b675e; --text3:#a6a299;
   --accent:#b8860b;
 }
+/* 大地（預設）：米白底、灰藍主色、赭石點綴（參考 loan-cal 的 earth 配色） */
+body.theme-earth{
+  --bg:#F4EFE6; --bg2:#FBF8F2; --bg3:#EFEADF; --bg4:#E6DFD1;
+  --border:rgba(90,78,58,0.14); --border2:rgba(90,78,58,0.28);
+  --text:#3B3A35; --text2:#6E6A60; --text3:#A39D90;
+  --accent:#A57A3F;
+  --c-black-stroke:#5A6B80; --c-black-fill:rgba(90,107,128,0.08);
+  --c-blue-stroke:#5F84AA;  --c-blue-fill:rgba(95,132,170,0.10);
+  --c-red-stroke:#C0705C;   --c-red-fill:rgba(192,112,92,0.10);
+  --c-purple-stroke:#8E78A8;--c-purple-fill:rgba(142,120,168,0.10);
+}
+/* 頂端資訊列：灰藍漸層＋白字（同參考網頁的標題區） */
+body.theme-earth .topbar{
+  background:linear-gradient(135deg,#5A6B80,#79889B 55%,#9AA6B4);border-bottom-color:#4E5D70;
+  --text:#ffffff; --text2:rgba(255,255,255,0.84); --text3:rgba(255,255,255,0.62);
+  --bg2:rgba(255,255,255,0.12); --bg3:rgba(255,255,255,0.16); --bg4:rgba(255,255,255,0.26);
+  --border:rgba(255,255,255,0.22); --border2:rgba(255,255,255,0.42);
+  --accent:#F1D7A2;
+}
+body.theme-earth .topbar select option{color:#3B3A35;background:#FBF8F2;}
+body.theme-earth .app-ver{color:rgba(255,255,255,0.72);}
+body.theme-earth .vtab.a{color:#5A6B80;border-bottom-color:#BA8C50;}
 body.theme-pink{
   --bg:#fff0f6; --bg2:#ffe3ef; --bg3:#ffd6e7; --bg4:#ffc6dc;
   --border:rgba(120,30,70,0.12); --border2:rgba(120,30,70,0.22);
@@ -276,6 +298,43 @@ body.kb-open .lock-banner,body.kb-open .barpick-bar,body.kb-open .printfs-tip{bo
 .right{padding:1.5em;}   /* 舊的雙欄版面才需要 overflow-y:auto；現在整頁一起捲，留著會讓 sticky 失效 */
 
 /* VIEW TABS */
+.page{grid-template-columns:auto minmax(0,1fr)!important;}
+.sidenav{position:sticky;top:0;align-self:start;height:100vh;height:100dvh;overflow-y:auto;overflow-x:hidden;
+  width:12.5em;display:flex;flex-direction:column;gap:0.15em;padding:0.6em 0.55em 1.2em;
+  background:var(--bg2);border-right:1px solid var(--border);z-index:45;transition:width .18s ease;}
+.page .sidenav .vtab{display:flex;flex-direction:row;align-items:center;gap:0.9em;width:100%;min-width:0;margin:0;
+  padding:0.62em 0.8em;border:none;border-radius:0.6em;background:none;color:var(--text2);
+  font-size:0.95em;font-weight:500;text-align:left;white-space:nowrap;letter-spacing:0.02em;}
+.page .sidenav .vtab:hover{background:var(--bg3);color:var(--text);}
+.page .sidenav .vtab.a{background:var(--bg4);color:var(--accent);font-weight:700;border:none;}
+.nav-ic{display:inline-flex;flex:0 0 auto;}
+.nav-ic svg{width:1.5em;height:1.5em;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;}
+.nav-lb{overflow:hidden;text-overflow:ellipsis;}
+.nav-burger{background:none;border:none;color:var(--text2);font-size:1.25em;line-height:1;cursor:pointer;border-radius:0.5em;padding:0.45em 0.6em;font-family:inherit;}
+.nav-burger:hover{background:var(--bg3);color:var(--text);}
+.sidenav .nav-top{align-self:flex-start;margin:0 0 0.4em 0.15em;}
+/* 收合：只剩圖示＋下方小字（YouTube 迷你導覽） */
+body.nav-mini .sidenav{width:5.2em;padding:0.6em 0.3em;}
+body.nav-mini .page .sidenav .vtab{flex-direction:column;gap:0.3em;padding:0.65em 0.1em;font-size:0.66em;text-align:center;white-space:normal;line-height:1.15;}
+body.nav-mini .nav-ic svg{width:2.1em;height:2.1em;}
+body.nav-mini .sidenav .nav-top{align-self:center;margin:0 0 0.4em;}
+/* 隱藏：整條側欄收掉，只留左上角一個小小的 ☰ */
+body.nav-hide:not(.mode-phone) .sidenav{width:auto;padding:0.5em 0.2em;background:none;border-right:none;box-shadow:none;}
+body.nav-hide:not(.mode-phone) .page .sidenav .vtab{display:none!important;}
+body.nav-hide:not(.mode-phone) .sidenav .nav-top{font-size:0.95em;padding:0.35em 0.45em;margin:0;opacity:0.75;}
+body.nav-hide:not(.mode-phone) .sidenav .nav-top:hover{opacity:1;}
+.nav-mbar,.nav-backdrop{display:none;}
+/* 手機：側欄平常藏起來，☰ 從左邊滑出 */
+body.mode-phone .page{grid-template-columns:minmax(0,1fr)!important;}
+body.mode-phone .sidenav{position:fixed;left:0;top:0;bottom:0;width:15em;transform:translateX(-105%);transition:transform .22s ease;z-index:300;box-shadow:4px 0 18px rgba(0,0,0,0.25);}
+body.mode-phone.nav-open .sidenav{transform:none;}
+body.mode-phone.nav-mini .sidenav{width:15em;padding:0.6em 0.55em 1.2em;}
+body.mode-phone.nav-mini .page .sidenav .vtab{flex-direction:row;gap:0.9em;padding:0.62em 0.8em;font-size:0.95em;text-align:left;}
+body.mode-phone.nav-mini .nav-ic svg{width:1.5em;height:1.5em;}
+body.mode-phone .nav-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:290;}
+body.mode-phone.nav-open .nav-backdrop{display:block;}
+body.mode-phone .nav-mbar{display:flex;align-items:center;gap:0.5em;margin:-0.4em 0 0.9em;padding-bottom:0.5em;border-bottom:1px solid var(--border);}
+body.mode-phone .nav-cur{font-weight:700;color:var(--accent);font-size:1.05em;}
 .vtabs{display:flex;gap:0.15em;margin-bottom:1.3em;border-bottom:1px solid var(--border);padding-bottom:0;overflow-x:auto;}
 .vtab{padding:0.6em 1em;font-size:0.85em;cursor:pointer;color:var(--text3);border-bottom:2px solid transparent;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit;transition:all .13s;white-space:nowrap;}
 .vtab.a{color:var(--accent);border-bottom-color:var(--accent);font-weight:500;}
@@ -1182,14 +1241,14 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   body[class*="print-"] .right{padding:0!important;width:auto!important;max-width:none!important;}
   body[class*="print-"]{-webkit-text-size-adjust:100%!important;text-size-adjust:100%!important;}
   /* 列印時把主題變數還原成預設，確保任何配色主題都印出白底原樣 */
-  body,body.theme-light,body.theme-pink{
+  body,body.theme-light,body.theme-pink,body.theme-earth{
     --bg:#fff;--bg2:#fff;--bg3:#fff;--bg4:#fff;
     --border:rgba(0,0,0,0.07);--border2:rgba(0,0,0,0.13);
     --text:#111;--text2:#444;--text3:#777;--accent:#b8860b;
     background:#fff;color:#111;
   }
   html,body{max-width:none!important;overflow-x:visible!important;}
-  .topbar,.vtabs,.icon-toolbar,.summary,.chord-hint,.view-print,.ic-legend,.cbpr-sel,.cbsub,.kbsub,.ctrl-toggle,.lock-banner,.chead-add,.chead-del{display:none!important;}
+  .topbar,.vtabs,.sidenav,.nav-mbar,.nav-backdrop,.icon-toolbar,.summary,.chord-hint,.view-print,.ic-legend,.cbpr-sel,.cbsub,.kbsub,.ctrl-toggle,.lock-banner,.chead-add,.chead-del{display:none!important;}
   /* 列印：標題列的滑動包層不影響分頁與位移 */
   .chead-wrap{overflow:visible!important;}
   .chead-wrap>.ccard-head{transform:none!important;}
@@ -1482,7 +1541,7 @@ body.gated>*:not(#gate){filter:grayscale(.9) opacity(.32)!important;pointer-even
       <div class="pill"><label>拍號</label><select id="s-time" onchange="this.dataset.val=this.value;schedRender()" title="全曲拍號（各小節可再單獨設定）" style="background:none;border:none;color:var(--text);font-family:inherit;font-size:1em;outline:none;cursor:pointer"><option value="4/4">4/4</option></select></div>
       <div class="pill"><label>BPM</label><input id="s-bpm" value="71" maxlength="3" inputmode="numeric" oninput="schedRender()" style="width:2.4em"></div>
       <div class="pill"><label>用途</label><select id="s-usage" onchange="onUsageChange(this)" style="background:none;border:none;color:var(--text);font-family:inherit;font-size:1em;outline:none;cursor:pointer"><option value="">—</option></select></div>
-      <div class="pill" style="gap:3px"><label>主題</label><select id="theme-sel" onchange="setTheme(this.value)" title="介面配色（只影響螢幕，列印仍為白底原樣）" style="background:none;border:none;color:var(--text);font-family:inherit;font-size:1em;outline:none;cursor:pointer"><option value="dark">黑</option><option value="light">白</option><option value="pink">粉</option></select></div>
+      <div class="pill" style="gap:3px"><label>主題</label><select id="theme-sel" onchange="setTheme(this.value)" title="介面配色（只影響螢幕，列印仍為白底原樣）" style="background:none;border:none;color:var(--text);font-family:inherit;font-size:1em;outline:none;cursor:pointer"><option value="earth">大地</option><option value="dark">黑</option><option value="light">白</option><option value="pink">粉</option></select></div>
       <div class="pill" style="gap:3px">
         <label>字級</label>
         <button class="fbtn" onclick="bumpFont(-2)" title="縮小檢視字級">−</button>
@@ -1505,20 +1564,25 @@ body.gated>*:not(#gate){filter:grayscale(.9) opacity(.32)!important;pointer-even
 </header>
 
 <div class="page">
+  <!-- 左側欄：切換頁面（像 YouTube：☰ 收合成只剩圖示／展開成圖示＋文字；手機為滑出式） -->
+  <nav class="sidenav" id="sidenav" aria-label="頁面">
+    <button class="nav-burger nav-top" onclick="navToggle()" aria-label="隱藏／顯示側欄" title="隱藏／顯示側欄">☰</button>
+    <button class="vtab a" data-view="seg" onclick="sw('seg',this)" title="段落流程圖"><span class="nav-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3.5" width="7" height="5" rx="1.2"/><rect x="14" y="9.5" width="7" height="5" rx="1.2"/><rect x="3" y="15.5" width="7" height="5" rx="1.2"/><path d="M10 6h3.5v3.5M14 12h-3.5v3.5"/></svg></span><span class="nav-lb">段落流程圖</span></button>
+    <button class="vtab" data-view="chord" onclick="sw('chord',this)" title="和弦譜"><span class="nav-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M9 5v14M15 5v14"/><path d="M6.6 10.2a1.6 1.6 0 1 0 0 2.6" stroke-width="1.5"/></svg></span><span class="nav-lb">和弦譜</span></button>
+    <button class="vtab" data-view="note" onclick="sw('note',this)" title="音符譜"><span class="nav-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 18V7l11-2.5V16"/><path d="M8 9.5l11-2.5"/><circle cx="5.8" cy="18" r="2.3" fill="currentColor"/><circle cx="16.8" cy="16" r="2.3" fill="currentColor"/></svg></span><span class="nav-lb">音符譜</span></button>
+    <button class="vtab" data-view="staff" onclick="sw('staff',this)" title="鍵盤譜"><span class="nav-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="M8 5v14M12.5 5v14M17 5v14"/><path d="M8 5v8M12.5 5v8M17 5v8" stroke-width="3.2" stroke-linecap="butt" transform="translate(-2.2 0)"/></svg></span><span class="nav-lb">鍵盤譜</span></button>
+    <button class="vtab" data-view="mixp" onclick="sw('mixp',this)" title="混合譜"><span class="nav-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4v16M12 4v16M18 4v16"/><rect x="3.8" y="13" width="4.4" height="3" rx="1" fill="currentColor"/><rect x="9.8" y="7" width="4.4" height="3" rx="1" fill="currentColor"/><rect x="15.8" y="11" width="4.4" height="3" rx="1" fill="currentColor"/></svg></span><span class="nav-lb">混合譜</span></button>
+    <button class="vtab" data-view="text" onclick="sw('text',this)" title="文字清單"><span class="nav-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6.5h11M9 12h11M9 17.5h11"/><circle cx="4.8" cy="6.5" r="1.2" fill="currentColor"/><circle cx="4.8" cy="12" r="1.2" fill="currentColor"/><circle cx="4.8" cy="17.5" r="1.2" fill="currentColor"/></svg></span><span class="nav-lb">文字清單</span></button>
+    <button class="vtab" data-view="export" onclick="sw('export',this)" title="匯出"><span class="nav-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V4M7.5 8.5L12 4l4.5 4.5"/><path d="M4.5 13.5v5a1.5 1.5 0 0 0 1.5 1.5h12a1.5 1.5 0 0 0 1.5-1.5v-5"/></svg></span><span class="nav-lb">匯出</span></button>
+  </nav>
+  <div class="nav-backdrop" onclick="navToggle(false)"></div>
   <!-- LEFT: editor -->
   <!-- 舊的左側「段落編輯」欄已移除，段落編輯全部移到「段落流程圖」分頁 -->
 
   <!-- RIGHT: views -->
   <section class="right">
-    <div class="vtabs">
-      <button class="vtab a" onclick="sw('seg',this)">段落流程圖</button>
-      <button class="vtab" onclick="sw('chord',this)">和弦譜</button>
-      <button class="vtab" onclick="sw('note',this)">音符譜</button>
-      <button class="vtab" onclick="sw('staff',this)">鍵盤譜</button>
-      <button class="vtab" onclick="sw('mixp',this)">混合譜</button>
-      <button class="vtab" onclick="sw('text',this)">文字清單</button>
-      <button class="vtab" onclick="sw('export',this)">匯出</button>
-    </div>
+    <!-- 手機：上方一條「☰ 目前頁面」，點了從左邊滑出側欄 -->
+    <div class="nav-mbar"><button class="nav-burger" onclick="navToggle()" aria-label="選單">☰</button><span class="nav-cur" id="nav-cur">段落流程圖</span></div>
 
     <div class="summary" id="summary"></div>
 
@@ -1691,6 +1755,27 @@ body.gated>*:not(#gate){filter:grayscale(.9) opacity(.32)!important;pointer-even
     <div class="cl-head"><span>📝 更新日誌 · Arranger 理譜人</span><button class="btn" onclick="hideChangelog()">✕</button></div>
     <div class="cl-body">
       <p class="cl-ver">目前版本 <b class="app-ver-txt">—</b>　·　開發時間軸：2026-06-17 起（依使用回饋持續優化）</p>
+
+      <h4>左側欄固定精簡，可整條隱藏 <span class="cl-date">2026-10-02</span></h4>
+      <ul><li>側欄一律用精簡樣式（圖示＋小字）</li>
+      <li>「段落流程圖」移到側欄最上面</li>
+      <li>按左上角 ☰ 可把側欄整條藏起來，只留一個小小的 ☰；再按一次就叫回來，會記住你的選擇</li></ul>
+
+      <h4>頁面切換改成左側欄（像 YouTube） <span class="cl-date">2026-10-02</span></h4>
+      <ul><li>和弦譜、音符譜、鍵盤譜、混合譜、段落流程圖、文字清單、匯出移到左側欄，每一項都有辨識用的小圖示</li>
+      <li>電腦／平板：按 ☰ 在「圖示＋文字」與「只剩圖示」之間切換，會記住你的選擇</li>
+      <li>手機：上方顯示目前頁面，按 ☰ 從左邊滑出側欄，選好自動收起來</li>
+      <li>列印時不會印出側欄</li></ul>
+
+      <h4>新增「大地」配色，並設為預設主題 <span class="cl-date">2026-10-02</span></h4>
+      <ul><li>米白底、灰藍主色、赭石點綴；頂端資訊列為灰藍漸層＋白字</li>
+      <li>工具列「主題」選單可隨時切回 黑／白／粉；列印仍是白底原樣，不受主題影響</li>
+      <li>原本用預設「黑」的人，這次更新會換成大地一次，之後照你自己選的</li></ul>
+
+      <h4>安全性：讀進來的譜檔先檢查 <span class="cl-date">2026-10-01</span></h4>
+      <ul><li>修正：別人分享的 .json 譜檔或雲端歌譜，如果在「小節拍號」或「拍號」欄位被動過手腳，打開時可能被執行惡意程式；現在讀檔時會先檢查，格式欄位（拍號、Key、段落編號、顏色、分割、重複次數、接續…）只接受合法的值</li>
+      <li>畫面上所有文字的特殊符號跳脫再加強一層</li>
+      <li>正常的譜檔完全不受影響</li></ul>
 
       <h4>分頁改名、混合譜小節選單、頁尾人次計數器 <span class="cl-date">2026-09-30</span></h4>
       <ul><li>分頁名稱：「鍵盤」改為「鍵盤譜」、「混合」改為「混合譜」</li>
@@ -2349,16 +2434,21 @@ function setFontSize(v){
   if(r)r.style.fontSize=v+'px';
 }
 function bumpFont(d){setFontSize(curFont+d);}
-/* 介面配色主題：dark(預設) / light / pink；只影響螢幕，存於本機 */
+/* 介面配色主題：earth(大地，預設) / dark / light / pink；只影響螢幕，存於本機 */
 function setTheme(name){
-  const t=['dark','light','pink'].includes(name)?name:'dark';
-  document.body.classList.remove('theme-light','theme-pink');
+  const t=['earth','dark','light','pink'].includes(name)?name:'earth';
+  document.body.classList.remove('theme-light','theme-pink','theme-earth');
   if(t==='light')document.body.classList.add('theme-light');
   else if(t==='pink')document.body.classList.add('theme-pink');
+  else if(t==='earth')document.body.classList.add('theme-earth');
   try{localStorage.setItem('arranger_theme',t);}catch(e){}
   const sel=document.getElementById('theme-sel'); if(sel)sel.value=t;
 }
-(function initTheme(){ let t='dark'; try{t=localStorage.getItem('arranger_theme')||'dark';}catch(e){} setTheme(t); })();
+/* 預設改成大地：新使用者直接是大地；舊使用者原本存的是「黑」（以前的預設）的，這次更新時換成大地一次，之後照自己的選擇 */
+(function initTheme(){ let t='earth';
+  try{ t=localStorage.getItem('arranger_theme')||'earth';
+       if(localStorage.getItem('arranger_theme_v2')!=='1'){ if(t==='dark')t='earth'; localStorage.setItem('arranger_theme_v2','1'); } }catch(e){}
+  setTheme(t); })();
 /* ── 介面語言：中文(預設) / English；字典逐字串對應，渲染後重套，可還原 ── */
 const LANGS=['zh','cn','en','ja','ko'];   // 語言循環順序：繁體 → 简体 → English → 日本語 → 한국어
 /* 語言：使用者手動選過就用他選的；否則依登入者的瀏覽器 / 系統語言自動挑最合適的 */
@@ -2420,7 +2510,7 @@ const I18N={
  "許願":"Wish","教學":"Tutorials","教學影片：在 YouTube 開啟教學播放清單":"Tutorial videos: open the playlist on YouTube","▲ 工具列":"▲ Toolbar","▼ 工具列":"▼ Toolbar","🖥 電腦":"🖥 Desktop","▦ 平板":"▦ Tablet","📱 手機":"📱 Phone","📝 更新日誌":"📝 Changelog",
  "意見回饋：寫信告訴我們你的建議或遇到的問題":"Feedback: email us your suggestions or problems",
  "曲目":"Title","演唱者":"Artist","拍號":"Time","BPM":"BPM","用途":"Use","男":"M","女":"F","字級":"Font","主題":"Theme","微調Key":"Tune Key",
- "黑":"Dark","白":"Light","粉":"Pink",
+ "黑":"Dark","白":"Light","粉":"Pink","大地":"Earth",
  "💾 存檔":"💾 Save","範本":"Template","👤 使用者":"👤 User","⋯ 更多":"⋯ More","↓ CSV":"↓ CSV","↓ PNG 示意圖":"↓ PNG Flow","↓ PNG 方塊圖":"↓ PNG Blocks","🖨 圖示譜PDF":"🖨 Icon PDF",
  "＋ 新增段落":"＋ Add sec.","刪":"Del",
  "展開示意圖":"Flow Map","方塊流程圖":"Block Flow","圖示譜":"Icon Chart","和弦譜":"Chord Chart","混合":"Mix","五線譜":"Staff","文字清單":"Text List","匯出":"Export","🗑 清除音符":"🗑 Clear notes","↩ 上一步":"↩ Undo","↪ 下一步":"↪ Redo","⇩ 載入":"⇩ Load chords","載入：把和弦譜／混合頁的和弦轉成 KB 數字（右手疊和弦音、左手根音）":"Load: turn the chords from the Chord Chart / Mix pages into KB numbers (right hand stacks the chord tones, left hand takes the root)","🎹 放和弦":"🎹 Place chord",
@@ -2604,7 +2694,7 @@ const I18N_JA={
  "微調Key":"キー微調整",
  "黑":"ダーク",
  "白":"ライト",
- "粉":"ピンク",
+ "粉":"ピンク","大地":"アース",
  "💾 存檔":"💾 保存",
  "範本":"ひな形",
  "👤 使用者":"👤 ユーザー",
@@ -2962,7 +3052,7 @@ const I18N_KO={
  "微調Key":"키 미세조정",
  "黑":"다크",
  "白":"라이트",
- "粉":"핑크",
+ "粉":"핑크","大地":"어스",
  "💾 存檔":"💾 저장",
  "範本":"템플릿",
  "👤 使用者":"👤 사용자",
@@ -3481,7 +3571,7 @@ function refreshSvcMode(){
 
 /* ── SAVE / LOAD ── */
 /* ── 版本：每次更新改這裡（格式 年.月.日，同一天第二版加 -2）；顯示在標題旁與更新日誌，存檔／匯出也會記錄 ── */
-const APP_VERSION='2026.09.30';
+const APP_VERSION='2026.10.02-3';
 function showAppVersion(){ try{ const t='v'+APP_VERSION; const a=document.getElementById('app-ver'); if(a)a.textContent=t; document.querySelectorAll('.app-ver-txt').forEach(e=>e.textContent=t); }catch(e){} }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',showAppVersion); else setTimeout(showAppVersion,0);
 function getProjectData(){
@@ -3510,8 +3600,58 @@ if(typeof window!=='undefined'){
   window.addEventListener('pagehide',commitEdits);
   document.addEventListener('visibilitychange',()=>{ if(document.hidden) commitEdits(); });
 }
+/* ── 讀進來的譜檔先「消毒」（安全性）──
+   譜檔可能來自別人分享的 .json、雲端歌庫、瀏覽器存檔；裡面的格式欄位（拍號、Key、段落編號、顏色、分割…）
+   只允許合法的值，不合法的一律換成預設值，避免被塞進可以執行的程式碼。
+   文字類（歌名、段落名、備註、和弦）照原樣保留，畫面上一律跳脫顯示。 */
+const _RE_TIME=/^\d{1,2}\/\d{1,2}$/, _RE_KEY=/^[A-G](#|b)?m?$/;
+function sanitizeProjectData(data){
+  if(!data||typeof data!=='object')return data;
+  const m=data.meta=(data.meta&&typeof data.meta==='object')?data.meta:{};
+  const str=(v,n)=>String(v==null?'':v).slice(0,n||200);
+  m.title=str(m.title); m.artist=str(m.artist); m.usage=str(m.usage,40);
+  m.time=_RE_TIME.test(String(m.time||''))?String(m.time):'4/4';
+  m.mkey=_RE_KEY.test(String(m.mkey||''))?String(m.mkey):''; m.fkey=_RE_KEY.test(String(m.fkey||''))?String(m.fkey):'';
+  m.bpm=/^\d{1,3}$/.test(String(m.bpm||''))?String(m.bpm):'';
+  if(m.fontSize!=null){ const f=parseFloat(m.fontSize); m.fontSize=(isFinite(f)&&f>=8&&f<=60)?f:undefined; }
+  if(m.customIns!=null&&!Array.isArray(m.customIns))m.customIns=[];
+  if(!Array.isArray(data.sects))data.sects=[];
+  const okColor=c=>(typeof COL==='object'&&COL&&Object.prototype.hasOwnProperty.call(COL,c))?c:'black';
+  const int=(v,lo,hi)=>{ const n=parseInt(v); return (isFinite(n)&&n>=lo&&n<=hi)?n:null; };
+  const used=new Set(); let maxId=0;
+  data.sects=data.sects.filter(x=>x&&typeof x==='object');
+  data.sects.forEach(x=>{ let id=int(x.id,1,1e9); if(id==null||used.has(id))id=null; x.id=id; if(id!=null){ used.add(id); maxId=Math.max(maxId,id); } });
+  data.sects.forEach(x=>{ if(x.id==null){ x.id=++maxId; used.add(x.id); } });
+  data.sects.forEach(x=>{
+    x.name=str(x.name); x.notes=str(x.notes,4000);
+    x.bars=int(x.bars,1,512)||1; x.color=okColor(x.color);
+    if(Array.isArray(x.layers)) x.layers=x.layers.filter(l=>l&&typeof l==='object').map(l=>({...l,color:okColor(l.color),ins:(l.ins&&typeof l.ins==='object')?l.ins:{}})); else x.layers=[{color:x.color,ins:{}}];
+    if(x.barsPerRow!=null&&x.barsPerRow!=='') x.barsPerRow=int(x.barsPerRow,1,16)||'';
+    if(x.goto!=null&&x.goto!=='') x.goto=used.has(int(x.goto,1,1e9))?int(x.goto,1,1e9):'';
+    const arr=(k,fn)=>{ if(x[k]==null)return; if(!Array.isArray(x[k])){ delete x[k]; return; } x[k]=x[k].map(fn); };
+    arr('meters',v=>(v&&_RE_TIME.test(String(v)))?String(v):'');
+    arr('rep',v=>(v==null||v==='')?v:(int(v,1,99)||1));
+    arr('subdiv',v=>[1,2,4].includes(parseInt(v))?parseInt(v):1);
+    arr('bargoto',v=>(v==null||v==='')?'':(used.has(int(v,1,1e9))?int(v,1,1e9):''));
+    arr('mixv',v=>(v==='note'||v==='kb')?v:'');
+    ['kbUpSub','kbLoSub'].forEach(k=>arr(k,v=>Array.isArray(v)?v.map(z=>[1,2,4].includes(parseInt(z))?parseInt(z):1):([1,2,4].includes(parseInt(v))?parseInt(v):v==null?v:1)));
+    FIELDS_TIE.forEach(k=>arr(k,r=>Array.isArray(r)?r.map(v=>(v&&/^\d{1,4},\d{1,4}(,s)?$/.test(String(v)))?String(v):''):r));
+    ['chArp','ntArp','kbUpArp','kbLoArp'].forEach(k=>arr(k,r=>Array.isArray(r)?r.map(v=>v?1:0):r));
+    if(Array.isArray(x.nt)){ const okD=new Set(NT_DUR.map(o=>o[0]).concat(['q4','r']));
+      x.nt=x.nt.map(r=>Array.isArray(r)?r.filter(b=>b&&typeof b==='object').map(b=>{ const o=ntNorm(b); if(!okD.has(o.d))o.d='q'; return o; }):r); }
+    if(Array.isArray(x.arr)) x.arr=x.arr.filter(a=>a&&typeof a==='object').map(a=>({...a,x:+a.x||0,w:+a.w||0.25}));
+    if(x._dispMode!=null) x._dispMode=['num','male','female'].includes(x._dispMode)?x._dispMode:'num';
+    if(x._dispKey!=null) x._dispKey=_RE_KEY.test(String(x._dispKey))?String(x._dispKey):'';
+    if(x._baseKey!=null) x._baseKey=_RE_KEY.test(String(x._baseKey))?String(x._baseKey):'';
+    if(x._time!=null) x._time=_RE_TIME.test(String(x._time))?String(x._time):'';
+    if(x._song!=null) x._song=str(x._song);
+  });
+  data.nid=Math.max(int(data.nid,1,1e9)||1, maxId+1);
+  return data;
+}
 function applyProjectData(data){
   if(!data||!data.sects)return false;
+  try{ sanitizeProjectData(data); }catch(e){ console.warn('sanitize',e); return false; }
   try{ if(window._bootDone&&Array.isArray(sects)&&sects.length){ const cur=getProjectData(); autoHistMaybe(cur,JSON.stringify(cur),true); } }catch(e){}   // 換譜前先把目前的內容記一份
   _secClearBk={};                      // 換譜就丟掉各段的「清除前備份」，避免復原到別首歌的內容
   document.getElementById('s-title').value=data.meta?.title||'';
@@ -3760,7 +3900,7 @@ async function subLibrary(add){
 function openCheckout(withLib){
   if(!_paddleOn){ alert(L('訂閱功能尚未設定（見 PADDLE_SETUP.md）。')); return; }
   if(!_supaUser){ alert(L('請先登入再訂閱。')); return; }
-  const dark=!(document.body.classList.contains('theme-light')||document.body.classList.contains('theme-pink'));
+  const dark=!(document.body.classList.contains('theme-light')||document.body.classList.contains('theme-pink')||document.body.classList.contains('theme-earth'));
   const loc=(_lang==='cn')?'zh-Hans':(_lang==='zh')?'zh-Hant':(_lang==='ja')?'ja':(_lang==='ko')?'ko':'en';
   try{
     Paddle.Checkout.open({
@@ -4481,7 +4621,7 @@ function impJSON(input){
   reader.readAsText(file);
 }
 
-function esc(v){return String(v).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');}
+function esc(v){return String(v).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/'/g,'&#39;');}
 function gv(id){return document.getElementById(id).value;}
 
 /* ── SUMMARY (total bars + estimated length) ── */
@@ -5588,7 +5728,7 @@ function renderTimeSelects(){
   const cur=gv('s-time')||'4/4';
   const base=['4/4','3/4','6/8','12/8'];
   const opts=base.includes(cur)?base:[cur,...base];
-  const html=opts.map(o=>`<option value="${o}"${o===cur?' selected':''}>${o}</option>`).join('');
+  const html=opts.map(o=>`<option value="${esc(o)}"${o===cur?' selected':''}>${esc(o)}</option>`).join('');
   ['chord-timesig','mix-timesig','mixp-timesig'].forEach(id=>{const s=document.getElementById(id); if(s)s.innerHTML=html;});
 }
 /* 每拍一個和弦欄位（空欄＝該拍延續前一個和弦，顯示圓點）。相容舊的 spans 與字串資料。 */
@@ -6211,7 +6351,7 @@ function barOneHtml(s,i,beats,repX,rowStart){
       subSel=`<select class="cbsub" onclick="event.stopPropagation()" onchange="setSubdiv(${s.id},${i},this.value)" title="本小節分割：♩四分(4格) / ♪八分(8格) / ♬十六分(16格)"><option value="1"${fac===1?' selected':''}>♩</option><option value="2"${fac===2?' selected':''}>♪</option><option value="4"${fac===4?' selected':''}>♬</option></select>`;
       repBadge=`<span class="cbrep ${rep>1?'on':''}" onclick="event.stopPropagation();cycleRep(${s.id},${i})" title="本小節重複次數（點擊循環 ·/×2/×4/×8）">${rep>1?'×'+rep:'·'}</span>`;
       const gopts=`<option value="">${isLast?'→ ?':'⌄'}</option>`+sects.map(t=>`<option value="${t.id}"${String(g)===String(t.id)?' selected':''}>→ ${esc(t.name)}</option>`).join('');
-      badges=`<button class="cmeter ${m?'on':'off'}" onclick="cycleMeter(${s.id},${i})" title="本小節拍號（點擊切換）">${m||'♩'}</button>`
+      badges=`<button class="cmeter ${m?'on':'off'}" onclick="cycleMeter(${s.id},${i})" title="本小節拍號（點擊切換）">${m?esc(m):'♩'}</button>`
         + (isLast
           ? `<select class="cgoto-badge ${g?'on':''}" onchange="setBarGoto(${s.id},${i},this.value)" title="接續到哪一段">${gopts}</select>`
           : `<select class="cjump ${g?'on':''}" onchange="setBarGoto(${s.id},${i},this.value)" title="此小節接續到哪一段">${gopts}</select>`);
@@ -7919,6 +8059,7 @@ function setMode(m){
   if(!MODES.includes(m))m='desktop';
   document.body.classList.remove('mode-tablet','mode-phone');
   if(m==='tablet'||m==='phone')document.body.classList.add('mode-'+m); // desktop = 無 class
+  if(m!=='phone')document.body.classList.remove('nav-open');   // 離開手機模式就收起抽屜
   MODES.forEach(x=>{
     const b=document.getElementById('mode-'+x+'-btn');
     if(b)b.classList.toggle('btna',x===m);
@@ -8498,7 +8639,7 @@ function kbBarHtml(s,i,rowStart){
   if(ctrlsOn){
     repBadge=`<span class="cbrep ${rep>1?'on':''}" onclick="event.stopPropagation();cycleRep(${s.id},${i})" title="本小節重複次數">${rep>1?'×'+rep:'·'}</span>`;
     const gopts=`<option value="">${isLast?'→ ?':'⌄'}</option>`+sects.map(t=>`<option value="${t.id}"${String(g)===String(t.id)?' selected':''}>→ ${esc(t.name)}</option>`).join('');
-    badges=`<button class="cmeter ${m?'on':'off'}" onclick="cycleMeter(${s.id},${i})" title="本小節拍號">${m||'♩'}</button>`+(isLast?`<select class="cgoto-badge ${g?'on':''}" onchange="setBarGoto(${s.id},${i},this.value)" title="接續到哪一段">${gopts}</select>`:`<select class="cjump ${g?'on':''}" onchange="setBarGoto(${s.id},${i},this.value)" title="此小節接續到哪一段">${gopts}</select>`);
+    badges=`<button class="cmeter ${m?'on':'off'}" onclick="cycleMeter(${s.id},${i})" title="本小節拍號">${m?esc(m):'♩'}</button>`+(isLast?`<select class="cgoto-badge ${g?'on':''}" onchange="setBarGoto(${s.id},${i},this.value)" title="接續到哪一段">${gopts}</select>`:`<select class="cjump ${g?'on':''}" onchange="setBarGoto(${s.id},${i},this.value)" title="此小節接續到哪一段">${gopts}</select>`);
   } else { if(rep>1)repBadge=`<span class="cbrep on static">×${rep}</span>`; if(meterShow(s,i,m))badges+=`<span class="cmeter on static">${esc(m)}</span>`; if(g){const t=sects.find(x=>x.id===g); badges+=`<span class="${isLast?'cgoto-badge':'cjump'} on static">→ ${t?esc(t.name):''}</span>`;} }
   /* 每一「拍」各自的分割選單（♩四分 / ♪八分 / ♬十六分），放在該拍左下角（避開上方的拍號/接續徽章） */
   // 控制項關掉時，切分鈕圖形完全隱藏（切分狀態已由格子底線與格數表達，不需要唯讀圖示）
@@ -8879,18 +9020,35 @@ async function expPNG(view){
   document.addEventListener('focusout',()=>{ setTimeout(setKb,180); },true);
 })();
 
-const PANELS=['seg','chord','note','staff','mixp','text','export'];   // 順序要和上方分頁鈕一致（sw 會用 index 對應）
+const PANELS=['chord','note','staff','mixp','seg','text','export'];   // 各頁面（分頁鈕用 data-view 對應，順序不影響）
 function sw(name,btn){
   currentView=name;
   const tabs=[...document.querySelectorAll('.vtab')];
   tabs.forEach(t=>t.classList.remove('a'));
   PANELS.forEach(p=>{const e=document.getElementById('vp-'+p); if(e)e.style.display='none';});
-  if(!btn){ const i=PANELS.indexOf(name); if(i>=0&&tabs[i])btn=tabs[i]; }   // 程式切換（例如服事清單載入）也要點亮分頁
+  if(!btn||!btn.dataset||btn.dataset.view!==name) btn=document.querySelector('.vtab[data-view="'+name+'"]')||btn;   // 程式切換（例如服事清單載入）也要點亮側欄
   if(btn)btn.classList.add('a');
+  try{ const c=document.getElementById('nav-cur'), lb=btn&&btn.querySelector('.nav-lb'); if(c&&lb)c.textContent=lb.textContent; }catch(e){}
+  if(document.body.classList.contains('nav-open'))navToggle(false);   // 手機：選好就收起來
   {const e=document.getElementById('vp-'+name); if(e)e.style.display='';}
   renderCurrent();   // 切到該檢視才渲染
   i18nMaybe();
 }
+
+/* ── 左側欄：電腦／平板＝固定精簡（圖示＋小字）↔ 隱藏（只剩小 ☰）；手機＝滑出式，選好自動收 ── */
+function navIsPhone(){ return document.body.classList.contains('mode-phone'); }
+function navToggle(force){
+  if(navIsPhone()){ const on=(force===undefined)?!document.body.classList.contains('nav-open'):!!force; document.body.classList.toggle('nav-open',on); return; }
+  if(force===false)return;
+  const hide=!document.body.classList.contains('nav-hide');
+  document.body.classList.toggle('nav-hide',hide);
+  try{ localStorage.setItem('arranger_nav',hide?'hide':'show'); }catch(e){}
+  try{ redrawMeasured(); }catch(e){}
+}
+(function navInit(){ let v=''; try{ v=localStorage.getItem('arranger_nav')||''; }catch(e){}
+  document.body.classList.add('nav-mini');                       // 一律精簡樣式
+  document.body.classList.toggle('nav-hide', v==='hide'); })();
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&document.body.classList.contains('nav-open'))navToggle(false); });
 
 /* ── INIT ── */
 function syncTopbarH(){
@@ -8964,7 +9122,7 @@ window.addEventListener('resize',redrawMeasured);
 window.addEventListener('beforeprint',redrawMeasured);
 window.addEventListener('afterprint',redrawMeasured);
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" integrity="sha384-ZZ1pncU3bQe8y31yfZdMFdSpttDoPmOZg2wguVK9almUodir1PghgT0eY7Mrty8H" crossorigin="anonymous"></script>
 <div class="cl-modal" id="save-modal" onclick="if(event.target===this)closeSaveMenu()">
   <div class="cl-box" style="max-width:380px">
     <div class="cl-head">💾 儲存譜 <button class="btn cl-btn" onclick="closeSaveMenu()">✕</button></div>
