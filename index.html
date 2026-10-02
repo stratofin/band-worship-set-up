@@ -872,6 +872,83 @@ body.chsym-on .cbeatcol{cursor:pointer;}
 .mixpage-stack.mixp .ccard-head{font-size:1.04em;padding:0.5em 0.8em;}
 .mixpage-stack.mixp .cname{font-size:1.1em;}
 /* 樂器配器：小節上方一條時間軸，配器條可自由拖曳（以比例定位、不卡小節），多了自動疊成多排 */
+/* ── 介面整理：檔案選單／曲目設定／和弦工具／說明 ── */
+.dd-car{font-size:0.75em;margin-left:0.35em;opacity:0.75;display:inline-block;transition:transform .15s;}
+.pop-menu{display:none;position:fixed;z-index:1200;background:var(--bg2);border:1px solid var(--border2);border-radius:0.6em;
+  box-shadow:0 8px 24px rgba(0,0,0,0.22);padding:0.35em;min-width:10.5em;}
+.pop-menu.show{display:flex;flex-direction:column;gap:0.15em;}
+.pm-item{display:block;width:100%;text-align:left;background:none;border:none;border-radius:0.45em;padding:0.55em 0.8em;
+  font-family:inherit;font-size:0.9em;color:var(--text);cursor:pointer;white-space:nowrap;}
+.pm-item:hover,.pm-item:focus-visible{background:var(--bg3);outline:none;}
+.file-btn.on .dd-car,.song-btn.on .dd-car,body.ctool-open .ctool-btn .dd-car{transform:rotate(180deg);}
+.file-btn.on,.song-btn.on,.help-btn.on{background:var(--bg4);border-color:var(--accent);}
+.help-pop{max-width:min(34em,calc(100vw - 16px));max-height:min(60vh,30em);overflow:auto;padding:0.8em 1em;font-size:0.82em;line-height:1.65;color:var(--text2);}
+.help-pop .hp-head{font-weight:700;color:var(--text);margin-bottom:0.35em;}
+.help-pop .hp-p+.hp-p{margin-top:0.5em;}
+.help-pop b{color:var(--text);}
+/* 各頁說明文字平常藏起來，按「❓ 說明」才跳出來 */
+.right .chord-hint,.right .seg-tip,.right .ic-leghint{display:none!important;}
+/* 曲目設定：平常收起來 */
+body:not(.song-open) .topbar .pills{display:none!important;}
+.tbar-r{margin-left:auto;}
+.song-btn{flex:0 0 auto;}
+/* 和弦工具：平常收起來，按了展開 */
+.ctool-wrap{display:contents;}
+.ctool-grp{display:none;}
+body.ctool-open .ctool-grp{display:contents;}
+body.ctool-open .ctool-btn{border-color:var(--accent);color:var(--accent);}
+/* 收起來時，若「放和弦」或「符號」還開著，鈕上亮一個小點提醒 */
+body:not(.ctool-open) .ctool-wrap:has(.chordplace-btn.on) .ctool-btn::after,
+body:not(.ctool-open) .ctool-wrap:has(#kb-chordmode.on) .ctool-btn::after,
+body.chsym-on:not(.ctool-open) .ctool-wrap:has(.ch-sym) .ctool-btn::after,
+body.kbsym-on:not(.ctool-open) .ctool-wrap:has(#kb-sym) .ctool-btn::after{
+  content:'';display:inline-block;width:0.45em;height:0.45em;border-radius:50%;background:var(--accent);margin-left:0.35em;vertical-align:middle;}
+/* 檔案 › 範本 子選單 */
+.pm-sub{position:relative;}
+.pm-subbtn{display:flex;align-items:center;}
+.pm-arrow{margin-left:auto;padding-left:1.2em;opacity:0.6;font-size:1.1em;line-height:1;transition:transform .15s;}
+.pm-sub.open>.pm-subbtn{background:var(--bg3);}
+.pm-submenu{display:none;position:absolute;left:100%;top:-0.35em;margin-left:0.3em;flex-direction:column;gap:0.15em;min-width:14em;
+  background:var(--bg2);border:1px solid var(--border2);border-radius:0.6em;box-shadow:0 8px 24px rgba(0,0,0,0.22);padding:0.35em;}
+.pm-submenu::before{content:'';position:absolute;left:-0.6em;top:0;bottom:0;width:0.6em;}   /* 滑鼠移過去的空隙不會斷 */
+.pm-sub.open>.pm-submenu{display:flex;}
+.pm-sub.flip>.pm-submenu{left:auto;right:100%;margin-left:0;margin-right:0.3em;}
+.pm-sub.flip>.pm-submenu::before{left:auto;right:-0.6em;}
+.pm-submenu .pm-item{white-space:normal;}
+.pm-empty{padding:0.5em 0.8em;color:var(--text3);font-size:0.85em;}
+/* 手機：範本清單直接在下面展開 */
+body.mode-phone .pm-submenu{position:static;margin:0.1em 0 0.2em 1.2em;min-width:0;box-shadow:none;border:none;border-left:2px solid var(--border2);border-radius:0;padding:0 0 0 0.3em;}
+body.mode-phone .pm-sub.open .pm-arrow{transform:rotate(90deg);}
+/* 我的最愛 */
+.fav-btn{padding:0.3em 0.55em;color:var(--text3);font-size:0.95em;line-height:1;margin-right:0.3em;}
+.fav-btn.on{color:#d0485a;border-color:#d0485a;}
+.fav-btn:hover{color:#d0485a;}
+.page .sidenav .nav-fav{position:relative;margin-top:0.45em;border-top:1px solid var(--border);border-radius:0 0 0.6em 0.6em;padding-top:0.8em;}
+.page .sidenav .nav-fav[hidden]{display:none!important;}
+.nav-fav .nav-ic{color:#d0485a;}
+.fav-cnt{position:absolute;top:0.55em;right:0.55em;min-width:1.45em;height:1.45em;padding:0 0.3em;border-radius:99px;background:#d0485a;color:#fff;
+  font-size:0.72em;font-weight:700;line-height:1.45em;text-align:center;box-sizing:border-box;}
+body.nav-mini:not(.mode-phone) .fav-cnt{font-size:1em;top:0.5em;right:0.45em;}
+body.mode-phone .fav-cnt{position:static;margin-left:auto;}
+.fav-pop{min-width:16em;max-width:min(26em,calc(100vw - 16px));max-height:min(70vh,32em);overflow:auto;padding:0.6em 0.5em;font-size:0.9em;}
+.fav-pop .hp-head{padding:0 0.4em;color:#d0485a;}
+.fav-tbl{width:100%;border-collapse:collapse;}
+.fav-row{cursor:pointer;}
+.fav-row td{padding:0.5em 0.45em;border-top:1px solid var(--border);vertical-align:middle;}
+.fav-row:first-child td{border-top:none;}
+.fav-row:hover td{background:var(--bg3);}
+.fav-row.on .fav-t{color:var(--accent);font-weight:700;}
+.fav-t{color:var(--text);word-break:break-word;}
+.fav-t .cl-tag{margin-left:0.4em;}
+.fav-src{color:var(--text3);font-size:0.8em;white-space:nowrap;text-align:right;}
+.fav-x-td{width:1%;}
+.fav-x{background:none;border:none;color:var(--text3);cursor:pointer;font-size:0.9em;padding:0.2em 0.35em;border-radius:0.35em;font-family:inherit;}
+.fav-x:hover{background:var(--bg4);color:#d0485a;}
+@media print{ .nav-fav,.fav-pop{display:none!important;} }
+/* 頁尾「更新日誌」 */
+.site-footer .sf-cl{background:none;border:none;padding:0;font:inherit;color:var(--text2);cursor:pointer;}
+.site-footer .sf-cl:hover{color:var(--accent);text-decoration:underline;}
+@media print{ .pop-menu,.help-btn,.ctool-btn,.song-btn{display:none!important;} }
 /* 更新日誌透明視窗 */
 .cl-btn{margin-left:0.4em;}
 .cl-modal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:1000;background:rgba(0,0,0,0.45);align-items:flex-start;justify-content:center;padding:5vh 4vw;}
@@ -1048,19 +1125,20 @@ body.mode-tablet .tbar-r .btn,body.mode-phone .tbar-r .btn{font-size:0.8em;paddi
    第二排起：曲目等欄位
    最後：開新檔案（整排）→ 存檔｜讀檔 → 範本｜使用者（四顆等寬） */
 body.mode-phone .topbar-row-2{align-items:flex-start;}
-body.mode-phone .seg,body.mode-phone #lang-btn,body.mode-phone .cl-btn{order:1;}
+body.mode-phone .seg,body.mode-phone #lang-btn,body.mode-phone .cl-btn,body.mode-phone .song-btn{order:1;}
+body.mode-phone .song-btn{font-size:0.72em;padding:0.28em 0.6em;margin-left:auto;}
 body.mode-phone .tbar-r{order:2;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:0.35em 0.3em;width:100%;max-width:100%;box-sizing:border-box;margin-top:0.15em;}
 body.mode-phone .pills{flex:1 0 100%;order:3;margin-top:0.15em;}
 body.mode-phone .tbar-r>*{width:100%;min-width:0;justify-content:center;}
-body.mode-phone .tbar-r>*{grid-column:span 3;}                /* 六欄格線：存檔／讀檔各佔一半 */
-body.mode-phone .tbar-r>*:first-child{grid-column:1 / -1;}   /* 開新檔案獨佔一排 */
-/* 範本｜歌曲庫｜使用者：同一排三等分（只在手機版調順序，電腦／平板不變） */
-body.mode-phone .tbar-r #tpl-sel{order:1;grid-column:span 2;}
-body.mode-phone .tbar-r #lib-btn{order:2;grid-column:span 2;}
-body.mode-phone .tbar-r #cloud-btn{order:3;grid-column:span 2;}
-/* 雲端沒設定、「使用者」隱藏時：範本與歌曲庫各佔一半 */
-body.mode-phone .tbar-r:has(#cloud-btn[style*="none"]) #tpl-sel,
-body.mode-phone .tbar-r:has(#cloud-btn[style*="none"]) #lib-btn{grid-column:span 3;}
+/* 檔案｜範本｜歌曲庫｜使用者：同一排四等分（只在手機版調順序，電腦／平板不變） */
+body.mode-phone .tbar-r{grid-template-columns:repeat(12,minmax(0,1fr))!important;}
+body.mode-phone .tbar-r>*{grid-column:span 4;}
+body.mode-phone .tbar-r #file-btn{order:0;}
+body.mode-phone .tbar-r #lib-btn{order:2;}
+body.mode-phone .tbar-r #cloud-btn{order:3;}
+body.mode-phone .tbar-r #tpl-sel{display:none!important;}
+/* 雲端沒設定、「使用者」隱藏時：檔案｜歌曲庫 各半 */
+body.mode-phone .tbar-r:has(#cloud-btn[style*="none"])>*{grid-column:span 6;}
 body.mode-phone .tbar-r .btn,body.mode-phone .tbar-r .tpl-sel{
   display:inline-flex;align-items:center;justify-content:center;height:2.1em;box-sizing:border-box;
   padding:0 0.5em;font-size:0.82em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;}
@@ -1534,7 +1612,7 @@ body.gated>*:not(#gate){filter:grayscale(.9) opacity(.32)!important;pointer-even
       <button class="segbtn" id="mode-phone-btn" onclick="setMode('phone')" title="手機：隱藏編輯區、圖示譜2欄">📱 手機</button>
     </span>
     <button class="segbtn cl-btn" id="lang-btn" onclick="toggleLang()" title="中文 / English">EN</button>
-    <button class="segbtn cl-btn" onclick="showChangelog(event)" title="查看歷次更新內容">📝 更新日誌</button>
+    <button class="btn song-btn" onclick="toggleSong(event)" title="曲目設定：曲目、演唱者、拍號、BPM、用途、主題、字級、男／女 Key（再按一次收起來）">🎼 曲目設定<span class="dd-car">▾</span></button>
     <div class="pills">
       <div class="pill"><label>曲目</label><input id="s-title" value="King Of Kings" oninput="schedRender()" style="width:100px"></div>
       <div class="pill"><label>演唱者</label><input id="s-artist" value="" placeholder="—" oninput="schedRender()" style="width:90px"></div>
@@ -1554,9 +1632,8 @@ body.gated>*:not(#gate){filter:grayscale(.9) opacity(.32)!important;pointer-even
       
     </div>
     <div class="tbar-r">
-      <button class="btn" onclick="newChart()" title="開新檔案：清空目前內容，開一份全新的譜">📄 開新檔案</button><button class="btn" onclick="openSaveMenu()" title="儲存：存到瀏覽器本機、另存成 .json 到資料夾，或匯出可攜的 JSON">💾 存檔</button>
-      <button class="btn" onclick="openLoadMenu()" title="讀檔：從瀏覽器本機的存檔，或從 .json 檔載入">📂 讀檔</button>
-      <select class="btn tpl-sel" id="tpl-sel" onchange="loadTemplate(this.value)" title="範本"><option value="">範本</option></select>
+      <button class="btn file-btn" id="file-btn" onclick="popToggle('file-menu',this,event)" title="檔案：開新檔案、存檔、讀檔、範本" aria-haspopup="menu">📁 檔案<span class="dd-car">▾</span></button>
+      <select class="btn tpl-sel" id="tpl-sel" onchange="loadTemplate(this.value)" title="範本" hidden aria-hidden="true" tabindex="-1"><option value="">範本</option></select>
       <button class="btn" id="cloud-btn" onclick="openCloud()" title="使用者登入 / 雲端歌庫" style="display:none">👤 使用者</button><button class="btn" id="lib-btn" onclick="openLibrary()" title="歌曲庫：瀏覽、載入歌譜；敬拜使用者可用「聚會服事」、個人使用者可用「演奏模式」挑歌排成一份">🎵 歌曲庫</button>
       <input id="json-import" type="file" accept=".json" style="display:none" onchange="impJSON(this)">
     </div>
@@ -1574,6 +1651,7 @@ body.gated>*:not(#gate){filter:grayscale(.9) opacity(.32)!important;pointer-even
     <button class="vtab" data-view="mixp" onclick="sw('mixp',this)" title="混合譜"><span class="nav-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4v16M12 4v16M18 4v16"/><rect x="3.8" y="13" width="4.4" height="3" rx="1" fill="currentColor"/><rect x="9.8" y="7" width="4.4" height="3" rx="1" fill="currentColor"/><rect x="15.8" y="11" width="4.4" height="3" rx="1" fill="currentColor"/></svg></span><span class="nav-lb">混合譜</span></button>
     <button class="vtab" data-view="text" onclick="sw('text',this)" title="文字清單"><span class="nav-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6.5h11M9 12h11M9 17.5h11"/><circle cx="4.8" cy="6.5" r="1.2" fill="currentColor"/><circle cx="4.8" cy="12" r="1.2" fill="currentColor"/><circle cx="4.8" cy="17.5" r="1.2" fill="currentColor"/></svg></span><span class="nav-lb">文字清單</span></button>
     <button class="vtab" data-view="export" onclick="sw('export',this)" title="匯出"><span class="nav-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V4M7.5 8.5L12 4l4.5 4.5"/><path d="M4.5 13.5v5a1.5 1.5 0 0 0 1.5 1.5h12a1.5 1.5 0 0 0 1.5-1.5v-5"/></svg></span><span class="nav-lb">匯出</span></button>
+    <button class="vtab nav-fav" id="nav-fav" onclick="favMenu(this,event)" title="我的最愛：點歌名直接打開那首歌的譜" hidden><span class="nav-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.2s-7.6-4.6-7.6-10.3A4.3 4.3 0 0 1 12 7.4a4.3 4.3 0 0 1 7.6 2.5c0 5.7-7.6 10.3-7.6 10.3z"/></svg></span><span class="nav-lb">最愛</span><span class="fav-cnt" id="fav-cnt">0</span></button>
   </nav>
   <div class="nav-backdrop" onclick="navToggle(false)"></div>
   <!-- LEFT: editor -->
@@ -1589,7 +1667,7 @@ body.gated>*:not(#gate){filter:grayscale(.9) opacity(.32)!important;pointer-even
     <!-- FLOW VIEW -->
     <!-- SEG VIEW（段落流程圖：直向段落方塊 ＋ 段落編輯 ＋ 樂器配置） -->
     <div id="vp-seg">
-      <div class="view-print"><button class="btn tbcollapse-btn" onclick="toggleToolbar()" title="收合/展開上方設定工具列">▾ 工具列</button><button class="btn lock-btn" onclick="toggleLock()" title="鎖定：開＝只能看譜、禁止編輯；關＝可編輯">🔓 鎖定 關</button><button class="btn" onclick="openOcr()">🔍 辨識匯入</button><button class="btn btna" onclick="printView('seg')">🖨 列印 / 存 PDF</button><label class="ic-hint">顯示 <select class="ic-sel seg-disp" onchange="setSegDisp(this.value)" title="段落方塊要顯示什麼"><option value="ins">樂器配置</option><option value="chord">和弦摘要</option><option value="none">只看段落</option></select></label></div>
+      <div class="view-print"><button class="btn tbcollapse-btn" onclick="toggleToolbar()" title="收合/展開上方設定工具列">▾ 工具列</button><button class="btn lock-btn" onclick="toggleLock()" title="鎖定：開＝只能看譜、禁止編輯；關＝可編輯">🔓 鎖定 關</button><button class="btn" onclick="openOcr()">🔍 辨識匯入</button><button class="btn btna" onclick="printView('seg')">🖨 列印 / 存 PDF</button><label class="ic-hint">顯示 <select class="ic-sel seg-disp" onchange="setSegDisp(this.value)" title="段落方塊要顯示什麼"><option value="ins">樂器配置</option><option value="chord">和弦摘要</option><option value="none">只看段落</option></select></label><button class="btn help-btn" onclick="showHelp(this,event)" title="說明：這一頁的操作方式（點其他地方就收起來）">❓ 說明</button></div>
       <div class="icon-toolbar">
         <button class="stbtn" onclick="addSect()" title="在最後新增一個段落">＋ 新增段落</button>
         <button class="stbtn segdel-btn" onclick="toggleSegDelMode()" title="刪除模式：開啟後每個段落名稱旁會出現 ✕，按下即刪除">－ 刪除段落</button>
@@ -1608,13 +1686,15 @@ body.gated>*:not(#gate){filter:grayscale(.9) opacity(.32)!important;pointer-even
 
     <div id="vp-chord" style="display:none">
       <div class="print-head"></div>
-      <div class="view-print"><button class="btn tbcollapse-btn" onclick="toggleToolbar()" title="收合/展開上方設定工具列">▾ 工具列</button><button class="btn lock-btn" onclick="toggleLock()" title="鎖定：開＝只能看譜與左右滑頁、禁止任何編輯；關＝可編輯">🔓 鎖定 關</button><button class="btn svc-only svc-pb-btn" onclick="toggleSvcPB(this)" title="聚會服事列印：開＝每首歌各自從新頁開始；關＝段落連續接著印">📄 聚會分頁 關</button><button class="btn" onclick="openOcr()">🔍 辨識匯入</button><span class="vp-break"></span><label class="ic-hint" style="display:inline-flex;align-items:center;gap:0.25em">輸出大小<select class="ic-sel psize-sel" onchange="setPrintSize(this.value)" title="輸出時的小節大小：緊湊或最小可讓一頁容納更多小節"><option value="std">標準</option><option value="cmp">緊湊</option><option value="min">最小</option></select></label><button class="btn" onclick="printFit('chord')" title="自動縮放，盡量塞進一張 A4">📄 經典A4</button><button class="btn btna" onclick="printView('chord')">🖨 列印 / 存 PDF</button></div>
+      <div class="view-print"><button class="btn tbcollapse-btn" onclick="toggleToolbar()" title="收合/展開上方設定工具列">▾ 工具列</button><button class="btn lock-btn" onclick="toggleLock()" title="鎖定：開＝只能看譜與左右滑頁、禁止任何編輯；關＝可編輯">🔓 鎖定 關</button><button class="btn svc-only svc-pb-btn" onclick="toggleSvcPB(this)" title="聚會服事列印：開＝每首歌各自從新頁開始；關＝段落連續接著印">📄 聚會分頁 關</button><button class="btn" onclick="openOcr()">🔍 辨識匯入</button><span class="vp-break"></span><label class="ic-hint" style="display:inline-flex;align-items:center;gap:0.25em">輸出大小<select class="ic-sel psize-sel" onchange="setPrintSize(this.value)" title="輸出時的小節大小：緊湊或最小可讓一頁容納更多小節"><option value="std">標準</option><option value="cmp">緊湊</option><option value="min">最小</option></select></label><button class="btn" onclick="printFit('chord')" title="自動縮放，盡量塞進一張 A4">📄 經典A4</button><button class="btn btna" onclick="printView('chord')">🖨 列印 / 存 PDF</button><button class="btn help-btn" onclick="showHelp(this,event)" title="說明：這一頁的操作方式（點其他地方就收起來）">❓ 說明</button></div>
       <div class="icon-toolbar">
         <label class="ic-hint">拍號 <select class="ic-sel" id="chord-timesig" onchange="setTimeSig(this.value)"></select></label>
         <label class="ic-hint">顯示 <select class="ic-sel" id="chord-disp" onchange="setChordDisp(this.value)"><option value="num">級數</option><option value="male">和弦名(男Key)</option><option value="female">和弦名(女Key)</option></select></label>
         <span class="key-step" title="半音微調 Key：依目前「顯示」調男/女 Key"><label>微調Key</label><button onclick="transposeKey(1)" title="升半音">▲</button><b class="keystep-lbl">—</b><button onclick="transposeKey(-1)" title="降半音">▼</button></span>
+        <span class="ctool-wrap"><button class="stbtn ctool-btn" onclick="toggleCtool(event)" title="和弦工具：選和弦、放和弦、符號（再按一次收起來）">🎹 和弦工具<span class="dd-car">▾</span></button><span class="ctool-grp">
         <label class="ic-hint">和弦 <select class="ic-sel cp-acc" onchange="setPlaceAcc(this.value)" title="升降"><option value="">♮</option><option value="b">♭</option><option value="#">♯</option></select><select class="ic-sel cp-root" onchange="setPlaceRoot(this.value)" title="根音（級數）"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option></select><select class="ic-sel cp-qual" onchange="setPlaceQual(this.value)" title="和弦性質"><option value="">大三</option><option value="m">小三 m</option><option value="6">6</option><option value="m6">m6</option><option value="7">屬七 7</option><option value="maj7">maj7</option><option value="m7">m7</option><option value="9">9</option><option value="maj9">maj9</option><option value="m9">m9</option><option value="add9">add9</option><option value="11">11</option><option value="m11">m11</option><option value="13">13</option><option value="maj13">maj13</option><option value="m13">m13</option><option value="sus2">sus2</option><option value="sus">sus</option><option value="7sus">7sus</option><option value="dim">dim</option><option value="aug">aug</option></select><button class="stbtn chordplace-btn" onclick="toggleChordPlace()" title="放和弦模式：開啟後點格子填入所選和弦（存級數，顯示可切級數/男女Key）">🎹 放和弦</button></label>
         <label class="ic-hint">符號 <select class="ic-sel ch-sym" onchange="setChSym(this.value)" title="琶音：點有音的格子加上／拿掉；連結線：先點第一個和弦（反黃），再點第二個就連起來。「延續的和弦」＝第二個照樣寫和弦名；「按照樂譜習慣」＝第二個不再寫和弦名"><option value="">—（不加）</option><option value="arp">琶音 ⌇</option><option value="tie">連結線 ⌒（延續的和弦）</option><option value="tieS">連結線 ⌒（按照樂譜習慣）</option></select></label>
+        </span></span>
         <label class="ic-hint">全部每排 <select class="ic-sel" onchange="applyAllBPR(this)" title="一次設定所有段落每排小節數"><option value="__">套用…</option><option value="">自動</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option></select></label>
         <button class="clear-btn" onclick="openClearPick()" title="選要清除哪些項目（和弦、音符、鍵盤、小節格式、備註、配器、整份段落），譜上會先用黃色標示；清完可再按一次「復原」">🗑 清除</button>
       </div>
@@ -1625,13 +1705,15 @@ body.gated>*:not(#gate){filter:grayscale(.9) opacity(.32)!important;pointer-even
     <!-- NOTE VIEW（音符譜：小節內自由新增音符方塊，用五線譜的時值符號呈現節奏） -->
     <div id="vp-note" style="display:none">
       <div class="print-head"></div>
-      <div class="view-print"><button class="btn tbcollapse-btn" onclick="toggleToolbar()" title="收合/展開上方設定工具列">▾ 工具列</button><button class="btn lock-btn" onclick="toggleLock()" title="鎖定：開＝只能看譜、禁止編輯；關＝可編輯">🔓 鎖定 關</button><button class="btn" onclick="printFit('note')" title="自動縮放，盡量塞進一張 A4">📄 經典A4</button><button class="btn btna" onclick="printView('note')">🖨 列印 / 存 PDF</button></div>
+      <div class="view-print"><button class="btn tbcollapse-btn" onclick="toggleToolbar()" title="收合/展開上方設定工具列">▾ 工具列</button><button class="btn lock-btn" onclick="toggleLock()" title="鎖定：開＝只能看譜、禁止編輯；關＝可編輯">🔓 鎖定 關</button><button class="btn" onclick="printFit('note')" title="自動縮放，盡量塞進一張 A4">📄 經典A4</button><button class="btn btna" onclick="printView('note')">🖨 列印 / 存 PDF</button><button class="btn help-btn" onclick="showHelp(this,event)" title="說明：這一頁的操作方式（點其他地方就收起來）">❓ 說明</button></div>
       <div class="icon-toolbar">
         <label class="ic-hint">顯示 <select class="ic-sel" id="note-disp" onchange="setChordDisp(this.value)"><option value="num">級數</option><option value="male">和弦名(男Key)</option><option value="female">和弦名(女Key)</option></select></label>
         <span class="key-step" title="半音微調 Key：依目前「顯示」調男/女 Key"><label>微調Key</label><button onclick="transposeKey(1)" title="升半音">▲</button><b class="keystep-lbl">—</b><button onclick="transposeKey(-1)" title="降半音">▼</button></span>
         <label class="ic-hint">全部每排 <select class="ic-sel" onchange="applyAllBPR(this)" title="一次設定所有段落每排小節數"><option value="__">套用…</option><option value="">自動</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option></select></label>
+        <span class="ctool-wrap"><button class="stbtn ctool-btn" onclick="toggleCtool(event)" title="和弦工具：選和弦、放和弦、符號（再按一次收起來）">🎹 和弦工具<span class="dd-car">▾</span></button><span class="ctool-grp">
         <label class="ic-hint">和弦 <select class="ic-sel cp-acc" onchange="setPlaceAcc(this.value)" title="升降"><option value="">♮</option><option value="b">♭</option><option value="#">♯</option></select><select class="ic-sel cp-root" onchange="setPlaceRoot(this.value)" title="根音（級數）"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option></select><select class="ic-sel cp-qual" onchange="setPlaceQual(this.value)" title="和弦性質"><option value="">大三</option><option value="m">小三 m</option><option value="6">6</option><option value="m6">m6</option><option value="7">屬七 7</option><option value="maj7">maj7</option><option value="m7">m7</option><option value="9">9</option><option value="maj9">maj9</option><option value="m9">m9</option><option value="add9">add9</option><option value="11">11</option><option value="m11">m11</option><option value="13">13</option><option value="maj13">maj13</option><option value="m13">m13</option><option value="sus2">sus2</option><option value="sus">sus</option><option value="7sus">7sus</option><option value="dim">dim</option><option value="aug">aug</option></select><button class="stbtn chordplace-btn" onclick="toggleChordPlace()" title="放和弦模式：開啟後點音符直接填入所選和弦（存級數，顯示可切級數/男女Key）">🎹 放和弦</button></label>
         <label class="ic-hint">符號 <select class="ic-sel ch-sym" onchange="setChSym(this.value)" title="琶音：點有和弦的音符加上／拿掉；連結線：先點第一個和弦（反黃），再點第二個就連起來（線畫在音符下方）。「延續的和弦」＝第二個照樣寫和弦名；「按照樂譜習慣」＝第二個不再寫和弦名"><option value="">—（不加）</option><option value="arp">琶音 ⌇</option><option value="tie">連結線 ⌒（延續的和弦）</option><option value="tieS">連結線 ⌒（按照樂譜習慣）</option></select></label>
+        </span></span>
         <button class="stbtn" onclick="ntLoadFromChords()" title="把和弦譜／混合頁已填的和弦轉成音符譜的音符（時值＝該和弦到下一個和弦的長度）">⇩ 載入</button>
         <button class="clear-btn" onclick="openClearPick()" title="選要清除哪些項目（和弦、音符、鍵盤、小節格式、備註、配器、整份段落），譜上會先用黃色標示；清完可再按一次「復原」">🗑 清除</button>
       </div>
@@ -1641,7 +1723,7 @@ body.gated>*:not(#gate){filter:grayscale(.9) opacity(.32)!important;pointer-even
     <!-- MIX+ VIEW (大格 + 樂器指令在控制區) -->
     <div id="vp-mixp" style="display:none">
       <div class="print-head"></div>
-      <div class="view-print"><button class="btn tbcollapse-btn" onclick="toggleToolbar()" title="收合/展開上方設定工具列">▾ 工具列</button><button class="btn lock-btn" onclick="toggleLock()" title="鎖定：開＝只能看譜與左右滑頁、禁止任何編輯；關＝可編輯">🔓 鎖定 關</button><button class="btn svc-only svc-pb-btn" onclick="toggleSvcPB(this)" title="聚會服事列印：開＝每首歌各自從新頁開始；關＝段落連續接著印">📄 聚會分頁 關</button><button class="btn" onclick="openOcr()">🔍 辨識匯入</button><span class="vp-break"></span><label class="ic-hint" style="display:inline-flex;align-items:center;gap:0.25em">輸出大小<select class="ic-sel psize-sel" onchange="setPrintSize(this.value)" title="輸出時的小節大小：緊湊或最小可讓一頁容納更多小節"><option value="std">標準</option><option value="cmp">緊湊</option><option value="min">最小</option></select></label><button class="btn" onclick="printFit('mixp')" title="自動縮放，盡量塞進一張 A4">📄 經典A4</button><button class="btn btna" onclick="printView('mixp')">🖨 列印 / 存 PDF</button></div>
+      <div class="view-print"><button class="btn tbcollapse-btn" onclick="toggleToolbar()" title="收合/展開上方設定工具列">▾ 工具列</button><button class="btn lock-btn" onclick="toggleLock()" title="鎖定：開＝只能看譜與左右滑頁、禁止任何編輯；關＝可編輯">🔓 鎖定 關</button><button class="btn svc-only svc-pb-btn" onclick="toggleSvcPB(this)" title="聚會服事列印：開＝每首歌各自從新頁開始；關＝段落連續接著印">📄 聚會分頁 關</button><button class="btn" onclick="openOcr()">🔍 辨識匯入</button><span class="vp-break"></span><label class="ic-hint" style="display:inline-flex;align-items:center;gap:0.25em">輸出大小<select class="ic-sel psize-sel" onchange="setPrintSize(this.value)" title="輸出時的小節大小：緊湊或最小可讓一頁容納更多小節"><option value="std">標準</option><option value="cmp">緊湊</option><option value="min">最小</option></select></label><button class="btn" onclick="printFit('mixp')" title="自動縮放，盡量塞進一張 A4">📄 經典A4</button><button class="btn btna" onclick="printView('mixp')">🖨 列印 / 存 PDF</button><button class="btn help-btn" onclick="showHelp(this,event)" title="說明：這一頁的操作方式（點其他地方就收起來）">❓ 說明</button></div>
       <div class="icon-toolbar">
         <button class="ic-navbtn" id="mixp-prev" onclick="mixpNav(-1)" title="上一頁">‹</button>
         <span class="ic-pageind" id="mixp-pageind">1 / 1</span>
@@ -1652,8 +1734,10 @@ body.gated>*:not(#gate){filter:grayscale(.9) opacity(.32)!important;pointer-even
         <label class="ic-hint">拍號 <select class="ic-sel" id="mixp-timesig" onchange="setTimeSig(this.value)"></select></label>
         <label class="ic-hint">顯示 <select class="ic-sel" id="mixp-disp" onchange="setChordDisp(this.value)"><option value="num">級數</option><option value="male">和弦名(男Key)</option><option value="female">和弦名(女Key)</option></select></label>
         <span class="key-step" title="半音微調 Key：依目前「顯示」調男/女 Key"><label>微調Key</label><button onclick="transposeKey(1)" title="升半音">▲</button><b class="keystep-lbl">—</b><button onclick="transposeKey(-1)" title="降半音">▼</button></span>
+        <span class="ctool-wrap"><button class="stbtn ctool-btn" onclick="toggleCtool(event)" title="和弦工具：選和弦、放和弦、符號（再按一次收起來）">🎹 和弦工具<span class="dd-car">▾</span></button><span class="ctool-grp">
         <label class="ic-hint">和弦 <select class="ic-sel cp-acc" onchange="setPlaceAcc(this.value)" title="升降"><option value="">♮</option><option value="b">♭</option><option value="#">♯</option></select><select class="ic-sel cp-root" onchange="setPlaceRoot(this.value)" title="根音（級數）"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option></select><select class="ic-sel cp-qual" onchange="setPlaceQual(this.value)" title="和弦性質"><option value="">大三</option><option value="m">小三 m</option><option value="6">6</option><option value="m6">m6</option><option value="7">屬七 7</option><option value="maj7">maj7</option><option value="m7">m7</option><option value="9">9</option><option value="maj9">maj9</option><option value="m9">m9</option><option value="add9">add9</option><option value="11">11</option><option value="m11">m11</option><option value="13">13</option><option value="maj13">maj13</option><option value="m13">m13</option><option value="sus2">sus2</option><option value="sus">sus</option><option value="7sus">7sus</option><option value="dim">dim</option><option value="aug">aug</option></select><button class="stbtn chordplace-btn" onclick="toggleChordPlace()" title="放和弦模式：開啟後點格子填入所選和弦（存級數，顯示可切級數/男女Key）">🎹 放和弦</button></label>
         <label class="ic-hint">符號 <select class="ic-sel ch-sym" onchange="setChSym(this.value)" title="琶音：點有音的格子加上／拿掉；連結線：先點第一個和弦（反黃），再點第二個就連起來。「延續的和弦」＝第二個照樣寫和弦名；「按照樂譜習慣」＝第二個不再寫和弦名"><option value="">—（不加）</option><option value="arp">琶音 ⌇</option><option value="tie">連結線 ⌒（延續的和弦）</option><option value="tieS">連結線 ⌒（按照樂譜習慣）</option></select></label>
+        </span></span>
         <label class="ic-hint">全部每排 <select class="ic-sel" onchange="applyAllBPR(this)" title="一次設定所有段落每排小節數"><option value="__">套用…</option><option value="">自動</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option></select></label>
         <button class="clear-btn" onclick="openClearPick()" title="選要清除哪些項目（和弦、音符、鍵盤、小節格式、備註、配器、整份段落），譜上會先用黃色標示；清完可再按一次「復原」">🗑 清除</button>
       </div>
@@ -1665,10 +1749,11 @@ body.gated>*:not(#gate){filter:grayscale(.9) opacity(.32)!important;pointer-even
     <!-- STAFF (五線譜) VIEW -->
     <div id="vp-staff" style="display:none">
       <div class="print-head"></div>
-      <div class="view-print"><button class="btn tbcollapse-btn" onclick="toggleToolbar()" title="收合/展開上方設定工具列">▾ 工具列</button><button class="btn lock-btn" onclick="toggleLock()" title="鎖定：開＝只能看譜與左右滑頁、禁止任何編輯；關＝可編輯">🔓 鎖定 關</button><button class="btn svc-only svc-pb-btn" onclick="toggleSvcPB(this)" title="聚會服事列印：開＝每首歌各自從新頁開始；關＝段落連續接著印">📄 聚會分頁 關</button><span class="vp-break"></span><label class="ic-hint" style="display:inline-flex;align-items:center;gap:0.25em">輸出大小<select class="ic-sel psize-sel" onchange="setPrintSize(this.value)" title="輸出時的小節大小：緊湊或最小可讓一頁容納更多小節"><option value="std">標準</option><option value="cmp">緊湊</option><option value="min">最小</option></select></label><button class="btn" onclick="printFit('staff')" title="自動縮放，盡量塞進一張 A4">📄 經典A4</button><button class="btn btna" onclick="printView('staff')">🖨 列印 / 存 PDF</button></div>
+      <div class="view-print"><button class="btn tbcollapse-btn" onclick="toggleToolbar()" title="收合/展開上方設定工具列">▾ 工具列</button><button class="btn lock-btn" onclick="toggleLock()" title="鎖定：開＝只能看譜與左右滑頁、禁止任何編輯；關＝可編輯">🔓 鎖定 關</button><button class="btn svc-only svc-pb-btn" onclick="toggleSvcPB(this)" title="聚會服事列印：開＝每首歌各自從新頁開始；關＝段落連續接著印">📄 聚會分頁 關</button><span class="vp-break"></span><label class="ic-hint" style="display:inline-flex;align-items:center;gap:0.25em">輸出大小<select class="ic-sel psize-sel" onchange="setPrintSize(this.value)" title="輸出時的小節大小：緊湊或最小可讓一頁容納更多小節"><option value="std">標準</option><option value="cmp">緊湊</option><option value="min">最小</option></select></label><button class="btn" onclick="printFit('staff')" title="自動縮放，盡量塞進一張 A4">📄 經典A4</button><button class="btn btna" onclick="printView('staff')">🖨 列印 / 存 PDF</button><button class="btn help-btn" onclick="showHelp(this,event)" title="說明：這一頁的操作方式（點其他地方就收起來）">❓ 說明</button></div>
       <div class="icon-toolbar">
         <label class="ic-hint">顯示 <select class="ic-sel" id="staff-disp" onchange="setChordDisp(this.value)"><option value="num">級數</option><option value="male">和弦名(男Key)</option><option value="female">和弦名(女Key)</option></select></label>
         <span class="key-step" title="半音微調 Key"><label>微調Key</label><button onclick="transposeKey(1)" title="升半音">▲</button><b class="keystep-lbl">—</b><button onclick="transposeKey(-1)" title="降半音">▼</button></span>
+        <span class="ctool-wrap"><button class="stbtn ctool-btn" onclick="toggleCtool(event)" title="和弦工具：選和弦、放和弦、符號（再按一次收起來）">🎹 和弦工具<span class="dd-car">▾</span></button><span class="ctool-grp">
         <span class="ic-hint">和弦</span>
         <select class="ic-sel" id="kb-cacc" title="根音升降"><option value="">♮</option><option value="b">♭</option><option value="#">♯</option></select>
         <select class="ic-sel" id="kb-croot" title="和弦根音（級數）"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option></select>
@@ -1677,6 +1762,7 @@ body.gated>*:not(#gate){filter:grayscale(.9) opacity(.32)!important;pointer-even
         <button class="stbtn" id="kb-lroot" onclick="toggleKbLRoot()" title="放和弦時左手一起放根音：開＝右手疊和弦組成音、左手放根音（同一個位置）；關＝只在點的那一排疊和弦">左手根音 開</button>
         <button class="stbtn" id="kb-order" onclick="toggleKbOrder()" title="疊音的顯示順序：順序下＝先輸入的排在下面（輸入 1 3 5 顯示成 5 3 1）；順序上＝照輸入順序由上往下">↧ 順序下</button>
         <label class="ic-hint">符號 <select class="ic-sel" id="kb-sym" onchange="setKbSym(this.value)" title="琶音：點有音的格子加上／拿掉；連結線：先點第一個和弦（反黃），再點第二個就連起來"><option value="">—（不加）</option><option value="arp">琶音 ⌇</option><option value="tie">連結線 ⌒</option></select></label>
+        </span></span>
         <label class="ic-hint">全部每排 <select class="ic-sel" onchange="applyAllBPR(this)" title="一次設定所有段落每排小節數"><option value="__">套用…</option><option value="">自動</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option></select></label>
         <button class="stbtn" onclick="kbLoadFromChords()" title="載入：把和弦譜／混合頁的和弦轉成 KB 數字（右手疊和弦音、左手根音）">⇩ 載入</button>
         <button class="clear-btn" onclick="openClearPick()" title="選要清除哪些項目（和弦、音符、鍵盤、小節格式、備註、配器、整份段落），譜上會先用黃色標示；清完可再按一次「復原」">🗑 清除</button>
@@ -1750,11 +1836,38 @@ body.gated>*:not(#gate){filter:grayscale(.9) opacity(.32)!important;pointer-even
 </div>
 
 <!-- 更新日誌（透明視窗，按外面消失） -->
+<!-- 檔案選單／說明：浮在畫面上，點其他地方就收起來 -->
+<div class="pop-menu" id="file-menu" role="menu">
+  <button class="pm-item" role="menuitem" onclick="popClose();newChart()" title="開新檔案：清空目前內容，開一份全新的譜">📄 開新檔案</button>
+  <button class="pm-item" role="menuitem" onclick="popClose();openSaveMenu()" title="儲存：存到瀏覽器本機、另存成 .json 到資料夾，或匯出可攜的 JSON">💾 存檔</button>
+  <button class="pm-item" role="menuitem" onclick="popClose();openLoadMenu()" title="讀檔：從瀏覽器本機的存檔，或從 .json 檔載入">📂 讀檔</button>
+  <div class="pm-sub" id="tpl-subwrap" onmouseenter="tplSubHover()" onmouseleave="tplSubOpen(false)">
+    <button class="pm-item pm-subbtn" role="menuitem" aria-haspopup="menu" onclick="tplSubClick()" title="範本：滑鼠移過去（或點一下）選範本歌曲">📑 範本<span class="pm-arrow">›</span></button>
+    <div class="pm-submenu" id="tpl-sub" role="menu"></div>
+  </div>
+</div>
+<div class="pop-menu help-pop" id="help-pop" role="dialog"></div>
+<div class="pop-menu fav-pop" id="fav-pop" role="dialog"></div>
 <div id="cl-modal" class="cl-modal" onclick="if(event.target===this)hideChangelog()">
   <div class="cl-box">
     <div class="cl-head"><span>📝 更新日誌 · Arranger 理譜人</span><button class="btn" onclick="hideChangelog()">✕</button></div>
     <div class="cl-body">
       <p class="cl-ver">目前版本 <b class="app-ver-txt">—</b>　·　開發時間軸：2026-06-17 起（依使用回饋持續優化）</p>
+
+      <h4>範本收進「📁 檔案」 <span class="cl-date">2026-10-02</span></h4>
+      <ul><li>工具列的「範本」移進「📁 檔案」選單；滑鼠移到「📑 範本」（手機點一下）就跳出範本歌曲，點了載入</li></ul>
+
+      <h4>我的最愛 <span class="cl-date">2026-10-02</span></h4>
+      <ul><li>歌曲庫每首歌的「載入」左邊多一顆 ♡，按了變 ♥ 收藏（雲端歌庫、我的歌庫都可以）</li>
+      <li>有收藏後，左側欄「匯出」下面出現「♥ 最愛」（右上角顯示首數），點開是歌曲清單，點歌名直接打開那首歌的譜；✕ 可從最愛移除</li>
+      <li>收藏只存在這台裝置；歌曲若已被刪除，會提示是否從最愛移除</li></ul>
+
+      <h4>介面整理：檔案選單、曲目設定、和弦工具、說明 <span class="cl-date">2026-10-02</span></h4>
+      <ul><li>「開新檔案／存檔／讀檔」合成一顆「📁 檔案」，按了往下跳出選單，點其他地方就收起來</li>
+      <li>曲目、演唱者、拍號、BPM、用途、主題、字級、男／女 Key 收進「🎼 曲目設定」，按一下展開、再按一下收起來</li>
+      <li>和弦譜／音符譜／混合譜／鍵盤譜的選和弦、放和弦、符號收進「🎹 和弦工具」，按一下展開、再按一下收起來；收起來時若放和弦或符號還開著，鈕上會亮一個小點</li>
+      <li>各譜頁的說明文字改成「❓ 說明」鈕，按了跳出來，點其他地方就消失</li>
+      <li>「📝 更新日誌」移到最下面「© 2026 Arranger 理譜人」右邊</li></ul>
 
       <h4>左側欄固定精簡，可整條隱藏 <span class="cl-date">2026-10-02</span></h4>
       <ul><li>側欄一律用精簡樣式（圖示＋小字）</li>
@@ -3452,6 +3565,27 @@ const T2S_CH={
  "順":"顺","須":"须","預":"预","頓":"顿","領":"领","頭":"头","顆":"颗","題":"题","顏":"颜","願":"愿","顛":"颠","類":"类","顯":"显","餘":"余",
  "饋":"馈","驗":"验","驟":"骤","體":"体","麼":"么","黃":"黄","點":"点","齊":"齐"
 };
+/* 介面整理新增的字 */
+Object.assign(I18N,{"最愛":"Favorites","從我的最愛移除":"Remove from favorites","加到我的最愛（左側欄「最愛」）":"Add to favorites (sidebar “Favorites”)","我的最愛：點歌名直接打開那首歌的譜":"Favorites: tap a song to open its chart","📁 檔案":"📁 File","🎼 曲目設定":"🎼 Song Settings","🎹 和弦工具":"🎹 Chord Tools","❓ 說明":"❓ Help",
+ "檔案：開新檔案、存檔、讀檔、範本":"File: new chart, save, open, templates","📑 範本":"📑 Templates","範本：滑鼠移過去（或點一下）選範本歌曲":"Templates: hover (or tap) to pick a template song",
+ "曲目設定：曲目、演唱者、拍號、BPM、用途、主題、字級、男／女 Key（再按一次收起來）":"Song settings: title, artist, time signature, BPM, category, theme, font size, male/female key (tap again to close)",
+ "和弦工具：選和弦、放和弦、符號（再按一次收起來）":"Chord tools: pick a chord, place chords, symbols (tap again to close)",
+ "說明：這一頁的操作方式（點其他地方就收起來）":"Help: how to use this page (tap anywhere else to close)"});
+Object.assign(I18N_JA,{"最愛":"お気に入り","從我的最愛移除":"お気に入りから外す","加到我的最愛（左側欄「最愛」）":"お気に入りに追加（サイドバー「お気に入り」）","我的最愛：點歌名直接打開那首歌的譜":"お気に入り：曲名を押すとその曲の譜面を開きます","📁 檔案":"📁 ファイル","🎼 曲目設定":"🎼 曲の設定","🎹 和弦工具":"🎹 コードツール","❓ 說明":"❓ ヘルプ",
+ "檔案：開新檔案、存檔、讀檔、範本":"ファイル：新規作成・保存・開く・テンプレート","📑 範本":"📑 テンプレート","範本：滑鼠移過去（或點一下）選範本歌曲":"テンプレート：マウスを乗せる（またはタップ）とテンプレート曲を選べます",
+ "曲目設定：曲目、演唱者、拍號、BPM、用途、主題、字級、男／女 Key（再按一次收起來）":"曲の設定：曲名・歌手・拍子・BPM・用途・テーマ・文字サイズ・男性／女性キー（もう一度押すと閉じます）",
+ "和弦工具：選和弦、放和弦、符號（再按一次收起來）":"コードツール：コード選択・コード入力・記号（もう一度押すと閉じます）",
+ "說明：這一頁的操作方式（點其他地方就收起來）":"ヘルプ：このページの使い方（ほかの場所を押すと閉じます）"});
+Object.assign(I18N_KO,{"最愛":"즐겨찾기","從我的最愛移除":"즐겨찾기에서 제거","加到我的最愛（左側欄「最愛」）":"즐겨찾기에 추가 (사이드바 「즐겨찾기」)","我的最愛：點歌名直接打開那首歌的譜":"즐겨찾기: 곡명을 누르면 그 곡의 악보가 열립니다","📁 檔案":"📁 파일","🎼 曲目設定":"🎼 곡 설정","🎹 和弦工具":"🎹 코드 도구","❓ 說明":"❓ 도움말",
+ "檔案：開新檔案、存檔、讀檔、範本":"파일: 새 악보, 저장, 열기, 템플릿","📑 範本":"📑 템플릿","範本：滑鼠移過去（或點一下）選範本歌曲":"템플릿: 마우스를 올리거나 탭해서 템플릿 곡 선택",
+ "曲目設定：曲目、演唱者、拍號、BPM、用途、主題、字級、男／女 Key（再按一次收起來）":"곡 설정: 곡명, 가수, 박자, BPM, 용도, 테마, 글자 크기, 남/여 키 (다시 누르면 닫힘)",
+ "和弦工具：選和弦、放和弦、符號（再按一次收起來）":"코드 도구: 코드 선택, 코드 입력, 기호 (다시 누르면 닫힘)",
+ "說明：這一頁的操作方式（點其他地方就收起來）":"도움말: 이 페이지 사용법 (다른 곳을 누르면 닫힘)"});
+Object.assign(I18N_CN,{"最愛":"最爱","從我的最愛移除":"从我的最爱移除","加到我的最愛（左側欄「最愛」）":"加到我的最爱（左侧栏「最爱」）","我的最愛：點歌名直接打開那首歌的譜":"我的最爱：点歌名直接打开那首歌的谱","📁 檔案":"📁 文件","🎼 曲目設定":"🎼 曲目设置","🎹 和弦工具":"🎹 和弦工具","❓ 說明":"❓ 说明",
+ "檔案：開新檔案、存檔、讀檔、範本":"文件：新建、保存、读取、模板","📑 範本":"📑 模板","範本：滑鼠移過去（或點一下）選範本歌曲":"模板：鼠标移过去（或点一下）选模板歌曲",
+ "曲目設定：曲目、演唱者、拍號、BPM、用途、主題、字級、男／女 Key（再按一次收起來）":"曲目设置：曲目、演唱者、拍号、BPM、用途、主题、字级、男／女 Key（再按一次收起来）",
+ "和弦工具：選和弦、放和弦、符號（再按一次收起來）":"和弦工具：选和弦、放和弦、符号（再按一次收起来）",
+ "說明：這一頁的操作方式（點其他地方就收起來）":"说明：这一页的操作方式（点其他地方就收起来）"});
 function toCN(s){ return String(s==null?"":s).replace(/[\u4e00-\u9fff]/g,c=>T2S_CH[c]||c); }
 function Lf(zh,en,ja,ko){ return _lang==='cn'?toCN(zh):_lang==='ko'?(ko!=null?ko:en):(_lang==='ja'?(ja!=null?ja:en):(_lang==='en'?en:zh)); }
 /* ── 多語系引擎：以中文為基準語，en / ja 各一張對照表 ── */
@@ -3571,7 +3705,7 @@ function refreshSvcMode(){
 
 /* ── SAVE / LOAD ── */
 /* ── 版本：每次更新改這裡（格式 年.月.日，同一天第二版加 -2）；顯示在標題旁與更新日誌，存檔／匯出也會記錄 ── */
-const APP_VERSION='2026.10.02-3';
+const APP_VERSION='2026.10.02-5';
 function showAppVersion(){ try{ const t='v'+APP_VERSION; const a=document.getElementById('app-ver'); if(a)a.textContent=t; document.querySelectorAll('.app-ver-txt').forEach(e=>e.textContent=t); }catch(e){} }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',showAppVersion); else setTimeout(showAppVersion,0);
 function getProjectData(){
@@ -4221,7 +4355,7 @@ async function cloudList(){
   if(error){ box.innerHTML='讀取失敗：'+esc(error.message); return; }
   _cloudSongs=data||[];
   if(!_cloudSongs.length){ box.innerHTML='<div class="cl-empty">此分類目前沒有歌曲'+(_supaAdmin?'（管理員可設好「用途」後儲存）。':'。')+'</div>'; return; }
-  box.innerHTML=_cloudSongs.map(s=>`<div class="cl-row${s.id===_cloudId?' on':''}"><span class="cl-rowmain"><span class="cl-stitle">${esc(s.title||'未命名')}${s.usage?`<span class="cl-tag">${esc(s.usage)}</span>`:''}</span>${clTimeHtml(s.updated_at)?`<span class="cl-sub">${clTimeHtml(s.updated_at)}</span>`:''}</span><span class="cl-sacts">${
+  box.innerHTML=_cloudSongs.map(s=>`<div class="cl-row${s.id===_cloudId?' on':''}"><span class="cl-rowmain"><span class="cl-stitle">${esc(s.title||'未命名')}${s.usage?`<span class="cl-tag">${esc(s.usage)}</span>`:''}</span>${clTimeHtml(s.updated_at)?`<span class="cl-sub">${clTimeHtml(s.updated_at)}</span>`:''}</span><span class="cl-sacts">${favBtnHtml('cloud',s.id)}${
     _serviceMode
       ? `<button class="btn" onclick="setlistAdd('${s.id}')"${_setlist.some(x=>x.id===s.id)?' disabled':''}>＋ 加入</button>`
       : `<button class="btn" onclick="cloudLoad('${s.id}')">載入</button>`
@@ -4234,7 +4368,7 @@ function myLibHtml(){
   const rows=myLib.length
     ? myLib.map((r,i)=>`<div class="cl-row"><span class="cl-rowmain"><span class="cl-title">${esc(r.title||L('未命名'))}</span>`
         +((r.usage||r.updated)?`<span class="cl-sub"><span class="cl-usage">${esc(r.usage||'')}</span>${clTimeHtml(r.updated)}</span>`:'')
-        +`</span><span class="cl-rowacts">`
+        +`</span><span class="cl-rowacts">`+favBtnHtml('my',r.id)
         +(_serviceMode?`<button class="btn" onclick="setlistAdd('${r.id}')"${_setlist.some(x=>x.id===r.id)?' disabled':''}>${L('＋ 加入')}</button>`
                       :`<button class="btn" onclick="myLibLoad('${r.id}')">${L('載入')}</button>`)
         +`<button class="btn" onclick="myLibDel('${r.id}')">${L('刪除')}</button></span></div>`).join('')
@@ -7802,6 +7936,160 @@ function arrChipHtml(s,a,idx,leftPct,widthPct,vrow){
 }
 function toggleArr(id){ const s=sects.find(x=>x.id===id); if(!s)return; s.arrOff=!s.arrOff; autoSave(); renderMixP(); }
 /* 更新日誌視窗：開啟 / 關閉（按外面或 Esc 關閉） */
+/* ── 浮出選單（檔案）／說明：點其他地方、捲動、Esc 都會收起來 ── */
+let _popOpen=null,_popBtn=null;
+function popClose(){ try{ tplSubOpen(false); }catch(x){} if(_popOpen)_popOpen.classList.remove('show'); if(_popBtn)_popBtn.classList.remove('on'); _popOpen=_popBtn=null; }
+function popPlace(pop,btn){
+  const r=btn.getBoundingClientRect(); pop.style.visibility='hidden'; pop.classList.add('show');
+  const w=pop.offsetWidth,h=pop.offsetHeight,vw=document.documentElement.clientWidth,vh=window.innerHeight;
+  let x=Math.max(8,Math.min(r.left,vw-w-8)), y=r.bottom+6;
+  if(pop.dataset.side==='right' && r.right+6+w<=vw-8){ x=r.right+6; y=Math.max(8,Math.min(r.top,vh-h-8)); }   // 側欄：往右邊彈出
+  else if(y+h>vh-8 && r.top-h-6>8) y=r.top-h-6;
+  pop.style.left=x+'px'; pop.style.top=y+'px'; pop.style.visibility='';
+}
+function popToggle(id,btn,e){
+  if(e&&e.stopPropagation)e.stopPropagation();
+  const pop=document.getElementById(id); if(!pop||!btn)return;
+  if(_popOpen===pop){ popClose(); return; }
+  popClose(); popPlace(pop,btn); btn.classList.add('on'); _popOpen=pop; _popBtn=btn;
+}
+/* 檔案 › 範本：滑鼠移過去（手機點一下）跳出範本歌曲；清單取自隱藏的 #tpl-sel（含 templates.json） */
+function tplSubOpen(on){
+  const w=document.getElementById('tpl-subwrap'), box=document.getElementById('tpl-sub'); if(!w||!box)return;
+  if(on===undefined)on=!w.classList.contains('open');
+  if(on){
+    const sel=document.getElementById('tpl-sel');
+    const opts=sel?[...sel.options].filter(o=>o.value):[];
+    box.innerHTML=opts.length
+      ? opts.map((o,i)=>`<button class="pm-item" role="menuitem" onclick="tplPick(${i})">${esc(o.textContent)}</button>`).join('')
+      : `<div class="pm-empty">${esc(Lf('目前沒有範本','No templates','テンプレートがありません','템플릿이 없습니다'))}</div>`;
+  }
+  w.classList.remove('flip'); w.classList.toggle('open',!!on);
+  if(on&&!navIsPhone()){ const r=box.getBoundingClientRect(); if(r.right>document.documentElement.clientWidth-8)w.classList.add('flip'); }   // 右邊放不下就往左開
+}
+let _tplHoverAt=0;
+function tplSubHover(){ _tplHoverAt=Date.now(); tplSubOpen(true); }
+/* 手機點一下會先觸發 mouseenter 再 click：剛被滑入打開的就不要又關掉 */
+function tplSubClick(){ if(Date.now()-_tplHoverAt<600){ tplSubOpen(true); return; } tplSubOpen(); }
+function tplPick(i){
+  const sel=document.getElementById('tpl-sel'); const opts=sel?[...sel.options].filter(o=>o.value):[];
+  const o=opts[i]; popClose(); if(o)loadTemplate(o.value);
+}
+/* 說明：把這一頁藏起來的說明文字搬進浮出框 */
+function showHelp(btn,e){
+  const pop=document.getElementById('help-pop'); if(!pop)return;
+  if(_popOpen===pop&&_popBtn===btn){ if(e&&e.stopPropagation)e.stopPropagation(); popClose(); return; }
+  const panel=btn.closest('[id^="vp-"]');
+  const hs=panel?[...panel.querySelectorAll('.chord-hint,.seg-tip,.ic-leghint')].filter(h=>h.textContent.trim()):[];
+  pop.innerHTML='<div class="hp-head">'+esc(L('❓ 說明'))+'</div>'+hs.map(h=>'<div class="hp-p">'+h.innerHTML+'</div>').join('');
+  if(_popOpen===pop)popClose();
+  popToggle('help-pop',btn,e);
+}
+document.addEventListener('click',e=>{ if(_popOpen&&!_popOpen.contains(e.target)&&!(_popBtn&&_popBtn.contains(e.target)))popClose(); },true);
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&_popOpen)popClose(); });
+/* 捲動／視窗大小改變（手機網址列伸縮也會觸發）：跟著按鈕重新定位，不直接關掉 */
+let _popRaf=0;
+function popFollow(){ if(!_popOpen||_popRaf)return; _popRaf=requestAnimationFrame(()=>{ _popRaf=0; if(_popOpen&&_popBtn)popPlace(_popOpen,_popBtn); }); }
+window.addEventListener('resize',popFollow);
+window.addEventListener('scroll',popFollow,{passive:true});
+/* ── 我的最愛：歌曲庫按 ♥ 收藏，左側欄「最愛」點歌名直接打開 ──
+   只存在這台裝置（localStorage）：來源（cloud＝雲端歌庫／my＝我的歌庫）＋ id ＋ 歌名 */
+let _favs=[];
+function favLoad(){
+  let a=[]; try{ a=JSON.parse(localStorage.getItem('arranger_favs')||'[]'); }catch(e){ a=[]; }
+  _favs=(Array.isArray(a)?a:[]).filter(f=>f&&(f.src==='cloud'||f.src==='my')&&typeof f.id==='string'&&/^[\w-]{1,64}$/.test(f.id))
+    .map(f=>({src:f.src,id:f.id,title:String(f.title||'').slice(0,200),usage:String(f.usage||'').slice(0,40)}));
+}
+function favSave(){ try{ localStorage.setItem('arranger_favs',JSON.stringify(_favs)); }catch(e){} }
+function favIdx(src,id){ return _favs.findIndex(f=>f.src===src&&f.id===id); }
+function favBtnHtml(src,id){
+  const on=favIdx(src,id)>=0;
+  return `<button class="btn fav-btn${on?' on':''}" onclick="favToggle('${src}','${esc(id)}',this,event)" title="${esc(on?L('從我的最愛移除'):L('加到我的最愛（左側欄「最愛」）'))}" aria-pressed="${on}">${on?'♥':'♡'}</button>`;
+}
+function favToggle(src,id,btn,e){
+  if(e&&e.stopPropagation)e.stopPropagation();
+  const i=favIdx(src,id);
+  if(i>=0) _favs.splice(i,1);
+  else {
+    const r=src==='my'?myLib.find(x=>x.id===id):(_cloudSongs||[]).find(x=>x.id===id);
+    _favs.push({src,id,title:String((r&&r.title)||L('未命名')).slice(0,200),usage:String((r&&r.usage)||'').slice(0,40)});
+  }
+  favSave(); favSync();
+  if(btn){ const on=i<0; btn.classList.toggle('on',on); btn.textContent=on?'♥':'♡'; btn.setAttribute('aria-pressed',on);
+    btn.title=on?L('從我的最愛移除'):L('加到我的最愛（左側欄「最愛」）'); }
+}
+/* 側欄「最愛」：有收藏才出現，右上角顯示首數 */
+function favSync(){
+  const b=document.getElementById('nav-fav'), c=document.getElementById('fav-cnt');
+  if(b)b.hidden=!_favs.length; if(c)c.textContent=_favs.length;
+  const pop=document.getElementById('fav-pop');
+  if(pop&&pop.classList.contains('show')){ if(_favs.length){ favRender(); if(_popBtn)popPlace(pop,_popBtn); } else popClose(); }
+}
+function favRender(){
+  const pop=document.getElementById('fav-pop'); if(!pop)return;
+  pop.innerHTML='<div class="hp-head">♥ '+esc(Lf('我的最愛','Favorites','お気に入り','즐겨찾기'))+'</div>'
+    +'<table class="fav-tbl"><tbody>'+_favs.map((f,i)=>{
+      const cur=(f.src==='cloud'&&f.id===_cloudId);
+      return `<tr class="fav-row${cur?' on':''}" onclick="favOpen(${i})" title="${esc(Lf('打開這首歌的譜','Open this chart','この曲の譜面を開く','이 곡의 악보 열기'))}">`
+        +`<td class="fav-t">${esc(f.title||L('未命名'))}${f.usage?`<span class="cl-tag">${esc(f.usage)}</span>`:''}</td>`
+        +`<td class="fav-src">${esc(f.src==='my'?Lf('我的歌庫','My Library','マイライブラリ','내 라이브러리'):Lf('雲端','Cloud','クラウド','클라우드'))}</td>`
+        +`<td class="fav-x-td"><button class="fav-x" onclick="favRemove(${i},event)" title="${esc(Lf('從我的最愛移除','Remove from favorites','お気に入りから外す','즐겨찾기에서 제거'))}">✕</button></td></tr>`;
+    }).join('')+'</tbody></table>';
+}
+function favMenu(btn,e){
+  const pop=document.getElementById('fav-pop'); if(!pop)return;
+  pop.dataset.side=navIsPhone()?'':'right';
+  if(_popOpen!==pop)favRender();
+  popToggle('fav-pop',btn,e);
+}
+function favRemove(i,e){ if(e&&e.stopPropagation)e.stopPropagation(); if(i<0||i>=_favs.length)return; _favs.splice(i,1); favSave(); favSync(); }
+function favMissing(f,msg){
+  if(confirm(Lf('找不到「'+f.title+'」（可能已被刪除或改名）'+(msg?'\n'+msg:'')+'\n\n要從我的最愛移除嗎？',
+               'Could not find "'+f.title+'" (it may have been deleted).'+(msg?'\n'+msg:'')+'\n\nRemove it from favorites?',
+               '「'+f.title+'」が見つかりません（削除された可能性があります）。'+(msg?'\n'+msg:'')+'\n\nお気に入りから外しますか？',
+               '「'+f.title+'」을(를) 찾을 수 없습니다 (삭제되었을 수 있음).'+(msg?'\n'+msg:'')+'\n\n즐겨찾기에서 제거할까요?'))){
+    const i=favIdx(f.src,f.id); if(i>=0){ _favs.splice(i,1); favSave(); favSync(); }
+  }
+}
+let _favBusy=false;
+async function favOpen(i){
+  const f=_favs[i]; if(!f||_favBusy)return;
+  popClose(); if(navIsPhone()&&document.body.classList.contains('nav-open'))navToggle(false);
+  let data=null;
+  if(f.src==='my'){
+    const r=myLib.find(x=>x.id===f.id); if(!r){ favMissing(f); return; }
+    data=JSON.parse(JSON.stringify(r.data));
+  } else {
+    if(!_supa){ alert(Lf('雲端尚未設定，無法讀取雲端歌庫。','Cloud is not configured, so the cloud library is unavailable.','クラウドが未設定のため、クラウドライブラリを読み込めません。','클라우드가 설정되지 않아 클라우드 라이브러리를 불러올 수 없습니다.')); return; }
+    _favBusy=true;
+    try{
+      const {data:d,error}=await _supa.from('songs').select('data').eq('id',f.id).maybeSingle();
+      if(error){ alert(Lf('載入失敗：','Load failed: ','読み込みに失敗しました：','불러오기 실패: ')+error.message); return; }
+      if(!d||!d.data||!Array.isArray(d.data.sects)){ favMissing(f); return; }
+      data=d.data;
+    } finally { _favBusy=false; }
+  }
+  if(applyProjectData(data)){
+    _cloudId=f.src==='cloud'?f.id:null;
+    renderSB(); renderAll();
+    if(currentView==='export')sw('chord');
+    window.scrollTo(0,0);
+  }
+}
+favLoad();
+/* 曲目設定、和弦工具：按一下展開、再按一下收起來（記住上次狀態） */
+function toggleSong(e){ if(e&&e.stopPropagation)e.stopPropagation();
+  const on=document.body.classList.toggle('song-open');
+  document.querySelectorAll('.song-btn').forEach(b=>b.classList.toggle('on',on));
+  try{ localStorage.setItem('arranger_song',on?'1':'0'); }catch(x){} }
+function toggleCtool(e){ if(e&&e.stopPropagation)e.stopPropagation();
+  const on=document.body.classList.toggle('ctool-open');
+  try{ localStorage.setItem('arranger_ctool',on?'1':'0'); }catch(x){}
+  try{ redrawMeasured(); }catch(x){} }
+(function uiFoldInit(){ let a='',b=''; try{ a=localStorage.getItem('arranger_song')||''; b=localStorage.getItem('arranger_ctool')||''; }catch(x){}
+  if(a==='1'){ document.body.classList.add('song-open'); document.querySelectorAll('.song-btn').forEach(x=>x.classList.add('on')); }
+  if(b==='1')document.body.classList.add('ctool-open');
+  try{ favSync(); }catch(x){} })();
 function showChangelog(e){ if(e&&e.stopPropagation)e.stopPropagation(); const m=document.getElementById('cl-modal'); if(m)m.classList.add('show'); }
 function hideChangelog(){ const m=document.getElementById('cl-modal'); if(m)m.classList.remove('show'); }
 document.addEventListener('keydown',e=>{ if(e.key==='Escape')hideChangelog(); });
@@ -9030,6 +9318,7 @@ function sw(name,btn){
   if(btn)btn.classList.add('a');
   try{ const c=document.getElementById('nav-cur'), lb=btn&&btn.querySelector('.nav-lb'); if(c&&lb)c.textContent=lb.textContent; }catch(e){}
   if(document.body.classList.contains('nav-open'))navToggle(false);   // 手機：選好就收起來
+  try{ popClose(); }catch(e){}
   {const e=document.getElementById('vp-'+name); if(e)e.style.display='';}
   renderCurrent();   // 切到該檢視才渲染
   i18nMaybe();
@@ -9166,6 +9455,7 @@ window.addEventListener('afterprint',redrawMeasured);
 </style>
 <footer class="site-footer">
   <span class="sf-copy">© 2026 Arranger 理譜人</span>
+  <button type="button" class="sf-cl" onclick="showChangelog(event)" title="查看歷次更新內容">📝 更新日誌</button>
   <span class="sf-count" id="sf-count" hidden><span class="sf-num" id="sf-num">0000000</span><span>人理過譜</span></span>
   <a class="sf-link" data-page="pricing" href="./pricing.html">定價</a>
   <a class="sf-link" data-page="terms" href="./terms.html">服務條款</a>
