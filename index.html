@@ -919,6 +919,14 @@ body.kbsym-on:not(.ctool-open) .ctool-wrap:has(#kb-sym) .ctool-btn::after{
 /* 手機：範本清單直接在下面展開 */
 body.mode-phone .pm-submenu{position:static;margin:0.1em 0 0.2em 1.2em;min-width:0;box-shadow:none;border:none;border-left:2px solid var(--border2);border-radius:0;padding:0 0 0 0.3em;}
 body.mode-phone .pm-sub.open .pm-arrow{transform:rotate(90deg);}
+/* 我的歌庫：雲端同步狀態 */
+.my-sync{font-size:0.8em;padding:0.4em 0.65em;border-radius:0.45em;margin:0.2em 0 0.5em;background:rgba(255,255,255,0.07);color:#d6d6d6;line-height:1.5;}
+.my-sync.on{border-left:3px solid var(--accent);}
+.my-sync.bad{border-left:3px solid #d0485a;color:#f0f0f0;}
+.my-sync .btn{font-size:0.95em;padding:0.15em 0.6em;margin-left:0.4em;}
+.my-sync .my-free{color:#a8a8a8;}
+.my-local{margin-top:0.8em;padding-top:0.6em;border-top:1px dashed var(--border2);}
+.my-local-hd{display:flex;align-items:center;justify-content:space-between;gap:0.6em;font-size:0.8em;color:#d6d6d6;margin-bottom:0.4em;}
 /* 我的最愛 */
 .fav-btn{padding:0.3em 0.55em;color:var(--text3);font-size:0.95em;line-height:1;margin-right:0.3em;}
 .fav-btn.on{color:#d0485a;border-color:#d0485a;}
@@ -987,6 +995,17 @@ body.mode-phone .fav-cnt{position:static;margin-left:auto;}
 .cl-tag{font-size:0.7em;margin-left:0.5em;padding:0.05em 0.5em;border-radius:99px;background:rgba(212,168,67,0.16);color:var(--accent);}
 .cl-row{display:flex;align-items:center;justify-content:space-between;gap:0.6em;padding:0.4em 0.5em;border:1px solid var(--border);border-radius:0.45em;margin-bottom:0.35em;}
 .cl-row.on{border-color:var(--accent);background:rgba(212,168,67,0.06);}
+/* ── 深色視窗（歌曲庫／登入／存檔…）：不管哪個主題，字一律淺色、按鈕淺灰，才看得清楚 ── */
+.cl-box{--text:#f4f4f4;--text2:#d4d4d4;--text3:#a9a9a9;--border:rgba(255,255,255,0.12);--border2:rgba(255,255,255,0.24);
+  --bg2:#2b2b2e;--bg3:rgba(255,255,255,0.08);--bg4:rgba(255,255,255,0.15);color:var(--text);}
+.cl-box .cl-stitle,.cl-box .cl-title,.cl-box .cl-email{color:#fff;}
+.cl-box .btn:not(.btna):not(.on):not(.cl-google),.cl-box .cl-cat:not(.on){background:#cfcfcf;color:#1c1c1c;border-color:#b5b5b5;--text:#1c1c1c;--text2:#333;--text3:#555;}
+.cl-box .btn:not(.btna):not(.on):not(.cl-google):hover,.cl-box .cl-cat:not(.on):hover{background:#e2e2e2;color:#111;border-color:var(--accent);}
+.cl-box .btn:disabled{opacity:0.45;}
+.cl-box .fav-btn:not(.on){color:#666;}
+.cl-box .fav-btn.on{background:#cfcfcf;color:#d0485a;border-color:#d0485a;}
+.cl-box .cl-catsel option,.cl-box select.btn option{color:#111;background:#fff;}
+.cl-box .cl-tag{color:#e6c172;background:rgba(230,193,114,0.16);}
 .cl-stitle{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .cl-title{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 /* 歌名一行、用途與「最後更新時間」放第二行，窄螢幕才不會擠成一團 */
@@ -1853,6 +1872,16 @@ body.gated>*:not(#gate){filter:grayscale(.9) opacity(.32)!important;pointer-even
     <div class="cl-head"><span>📝 更新日誌 · Arranger 理譜人</span><button class="btn" onclick="hideChangelog()">✕</button></div>
     <div class="cl-body">
       <p class="cl-ver">目前版本 <b class="app-ver-txt">—</b>　·　開發時間軸：2026-06-17 起（依使用回饋持續優化）</p>
+
+      <h4>歌曲庫看得更清楚 <span class="cl-date">2026-10-03</span></h4>
+      <ul><li>歌曲庫、登入、存檔等深色視窗：歌名與文字改成白色，原本白色的按鈕改成淺灰色（任何主題都一樣）</li></ul>
+
+      <h4>我的歌庫雲端同步 <span class="cl-date">2026-10-03</span></h4>
+      <ul><li>登入後，「我的歌庫」存到雲端，換手機、換電腦都看得到（只有自己看得到）</li>
+      <li>免費帳號：可以看自己雲端裡的譜；新增、修改要「個人方案」</li>
+      <li>這台裝置上以前存的歌，會列在「還沒上傳」，按「⬆ 全部上傳到雲端」一次搬上去（同名不覆蓋）</li>
+      <li>同一首歌在兩台裝置都改過時，會先問要覆蓋還是另存，不會悄悄蓋掉</li>
+      <li>未登入時跟以前一樣，只存在這台裝置</li></ul>
 
       <h4>範本收進「📁 檔案」 <span class="cl-date">2026-10-02</span></h4>
       <ul><li>工具列的「範本」移進「📁 檔案」選單；滑鼠移到「📑 範本」（手機點一下）就跳出範本歌曲，點了載入</li></ul>
@@ -3705,7 +3734,7 @@ function refreshSvcMode(){
 
 /* ── SAVE / LOAD ── */
 /* ── 版本：每次更新改這裡（格式 年.月.日，同一天第二版加 -2）；顯示在標題旁與更新日誌，存檔／匯出也會記錄 ── */
-const APP_VERSION='2026.10.02-5';
+const APP_VERSION='2026.10.03-2';
 function showAppVersion(){ try{ const t='v'+APP_VERSION; const a=document.getElementById('app-ver'); if(a)a.textContent=t; document.querySelectorAll('.app-ver-txt').forEach(e=>e.textContent=t); }catch(e){} }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',showAppVersion); else setTimeout(showAppVersion,0);
 function getProjectData(){
@@ -3927,7 +3956,8 @@ async function cloudInit(){
     await fetchSubscription();
     updateCloudBtn();
     syncGate();
-    _supa.auth.onAuthStateChange(async (_e,ss)=>{ _supaUser = ss?ss.user:null; _supaAdmin=false;
+    _supa.auth.onAuthStateChange(async (_e,ss)=>{ const _pu=_supaUser&&_supaUser.id; _supaUser = ss?ss.user:null; _supaAdmin=false;
+      if(((_supaUser&&_supaUser.id)||null)!==(_pu||null)){ try{ myCloudReset(); }catch(x){} }
       if(_supaUser)await cloudFetchRole();
       await fetchSubscription();
       const m=document.getElementById('cloud-modal');
@@ -4364,45 +4394,209 @@ async function cloudList(){
 /* ── 我的歌庫（個人使用者專用，只存在這台裝置，不進雲端） ── */
 let myLib=[]; try{ myLib=JSON.parse(localStorage.getItem('arranger_mylib')||'[]')||[]; }catch(e){ myLib=[]; }
 function saveMyLib(){ try{ localStorage.setItem('arranger_mylib',JSON.stringify(myLib)); }catch(e){ alert(Lf('本機空間不足，儲存失敗。','Out of local storage space.','ローカル容量が足りず保存できません。','로컬 저장 공간이 부족합니다.')); } }
-function myLibHtml(){
-  const rows=myLib.length
-    ? myLib.map((r,i)=>`<div class="cl-row"><span class="cl-rowmain"><span class="cl-title">${esc(r.title||L('未命名'))}</span>`
-        +((r.usage||r.updated)?`<span class="cl-sub"><span class="cl-usage">${esc(r.usage||'')}</span>${clTimeHtml(r.updated)}</span>`:'')
-        +`</span><span class="cl-rowacts">`+favBtnHtml('my',r.id)
-        +(_serviceMode?`<button class="btn" onclick="setlistAdd('${r.id}')"${_setlist.some(x=>x.id===r.id)?' disabled':''}>${L('＋ 加入')}</button>`
-                      :`<button class="btn" onclick="myLibLoad('${r.id}')">${L('載入')}</button>`)
-        +`<button class="btn" onclick="myLibDel('${r.id}')">${L('刪除')}</button></span></div>`).join('')
-    : `<div class="cl-empty">${L('我的歌庫還是空的，按「＋ 收藏目前這份」把現在編輯的譜存進來。')}</div>`;
-  return `<div class="cl-libtop"><span class="cl-libhd">${L('我的歌庫')}</span>`
-    +`<button class="btn cl-svc-btn${_serviceMode?' on':''}" id="cl-svc-btn" onclick="toggleService()">🎵 ${L('演奏模式')}</button></div>`
-    +`<div class="cl-actions"><button class="btn btna" onclick="myLibAdd()">${L('＋ 收藏目前這份')}</button></div>`
-    +`<div id="cl-setlist" class="cl-setlist"${_serviceMode?'':' style="display:none"'}></div>`   /* 沒開演奏模式時不顯示空框 */
-    +`<div class="cl-list">${rows}</div>`;
+/* ── 我的歌庫 ──
+   未登入：只存在這台裝置（localStorage arranger_mylib），跟以前一樣。
+   登入後：存在雲端 my_songs 表（只有本人讀得到），換裝置也看得到。
+     · 免費帳號：可以看自己雲端裡的譜（視譜）
+     · 個人方案（或管理員）：可以新增、修改；後端 RLS 用 is_subscribed() 再擋一次
+   這台裝置上還沒上傳的歌，會列在下面，可以一鍵上傳。 */
+let myCloud=[], _myCloudAt=0, _myCloudBusy=false, _myCloudErr='';
+let _myBase=null;   /* 目前畫面上這份是從雲端哪一首、哪個版本打開的（判斷別的裝置有沒有先改過） */
+function myCloudOn(){ return !!(_supa && _supaUser); }
+function myCanSave(){ return !!(_isPro || _supaAdmin); }
+function myFind(id){ return myCloud.find(x=>x.id===id) || myLib.find(x=>x.id===id) || null; }
+function myLocalPending(){ return myLib.filter(r=>!r.cloudId); }
+function myCloudReset(){ myCloud=[]; _myCloudAt=0; _myCloudErr=''; }
+async function myCloudFetch(force){
+  if(!myCloudOn()||_myCloudBusy)return;
+  if(!force && _myCloudAt && Date.now()-_myCloudAt<20000)return;
+  _myCloudBusy=true;
+  try{
+    const {data,error}=await _supa.from('my_songs').select('id,title,usage,updated_at').order('updated_at',{ascending:false}).limit(1000);
+    if(error){ _myCloudErr=error.message||String(error); }
+    else {
+      _myCloudErr='';
+      const old={}; myCloud.forEach(r=>{ old[r.id]=r; });
+      myCloud=(data||[]).map(r=>{ const o=old[r.id];
+        return {id:String(r.id),title:String(r.title||''),usage:String(r.usage||''),updated:r.updated_at,cloud:true,
+                data:(o&&o.updated===r.updated_at)?o.data:null}; });
+    }
+  }catch(e){ _myCloudErr=e.message||String(e); }
+  finally{ _myCloudBusy=false; _myCloudAt=Date.now(); }
+  myLibRefresh();
 }
-function myLibRefresh(){ if(_cloudMode==='personal'||_cloudMode==='library'){ cloudRenderModal(); } }
-function myLibAdd(){
+/* 雲端的歌列表只抓標題，打開／排清單時才抓整份內容 */
+async function myEnsureData(r){
+  if(!r)return null; if(r.data)return r.data; if(!r.cloud||!myCloudOn())return null;
+  const {data,error}=await _supa.from('my_songs').select('data,updated_at').eq('id',r.id).maybeSingle();
+  if(error)throw new Error(error.message);
+  if(!data)return null;
+  r.data=data.data; r.updated=data.updated_at; return r.data;
+}
+function myErrText(error){
+  const c=error&&error.code, m=(error&&error.message)||String(error||'');
+  if(c==='42501'||/row-level security/i.test(m)) return Lf('沒有權限：存到雲端需要個人方案。','Not allowed: saving to the cloud needs the Personal plan.','権限がありません：クラウド保存には個人プランが必要です。','권한 없음: 클라우드 저장에는 개인 요금제가 필요합니다.');
+  if(c==='23514') return Lf('這份譜太大，存不進去。','This chart is too large to save.','この譜面は大きすぎて保存できません。','악보가 너무 커서 저장할 수 없습니다.');
+  if(/MY_SONGS_LIMIT/.test(m)) return Lf('雲端歌庫已達上限（1000 首）。','Your cloud library is full (1000 songs).','クラウドライブラリが上限（1000曲）に達しました。','클라우드 라이브러리가 가득 찼습니다 (1000곡).');
+  return m;
+}
+function myNeedPlan(){
+  alert(Lf('存到雲端需要「個人方案」（US$6／月）。\n免費帳號可以看自己雲端裡的譜，但不能新增或修改。',
+           'Saving to the cloud needs the Personal plan (US$6/month).\nA free account can view charts already in your cloud library, but cannot add or edit.',
+           'クラウドへの保存には「個人プラン」（US$6／月）が必要です。\n無料アカウントはクラウド内の譜面を見ることはできますが、追加・編集はできません。',
+           '클라우드 저장에는 「개인 요금제」(US$6/월)가 필요합니다.\n무료 계정은 클라우드의 악보를 볼 수는 있지만 추가·수정은 할 수 없습니다.'));
+}
+function myRowHtml(r,src){
+  const id=esc(r.id);
+  return `<div class="cl-row"><span class="cl-rowmain"><span class="cl-title">${esc(r.title||L('未命名'))}</span>`
+    +((r.usage||r.updated)?`<span class="cl-sub"><span class="cl-usage">${esc(r.usage||'')}</span>${clTimeHtml(r.updated)}</span>`:'')
+    +`</span><span class="cl-rowacts">`+favBtnHtml(src,r.id)
+    +(_serviceMode?`<button class="btn" onclick="setlistAdd('${id}')"${_setlist.some(x=>x.id===r.id)?' disabled':''}>${L('＋ 加入')}</button>`
+                  :`<button class="btn" onclick="myLibLoad('${id}')">${L('載入')}</button>`)
+    +`<button class="btn" onclick="myLibDel('${id}')">${L('刪除')}</button></span></div>`;
+}
+function myLibHtml(){
+  const top=`<div class="cl-libtop"><span class="cl-libhd">${L('我的歌庫')}</span>`
+    +`<button class="btn cl-svc-btn${_serviceMode?' on':''}" id="cl-svc-btn" onclick="toggleService()">🎵 ${L('演奏模式')}</button></div>`;
+  const add=`<div class="cl-actions"><button class="btn btna" onclick="myLibAdd()">${L('＋ 收藏目前這份')}</button></div>`;
+  const setl=`<div id="cl-setlist" class="cl-setlist"${_serviceMode?'':' style="display:none"'}></div>`;   /* 沒開演奏模式時不顯示空框 */
+  if(!myCloudOn()){
+    const rows=myLib.length ? myLib.map(r=>myRowHtml(r,'my')).join('')
+      : `<div class="cl-empty">${L('我的歌庫還是空的，按「＋ 收藏目前這份」把現在編輯的譜存進來。')}</div>`;
+    const hint=_supa?`<div class="my-sync off">📱 ${esc(Lf('目前只存在這台裝置。登入後會存到雲端，換手機、換電腦都看得到。','Saved on this device only. Sign in to keep your library in the cloud and see it on any device.','この端末にのみ保存されています。ログインするとクラウドに保存され、どの端末からでも見られます。','이 기기에만 저장되어 있습니다. 로그인하면 클라우드에 저장되어 어느 기기에서나 볼 수 있습니다.'))}</div>`:'';
+    return top+hint+add+setl+`<div class="cl-list">${rows}</div>`;
+  }
+  setTimeout(()=>myCloudFetch(),0);   /* 背景更新（20 秒內不重抓） */
+  const st=_myCloudErr
+    ? `<div class="my-sync bad">⚠ ${esc(Lf('雲端讀取失敗：','Could not reach the cloud: ','クラウドの読み込みに失敗しました：','클라우드를 읽지 못했습니다: '))}${esc(_myCloudErr)} <button class="btn" onclick="myCloudFetch(true)">${esc(Lf('重試','Retry','再試行','다시 시도'))}</button></div>`
+    : `<div class="my-sync on">☁ ${esc(Lf('雲端同步','Cloud sync','クラウド同期','클라우드 동기화'))} · ${myCloud.length} ${esc(Lf('首','songs','曲','곡'))}${_myCloudBusy?' · '+esc(Lf('更新中…','updating…','更新中…','업데이트 중…')):''}`
+      +(myCanSave()?'':` · <span class="my-free">${esc(Lf('免費帳號：只能看，新增／修改需要個人方案','Free account: view only — adding/editing needs the Personal plan','無料アカウント：閲覧のみ（追加・編集は個人プラン）','무료 계정: 보기만 가능 (추가·수정은 개인 요금제)'))}</span>`)
+      +`</div>`;
+  const rows=myCloud.length ? myCloud.map(r=>myRowHtml(r,'mine')).join('')
+    : `<div class="cl-empty">${esc(_myCloudAt?Lf('雲端歌庫還是空的，按「＋ 收藏目前這份」存進來。','Your cloud library is empty — tap “＋ Save current chart”.','クラウドライブラリは空です。「＋ 今の譜面を保存」で追加できます。','클라우드 라이브러리가 비어 있습니다. 「＋ 현재 악보 저장」으로 추가하세요.'):Lf('讀取中…','Loading…','読み込み中…','불러오는 중…'))}</div>`;
+  const pend=myLocalPending();
+  const local=pend.length
+    ? `<div class="my-local"><div class="my-local-hd">📱 ${esc(Lf('這台裝置上還有 '+pend.length+' 首沒上傳','This device has '+pend.length+' song(s) not in the cloud yet','この端末に未アップロードの曲が '+pend.length+' 曲あります','이 기기에 업로드하지 않은 곡이 '+pend.length+'곡 있습니다'))}`
+      +`<button class="btn" onclick="myUploadLocal()">⬆ ${esc(Lf('全部上傳到雲端','Upload all to the cloud','すべてクラウドへ','모두 클라우드로 업로드'))}</button></div>`
+      +`<div class="cl-list">${pend.map(r=>myRowHtml(r,'my')).join('')}</div></div>`
+    : '';
+  return top+st+add+setl+`<div class="cl-list">${rows}</div>`+local+(myCanSave()?'':subUiHtml());
+}
+function myLibRefresh(){ if(_cloudMode==='personal'||_cloudMode==='library'||(_supaUser&&_userKind==='personal')){ const m=document.getElementById('cloud-modal'); if(m&&m.classList.contains('show'))cloudRenderModal(); } }
+let _mySaving=false;
+async function myLibAdd(){
   commitEdits();
   const title=(gv('s-title')||L('未命名')).trim()||L('未命名');
+  const usage=gv('s-usage')||'';
   const data=getProjectData();
-  const i=myLib.findIndex(r=>r.title===title);
-  if(i>=0){
-    if(!confirm(Lf('「'+title+'」已在歌庫裡，要覆蓋嗎？','"'+title+'" is already saved. Overwrite?','「'+title+'」はすでにあります。上書きしますか？','「'+title+'」이(가) 이미 있습니다. 덮어쓸까요?')))return;
-    myLib[i]={...myLib[i],title,usage:gv('s-usage')||'',data,updated:new Date().toISOString()};
-  } else {
-    myLib.push({id:'my'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),title,usage:gv('s-usage')||'',data,updated:new Date().toISOString()});
+  if(!myCloudOn()){                               /* 未登入：存在這台裝置 */
+    const i=myLib.findIndex(r=>r.title===title);
+    if(i>=0){
+      if(!confirm(Lf('「'+title+'」已在歌庫裡，要覆蓋嗎？','"'+title+'" is already saved. Overwrite?','「'+title+'」はすでにあります。上書きしますか？','「'+title+'」이(가) 이미 있습니다. 덮어쓸까요?')))return;
+      myLib[i]={...myLib[i],title,usage,data,updated:new Date().toISOString()};
+    } else {
+      myLib.push({id:'my'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),title,usage,data,updated:new Date().toISOString()});
+    }
+    saveMyLib(); myLibRefresh(); return;
   }
-  saveMyLib(); myLibRefresh();
+  if(!myCanSave()){ myNeedPlan(); return; }
+  if(_mySaving)return; _mySaving=true; cloudMsg(Lf('存到雲端…','Saving to the cloud…','クラウドに保存中…','클라우드에 저장 중…'));
+  try{
+    await myCloudFetch(true);
+    const r=myCloud.find(x=>x.title===title);
+    if(r){
+      const base=(_myBase&&_myBase.id===r.id)?_myBase.updated:null;
+      if(base && base!==r.updated){                 /* 打開之後，別的裝置又存過 */
+        const when=clTime(r.updated);
+        if(!confirm(Lf('「'+title+'」在你打開之後，又在別的裝置被改過（'+when+'）。\n\n按「確定」用目前這份覆蓋；按「取消」另存成一首新的。',
+                       '"'+title+'" was changed on another device after you opened it ('+when+').\n\nOK = overwrite with this version; Cancel = save as a new song.',
+                       '「'+title+'」は開いた後に別の端末で更新されました（'+when+'）。\n\nOK＝今の内容で上書き／キャンセル＝新しい曲として保存',
+                       '「'+title+'」을(를) 연 뒤 다른 기기에서 수정되었습니다 ('+when+').\n\n확인 = 지금 내용으로 덮어쓰기 / 취소 = 새 곡으로 저장'))){
+          await myCloudInsert({title:title+Lf('（副本）',' (copy)','（コピー）',' (사본)'),usage,data}); return;
+        }
+      } else if(!confirm(Lf('「'+title+'」已在歌庫裡，要覆蓋嗎？','"'+title+'" is already saved. Overwrite?','「'+title+'」はすでにあります。上書きしますか？','「'+title+'」이(가) 이미 있습니다. 덮어쓸까요?'))){ cloudMsg(''); return; }
+      await myCloudUpdate(r,{title,usage,data});
+    } else {
+      await myCloudInsert({title,usage,data});
+    }
+  } finally { _mySaving=false; }
 }
-function myLibLoad(id){
-  const r=myLib.find(x=>x.id===id); if(!r)return;
-  if(applyProjectData(JSON.parse(JSON.stringify(r.data)))){ renderSB(); renderAll(); closeCloud(); }
+async function myCloudInsert(row,quiet){
+  const {data,error}=await _supa.from('my_songs').insert({title:row.title,usage:row.usage||'',data:row.data}).select('id,updated_at').single();
+  if(error){ if(!quiet){ cloudMsg(''); alert(Lf('存到雲端失敗：','Could not save to the cloud: ','クラウドへの保存に失敗しました：','클라우드 저장 실패: ')+myErrText(error)); } return null; }
+  myCloud.unshift({id:String(data.id),title:row.title,usage:row.usage||'',updated:data.updated_at,cloud:true,data:row.data});
+  if(!quiet)_myBase={id:String(data.id),updated:data.updated_at};
+  if(!quiet){ cloudMsg(Lf('已存到雲端','Saved to the cloud','クラウドに保存しました','클라우드에 저장했습니다')); myLibRefresh(); }
+  return data.id;
 }
-function myLibDel(id){
-  const r=myLib.find(x=>x.id===id); if(!r)return;
+/* 覆蓋：帶著「上次看到的更新時間」一起送，別的裝置先改過就不會悄悄蓋掉 */
+async function myCloudUpdate(r,row,force){
+  let q=_supa.from('my_songs').update({title:row.title,usage:row.usage||'',data:row.data}).eq('id',r.id);
+  if(!force)q=q.eq('updated_at',r.updated);
+  const {data,error}=await q.select('id,updated_at');
+  if(error){ cloudMsg(''); alert(Lf('存到雲端失敗：','Could not save to the cloud: ','クラウドへの保存に失敗しました：','클라우드 저장 실패: ')+myErrText(error)); return false; }
+  if(!data||!data.length){
+    const {data:cur}=await _supa.from('my_songs').select('updated_at').eq('id',r.id).maybeSingle();
+    if(cur && !force && cur.updated_at!==r.updated){
+      const when=clTime(cur.updated_at);
+      if(confirm(Lf('「'+r.title+'」剛在別的裝置被改過（'+when+'）。\n\n按「確定」用目前這份覆蓋；按「取消」另存成一首新的。',
+                    '"'+r.title+'" was just changed on another device ('+when+').\n\nOK = overwrite with this version; Cancel = save as a new song.',
+                    '「'+r.title+'」は別の端末で更新されたばかりです（'+when+'）。\n\nOK＝今の内容で上書き／キャンセル＝新しい曲として保存',
+                    '「'+r.title+'」이(가) 다른 기기에서 방금 수정되었습니다 ('+when+').\n\n확인 = 지금 내용으로 덮어쓰기 / 취소 = 새 곡으로 저장')))
+        return myCloudUpdate(r,row,true);
+      return !!(await myCloudInsert({...row,title:row.title+Lf('（副本）',' (copy)','（コピー）',' (사본)')}));
+    }
+    cloudMsg(''); alert(cur?myErrText({code:'42501'}):Lf('找不到這首歌（可能已被刪除）。','Song not found (it may have been deleted).','曲が見つかりません（削除された可能性があります）。','곡을 찾을 수 없습니다 (삭제되었을 수 있음).'));
+    return false;
+  }
+  r.title=row.title; r.usage=row.usage||''; r.data=row.data; r.updated=data[0].updated_at; _myBase={id:r.id,updated:r.updated};
+  cloudMsg(Lf('已存到雲端','Saved to the cloud','クラウドに保存しました','클라우드에 저장했습니다')); myLibRefresh(); return true;
+}
+/* 把這台裝置的歌上傳到雲端（同名的會另存一首，不覆蓋） */
+async function myUploadLocal(){
+  const list=myLocalPending(); if(!list.length||!myCloudOn())return;
+  if(!myCanSave()){ myNeedPlan(); return; }
+  if(!confirm(Lf('把這台裝置的 '+list.length+' 首歌上傳到雲端？\n（雲端已有同名的歌也不會被覆蓋，會另存一首）',
+                 'Upload '+list.length+' song(s) from this device to the cloud?\n(Songs with the same name in the cloud are not overwritten.)',
+                 'この端末の '+list.length+' 曲をクラウドにアップロードしますか？\n（同名の曲は上書きされません）',
+                 '이 기기의 '+list.length+'곡을 클라우드에 업로드할까요?\n(같은 이름의 곡은 덮어쓰지 않습니다)')))return;
+  let ok=0, fail=0, lastErr='';
+  cloudMsg(Lf('上傳中…','Uploading…','アップロード中…','업로드 중…'));
+  for(const r of list){
+    const {data,error}=await _supa.from('my_songs').insert({title:r.title||L('未命名'),usage:r.usage||'',data:r.data}).select('id').single();
+    if(error){ fail++; lastErr=myErrText(error); if(error.code==='42501')break; continue; }
+    r.cloudId=String(data.id); ok++;
+    _favs.forEach(f=>{ if(f.src==='my'&&f.id===r.id){ f.src='mine'; f.id=r.cloudId; } });   /* 最愛跟著搬到雲端那份 */
+  }
+  saveMyLib(); favSave(); favSync();
+  await myCloudFetch(true);
+  alert(Lf('上傳完成：'+ok+' 首'+(fail?'，失敗 '+fail+' 首（'+lastErr+'）':''),
+           'Uploaded: '+ok+(fail?', failed: '+fail+' ('+lastErr+')':''),
+           'アップロード完了：'+ok+' 曲'+(fail?'、失敗 '+fail+' 曲（'+lastErr+'）':''),
+           '업로드 완료: '+ok+'곡'+(fail?', 실패 '+fail+'곡 ('+lastErr+')':'')));
+}
+async function myLibLoad(id){
+  const r=myFind(id); if(!r)return;
+  let d=null;
+  try{ d=await myEnsureData(r); }catch(e){ alert(Lf('載入失敗：','Load failed: ','読み込みに失敗しました：','불러오기 실패: ')+e.message); return; }
+  if(!d){ alert(Lf('找不到這首歌（可能已被刪除）。','Song not found (it may have been deleted).','曲が見つかりません（削除された可能性があります）。','곡을 찾을 수 없습니다 (삭제되었을 수 있음).')); myCloudFetch(true); return; }
+  if(applyProjectData(JSON.parse(JSON.stringify(d)))){ _myBase=r.cloud?{id:r.id,updated:r.updated}:null; renderSB(); renderAll(); closeCloud(); }
+}
+async function myLibDel(id){
+  const r=myFind(id); if(!r)return;
   if(!confirm(Lf('從我的歌庫移除「'+r.title+'」？','Remove "'+r.title+'" from My Library?','マイライブラリから「'+r.title+'」を削除しますか？','내 라이브러리에서 「'+r.title+'」을(를) 삭제할까요?')))return;
-  myLib=myLib.filter(x=>x.id!==id);
+  if(r.cloud){
+    const {error}=await _supa.from('my_songs').delete().eq('id',id);
+    if(error){ alert(Lf('刪除失敗：','Delete failed: ','削除に失敗しました：','삭제 실패: ')+myErrText(error)); return; }
+    myCloud=myCloud.filter(x=>x.id!==id);
+    myLib=myLib.filter(x=>x.cloudId!==id);   /* 這台裝置上傳過的原稿一起刪掉，不會又跑回「沒上傳」清單 */
+    saveMyLib();
+  } else {
+    myLib=myLib.filter(x=>x.id!==id); saveMyLib();
+  }
   _setlist=_setlist.filter(x=>x.id!==id);
-  saveMyLib(); myLibRefresh();
+  const fi=_favs.findIndex(f=>(f.src==='mine'||f.src==='my')&&f.id===id); if(fi>=0){ _favs.splice(fi,1); favSave(); favSync(); }
+  myLibRefresh();
 }
 /* ── 清單模式：敬拜使用者＝聚會服事、個人使用者＝演奏模式；最多 10 首，排序後依序串成一份 ── */
 const SETLIST_MAX=10;
@@ -4419,7 +4613,8 @@ async function setlistAdd(id){
   if(_setlist.some(x=>x.id===id))return;
   if(_svcKind==='perform'){                      // 演奏模式：從我的歌庫（本機）取
     if(_setlist.length>=SETLIST_MAX){ alert(Lf(svcLabel()+'最多 '+SETLIST_MAX+' 首。',svcLabel()+': up to '+SETLIST_MAX+' songs.',svcLabel()+'は最大 '+SETLIST_MAX+' 曲までです。',svcLabel()+'는 최대 '+SETLIST_MAX+'곡까지입니다.')); return; }
-    const r=myLib.find(x=>x.id===id); if(!r)return;
+    const r=myFind(id); if(!r)return;
+    try{ await myEnsureData(r); }catch(e){}
     const m=(r.data&&r.data.meta)||{};
     const item={id,title:r.title||L('未命名'),mode:m.mkey?'male':(m.fkey?'female':'num'),key:m.mkey||m.fkey||''};
     _setlist.push(item); myLibRefresh(); return;
@@ -4473,8 +4668,10 @@ function renderSetlist(){
 async function startService(){
   if(!_setlist.length)return; cloudMsg(L('載入服事清單…'));
   const byId={};
-  if(_svcKind==='perform'){                      // 演奏模式：全部來自本機歌庫
-    myLib.forEach(r=>{ byId[r.id]={id:r.id,title:r.title,data:r.data}; });
+  if(_svcKind==='perform'){                      // 演奏模式：來自我的歌庫（雲端的歌先抓內容）
+    for(const it of _setlist){ const r=myFind(it.id); if(!r)continue;
+      try{ await myEnsureData(r); }catch(e){ cloudMsg(L('載入失敗：')+e.message); return; }
+      byId[r.id]={id:r.id,title:r.title,data:r.data}; }
   } else {
     const ids=_setlist.map(s=>s.id);
     const {data,error}=await _supa.from('songs').select('id,title,data').in('id',ids);
@@ -7997,7 +8194,7 @@ window.addEventListener('scroll',popFollow,{passive:true});
 let _favs=[];
 function favLoad(){
   let a=[]; try{ a=JSON.parse(localStorage.getItem('arranger_favs')||'[]'); }catch(e){ a=[]; }
-  _favs=(Array.isArray(a)?a:[]).filter(f=>f&&(f.src==='cloud'||f.src==='my')&&typeof f.id==='string'&&/^[\w-]{1,64}$/.test(f.id))
+  _favs=(Array.isArray(a)?a:[]).filter(f=>f&&(f.src==='cloud'||f.src==='my'||f.src==='mine')&&typeof f.id==='string'&&/^[\w-]{1,64}$/.test(f.id))
     .map(f=>({src:f.src,id:f.id,title:String(f.title||'').slice(0,200),usage:String(f.usage||'').slice(0,40)}));
 }
 function favSave(){ try{ localStorage.setItem('arranger_favs',JSON.stringify(_favs)); }catch(e){} }
@@ -8011,7 +8208,7 @@ function favToggle(src,id,btn,e){
   const i=favIdx(src,id);
   if(i>=0) _favs.splice(i,1);
   else {
-    const r=src==='my'?myLib.find(x=>x.id===id):(_cloudSongs||[]).find(x=>x.id===id);
+    const r=src==='my'?myLib.find(x=>x.id===id):src==='mine'?myCloud.find(x=>x.id===id):(_cloudSongs||[]).find(x=>x.id===id);
     _favs.push({src,id,title:String((r&&r.title)||L('未命名')).slice(0,200),usage:String((r&&r.usage)||'').slice(0,40)});
   }
   favSave(); favSync();
@@ -8032,7 +8229,7 @@ function favRender(){
       const cur=(f.src==='cloud'&&f.id===_cloudId);
       return `<tr class="fav-row${cur?' on':''}" onclick="favOpen(${i})" title="${esc(Lf('打開這首歌的譜','Open this chart','この曲の譜面を開く','이 곡의 악보 열기'))}">`
         +`<td class="fav-t">${esc(f.title||L('未命名'))}${f.usage?`<span class="cl-tag">${esc(f.usage)}</span>`:''}</td>`
-        +`<td class="fav-src">${esc(f.src==='my'?Lf('我的歌庫','My Library','マイライブラリ','내 라이브러리'):Lf('雲端','Cloud','クラウド','클라우드'))}</td>`
+        +`<td class="fav-src">${esc(f.src==='my'?Lf('這台裝置','This device','この端末','이 기기'):f.src==='mine'?Lf('我的歌庫','My Library','マイライブラリ','내 라이브러리'):Lf('敬拜歌庫','Worship library','ワーシップ','워십 라이브러리'))}</td>`
         +`<td class="fav-x-td"><button class="fav-x" onclick="favRemove(${i},event)" title="${esc(Lf('從我的最愛移除','Remove from favorites','お気に入りから外す','즐겨찾기에서 제거'))}">✕</button></td></tr>`;
     }).join('')+'</tbody></table>';
 }
@@ -8059,6 +8256,15 @@ async function favOpen(i){
   if(f.src==='my'){
     const r=myLib.find(x=>x.id===f.id); if(!r){ favMissing(f); return; }
     data=JSON.parse(JSON.stringify(r.data));
+  } else if(f.src==='mine'){
+    if(!myCloudOn()){ alert(Lf('這首歌在你的雲端歌庫，請先登入。','This song is in your cloud library — please sign in first.','この曲はクラウドライブラリにあります。先にログインしてください。','이 곡은 클라우드 라이브러리에 있습니다. 먼저 로그인하세요.')); return; }
+    _favBusy=true;
+    try{
+      const {data:d,error}=await _supa.from('my_songs').select('data,updated_at').eq('id',f.id).maybeSingle();
+      if(error){ alert(Lf('載入失敗：','Load failed: ','読み込みに失敗しました：','불러오기 실패: ')+error.message); return; }
+      if(!d||!d.data||!Array.isArray(d.data.sects)){ favMissing(f); return; }
+      data=d.data; try{ Object.defineProperty(data,'__myUpd',{value:d.updated_at,enumerable:false,configurable:true}); }catch(x){}
+    } finally { _favBusy=false; }
   } else {
     if(!_supa){ alert(Lf('雲端尚未設定，無法讀取雲端歌庫。','Cloud is not configured, so the cloud library is unavailable.','クラウドが未設定のため、クラウドライブラリを読み込めません。','클라우드가 설정되지 않아 클라우드 라이브러리를 불러올 수 없습니다.')); return; }
     _favBusy=true;
@@ -8071,6 +8277,7 @@ async function favOpen(i){
   }
   if(applyProjectData(data)){
     _cloudId=f.src==='cloud'?f.id:null;
+    _myBase=(f.src==='mine'&&data.__myUpd)?{id:f.id,updated:data.__myUpd}:null; try{ delete data.__myUpd; }catch(x){}
     renderSB(); renderAll();
     if(currentView==='export')sw('chord');
     window.scrollTo(0,0);
