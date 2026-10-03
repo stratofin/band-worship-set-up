@@ -891,6 +891,9 @@ body.chsym-on .cbeatcol{cursor:pointer;}
 /* 曲目設定：平常收起來 */
 body:not(.song-open) .topbar .pills{display:none!important;}
 .tbar-r{margin-left:auto;}
+/* 電腦／平板：檔案｜使用者｜歌曲庫 緊接在「曲目設定」右邊；曲目設定展開的欄位在下面第二排，收起來那排就不見 */
+body:not(.mode-phone) .topbar-row-2 .tbar-r{margin-left:0;width:auto;flex:0 0 auto;}
+body:not(.mode-phone) .topbar-row-2 .pills{order:10;flex:1 1 100%;width:100%;}
 .song-btn{flex:0 0 auto;}
 /* 和弦工具：平常收起來，按了展開 */
 .ctool-wrap{display:contents;}
@@ -1872,6 +1875,10 @@ body.gated>*:not(#gate){filter:grayscale(.9) opacity(.32)!important;pointer-even
     <div class="cl-head"><span>📝 更新日誌 · Arranger 理譜人</span><button class="btn" onclick="hideChangelog()">✕</button></div>
     <div class="cl-body">
       <p class="cl-ver">目前版本 <b class="app-ver-txt">—</b>　·　開發時間軸：2026-06-17 起（依使用回饋持續優化）</p>
+
+      <h4>上方工具列排列 <span class="cl-date">2026-10-03</span></h4>
+      <ul><li>電腦／平板：「檔案｜使用者｜歌曲庫」移到「🎼 曲目設定」右邊</li>
+      <li>曲目設定展開的欄位改在下面第二排；收起來時那一排就不見</li></ul>
 
       <h4>歌曲庫看得更清楚 <span class="cl-date">2026-10-03</span></h4>
       <ul><li>歌曲庫、登入、存檔等深色視窗：歌名與文字改成白色，原本白色的按鈕改成淺灰色（任何主題都一樣）</li></ul>
@@ -3734,7 +3741,7 @@ function refreshSvcMode(){
 
 /* ── SAVE / LOAD ── */
 /* ── 版本：每次更新改這裡（格式 年.月.日，同一天第二版加 -2）；顯示在標題旁與更新日誌，存檔／匯出也會記錄 ── */
-const APP_VERSION='2026.10.03-2';
+const APP_VERSION='2026.10.03-3';
 function showAppVersion(){ try{ const t='v'+APP_VERSION; const a=document.getElementById('app-ver'); if(a)a.textContent=t; document.querySelectorAll('.app-ver-txt').forEach(e=>e.textContent=t); }catch(e){} }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',showAppVersion); else setTimeout(showAppVersion,0);
 function getProjectData(){
