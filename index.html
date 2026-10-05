@@ -922,6 +922,36 @@ body.kbsym-on:not(.ctool-open) .ctool-wrap:has(#kb-sym) .ctool-btn::after{
 /* 手機：範本清單直接在下面展開 */
 body.mode-phone .pm-submenu{position:static;margin:0.1em 0 0.2em 1.2em;min-width:0;box-shadow:none;border:none;border-left:2px solid var(--border2);border-radius:0;padding:0 0 0 0.3em;}
 body.mode-phone .pm-sub.open .pm-arrow{transform:rotate(90deg);}
+/* 歌曲庫分頁 */
+.lib-tabs{display:flex;gap:0.3em;flex-wrap:wrap;margin:0.1em 0 0.7em;border-bottom:1px solid var(--border2);}
+.lib-tab{background:none;border:none;border-bottom:2px solid transparent;color:var(--text2);font:inherit;font-size:0.88em;padding:0.45em 0.8em;cursor:pointer;margin-bottom:-1px;}
+.lib-tab:hover{color:var(--text);}
+.lib-tab.on{color:var(--accent);border-bottom-color:var(--accent);font-weight:700;}
+.team-soon{padding:0.9em 1em;border:1px dashed var(--border2);border-radius:0.5em;color:var(--text2);font-size:0.86em;line-height:1.7;}
+.team-soon b{color:var(--text);}
+/* 我的方案 */
+.plan-box{margin:0.2em 0 0.4em;}
+.plan-cur{font-size:0.9em;margin-bottom:0.5em;display:flex;align-items:center;gap:0.5em;flex-wrap:wrap;}
+.plan-cur b{color:var(--accent);}
+.plan-note{font-size:0.8em;color:var(--text3);}
+.plan-grant{font-size:0.72em;border:1px solid var(--accent);color:var(--accent);border-radius:99px;padding:0.05em 0.55em;}
+.plan-list{display:flex;flex-direction:column;gap:0.35em;}
+.plan-row{display:grid;grid-template-columns:9.5em 1fr auto;align-items:center;gap:0.6em;padding:0.5em 0.7em;border:1px solid var(--border);border-radius:0.5em;font-size:0.84em;}
+.plan-row.on{border-color:var(--accent);background:rgba(212,168,67,0.07);}
+.plan-k{font-weight:700;color:var(--text);}
+.plan-price{display:block;font-weight:400;font-size:0.85em;color:var(--text3);}
+.plan-feat{color:var(--text2);}
+.plan-act{font-size:0.9em;text-decoration:none;white-space:nowrap;}
+.plan-soon{font-size:0.78em;color:var(--text3);white-space:nowrap;}
+.plan-upsell{margin-top:0.8em;font-size:0.8em;color:var(--text2);display:flex;align-items:center;gap:0.6em;flex-wrap:wrap;}
+body.mode-phone .plan-row{grid-template-columns:1fr auto;}
+body.mode-phone .plan-feat{grid-column:1 / -1;grid-row:2;}
+.cl-box .cl-viewsel{font-size:0.86em;color:var(--text2);}
+.cl-box .cl-viewsel .cl-keysel{font-size:1em;color:var(--text);background:rgba(255,255,255,0.08);border:1px solid var(--border2);border-radius:0.35em;padding:0.2em 0.4em;}
+/* 第一次登入：主要怎麼用 */
+.use-q{margin:0 0 0.8em;color:var(--text2);}
+.use-opt{display:flex;flex-direction:column;align-items:flex-start;width:100%;margin-bottom:0.5em;padding:0.7em 0.9em;text-align:left;font-size:0.95em;}
+.use-opt span{font-size:0.78em;color:var(--text3);margin-top:0.15em;}
 /* 我的歌庫：雲端同步狀態 */
 .my-sync{font-size:0.8em;padding:0.4em 0.65em;border-radius:0.45em;margin:0.2em 0 0.5em;background:rgba(255,255,255,0.07);color:#d6d6d6;line-height:1.5;}
 .my-sync.on{border-left:3px solid var(--accent);}
@@ -1876,6 +1906,13 @@ body.gated>*:not(#gate){filter:grayscale(.9) opacity(.32)!important;pointer-even
     <div class="cl-body">
       <p class="cl-ver">目前版本 <b class="app-ver-txt">—</b>　·　開發時間軸：2026-06-17 起（依使用回饋持續優化）</p>
 
+      <h4>首頁整合成一組「登入／註冊」，功能依帳號方案決定 <span class="cl-date">2026-10-05</span></h4>
+      <ul><li>首頁不再分「個人／敬拜／管理者」登入：只有一組 email 登入、建立新帳號、Google 帳號繼續；測試期間仍可「先不登入，以敬拜使用者瀏覽」</li>
+      <li>登入後依帳號有的方案打開功能：免費（登入、基本視譜）、個人方案（建立／編輯自己的譜）、團隊方案（團隊共享與編輯，即將推出）、教會團隊包（團隊＋敬拜歌庫）；管理員自動有管理功能</li>
+      <li>第一次登入會問一題「主要怎麼用？個人／樂團／教會」，只決定預設畫面，之後可在「👤 使用者」裡改</li>
+      <li>歌曲庫改成分頁：📚 我的歌庫（每個人）、👥 團隊（團隊方案以上）、⛪ 敬拜歌庫（教會團隊包、管理員；測試期間開放瀏覽）</li>
+      <li>「👤 使用者」改成帳號面板：顯示「我的方案」與升級方式；沒登入時是「👤 登入」</li></ul>
+
       <h4>上方工具列排列 <span class="cl-date">2026-10-03</span></h4>
       <ul><li>電腦／平板：「檔案｜使用者｜歌曲庫」移到「🎼 曲目設定」右邊</li>
       <li>曲目設定展開的欄位改在下面第二排；收起來時那一排就不見</li></ul>
@@ -2494,7 +2531,7 @@ body.gated>*:not(#gate){filter:grayscale(.9) opacity(.32)!important;pointer-even
       <div id="cl-auth"></div>
       <div id="cl-msg" class="cl-msg"></div>
       <div id="cl-lib" style="display:none">
-        <div class="cl-libtop"><span class="cl-libhd">雲端歌庫</span><button class="btn cl-svc-btn" id="cl-svc-btn" onclick="toggleService()">⛪ 聚會服事</button></div>
+        <div class="cl-libtop"><span class="cl-libhd">敬拜歌庫</span><button class="btn cl-svc-btn" id="cl-svc-btn" onclick="toggleService()">⛪ 聚會服事</button></div>
         <div id="cl-setlist" class="cl-setlist" style="display:none"></div>
         <div class="cl-cats" id="cl-cats">
           <button class="cl-cat on" onclick="cloudCat('',this)">全部</button>
@@ -3602,22 +3639,22 @@ const T2S_CH={
  "饋":"馈","驗":"验","驟":"骤","體":"体","麼":"么","黃":"黄","點":"点","齊":"齐"
 };
 /* 介面整理新增的字 */
-Object.assign(I18N,{"最愛":"Favorites","從我的最愛移除":"Remove from favorites","加到我的最愛（左側欄「最愛」）":"Add to favorites (sidebar “Favorites”)","我的最愛：點歌名直接打開那首歌的譜":"Favorites: tap a song to open its chart","📁 檔案":"📁 File","🎼 曲目設定":"🎼 Song Settings","🎹 和弦工具":"🎹 Chord Tools","❓ 說明":"❓ Help",
+Object.assign(I18N,{"免費":"Free","個人方案":"Personal","團隊方案":"Team","教會團隊包":"Church","目前方案":"Current plan","已開通":"Granted","來信升級":"Email to upgrade","來信開通":"Email to activate","付款即將開放":"Payments coming soon","登入網站、基本視譜":"Sign in and view charts","建立、編輯自己的譜（我的歌庫雲端同步）":"Create and edit your own charts (My Library cloud sync)","個人方案全部功能＋團隊共享與編輯（即將推出）":"Everything in Personal + team sharing and editing (coming soon)","團隊方案＋敬拜歌庫（請來信開通）":"Team + worship library (email us to activate)","建立、編輯自己的譜需要「個人方案」":"Creating and editing your own charts needs the Personal plan","查看方案":"See plans","歡迎使用 Arranger 理譜人":"Welcome to Arranger","你主要怎麼用？（之後可以在「使用者」裡改）":"How will you mainly use it? (You can change this later under “User”)","個人":"Personal","樂團":"Band","教會":"Church","自己編曲、練習、演奏":"Arrange, practice and play on your own","和團員分享、一起改譜":"Share with bandmates and edit together","敬拜團、聚會服事":"Worship team and services","略過":"Skip","主要用途":"Main use","我的方案":"My plan","團隊":"Team","敬拜歌庫":"Worship library","團隊功能準備中":"Team features are on the way","建立團隊、用邀請碼或 email 邀請成員、共享與編輯團隊的譜。完成後會出現在這裡。":"Create a team, invite members by code or email, and share and edit team charts. It will appear here when ready.","測試期間開放瀏覽；正式上線後敬拜歌庫屬於「教會團隊包」。":"Open for browsing during testing; after launch the worship library is part of the Church plan.","請先登入。":"Please sign in first.","登入／註冊":"Sign in / Sign up","登出":"Sign out","歌曲庫":"Song Library","👤 使用者":"👤 User","👤 登入":"👤 Sign in","登入或註冊":"Sign in or create an account","建立新帳號":"Create account","或":"or","用 Google 帳號繼續":"Continue with Google","註冊免費：可以登入、基本視譜。建立自己的譜、團隊共享等功能依方案開通。":"Signing up is free: sign in and view charts. Creating your own charts, team sharing and more depend on your plan.","這個方案目前還不能線上訂閱。":"This plan can't be purchased online yet.","儲存目前到雲端":"Save current to cloud","另存新檔":"Save as new","最愛":"Favorites","從我的最愛移除":"Remove from favorites","加到我的最愛（左側欄「最愛」）":"Add to favorites (sidebar “Favorites”)","我的最愛：點歌名直接打開那首歌的譜":"Favorites: tap a song to open its chart","📁 檔案":"📁 File","🎼 曲目設定":"🎼 Song Settings","🎹 和弦工具":"🎹 Chord Tools","❓ 說明":"❓ Help",
  "檔案：開新檔案、存檔、讀檔、範本":"File: new chart, save, open, templates","📑 範本":"📑 Templates","範本：滑鼠移過去（或點一下）選範本歌曲":"Templates: hover (or tap) to pick a template song",
  "曲目設定：曲目、演唱者、拍號、BPM、用途、主題、字級、男／女 Key（再按一次收起來）":"Song settings: title, artist, time signature, BPM, category, theme, font size, male/female key (tap again to close)",
  "和弦工具：選和弦、放和弦、符號（再按一次收起來）":"Chord tools: pick a chord, place chords, symbols (tap again to close)",
  "說明：這一頁的操作方式（點其他地方就收起來）":"Help: how to use this page (tap anywhere else to close)"});
-Object.assign(I18N_JA,{"最愛":"お気に入り","從我的最愛移除":"お気に入りから外す","加到我的最愛（左側欄「最愛」）":"お気に入りに追加（サイドバー「お気に入り」）","我的最愛：點歌名直接打開那首歌的譜":"お気に入り：曲名を押すとその曲の譜面を開きます","📁 檔案":"📁 ファイル","🎼 曲目設定":"🎼 曲の設定","🎹 和弦工具":"🎹 コードツール","❓ 說明":"❓ ヘルプ",
+Object.assign(I18N_JA,{"免費":"無料","個人方案":"個人プラン","團隊方案":"チームプラン","教會團隊包":"教会パック","目前方案":"現在のプラン","已開通":"付与済み","來信升級":"メールでアップグレード","來信開通":"メールで申し込む","付款即將開放":"お支払いは近日公開","登入網站、基本視譜":"ログインして譜面を閲覧","建立、編輯自己的譜（我的歌庫雲端同步）":"自分の譜面を作成・編集（マイライブラリのクラウド同期）","個人方案全部功能＋團隊共享與編輯（即將推出）":"個人プランの全機能＋チームで共有・編集（近日公開）","團隊方案＋敬拜歌庫（請來信開通）":"チームプラン＋ワーシップライブラリ（メールで申し込み）","建立、編輯自己的譜需要「個人方案」":"自分の譜面の作成・編集には「個人プラン」が必要です","查看方案":"プランを見る","歡迎使用 Arranger 理譜人":"Arranger へようこそ","你主要怎麼用？（之後可以在「使用者」裡改）":"主な使い方は？（あとで「ユーザー」から変更できます）","個人":"個人","樂團":"バンド","教會":"教会","自己編曲、練習、演奏":"自分で編曲・練習・演奏","和團員分享、一起改譜":"メンバーと共有して一緒に編集","敬拜團、聚會服事":"ワーシップチーム・礼拝","略過":"スキップ","主要用途":"主な使い方","我的方案":"マイプラン","團隊":"チーム","敬拜歌庫":"ワーシップライブラリ","團隊功能準備中":"チーム機能は準備中です","建立團隊、用邀請碼或 email 邀請成員、共享與編輯團隊的譜。完成後會出現在這裡。":"チームを作成し、招待コードやメールでメンバーを招待して、チームの譜面を共有・編集できます。完成したらここに表示されます。","測試期間開放瀏覽；正式上線後敬拜歌庫屬於「教會團隊包」。":"テスト期間中は閲覧可能。正式公開後、ワーシップライブラリは「教会パック」に含まれます。","請先登入。":"先にログインしてください。","登入／註冊":"ログイン／登録","登出":"ログアウト","歌曲庫":"曲ライブラリ","👤 使用者":"👤 ユーザー","👤 登入":"👤 ログイン","登入或註冊":"ログインまたは新規登録","建立新帳號":"アカウントを作成","或":"または","用 Google 帳號繼續":"Google で続ける","註冊免費：可以登入、基本視譜。建立自己的譜、團隊共享等功能依方案開通。":"登録は無料：ログインと譜面の閲覧ができます。自分の譜面作成やチーム共有はプランに応じて利用できます。","這個方案目前還不能線上訂閱。":"このプランはまだオンラインで購入できません。","儲存目前到雲端":"現在の内容をクラウドに保存","另存新檔":"新規保存","最愛":"お気に入り","從我的最愛移除":"お気に入りから外す","加到我的最愛（左側欄「最愛」）":"お気に入りに追加（サイドバー「お気に入り」）","我的最愛：點歌名直接打開那首歌的譜":"お気に入り：曲名を押すとその曲の譜面を開きます","📁 檔案":"📁 ファイル","🎼 曲目設定":"🎼 曲の設定","🎹 和弦工具":"🎹 コードツール","❓ 說明":"❓ ヘルプ",
  "檔案：開新檔案、存檔、讀檔、範本":"ファイル：新規作成・保存・開く・テンプレート","📑 範本":"📑 テンプレート","範本：滑鼠移過去（或點一下）選範本歌曲":"テンプレート：マウスを乗せる（またはタップ）とテンプレート曲を選べます",
  "曲目設定：曲目、演唱者、拍號、BPM、用途、主題、字級、男／女 Key（再按一次收起來）":"曲の設定：曲名・歌手・拍子・BPM・用途・テーマ・文字サイズ・男性／女性キー（もう一度押すと閉じます）",
  "和弦工具：選和弦、放和弦、符號（再按一次收起來）":"コードツール：コード選択・コード入力・記号（もう一度押すと閉じます）",
  "說明：這一頁的操作方式（點其他地方就收起來）":"ヘルプ：このページの使い方（ほかの場所を押すと閉じます）"});
-Object.assign(I18N_KO,{"最愛":"즐겨찾기","從我的最愛移除":"즐겨찾기에서 제거","加到我的最愛（左側欄「最愛」）":"즐겨찾기에 추가 (사이드바 「즐겨찾기」)","我的最愛：點歌名直接打開那首歌的譜":"즐겨찾기: 곡명을 누르면 그 곡의 악보가 열립니다","📁 檔案":"📁 파일","🎼 曲目設定":"🎼 곡 설정","🎹 和弦工具":"🎹 코드 도구","❓ 說明":"❓ 도움말",
+Object.assign(I18N_KO,{"免費":"무료","個人方案":"개인 요금제","團隊方案":"팀 요금제","教會團隊包":"교회 팩","目前方案":"현재 요금제","已開通":"부여됨","來信升級":"이메일로 업그레이드","來信開通":"이메일로 신청","付款即將開放":"결제 곧 오픈","登入網站、基本視譜":"로그인 후 악보 보기","建立、編輯自己的譜（我的歌庫雲端同步）":"내 악보 만들기·편집 (내 라이브러리 클라우드 동기화)","個人方案全部功能＋團隊共享與編輯（即將推出）":"개인 요금제 전체 + 팀 공유·편집 (곧 출시)","團隊方案＋敬拜歌庫（請來信開通）":"팀 요금제 + 워십 라이브러리 (이메일로 신청)","建立、編輯自己的譜需要「個人方案」":"내 악보를 만들고 편집하려면 「개인 요금제」가 필요합니다","查看方案":"요금제 보기","歡迎使用 Arranger 理譜人":"Arranger에 오신 것을 환영합니다","你主要怎麼用？（之後可以在「使用者」裡改）":"주로 어떻게 사용하시나요? (나중에 「사용자」에서 변경 가능)","個人":"개인","樂團":"밴드","教會":"교회","自己編曲、練習、演奏":"혼자 편곡·연습·연주","和團員分享、一起改譜":"멤버와 공유하고 함께 편집","敬拜團、聚會服事":"워십팀·예배","略過":"건너뛰기","主要用途":"주요 용도","我的方案":"내 요금제","團隊":"팀","敬拜歌庫":"워십 라이브러리","團隊功能準備中":"팀 기능 준비 중","建立團隊、用邀請碼或 email 邀請成員、共享與編輯團隊的譜。完成後會出現在這裡。":"팀을 만들고 초대 코드나 이메일로 멤버를 초대해 팀 악보를 공유·편집합니다. 완성되면 여기에 표시됩니다.","測試期間開放瀏覽；正式上線後敬拜歌庫屬於「教會團隊包」。":"테스트 기간에는 열람 가능. 정식 출시 후 워십 라이브러리는 「교회 팩」에 포함됩니다.","請先登入。":"먼저 로그인하세요.","登入／註冊":"로그인 / 가입","登出":"로그아웃","歌曲庫":"곡 라이브러리","👤 使用者":"👤 사용자","👤 登入":"👤 로그인","登入或註冊":"로그인 또는 가입","建立新帳號":"계정 만들기","或":"또는","用 Google 帳號繼續":"Google로 계속","註冊免費：可以登入、基本視譜。建立自己的譜、團隊共享等功能依方案開通。":"가입은 무료: 로그인과 악보 보기가 가능합니다. 내 악보 만들기·팀 공유 등은 요금제에 따라 열립니다.","這個方案目前還不能線上訂閱。":"이 요금제는 아직 온라인으로 구매할 수 없습니다.","儲存目前到雲端":"현재 내용을 클라우드에 저장","另存新檔":"새로 저장","最愛":"즐겨찾기","從我的最愛移除":"즐겨찾기에서 제거","加到我的最愛（左側欄「最愛」）":"즐겨찾기에 추가 (사이드바 「즐겨찾기」)","我的最愛：點歌名直接打開那首歌的譜":"즐겨찾기: 곡명을 누르면 그 곡의 악보가 열립니다","📁 檔案":"📁 파일","🎼 曲目設定":"🎼 곡 설정","🎹 和弦工具":"🎹 코드 도구","❓ 說明":"❓ 도움말",
  "檔案：開新檔案、存檔、讀檔、範本":"파일: 새 악보, 저장, 열기, 템플릿","📑 範本":"📑 템플릿","範本：滑鼠移過去（或點一下）選範本歌曲":"템플릿: 마우스를 올리거나 탭해서 템플릿 곡 선택",
  "曲目設定：曲目、演唱者、拍號、BPM、用途、主題、字級、男／女 Key（再按一次收起來）":"곡 설정: 곡명, 가수, 박자, BPM, 용도, 테마, 글자 크기, 남/여 키 (다시 누르면 닫힘)",
  "和弦工具：選和弦、放和弦、符號（再按一次收起來）":"코드 도구: 코드 선택, 코드 입력, 기호 (다시 누르면 닫힘)",
  "說明：這一頁的操作方式（點其他地方就收起來）":"도움말: 이 페이지 사용법 (다른 곳을 누르면 닫힘)"});
-Object.assign(I18N_CN,{"最愛":"最爱","從我的最愛移除":"从我的最爱移除","加到我的最愛（左側欄「最愛」）":"加到我的最爱（左侧栏「最爱」）","我的最愛：點歌名直接打開那首歌的譜":"我的最爱：点歌名直接打开那首歌的谱","📁 檔案":"📁 文件","🎼 曲目設定":"🎼 曲目设置","🎹 和弦工具":"🎹 和弦工具","❓ 說明":"❓ 说明",
+Object.assign(I18N_CN,{"免費":"免费","個人方案":"个人方案","團隊方案":"团队方案","教會團隊包":"教会团队包","目前方案":"目前方案","已開通":"已开通","來信升級":"来信升级","來信開通":"来信开通","付款即將開放":"付款即将开放","登入網站、基本視譜":"登录网站、基本视谱","建立、編輯自己的譜（我的歌庫雲端同步）":"建立、编辑自己的谱（我的歌库云端同步）","個人方案全部功能＋團隊共享與編輯（即將推出）":"个人方案全部功能＋团队共享与编辑（即将推出）","團隊方案＋敬拜歌庫（請來信開通）":"团队方案＋敬拜歌库（请来信开通）","建立、編輯自己的譜需要「個人方案」":"建立、编辑自己的谱需要「个人方案」","查看方案":"查看方案","歡迎使用 Arranger 理譜人":"欢迎使用 Arranger 理谱人","你主要怎麼用？（之後可以在「使用者」裡改）":"你主要怎么用？（之后可以在「用户」里改）","個人":"个人","樂團":"乐团","教會":"教会","自己編曲、練習、演奏":"自己编曲、练习、演奏","和團員分享、一起改譜":"和团员分享、一起改谱","敬拜團、聚會服事":"敬拜团、聚会服事","略過":"略过","主要用途":"主要用途","我的方案":"我的方案","團隊":"团队","敬拜歌庫":"敬拜歌库","團隊功能準備中":"团队功能准备中","建立團隊、用邀請碼或 email 邀請成員、共享與編輯團隊的譜。完成後會出現在這裡。":"建立团队、用邀请码或 email 邀请成员、共享与编辑团队的谱。完成后会出现在这里。","測試期間開放瀏覽；正式上線後敬拜歌庫屬於「教會團隊包」。":"测试期间开放浏览；正式上线后敬拜歌库属于「教会团队包」。","請先登入。":"请先登录。","登入／註冊":"登录／注册","登出":"登出","歌曲庫":"歌曲库","👤 使用者":"👤 用户","👤 登入":"👤 登录","登入或註冊":"登录或注册","建立新帳號":"建立新账号","或":"或","用 Google 帳號繼續":"用 Google 账号继续","註冊免費：可以登入、基本視譜。建立自己的譜、團隊共享等功能依方案開通。":"注册免费：可以登录、基本视谱。建立自己的谱、团队共享等功能依方案开通。","這個方案目前還不能線上訂閱。":"这个方案目前还不能在线订阅。","儲存目前到雲端":"储存目前到云端","另存新檔":"另存新档","最愛":"最爱","從我的最愛移除":"从我的最爱移除","加到我的最愛（左側欄「最愛」）":"加到我的最爱（左侧栏「最爱」）","我的最愛：點歌名直接打開那首歌的譜":"我的最爱：点歌名直接打开那首歌的谱","📁 檔案":"📁 文件","🎼 曲目設定":"🎼 曲目设置","🎹 和弦工具":"🎹 和弦工具","❓ 說明":"❓ 说明",
  "檔案：開新檔案、存檔、讀檔、範本":"文件：新建、保存、读取、模板","📑 範本":"📑 模板","範本：滑鼠移過去（或點一下）選範本歌曲":"模板：鼠标移过去（或点一下）选模板歌曲",
  "曲目設定：曲目、演唱者、拍號、BPM、用途、主題、字級、男／女 Key（再按一次收起來）":"曲目设置：曲目、演唱者、拍号、BPM、用途、主题、字级、男／女 Key（再按一次收起来）",
  "和弦工具：選和弦、放和弦、符號（再按一次收起來）":"和弦工具：选和弦、放和弦、符号（再按一次收起来）",
@@ -3741,7 +3778,7 @@ function refreshSvcMode(){
 
 /* ── SAVE / LOAD ── */
 /* ── 版本：每次更新改這裡（格式 年.月.日，同一天第二版加 -2）；顯示在標題旁與更新日誌，存檔／匯出也會記錄 ── */
-const APP_VERSION='2026.10.03-3';
+const APP_VERSION='2026.10.05';
 function showAppVersion(){ try{ const t='v'+APP_VERSION; const a=document.getElementById('app-ver'); if(a)a.textContent=t; document.querySelectorAll('.app-ver-txt').forEach(e=>e.textContent=t); }catch(e){} }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',showAppVersion); else setTimeout(showAppVersion,0);
 function getProjectData(){
@@ -3931,8 +3968,10 @@ let _supa=null,_supaUser=null,_supaAdmin=false,_cloudId=null;
    設定步驟見 PADDLE_SETUP.md。TOKEN / PRICE 留空 ＝ 訂閱功能不啟用（其餘功能照舊）。 */
 const PADDLE_ENV   = 'sandbox';   // 'sandbox' 測試 / 'production' 正式
 const PADDLE_TOKEN = '';          // ← Paddle → Developer tools → Authentication → client-side token
-const PADDLE_PRICE_BASE = '';     // ← 基本訂閱的 Price ID（pri_ 開頭）
-const PADDLE_PRICE_LIB  = '';     // ← 敬拜雲端歌庫加購的 Price ID（留空＝不賣加購）
+const PADDLE_PRICE_BASE = '';     // ← 個人方案 US$6／月 的 Price ID（pri_ 開頭）
+const PADDLE_PRICE_TEAM = '';     // ← 團隊方案 US$20／月 的 Price ID（留空＝先不在網站上賣）
+const PADDLE_PRICE_CHURCH = '';   // ← 教會團隊包的 Price ID（留空＝不在網站上賣，由管理員用 profiles.grant_plan 開通）
+const PADDLE_PRICE_LIB  = '';     // ← 舊的「敬拜雲端歌庫加購」（已併入教會團隊包；保留只為相容舊訂閱）
 let _paddleOn=false,_sub=null,_isPro=false,_hasLib=false;
 /* ════ 測試帳號 ════
    給幫忙試用、回報問題的人用。這是一個「真的」Supabase 帳號，
@@ -3957,12 +3996,12 @@ async function cloudInit(){
     if(session){
       _supaUser=session.user; await cloudFetchRole();
       /* Google 註冊是跳轉出去再回來，身分在跳轉前存起來，回來才套用 */
-      try{ const pk=localStorage.getItem('arranger_pending_kind');
-        if(pk){ gateApplyRole(pk); localStorage.removeItem('arranger_pending_kind'); } }catch(e){}
+      try{ localStorage.removeItem('arranger_pending_kind'); }catch(e){}   /* 舊版 Google 註冊留下的身分記號：不再使用 */
     }
     await fetchSubscription();
     updateCloudBtn();
     syncGate();
+    setTimeout(()=>{ try{ maybeAskUse(); }catch(e){} },300);
     _supa.auth.onAuthStateChange(async (_e,ss)=>{ const _pu=_supaUser&&_supaUser.id; _supaUser = ss?ss.user:null; _supaAdmin=false;
       if(((_supaUser&&_supaUser.id)||null)!==(_pu||null)){ try{ myCloudReset(); }catch(x){} }
       if(_supaUser)await cloudFetchRole();
@@ -3980,11 +4019,13 @@ function updateCloudBtn(){
     const m=_supaUser.user_metadata||{};
     const nm=(m.full_name||m.name||_supaUser.email||'').split('@')[0];
     b.textContent='👤 '+nm; b.classList.add('on');
-  } else { b.textContent=L('👤 使用者'); b.classList.remove('on'); }
+  } else { b.textContent=L('👤 登入'); b.classList.remove('on'); }
 }
 async function cloudFetchRole(){
-  _supaAdmin=false; if(!_supaUser)return;
-  try{ const {data}=await _supa.from('profiles').select('role').eq('id',_supaUser.id).single(); _supaAdmin=!!(data&&data.role==='admin'); }catch(e){}
+  _supaAdmin=false; _grantPlan=''; if(!_supaUser)return;
+  _grantPlan='';
+  try{ const {data}=await _supa.from('profiles').select('*').eq('id',_supaUser.id).single(); _supaAdmin=!!(data&&data.role==='admin');
+    const g=data&&data.grant_plan; if(g&&PLAN_RANK[g]!=null)_grantPlan=g; }catch(e){}
   renderUsageSelect();
 }
 /* ════════ 訂閱付費（Paddle）════════
@@ -4018,37 +4059,120 @@ async function fetchSubscription(){
     }catch(e){ console.warn('fetchSubscription',e); }
   }
   document.body.classList.toggle('is-pro',_isPro);
+  try{ renderUsageSelect(); }catch(e){}
   document.body.classList.toggle('has-lib',_hasLib);
   const m=document.getElementById('cloud-modal');
   if(m&&m.classList.contains('show'))cloudRenderModal();
 }
-function subDate(s){ try{ return new Date(s).toLocaleDateString(); }catch(e){ return ''; } }
-function subUiHtml(){
-  if(!_paddleOn) return '';                       // 未設定金流 → 整區不出現
-  const st=_sub?_sub.status:'';
-  const lib=!!PADDLE_PRICE_LIB;
+/* ════════ 方案與權限（依帳號決定功能）════════
+   首頁只有「登入／註冊」，不再讓使用者自己選身分；登入後依帳號有的方案打開功能。
+   方案可以疊加，取最高的：
+     free     免費：登入、基本視譜（看自己雲端裡的譜）
+     personal 個人 US$6／月：建立、編輯自己的譜（我的歌庫雲端同步）
+     team     團隊 US$20／月：個人全部＋團隊共享與編輯（團隊功能開發中）
+     church   教會團隊包：團隊＋敬拜歌庫（由管理員開通，或日後另設價格）
+   來源：Paddle 訂閱上的 price id（webhook 寫進 subscriptions.items），或 profiles.grant_plan（管理員手動開通）。
+   這裡只決定「畫面上顯示什麼」；真正的把關在 Supabase RLS（supabase_plans.sql）。 */
+const PLAN_RANK={free:0,personal:1,team:2,church:3};
+let _grantPlan='';
+function guestBrowseOn(){ try{ return !!GUEST_BROWSE; }catch(e){ return true; } }
+function currentPlan(){
+  let p='free';
   if(_isPro){
-    const d=(_sub&&_sub.current_period_end)?subDate(_sub.current_period_end):'';
-    const trial=(_sub&&_sub.status==='trialing');
-    const note=(_sub&&_sub.cancel_at_period_end)
-      ? (d?L('已排定取消，可用到')+' '+d:L('已排定取消'))
-      : trial ? (d?L('試用中，首次扣款')+' '+d:L('試用中'))
-      : (d?L('下次續訂')+' '+d:'');
-    let h='<div class="sub-box"><span class="sub-badge">'+(_hasLib?esc(L('訂閱 ＋ 歌庫')):esc(L('訂閱中')))+'</span>'
-      +'<span class="sub-note">'+esc(note)+'</span>';
-    if(lib && !_hasLib) h+='<button class="btn" onclick="subLibrary(true)">'+esc(L('＋ 加購敬拜雲端歌庫'))+'</button>';
-    else if(lib && _hasLib) h+='<button class="btn" onclick="subLibrary(false)">'+esc(L('移除歌庫加購'))+'</button>';
-    return h+'</div>';
+    const it=(_sub&&Array.isArray(_sub.items))?_sub.items:[];
+    if(PADDLE_PRICE_CHURCH && it.indexOf(PADDLE_PRICE_CHURCH)>=0) p='church';
+    else if(PADDLE_PRICE_TEAM && it.indexOf(PADDLE_PRICE_TEAM)>=0) p='team';
+    else p='personal';
   }
-  if(st==='past_due'){
-    return '<div class="sub-box"><span class="sub-note bad">'+esc(L('扣款失敗，訂閱暫停中'))+'</span>'
-      +'<button class="btn btna" onclick="openCheckout(false)">'+esc(L('重新訂閱'))+'</button></div>';
-  }
-  let h='<div class="sub-box"><span class="sub-note">'+esc(L('訂閱後可使用雲端帳號與多裝置同步'))+'</span>'
-    +'<button class="btn btna" onclick="openCheckout(false)">'+esc(L('訂閱'))+'</button>';
-  if(lib) h+='<button class="btn" onclick="openCheckout(true)">'+esc(L('訂閱 ＋ 敬拜雲端歌庫'))+'</button>';
+  if(_grantPlan && PLAN_RANK[_grantPlan]>PLAN_RANK[p]) p=_grantPlan;
+  return p;
+}
+function ent(){
+  const p=currentPlan(), r=PLAN_RANK[p], adm=!!_supaAdmin;
+  return { plan:p, signedIn:!!_supaUser, admin:adm,
+    personal: r>=1||adm,
+    team:     r>=2||adm,
+    /* 敬拜歌庫：教會團隊包／舊的歌庫加購／管理員；測試期間（GUEST_BROWSE）先對所有人開放 */
+    worship:  p==='church'||_hasLib||adm||guestBrowseOn() };
+}
+function planName(p){ return ({free:L('免費'),personal:L('個人方案'),team:L('團隊方案'),church:L('教會團隊包')})[p]||p; }
+const PLAN_DEFS=[
+  {k:'free',    price:'',           feat:'登入網站、基本視譜'},
+  {k:'personal',price:'US$6／月',   feat:'建立、編輯自己的譜（我的歌庫雲端同步）'},
+  {k:'team',    price:'US$20／月',  feat:'個人方案全部功能＋團隊共享與編輯（即將推出）'},
+  {k:'church',  price:'',           feat:'團隊方案＋敬拜歌庫（請來信開通）'}
+];
+function planPriceId(k){ return k==='personal'?PADDLE_PRICE_BASE:k==='team'?PADDLE_PRICE_TEAM:k==='church'?PADDLE_PRICE_CHURCH:''; }
+function planStatusNote(){
+  if(!_sub)return '';
+  const d=_sub.current_period_end?subDate(_sub.current_period_end):'';
+  if(_sub.status==='past_due')return L('扣款失敗，訂閱暫停中');
+  if(!_isPro)return '';
+  if(_sub.cancel_at_period_end)return d?L('已排定取消，可用到')+' '+d:L('已排定取消');
+  if(_sub.status==='trialing')return d?L('試用中，首次扣款')+' '+d:L('試用中');
+  return d?L('下次續訂')+' '+d:'';
+}
+/* 「我的方案」：目前方案＋可以升級的選項 */
+function planHtml(){
+  const e=ent(), cur=e.plan, cr=PLAN_RANK[cur];
+  const mail='mailto:support@arrangerlipu.com?subject='+encodeURIComponent('Arranger 方案開通／升級')+'&body='+encodeURIComponent('帳號 email：'+((_supaUser&&_supaUser.email)||''));
+  let h='<div class="plan-box"><div class="plan-cur">'+esc(L('目前方案'))+'：<b>'+esc(planName(cur))+'</b>'
+    +(e.admin?' <span class="cl-role admin">'+esc(L('管理員'))+'</span>':'')
+    +(_grantPlan&&PLAN_RANK[_grantPlan]>=cr?' <span class="plan-grant">'+esc(L('已開通'))+'</span>':'')
+    +(planStatusNote()?' <span class="plan-note">'+esc(planStatusNote())+'</span>':'')+'</div>'
+    +'<div class="plan-list">';
+  PLAN_DEFS.forEach(d=>{
+    const r=PLAN_RANK[d.k], on=(d.k===cur), pid=planPriceId(d.k);
+    let act='';
+    if(r>cr && d.k!=='free'){
+      if(_isPro) act='<a class="btn plan-act" href="'+mail+'">'+esc(L('來信升級'))+'</a>';           /* 已有訂閱：換方案先人工處理，避免重複扣款 */
+      else if(_paddleOn && pid) act='<button class="btn btna plan-act" onclick="openCheckout(\''+esc(d.k)+'\')">'+esc(L('訂閱'))+'</button>';
+      else if(d.k==='church') act='<a class="btn plan-act" href="'+mail+'">'+esc(L('來信開通'))+'</a>';
+      else act='<span class="plan-soon">'+esc(L('付款即將開放'))+'</span>';
+    }
+    h+='<div class="plan-row'+(on?' on':'')+'"><span class="plan-k">'+(on?'✓ ':'')+esc(planName(d.k))+(d.price?' <span class="plan-price">'+esc(d.price)+'</span>':'')+'</span>'
+      +'<span class="plan-feat">'+esc(L(d.feat))+'</span>'+act+'</div>';
+  });
+  h+='</div>';
+  if(_sub&&_sub.status==='past_due'&&_paddleOn) h+='<div class="cl-actions"><button class="btn btna" onclick="openCheckout(\'personal\')">'+esc(L('重新訂閱'))+'</button></div>';
   return h+'</div>';
 }
+/* 免費帳號在「我的歌庫」看到的一行升級提示 */
+function planUpsellHtml(){
+  if(!_supaUser||ent().personal)return '';
+  return '<div class="plan-upsell">'+esc(L('建立、編輯自己的譜需要「個人方案」'))+' <button class="btn" onclick="openAccount()">'+esc(L('查看方案'))+'</button></div>';
+}
+/* 第一次登入問一題「主要怎麼用？」——只決定預設畫面與推薦方案，不鎖功能 */
+function usePref(){ try{ return localStorage.getItem('arranger_use')||''; }catch(e){ return ''; } }
+function setUsePref(u){
+  try{ localStorage.setItem('arranger_use',u); }catch(e){}
+  setUserKind(u==='church'?'worship':'personal');
+  setSvcKind(u==='church'?'service':'perform');
+  try{ if(_supa&&_supaUser)_supa.auth.updateUser({data:{arranger_use:u}}); }catch(e){}
+  const m=document.getElementById('use-modal'); if(m)m.remove();
+}
+function maybeAskUse(){
+  if(!_supaUser)return;
+  const meta=(_supaUser.user_metadata||{}).arranger_use;
+  if(meta&&!usePref()){ try{ localStorage.setItem('arranger_use',meta); }catch(e){} return; }
+  if(usePref()||meta||document.getElementById('use-modal'))return;
+  const m=document.createElement('div'); m.id='use-modal'; m.className='cl-modal show';
+  m.innerHTML='<div class="cl-box" style="max-width:380px"><div class="cl-head">👋 '+esc(L('歡迎使用 Arranger 理譜人'))+'</div><div class="cl-body">'
+    +'<p class="use-q">'+esc(L('你主要怎麼用？（之後可以在「使用者」裡改）'))+'</p>'
+    +'<button class="btn use-opt" onclick="setUsePref(\'personal\')">🎧 '+esc(L('個人'))+'<span>'+esc(L('自己編曲、練習、演奏'))+'</span></button>'
+    +'<button class="btn use-opt" onclick="setUsePref(\'band\')">🎸 '+esc(L('樂團'))+'<span>'+esc(L('和團員分享、一起改譜'))+'</span></button>'
+    +'<button class="btn use-opt" onclick="setUsePref(\'church\')">⛪ '+esc(L('教會'))+'<span>'+esc(L('敬拜團、聚會服事'))+'</span></button>'
+    +'<button class="gate-back" onclick="setUsePref(\'personal\')">'+esc(L('略過'))+'</button></div></div>';
+  document.body.appendChild(m);
+}
+function useSelHtml(){
+  const u=usePref()||'personal';
+  return '<label class="cl-viewsel">'+esc(L('主要用途'))+' <select class="cl-keysel" onchange="setUsePref(this.value);cloudRenderModal()">'
+    +[['personal','個人'],['band','樂團'],['church','教會']].map(o=>'<option value="'+o[0]+'"'+(u===o[0]?' selected':'')+'>'+esc(L(o[1]))+'</option>').join('')
+    +'</select></label>';
+}
+function subDate(s){ try{ return new Date(s).toLocaleDateString(); }catch(e){ return ''; } }
+function subUiHtml(){ return planHtml(); }   /* 舊名稱保留：一律顯示「我的方案」 */
 /* 在既有訂閱上加購／移除歌庫。真正動 Paddle 的是 Edge Function，
    前端只負責帶著登入 token 呼叫它；狀態回寫一律走 webhook。 */
 async function subLibrary(add){
@@ -4068,16 +4192,17 @@ async function subLibrary(add){
     setTimeout(fetchSubscription,2500); setTimeout(fetchSubscription,8000);
   }catch(e){ cloudMsg(L('操作失敗：')+e.message); }
 }
-function openCheckout(withLib){
+function openCheckout(plan){
+  if(plan===true||plan===false)plan='personal';   /* 舊的呼叫方式 */
+  const pid=planPriceId(plan||'personal');
   if(!_paddleOn){ alert(L('訂閱功能尚未設定（見 PADDLE_SETUP.md）。')); return; }
   if(!_supaUser){ alert(L('請先登入再訂閱。')); return; }
+  if(!pid){ alert(L('這個方案目前還不能線上訂閱。')); return; }
   const dark=!(document.body.classList.contains('theme-light')||document.body.classList.contains('theme-pink')||document.body.classList.contains('theme-earth'));
   const loc=(_lang==='cn')?'zh-Hans':(_lang==='zh')?'zh-Hant':(_lang==='ja')?'ja':(_lang==='ko')?'ko':'en';
   try{
     Paddle.Checkout.open({
-      items: (withLib && PADDLE_PRICE_LIB)
-        ? [{ priceId:PADDLE_PRICE_BASE, quantity:1 },{ priceId:PADDLE_PRICE_LIB, quantity:1 }]
-        : [{ priceId:PADDLE_PRICE_BASE, quantity:1 }],
+      items: [{ priceId:pid, quantity:1 }],
       customer:_supaUser.email?{ email:_supaUser.email }:undefined,
       customData:{ supabase_user_id:_supaUser.id },
       settings:{ theme:dark?'dark':'light', locale:loc }
@@ -4085,8 +4210,8 @@ function openCheckout(withLib){
   }catch(e){ alert(L('結帳視窗開啟失敗：')+e.message); }
 }
 /* ════════ 進站鎖 ════════
-   進站前先選身分。三個「登入」走同一套 Supabase 驗證，差別只在登入後要用哪種
-   用途分類；兩個「註冊」則是先問身分再建帳號。
+   首頁只有一組「登入／註冊」（email 或 Google）。不再讓使用者自己選身分：
+   登入後依帳號有的方案決定功能（見「方案與權限」）。
    真正的資料把關在 Supabase RLS，這層只是不讓未登入的人操作介面。 */
 const GUEST_BROWSE = true;   /* 測試期間開放「免登入以敬拜使用者瀏覽」；正式收費時改 false */
 let _gateView='menu', _gateRole='worship', _gateMethod='email', _guest=false;
@@ -4126,44 +4251,25 @@ function gateRoleName(r){ return r==='personal'?L('個人使用者'):r==='admin'
 function gateRender(){
   const b=document.getElementById('gate-body'); if(!b)return;
   const esc2=esc;
-  if(_gateView==='menu'){
-    let h='';
-    h+='<button class="gate-btn gate-primary" onclick="gateGo(\'login\',\'personal\')">'+esc2(L('個人使用者登入'))+'</button>';
-    h+='<button class="gate-btn" onclick="gateGo(\'login\',\'worship\')">'+esc2(L('敬拜使用者登入'))+'</button>';
-    h+='<button class="gate-btn" onclick="gateGo(\'login\',\'admin\')">'+esc2(L('管理者登入'))+'</button>';
-    h+='<div class="gate-sep"></div>';
-    h+='<button class="gate-btn gate-google" onclick="gateGo(\'kind\',\'google\')">'+_GICO+esc2(L('Google 註冊'))+'</button>';
-    h+='<button class="gate-btn" onclick="gateGo(\'kind\',\'email\')">'+esc2(L('email 註冊'))+'</button>';
-    if(gateTestOn())
-      h+='<button class="gate-btn gate-test" onclick="gateTest()">'+esc2(L('用測試帳號進入'))+'</button>';
-    if(GUEST_BROWSE){
-      h+='<div class="gate-sep"></div>';
-      h+='<button class="gate-btn gate-guest" onclick="gateGuest()">'+esc2(L('先不登入，以敬拜使用者瀏覽'))+'</button>';
-      h+='<p class="gate-note">'+esc2(L('測試期間開放，正式版將關閉'))+'</p>';
-    }
-    h+='<p class="gate-note">'+esc2(L('新帳號享 3 天免費試用，試用期內取消不扣款。'))+'</p>';
-    b.innerHTML=h; return;
-  }
-  if(_gateView==='kind'){
-    b.innerHTML='<p class="gate-kind">'+esc2(L('註冊後要以哪種身分使用？'))+'</p>'
-      +'<button class="gate-btn gate-primary" onclick="gateGo(\'signup\',\'personal\')">'+esc2(L('個人使用者'))+'</button>'
-      +'<p class="gate-note">'+esc2(L('用途留白，可自行新增、移除分類'))+'</p>'
-      +'<button class="gate-btn" onclick="gateGo(\'signup\',\'worship\')">'+esc2(L('敬拜使用者'))+'</button>'
-      +'<p class="gate-note">'+esc2(L('用途固定為短歌／讚美／敬拜'))+'</p>'
-      +'<button class="gate-back" onclick="gateGo(\'menu\')">'+esc2(L('返回'))+'</button>';
-    return;
-  }
-  /* login / signup 共用表單 */
-  const signup=(_gateView==='signup');
-  const em=signup?'':(rememberOn()?rememberedEmail():(gateTestOn()?TEST_EMAIL:''));
-  if(signup && _gateMethod==='google'){ gateGoogle(_gateRole); return; }
-  b.innerHTML='<p class="gate-kind">'+esc2(signup?gateRoleName(_gateRole)+' · '+L('註冊'):gateRoleName(_gateRole)+' · '+L('登入'))+'</p>'
+  const em=rememberOn()?rememberedEmail():(gateTestOn()?TEST_EMAIL:'');
+  /* 首頁只有一組「登入／註冊」：同一個 email 表單，登入或建立新帳號；功能由帳號有的方案決定 */
+  let h='<p class="gate-kind">'+esc2(L('登入或註冊'))+'</p>'
     +'<input id="gate-email" type="email" placeholder="email" autocomplete="username" value="'+esc2(em)+'">'
-    +'<input id="gate-pw" type="password" placeholder="'+esc2(L('密碼（至少 6 碼）'))+'" autocomplete="'+(signup?'new-password':'current-password')+'">'
-    +(signup?'':'<label class="gate-remember"><input type="checkbox" id="gate-remember"'+(rememberOn()?' checked':'')+'>'+esc2(L('記住帳號'))+'</label>')
-    +'<button class="gate-btn gate-primary" onclick="'+(signup?'gateSignUp()':'gateSignIn()')+'">'+esc2(signup?L('註冊'):L('登入'))+'</button>'
-    +(signup?'':'<button class="gate-btn gate-google" onclick="gateGoogle(\''+_gateRole+'\')">'+_GICO+esc2(L('用 Google 帳號登入'))+'</button>')
-    +'<button class="gate-back" onclick="gateGo(\'menu\')">'+esc2(L('返回'))+'</button>';
+    +'<input id="gate-pw" type="password" placeholder="'+esc2(L('密碼（至少 6 碼）'))+'" autocomplete="current-password" onkeydown="if(event.key===\'Enter\')gateSignIn()">'
+    +'<label class="gate-remember"><input type="checkbox" id="gate-remember"'+(rememberOn()?' checked':'')+'>'+esc2(L('記住帳號'))+'</label>'
+    +'<button class="gate-btn gate-primary" onclick="gateSignIn()">'+esc2(L('登入'))+'</button>'
+    +'<button class="gate-btn" onclick="gateSignUp()">'+esc2(L('建立新帳號'))+'</button>'
+    +'<p class="gate-or">'+esc2(L('或'))+'</p>'
+    +'<button class="gate-btn gate-google" onclick="gateGoogle()">'+_GICO+esc2(L('用 Google 帳號繼續'))+'</button>';
+  if(gateTestOn())
+    h+='<button class="gate-btn gate-test" onclick="gateTest()">'+esc2(L('用測試帳號進入'))+'</button>';
+  if(GUEST_BROWSE){
+    h+='<div class="gate-sep"></div>';
+    h+='<button class="gate-btn gate-guest" onclick="gateGuest()">'+esc2(L('先不登入，以敬拜使用者瀏覽'))+'</button>';
+    h+='<p class="gate-note">'+esc2(L('測試期間開放，正式版將關閉'))+'</p>';
+  }
+  h+='<p class="gate-note">'+esc2(L('註冊免費：可以登入、基本視譜。建立自己的譜、團隊共享等功能依方案開通。'))+'</p>';
+  b.innerHTML=h;
 }
 
 function syncGate(){
@@ -4176,19 +4282,19 @@ function gateApplyRole(r){
   const k=(r==='personal')?'personal':'worship';
   setUserKind(k); setSvcKind(k==='personal'?'perform':'service');
 }
-async function gateAfterLogin(user,role){
+async function gateAfterLogin(user){
   _supaUser=user; await cloudFetchRole(); await fetchSubscription();
-  if(role==='admin' && !_supaAdmin) gateApplyRole('worship'); else gateApplyRole(role);
-  updateCloudBtn(); syncGate();
+  const u=usePref()||((user&&user.user_metadata)||{}).arranger_use;
+  if(u)gateApplyRole(u==='church'?'worship':'personal');
+  updateCloudBtn(); syncGate(); maybeAskUse();
 }
 function gateGuest(){
   _guest=true; gateApplyRole('worship');
   try{ sessionStorage.setItem('arranger_guest','1'); }catch(e){}
   syncGate();
 }
-async function gateGoogle(role){
+async function gateGoogle(){
   if(!_supa){ gateMsg(L('雲端尚未設定。')); return; }
-  try{ localStorage.setItem('arranger_pending_kind', (role==='personal')?'personal':'worship'); }catch(e){}
   gateMsg(L('前往 Google 登入…'));
   const {error}=await _supa.auth.signInWithOAuth({ provider:'google', options:{ redirectTo:location.origin+location.pathname } });
   if(error) gateMsg(L('Google 登入失敗：')+error.message);
@@ -4200,7 +4306,7 @@ async function gateSignIn(){
   const {data,error}=await _supa.auth.signInWithPassword({ email:em, password:gv('gate-pw') });
   if(error){ gateMsg(L('登入失敗：')+error.message); return; }
   saveRemember(em);
-  await gateAfterLogin(data.user,_gateRole);
+  await gateAfterLogin(data.user);
 }
 async function gateSignUp(){
   if(!_supa){ gateMsg(L('雲端尚未設定。')); return; }
@@ -4209,8 +4315,7 @@ async function gateSignUp(){
   gateMsg(L('處理中…'));
   const {data,error}=await _supa.auth.signUp({ email:em, password:pw });
   if(error){ gateMsg(L('註冊失敗：')+error.message); return; }
-  if(data && data.session){ await gateAfterLogin(data.user,_gateRole); return; }
-  gateApplyRole(_gateRole);                       /* 等驗證信期間先把身分記起來 */
+  if(data && data.session){ await gateAfterLogin(data.user); return; }
   gateMsg(L('註冊成功，請查收驗證信後再登入。'));
 }
 async function gateTest(){
@@ -4218,31 +4323,58 @@ async function gateTest(){
   gateMsg(L('登入中…'));
   const {data,error}=await _supa.auth.signInWithPassword({ email:TEST_EMAIL, password:TEST_PW });
   if(error){ gateMsg(L('測試帳號登入失敗：')+error.message); return; }
-  await gateAfterLogin(data.user,'worship');
+  await gateAfterLogin(data.user);
 }
-let _cloudMode='choose';   // choose / browse / adminlogin（未登入時）
-function openCloud(){ if(!_supa){ alert('雲端尚未設定（請見 SUPABASE_SETUP.md 填入連線資訊）。'); return; }
-  /* 訪客瀏覽中按「使用者」＝ 想登入 → 回到進站鎖 */
-  if(!_supaUser && _guest){ _guest=false; try{ sessionStorage.removeItem('arranger_guest'); }catch(e){} _gateView='menu'; syncGate(); return; }
-  _cloudMode='choose'; clSetTitle('👤 使用者登入');   /* 登入後的面板不看 _cloudMode；歌曲庫模式要在這裡切回來 */
-  document.getElementById('cloud-modal').classList.add('show'); cloudRenderModal(); }
+let _cloudMode='account';   // account（使用者面板）／library（歌曲庫）
+/* 「👤 使用者」：沒登入 → 打開登入畫面；登入了 → 帳號與「我的方案」 */
+function openCloud(){
+  if(!_supa){ alert(Lf('雲端尚未設定。','Cloud is not configured yet.','クラウドが未設定です。','클라우드가 아직 설정되지 않았습니다.')); return; }
+  if(!_supaUser){ showLogin(); return; }
+  openAccount();
+}
+function openAccount(){
+  if(!_supaUser){ showLogin(); return; }
+  _cloudMode='account'; clSetTitle('👤 使用者');
+  document.getElementById('cloud-modal').classList.add('show'); cloudRenderModal();
+}
 function clSetTitle(t){ const e=document.getElementById('cl-title'); if(e)e.textContent=L(t); }
-/* ── 🎵 歌曲庫：使用者按鈕改成登入／帳號之後，選歌功能從這裡進 ──
-   敬拜使用者：雲端歌庫（全部／短歌／讚美／敬拜）＋「⛪ 聚會服事」挑歌排成一份
-   個人使用者：本機「我的歌庫」＋「🎵 演奏模式」 */
+/* 🎵 歌曲庫：依帳號有的方案出現分頁 —— 我的歌庫（每個人）／團隊（團隊方案以上）／敬拜歌庫（教會團隊包、管理員；測試期間全開） */
+let _libTab=''; try{ _libTab=localStorage.getItem('arranger_libtab')||''; }catch(e){}
+function libTabs(){
+  const e=ent(), t=[['mine','📚 '+L('我的歌庫')]];
+  if(e.team) t.push(['team','👥 '+L('團隊')]);
+  if(e.worship) t.push(['worship','⛪ '+L('敬拜歌庫')]);
+  return t;
+}
+function libTab(t){ _libTab=t; try{ localStorage.setItem('arranger_libtab',t); }catch(e){} _serviceMode=false; cloudRenderModal(); }
 function openLibrary(){
-  if(_userKind!=='personal' && !_supa){ alert(Lf('雲端尚未設定，無法讀取雲端歌庫。','Cloud is not configured, so the cloud library is unavailable.','クラウドが未設定のため、クラウドライブラリを読み込めません。','클라우드가 설정되지 않아 클라우드 라이브러리를 불러올 수 없습니다.')); return; }
   _cloudMode='library'; clSetTitle('🎵 歌曲庫');
   document.getElementById('cloud-modal').classList.add('show'); cloudRenderModal();
 }
 function libraryRender(body,lib){
-  if(_userKind==='personal'){
+  const tabs=libTabs();
+  if(!tabs.some(x=>x[0]===_libTab)){
+    const pref=(usePref()==='church'||_userKind==='worship')?'worship':'mine';
+    _libTab=tabs.some(x=>x[0]===pref)?pref:'mine';
+  }
+  const bar=tabs.length>1?'<div class="lib-tabs">'+tabs.map(x=>'<button class="lib-tab'+(x[0]===_libTab?' on':'')+'" onclick="libTab(\''+x[0]+'\')">'+esc(x[1])+'</button>').join('')+'</div>':'';
+  if(_libTab==='mine'){
     if(_svcKind!=='perform')setSvcKind('perform');
-    body.innerHTML=userKindHtml()+myLibHtml();
+    body.innerHTML=bar+myLibHtml();
     lib.style.display='none'; renderSetlist(); return;
   }
+  if(_libTab==='team'){
+    body.innerHTML=bar+'<div class="team-soon"><b>👥 '+esc(L('團隊功能準備中'))+'</b><br>'
+      +esc(L('建立團隊、用邀請碼或 email 邀請成員、共享與編輯團隊的譜。完成後會出現在這裡。'))+'</div>';
+    lib.style.display='none'; return;
+  }
+  /* 敬拜歌庫 */
   if(_svcKind!=='service')setSvcKind('service');
-  body.innerHTML=userKindHtml()
+  if(!_supa){ body.innerHTML=bar+'<div class="cl-empty">'+esc(Lf('雲端尚未設定，無法讀取敬拜歌庫。','Cloud is not configured, so the worship library is unavailable.','クラウドが未設定のため、ワーシップライブラリを読み込めません。','클라우드가 설정되지 않아 워십 라이브러리를 불러올 수 없습니다.'))+'</div>'; lib.style.display='none'; return; }
+  const adm=_supaAdmin?'<div class="cl-actions"><button class="btn btna" onclick="cloudSave()">☁ '+esc(L('儲存目前到雲端'))+'</button><button class="btn" onclick="cloudNewSave()">'+esc(L('另存新檔'))+'</button></div>':'';
+  const e=ent(), testing=guestBrowseOn()&&!(e.plan==='church'||_hasLib||e.admin);
+  body.innerHTML=bar+adm
+    +(testing?'<div class="my-sync">🧪 '+esc(L('測試期間開放瀏覽；正式上線後敬拜歌庫屬於「教會團隊包」。'))+'</div>':'')
     +`<div class="cl-hint">${esc(L('點「載入」打開單首；按「⛪ 聚會服事」可挑最多 10 首，排好順序後依序載入成一份。'))}</div>`;
   lib.style.display='';
   const b=document.getElementById('cl-svc-btn'); if(b){ b.textContent='⛪ '+svcLabel(); b.classList.toggle('on',_serviceMode); }
@@ -4254,54 +4386,25 @@ function cloudMode(m){ _cloudMode=m; cloudRenderModal(); }
 function cloudRenderModal(){
   const body=document.getElementById('cl-auth'), lib=document.getElementById('cl-lib'); if(!body)return; cloudMsg('');
   if(_cloudMode==='library'){ libraryRender(body,lib); return; }
-  if(_supaUser){   // 管理者已登入
-    const _m=_supaUser.user_metadata||{};
-    const _av=_m.avatar_url||_m.picture||'';
-    const _nm=_m.full_name||_m.name||'';
-    body.innerHTML=`<div class="cl-userline">${_av?`<img class="cl-avatar" src="${esc(_av)}" alt="">`:''}<span class="cl-email">${esc(_nm||_supaUser.email||'')}</span><span class="cl-role ${_supaAdmin?'admin':''}">${_supaAdmin?'管理員':'使用者'}</span><button class="btn" onclick="cloudSignOut()">登出</button></div>`
-      +(_supaAdmin
-        ? `<div class="cl-actions"><button class="btn btna" onclick="cloudSave()">☁ 儲存目前到雲端</button><button class="btn" onclick="cloudNewSave()">另存新檔</button></div>`
-        : `<div class="cl-hint">此帳號為一般使用者：可瀏覽/載入歌譜；修改只存本機。</div>`)
-      +userKindHtml()
-      +(_userKind==='personal'?myLibHtml():'')
-      +subUiHtml();
-    /* 個人使用者不看雲端歌庫，看自己的我的歌庫 */
-    if(_userKind==='personal'){ lib.style.display='none'; renderSetlist(); }
-    else { lib.style.display=''; cloudList(); }
-  } else if(_cloudMode==='adminlogin'){   // 管理者登入表單
-    body.innerHTML=`<div class="cl-libhd">管理者登入</div><button class="btn cl-google" onclick="cloudSignInGoogle()"><svg class="g-ico" viewBox="0 0 48 48" aria-hidden="true"><path fill="#4285F4" d="M45.1 24.5c0-1.6-.1-2.7-.4-3.9H24v7.1h12.1c-.2 1.8-1.6 4.6-4.5 6.4l-.1.3 6.5 5 .5.1c4.1-3.8 6.6-9.4 6.6-15z"/><path fill="#34A853" d="M24 46c5.9 0 10.9-1.9 14.5-5.3l-6.9-5.3c-1.8 1.3-4.3 2.2-7.6 2.2-5.8 0-10.7-3.8-12.5-9l-.3.1-6.7 5.2-.1.3C8 41.1 15.4 46 24 46z"/><path fill="#FBBC05" d="M11.5 28.6c-.5-1.4-.7-2.9-.7-4.6s.3-3.2.7-4.6v-.3l-6.8-5.3-.2.1A22 22 0 0 0 2 24c0 3.5.9 6.9 2.5 9.9l7-5.3z"/><path fill="#EA4335" d="M24 9.5c4.1 0 6.9 1.8 8.5 3.3l6.2-6C34.9 3.4 29.9 1 24 1 15.4 1 8 6 4.5 14.1l7 5.3C13.3 13.3 18.2 9.5 24 9.5z"/></svg>Google 帳號登入</button><div class="cl-or">或用 email 登入</div><div class="cl-form"><input id="cl-email" type="email" placeholder="email" autocomplete="username"><input id="cl-pw" type="password" placeholder="密碼（至少6碼）" autocomplete="current-password"><div class="cl-actions"><button class="btn btna" onclick="cloudSignIn()">登入</button><button class="btn" onclick="cloudSignUp()">註冊</button><button class="btn" onclick="cloudMode('choose')">返回</button></div></div>`;
-    lib.style.display='none';
-  } else if(_cloudMode==='personal'){   // 個人使用者：完全獨立，不使用雲端歌庫
-    setUserKind('personal'); setSvcKind('perform');
-    body.innerHTML=`<div class="cl-userline"><span class="cl-role">🎧 個人使用者 · 我的歌庫</span><button class="btn" onclick="cloudMode('choose')">返回</button></div>`
-      +`<div class="cl-hint">個人使用者不使用雲端歌庫，歌曲只存在這台裝置上。<br>「用途」下拉最後有「＋ 新增分類…／－ 移除分類…」可自訂分類；「🎵 演奏模式」可從我的歌庫挑最多 10 首排成一份。</div>`
-      +myLibHtml();
-    lib.style.display='none';
-    renderSetlist();
-  } else if(_cloudMode==='browse'){   // 敬拜使用者瀏覽（免登入）
-    setUserKind('worship'); setSvcKind('service');
-    body.innerHTML=`<div class="cl-userline"><span class="cl-role">⛪ 敬拜使用者 · 瀏覽歌譜</span><button class="btn" onclick="cloudMode('adminlogin')">🔑 管理者登入</button><button class="btn" onclick="cloudMode('choose')">返回</button></div>`;
-    lib.style.display=''; cloudList();
-  } else {   // 選擇身分
-    body.innerHTML=`<div class="cl-choose"><button class="btn cl-google" onclick="cloudSignInGoogle()"><svg class="g-ico" viewBox="0 0 48 48" aria-hidden="true"><path fill="#4285F4" d="M45.1 24.5c0-1.6-.1-2.7-.4-3.9H24v7.1h12.1c-.2 1.8-1.6 4.6-4.5 6.4l-.1.3 6.5 5 .5.1c4.1-3.8 6.6-9.4 6.6-15z"/><path fill="#34A853" d="M24 46c5.9 0 10.9-1.9 14.5-5.3l-6.9-5.3c-1.8 1.3-4.3 2.2-7.6 2.2-5.8 0-10.7-3.8-12.5-9l-.3.1-6.7 5.2-.1.3C8 41.1 15.4 46 24 46z"/><path fill="#FBBC05" d="M11.5 28.6c-.5-1.4-.7-2.9-.7-4.6s.3-3.2.7-4.6v-.3l-6.8-5.3-.2.1A22 22 0 0 0 2 24c0 3.5.9 6.9 2.5 9.9l7-5.3z"/><path fill="#EA4335" d="M24 9.5c4.1 0 6.9 1.8 8.5 3.3l6.2-6C34.9 3.4 29.9 1 24 1 15.4 1 8 6 4.5 14.1l7 5.3C13.3 13.3 18.2 9.5 24 9.5z"/></svg>Google 帳號登入</button><button class="btn btna" onclick="cloudMode('browse')">⛪ 敬拜使用者：瀏覽歌譜</button><button class="btn" onclick="cloudMode('personal')">🎧 個人使用者：自訂分類</button><button class="btn" onclick="cloudMode('adminlogin')">🔑 管理者登入</button></div><div class="cl-hint">敬拜使用者：免登入瀏覽、載入、用「聚會服事」排歌，用途固定為短歌／讚美／敬拜。<br>個人使用者：用途留白，可自行新增、移除分類。<br>管理者登入後才能新增、儲存、刪除、歸類。</div>`;
-    lib.style.display='none';
-  }
+  lib.style.display='none';
+  if(!_supaUser){ body.innerHTML='<div class="cl-empty">'+esc(L('請先登入。'))+'</div><div class="cl-actions"><button class="btn btna" onclick="closeCloud();showLogin()">'+esc(L('登入／註冊'))+'</button></div>'; return; }
+  const _m=_supaUser.user_metadata||{};
+  const _av=_m.avatar_url||_m.picture||'';
+  const _nm=_m.full_name||_m.name||'';
+  body.innerHTML=`<div class="cl-userline">${_av?`<img class="cl-avatar" src="${esc(_av)}" alt="">`:''}<span class="cl-email">${esc(_nm||_supaUser.email||'')}</span>`
+    +`<button class="btn" onclick="cloudSignOut()">${esc(L('登出'))}</button></div>`
+    +(_nm&&_supaUser.email?`<div class="cl-hint" style="margin-top:-0.3em">${esc(_supaUser.email)}</div>`:'')
+    +`<div class="cl-libhd">${esc(L('我的方案'))}</div>`+planHtml()
+    +`<div class="cl-actions" style="margin-top:0.8em">${useSelHtml()}<button class="btn" onclick="openLibrary()">🎵 ${esc(L('歌曲庫'))}</button></div>`;
 }
-/* 身分（用途分類的行為不同）：登入之後仍要能切換，
-   否則進站鎖上線後就沒有地方選了。 */
-function userKindHtml(){
-  const w=_userKind!=='personal';
-  return '<div class="cl-kind">'
-    +'<button class="btn'+(w?' btna':'')+'" onclick="pickUserKind(\'worship\')">'+esc(L('⛪ 敬拜使用者'))+'</button>'
-    +'<button class="btn'+(w?'':' btna')+'" onclick="pickUserKind(\'personal\')">'+esc(L('🎧 個人使用者'))+'</button>'
-    +'<span class="cl-kind-note">'+esc(w?L('用途固定為短歌／讚美／敬拜'):L('用途留白，可自行新增、移除分類'))+'</span>'
-    +'</div>';
+/* 進站鎖的登入畫面（訪客瀏覽中、或按「使用者」時叫出來） */
+function showLogin(){
+  _guest=false; try{ sessionStorage.removeItem('arranger_guest'); }catch(e){}
+  closeCloud(); _gateView='menu'; syncGate();
 }
-function pickUserKind(k){
-  setUserKind(k);
-  setSvcKind(k==='personal'?'perform':'service');
-  cloudRenderModal();
-}
+/* 舊的「敬拜／個人」切換已移除：功能改由帳號方案決定；留著空殼避免舊連結報錯 */
+function userKindHtml(){ return ''; }
+function pickUserKind(k){ setUserKind(k); cloudRenderModal(); }
 async function cloudSignUp(){ cloudMsg('處理中…'); const {error}=await _supa.auth.signUp({email:cv('cl-email'),password:cv('cl-pw')}); cloudMsg(error?('註冊失敗：'+error.message):'註冊成功；若需 email 驗證請查收信件後再登入。'); }
 async function cloudSignIn(){ cloudMsg('登入中…'); const {data,error}=await _supa.auth.signInWithPassword({email:cv('cl-email'),password:cv('cl-pw')}); if(error){cloudMsg('登入失敗：'+error.message);return;} _supaUser=data.user; await cloudFetchRole(); cloudRenderModal(); }
 /* Google 帳號登入（Supabase OAuth）。需先在 Supabase → Authentication → Providers 啟用 Google，
@@ -4312,7 +4415,8 @@ async function cloudSignInGoogle(){
   const {error}=await _supa.auth.signInWithOAuth({ provider:'google', options:{ redirectTo:location.origin+location.pathname } });
   if(error)cloudMsg(Lf('Google 登入失敗：','Google sign-in failed: ','Googleログインに失敗しました：','Google 로그인 실패: ')+error.message);
 }
-async function cloudSignOut(){ await _supa.auth.signOut(); _supaUser=null; _supaAdmin=false; _cloudId=null; renderUsageSelect(); cloudRenderModal(); }
+async function cloudSignOut(){ try{ await _supa.auth.signOut(); }catch(e){} _supaUser=null; _supaAdmin=false; _grantPlan=''; _cloudId=null; try{ myCloudReset(); }catch(e){}
+  closeCloud(); renderUsageSelect(); updateCloudBtn(); fetchSubscription(); syncGate(); }
 /* ── 使用者類型：worship＝敬拜使用者（用途固定三選項）／personal＝個人使用者（用途可自訂） ── */
 const USAGE_FIXED=['短歌','讚美','敬拜'];
 let _userKind='worship'; try{ const k=localStorage.getItem('arranger_userkind'); if(k==='personal'||k==='worship')_userKind=k; }catch(e){}
@@ -4323,12 +4427,14 @@ function setUserKind(k){
   try{ localStorage.setItem('arranger_userkind',k); }catch(e){}
   renderUsageSelect();
 }
-/* 可以自訂分類的身分：個人使用者、以及登入後的管理者 */
-function canEditUsage(){ return _userKind==='personal' || !!_supaAdmin; }
+/* 用途分類：有個人方案（或管理員）可以自訂；有敬拜歌庫的多出 短歌／讚美／敬拜。
+   沒登入、或訪客瀏覽時，照「主要用途」給預設：教會＝固定三類、其他＝自訂 */
+function canEditUsage(){ const e=ent(); return e.personal || e.admin || (!_supaUser && _userKind==='personal'); }
 function usageList(){
-  if(_userKind==='personal') return customUsages.slice();
-  if(_supaAdmin) return USAGE_FIXED.concat(customUsages.filter(u=>!USAGE_FIXED.includes(u)));  // 管理者：固定三類＋自訂
-  return USAGE_FIXED.slice();                                                                  // 敬拜使用者：固定三類
+  const e=ent(); let l=[];
+  if(e.admin || (e.plan==='church'||_hasLib) || (_userKind!=='personal' && e.worship)) l=USAGE_FIXED.slice();
+  if(canEditUsage()) customUsages.forEach(u=>{ if(!l.includes(u))l.push(u); });
+  return l;
 }
 /* 重建「用途」下拉：個人使用者最後多兩個管理項 */
 function renderUsageSelect(){
@@ -4410,7 +4516,7 @@ function saveMyLib(){ try{ localStorage.setItem('arranger_mylib',JSON.stringify(
 let myCloud=[], _myCloudAt=0, _myCloudBusy=false, _myCloudErr='';
 let _myBase=null;   /* 目前畫面上這份是從雲端哪一首、哪個版本打開的（判斷別的裝置有沒有先改過） */
 function myCloudOn(){ return !!(_supa && _supaUser); }
-function myCanSave(){ return !!(_isPro || _supaAdmin); }
+function myCanSave(){ return ent().personal; }
 function myFind(id){ return myCloud.find(x=>x.id===id) || myLib.find(x=>x.id===id) || null; }
 function myLocalPending(){ return myLib.filter(r=>!r.cloudId); }
 function myCloudReset(){ myCloud=[]; _myCloudAt=0; _myCloudErr=''; }
@@ -4487,9 +4593,9 @@ function myLibHtml(){
       +`<button class="btn" onclick="myUploadLocal()">⬆ ${esc(Lf('全部上傳到雲端','Upload all to the cloud','すべてクラウドへ','모두 클라우드로 업로드'))}</button></div>`
       +`<div class="cl-list">${pend.map(r=>myRowHtml(r,'my')).join('')}</div></div>`
     : '';
-  return top+st+add+setl+`<div class="cl-list">${rows}</div>`+local+(myCanSave()?'':subUiHtml());
+  return top+st+add+setl+`<div class="cl-list">${rows}</div>`+local+planUpsellHtml();
 }
-function myLibRefresh(){ if(_cloudMode==='personal'||_cloudMode==='library'||(_supaUser&&_userKind==='personal')){ const m=document.getElementById('cloud-modal'); if(m&&m.classList.contains('show'))cloudRenderModal(); } }
+function myLibRefresh(){ if(_cloudMode==='library'){ const m=document.getElementById('cloud-modal'); if(m&&m.classList.contains('show'))cloudRenderModal(); } }
 let _mySaving=false;
 async function myLibAdd(){
   commitEdits();
