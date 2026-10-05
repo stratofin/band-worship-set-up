@@ -929,6 +929,33 @@ body.mode-phone .pm-sub.open .pm-arrow{transform:rotate(90deg);}
 .lib-tab.on{color:var(--accent);border-bottom-color:var(--accent);font-weight:700;}
 .team-soon{padding:0.9em 1em;border:1px dashed var(--border2);border-radius:0.5em;color:var(--text2);font-size:0.86em;line-height:1.7;}
 .team-soon b{color:var(--text);}
+/* 團隊 */
+.team-input{flex:1 1 10em;min-width:0;background:rgba(255,255,255,0.08);border:1px solid var(--border2);border-radius:0.4em;color:var(--text);font:inherit;font-size:0.88em;padding:0.4em 0.6em;outline:none;}
+.team-input:focus{border-color:var(--accent);}
+.team-join,.team-row{display:flex;gap:0.45em;align-items:center;flex-wrap:wrap;margin:0.45em 0;}
+.team-empty{padding:0.8em 1em;border:1px dashed var(--border2);border-radius:0.5em;color:var(--text2);font-size:0.86em;line-height:1.7;margin-bottom:0.4em;}
+.team-empty b{color:var(--text);}
+.team-invite{display:flex;align-items:center;gap:0.5em;flex-wrap:wrap;padding:0.55em 0.8em;border:1px solid var(--accent);border-radius:0.5em;margin-bottom:0.6em;font-size:0.88em;background:rgba(212,168,67,0.08);}
+.team-acts{display:inline-flex;gap:0.35em;margin-left:auto;align-items:center;}
+.team-sub{font-size:0.8em;color:var(--text3);}
+.team-pick{margin-bottom:0.5em;}
+.team-pick .cl-keysel{font-size:0.95em;color:var(--text);background:rgba(255,255,255,0.08);border:1px solid var(--border2);border-radius:0.35em;padding:0.25em 0.45em;}
+.team-head{display:flex;align-items:center;gap:0.55em;flex-wrap:wrap;margin:0.2em 0 0.4em;}
+.team-name{font-weight:700;font-size:1.02em;color:var(--text);}
+.team-badge{font-size:0.74em;background:var(--accent);color:#151515;border-radius:99px;padding:0.08em 0.6em;font-weight:700;}
+.team-by{font-size:0.72em;color:var(--text3);margin-left:0.4em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.team-manage{border:1px solid var(--border2);border-radius:0.55em;padding:0.4em 0.8em 0.7em;margin:0.6em 0;background:rgba(255,255,255,0.03);}
+.team-sec{font-size:0.74em;font-weight:700;letter-spacing:0.5px;color:var(--text3);margin:0.9em 0 0.2em;}
+.team-code{font-family:'Space Mono',ui-monospace,monospace;font-size:1.05em;letter-spacing:0.12em;color:var(--accent);background:rgba(255,255,255,0.06);padding:0.2em 0.55em;border-radius:0.35em;}
+.team-chk{display:flex;align-items:center;gap:0.45em;font-size:0.84em;color:var(--text2);margin:0.25em 0;cursor:pointer;}
+.team-mem{border-bottom:1px solid var(--border);padding-bottom:0.35em;}
+.team-mail{font-size:0.86em;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:1 1 auto;}
+.team-mem .cl-keysel{color:var(--text);background:rgba(255,255,255,0.08);border:1px solid var(--border2);border-radius:0.35em;padding:0.15em 0.35em;font-size:0.82em;}
+.cl-box .btn.team-danger:not(.btna):not(.on):not(.cl-google){background:#7a2a2a;color:#fff;border-color:#a33;}
+.cl-box .btn.team-danger:not(.btna):not(.on):not(.cl-google):hover{background:#933;color:#fff;}
+.team-more{margin-top:1em;font-size:0.86em;color:var(--text2);}
+.team-more summary{cursor:pointer;}
+.gate-join{color:var(--accent,#d4a843)!important;font-weight:600;}
 /* 我的方案 */
 .plan-box{margin:0.2em 0 0.4em;}
 .plan-cur{font-size:0.9em;margin-bottom:0.5em;display:flex;align-items:center;gap:0.5em;flex-wrap:wrap;}
@@ -1905,6 +1932,13 @@ body.gated>*:not(#gate){filter:grayscale(.9) opacity(.32)!important;pointer-even
     <div class="cl-head"><span>📝 更新日誌 · Arranger 理譜人</span><button class="btn" onclick="hideChangelog()">✕</button></div>
     <div class="cl-body">
       <p class="cl-ver">目前版本 <b class="app-ver-txt">—</b>　·　開發時間軸：2026-06-17 起（依使用回饋持續優化）</p>
+
+      <h4>👥 團隊模式 <span class="cl-date">2026-10-06</span></h4>
+      <ul><li>歌曲庫「👥 團隊」分頁：有團隊方案的人可以建立團隊（每人最多 3 個、每隊最多 12 人、200 首譜）</li>
+      <li>邀請團員三種方式：邀請碼、邀請連結（點了登入後自動問要不要加入）、email 邀請（對方登入後按接受，也會幫你開好邀請信草稿）</li>
+      <li>用邀請碼加入可以設定「要團長同意」；團長可以把成員設成「編輯者」、移除成員、換新邀請碼、關閉邀請碼、刪除團隊</li>
+      <li>團隊的譜：成員都能看、載入（免費帳號也可以）；團長和編輯者可以新增、覆蓋、刪除；別人先改過會提示覆蓋或另存</li>
+      <li>團長方案到期 → 團隊唯讀；被移除或退出立刻看不到；團隊的譜也可以按 ♡ 加到最愛</li></ul>
 
       <h4>首頁整合成一組「登入／註冊」，功能依帳號方案決定 <span class="cl-date">2026-10-05</span></h4>
       <ul><li>首頁不再分「個人／敬拜／管理者」登入：只有一組 email 登入、建立新帳號、Google 帳號繼續；測試期間仍可「先不登入，以敬拜使用者瀏覽」</li>
@@ -3778,7 +3812,7 @@ function refreshSvcMode(){
 
 /* ── SAVE / LOAD ── */
 /* ── 版本：每次更新改這裡（格式 年.月.日，同一天第二版加 -2）；顯示在標題旁與更新日誌，存檔／匯出也會記錄 ── */
-const APP_VERSION='2026.10.05';
+const APP_VERSION='2026.10.06-2';
 function showAppVersion(){ try{ const t='v'+APP_VERSION; const a=document.getElementById('app-ver'); if(a)a.textContent=t; document.querySelectorAll('.app-ver-txt').forEach(e=>e.textContent=t); }catch(e){} }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',showAppVersion); else setTimeout(showAppVersion,0);
 function getProjectData(){
@@ -4001,9 +4035,9 @@ async function cloudInit(){
     await fetchSubscription();
     updateCloudBtn();
     syncGate();
-    setTimeout(()=>{ try{ maybeAskUse(); }catch(e){} },300);
+    setTimeout(()=>{ try{ maybeAskUse(); if(_supaUser){ teamsFetch(true); teamPendingJoin(); } }catch(e){} },300);
     _supa.auth.onAuthStateChange(async (_e,ss)=>{ const _pu=_supaUser&&_supaUser.id; _supaUser = ss?ss.user:null; _supaAdmin=false;
-      if(((_supaUser&&_supaUser.id)||null)!==(_pu||null)){ try{ myCloudReset(); }catch(x){} }
+      if(((_supaUser&&_supaUser.id)||null)!==(_pu||null)){ try{ myCloudReset(); teamsReset(); }catch(x){} }
       if(_supaUser)await cloudFetchRole();
       await fetchSubscription();
       const m=document.getElementById('cloud-modal');
@@ -4253,7 +4287,8 @@ function gateRender(){
   const esc2=esc;
   const em=rememberOn()?rememberedEmail():(gateTestOn()?TEST_EMAIL:'');
   /* 首頁只有一組「登入／註冊」：同一個 email 表單，登入或建立新帳號；功能由帳號有的方案決定 */
-  let h='<p class="gate-kind">'+esc2(L('登入或註冊'))+'</p>'
+  let h=(teamPendingCode()?'<p class="gate-kind gate-join">👥 '+esc2(Lf('登入或註冊後，會帶你加入團隊（邀請碼 '+teamPendingCode()+'）','Sign in or sign up and we’ll take you into the team (code '+teamPendingCode()+')','ログインまたは登録すると、チームに参加できます（コード '+teamPendingCode()+'）','로그인하거나 가입하면 팀에 참여합니다 (코드 '+teamPendingCode()+')'))+'</p>':'')
+    +'<p class="gate-kind">'+esc2(L('登入或註冊'))+'</p>'
     +'<input id="gate-email" type="email" placeholder="email" autocomplete="username" value="'+esc2(em)+'">'
     +'<input id="gate-pw" type="password" placeholder="'+esc2(L('密碼（至少 6 碼）'))+'" autocomplete="current-password" onkeydown="if(event.key===\'Enter\')gateSignIn()">'
     +'<label class="gate-remember"><input type="checkbox" id="gate-remember"'+(rememberOn()?' checked':'')+'>'+esc2(L('記住帳號'))+'</label>'
@@ -4287,6 +4322,7 @@ async function gateAfterLogin(user){
   const u=usePref()||((user&&user.user_metadata)||{}).arranger_use;
   if(u)gateApplyRole(u==='church'?'worship':'personal');
   updateCloudBtn(); syncGate(); maybeAskUse();
+  try{ teamsFetch(true); setTimeout(()=>teamPendingJoin(),400); }catch(e){}
 }
 function gateGuest(){
   _guest=true; gateApplyRole('worship');
@@ -4342,7 +4378,7 @@ function clSetTitle(t){ const e=document.getElementById('cl-title'); if(e)e.text
 let _libTab=''; try{ _libTab=localStorage.getItem('arranger_libtab')||''; }catch(e){}
 function libTabs(){
   const e=ent(), t=[['mine','📚 '+L('我的歌庫')]];
-  if(e.team) t.push(['team','👥 '+L('團隊')]);
+  if(e.team||teamOn()) t.push(['team','👥 '+L('團隊')]);   /* 有登入就看得到：免費帳號也要能輸入邀請碼加入 */
   if(e.worship) t.push(['worship','⛪ '+L('敬拜歌庫')]);
   return t;
 }
@@ -4364,8 +4400,7 @@ function libraryRender(body,lib){
     lib.style.display='none'; renderSetlist(); return;
   }
   if(_libTab==='team'){
-    body.innerHTML=bar+'<div class="team-soon"><b>👥 '+esc(L('團隊功能準備中'))+'</b><br>'
-      +esc(L('建立團隊、用邀請碼或 email 邀請成員、共享與編輯團隊的譜。完成後會出現在這裡。'))+'</div>';
+    body.innerHTML=bar+teamHtml();
     lib.style.display='none'; return;
   }
   /* 敬拜歌庫 */
@@ -4415,7 +4450,7 @@ async function cloudSignInGoogle(){
   const {error}=await _supa.auth.signInWithOAuth({ provider:'google', options:{ redirectTo:location.origin+location.pathname } });
   if(error)cloudMsg(Lf('Google 登入失敗：','Google sign-in failed: ','Googleログインに失敗しました：','Google 로그인 실패: ')+error.message);
 }
-async function cloudSignOut(){ try{ await _supa.auth.signOut(); }catch(e){} _supaUser=null; _supaAdmin=false; _grantPlan=''; _cloudId=null; try{ myCloudReset(); }catch(e){}
+async function cloudSignOut(){ try{ await _supa.auth.signOut(); }catch(e){} _supaUser=null; _supaAdmin=false; _grantPlan=''; _cloudId=null; try{ myCloudReset(); teamsReset(); }catch(e){}
   closeCloud(); renderUsageSelect(); updateCloudBtn(); fetchSubscription(); syncGate(); }
 /* ── 使用者類型：worship＝敬拜使用者（用途固定三選項）／personal＝個人使用者（用途可自訂） ── */
 const USAGE_FIXED=['短歌','讚美','敬拜'];
@@ -8307,7 +8342,7 @@ window.addEventListener('scroll',popFollow,{passive:true});
 let _favs=[];
 function favLoad(){
   let a=[]; try{ a=JSON.parse(localStorage.getItem('arranger_favs')||'[]'); }catch(e){ a=[]; }
-  _favs=(Array.isArray(a)?a:[]).filter(f=>f&&(f.src==='cloud'||f.src==='my'||f.src==='mine')&&typeof f.id==='string'&&/^[\w-]{1,64}$/.test(f.id))
+  _favs=(Array.isArray(a)?a:[]).filter(f=>f&&(f.src==='cloud'||f.src==='my'||f.src==='mine'||f.src==='team')&&typeof f.id==='string'&&/^[\w-]{1,64}$/.test(f.id))
     .map(f=>({src:f.src,id:f.id,title:String(f.title||'').slice(0,200),usage:String(f.usage||'').slice(0,40)}));
 }
 function favSave(){ try{ localStorage.setItem('arranger_favs',JSON.stringify(_favs)); }catch(e){} }
@@ -8321,7 +8356,8 @@ function favToggle(src,id,btn,e){
   const i=favIdx(src,id);
   if(i>=0) _favs.splice(i,1);
   else {
-    const r=src==='my'?myLib.find(x=>x.id===id):src==='mine'?myCloud.find(x=>x.id===id):(_cloudSongs||[]).find(x=>x.id===id);
+    const r=src==='my'?myLib.find(x=>x.id===id):src==='mine'?myCloud.find(x=>x.id===id)
+      :src==='team'?[].concat(...Object.values(_teamSongs||{})).find(x=>x.id===id):(_cloudSongs||[]).find(x=>x.id===id);
     _favs.push({src,id,title:String((r&&r.title)||L('未命名')).slice(0,200),usage:String((r&&r.usage)||'').slice(0,40)});
   }
   favSave(); favSync();
@@ -8342,7 +8378,7 @@ function favRender(){
       const cur=(f.src==='cloud'&&f.id===_cloudId);
       return `<tr class="fav-row${cur?' on':''}" onclick="favOpen(${i})" title="${esc(Lf('打開這首歌的譜','Open this chart','この曲の譜面を開く','이 곡의 악보 열기'))}">`
         +`<td class="fav-t">${esc(f.title||L('未命名'))}${f.usage?`<span class="cl-tag">${esc(f.usage)}</span>`:''}</td>`
-        +`<td class="fav-src">${esc(f.src==='my'?Lf('這台裝置','This device','この端末','이 기기'):f.src==='mine'?Lf('我的歌庫','My Library','マイライブラリ','내 라이브러리'):Lf('敬拜歌庫','Worship library','ワーシップ','워십 라이브러리'))}</td>`
+        +`<td class="fav-src">${esc(f.src==='my'?Lf('這台裝置','This device','この端末','이 기기'):f.src==='mine'?Lf('我的歌庫','My Library','マイライブラリ','내 라이브러리'):f.src==='team'?Lf('團隊','Team','チーム','팀'):Lf('敬拜歌庫','Worship library','ワーシップ','워십 라이브러리'))}</td>`
         +`<td class="fav-x-td"><button class="fav-x" onclick="favRemove(${i},event)" title="${esc(Lf('從我的最愛移除','Remove from favorites','お気に入りから外す','즐겨찾기에서 제거'))}">✕</button></td></tr>`;
     }).join('')+'</tbody></table>';
 }
@@ -8369,6 +8405,15 @@ async function favOpen(i){
   if(f.src==='my'){
     const r=myLib.find(x=>x.id===f.id); if(!r){ favMissing(f); return; }
     data=JSON.parse(JSON.stringify(r.data));
+  } else if(f.src==='team'){
+    if(!teamOn()){ alert(Lf('這首歌在團隊裡，請先登入。','This song is in a team — please sign in first.','この曲はチームにあります。先にログインしてください。','이 곡은 팀에 있습니다. 먼저 로그인하세요.')); return; }
+    _favBusy=true;
+    try{
+      const {data:d,error}=await _supa.from('team_songs').select('data,updated_at,team_id').eq('id',f.id).maybeSingle();
+      if(error){ alert(Lf('載入失敗：','Load failed: ','読み込みに失敗しました：','불러오기 실패: ')+error.message); return; }
+      if(!d||!d.data||!Array.isArray(d.data.sects)){ favMissing(f); return; }
+      data=d.data; try{ Object.defineProperty(data,'__teamBase',{value:{team:String(d.team_id),id:f.id,updated:d.updated_at},enumerable:false,configurable:true}); }catch(x){}
+    } finally { _favBusy=false; }
   } else if(f.src==='mine'){
     if(!myCloudOn()){ alert(Lf('這首歌在你的雲端歌庫，請先登入。','This song is in your cloud library — please sign in first.','この曲はクラウドライブラリにあります。先にログインしてください。','이 곡은 클라우드 라이브러리에 있습니다. 먼저 로그인하세요.')); return; }
     _favBusy=true;
@@ -8391,12 +8436,361 @@ async function favOpen(i){
   if(applyProjectData(data)){
     _cloudId=f.src==='cloud'?f.id:null;
     _myBase=(f.src==='mine'&&data.__myUpd)?{id:f.id,updated:data.__myUpd}:null; try{ delete data.__myUpd; }catch(x){}
+    if(f.src==='team'&&data.__teamBase){ _teamBase=data.__teamBase; if(_teams.some(t=>t.id===_teamBase.team))_teamSel=_teamBase.team; }
     renderSB(); renderAll();
     if(currentView==='export')sw('chord');
     window.scrollTo(0,0);
   }
 }
 favLoad();
+/* ════════ 👥 團隊模式（第 2 階段）════════
+   後端：supabase_teams.sql（teams／team_members／team_invites／team_songs＋各種 team_* 函式）。
+   這裡只負責畫面；誰能看、誰能改一律由 Supabase 判斷（RLS 與函式），前端擋不住也不靠前端擋。
+   · 團長（團隊方案以上）：建立團隊、邀請碼／邀請連結／email 邀請、審核、設定編輯者、移除成員
+   · 編輯者：新增、修改、刪除團隊的譜
+   · 成員：看團隊的譜（免費帳號就可以）；想自己改，就載入後存到「我的歌庫」（需個人方案）
+   · 團長方案到期 → 唯讀 */
+const T_=(zh,en,ja,ko)=>Lf(zh,en,ja,ko);
+const _UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const _TCODE=/^[A-Z0-9]{6,12}$/;
+let _teams=[], _teamInvites=[], _teamsAt=0, _teamsBusy=false, _teamsErr='';
+let _teamSel=''; try{ _teamSel=localStorage.getItem('arranger_team')||''; }catch(e){}
+let _teamSongs={}, _teamSongsAt={}, _teamRoster={}, _teamManage=false, _teamBase=null, _teamBusy=false;
+function teamOn(){ return !!(_supa && _supaUser); }
+function teamsReset(){ _teams=[]; _teamInvites=[]; _teamsAt=0; _teamsErr=''; _teamSongs={}; _teamSongsAt={}; _teamRoster={}; _teamManage=false; _teamBase=null; }
+function teamCur(){ return _teams.find(t=>t.id===_teamSel)||null; }
+function teamCanEdit(t){ return !!(t && t.status==='active' && (t.role==='owner'||t.role==='editor') && t.writable); }
+function teamRefresh(){ if(_cloudMode==='library' && _libTab==='team'){ const m=document.getElementById('cloud-modal'); if(m&&m.classList.contains('show'))cloudRenderModal(); } }
+function teamErrText(error){
+  const m=(error&&error.message)||String(error||''), c=error&&error.code;
+  const map={
+    TEAM_PLAN_REQUIRED:T_('建立團隊需要「團隊方案」。','Creating a team needs the Team plan.','チームの作成には「チームプラン」が必要です。','팀을 만들려면 「팀 요금제」가 필요합니다.'),
+    TEAM_NAME_INVALID:T_('團隊名稱要 1～60 個字。','Team name must be 1–60 characters.','チーム名は 1～60 文字にしてください。','팀 이름은 1～60자여야 합니다.'),
+    TEAM_OWN_LIMIT:T_('每人最多建立 3 個團隊。','You can own up to 3 teams.','作成できるチームは 3 つまでです。','팀은 최대 3개까지 만들 수 있습니다.'),
+    TEAM_RATE_LIMIT:T_('嘗試太多次了，請一小時後再試。','Too many attempts — please try again in an hour.','試行回数が多すぎます。1 時間後にもう一度お試しください。','시도 횟수가 너무 많습니다. 1시간 후 다시 시도하세요.'),
+    TEAM_FULL:T_('這個團隊人數已滿（12 人）。','This team is full (12 people).','このチームは満員です（12 人）。','이 팀은 정원이 찼습니다 (12명).'),
+    TEAM_OWNER_ONLY:T_('只有團長可以這樣做。','Only the team leader can do this.','チームリーダーのみ操作できます。','팀장만 할 수 있습니다.'),
+    TEAM_MEMBER_ONLY:T_('你不是這個團隊的成員。','You are not a member of this team.','このチームのメンバーではありません。','이 팀의 멤버가 아닙니다.'),
+    EMAIL_INVALID:T_('email 格式不正確。','That email address doesn’t look right.','メールアドレスの形式が正しくありません。','이메일 형식이 올바르지 않습니다.'),
+    TEAM_INVITE_LIMIT:T_('這個團隊的 email 邀請已達上限（100 筆）。','This team has reached the email-invite limit (100).','このチームのメール招待は上限（100 件）に達しました。','이 팀의 이메일 초대가 한도(100건)에 도달했습니다.'),
+    INVITE_NOT_FOUND:T_('找不到這個邀請（可能已取消）。','Invitation not found (it may have been cancelled).','招待が見つかりません（取り消された可能性があります）。','초대를 찾을 수 없습니다 (취소되었을 수 있음).'),
+    OWNER_CANNOT_LEAVE:T_('團長不能退出自己的團隊；要結束請刪除團隊。','The leader can’t leave their own team — delete the team instead.','リーダーは自分のチームから抜けられません。チームを削除してください。','팀장은 자신의 팀을 나갈 수 없습니다. 팀을 삭제하세요.'),
+    TEAM_SONGS_LIMIT:T_('這個團隊的譜已達上限（200 首）。','This team has reached the song limit (200).','このチームの譜面は上限（200 曲）に達しました。','이 팀의 악보가 한도(200곡)에 도달했습니다.'),
+    NOT_SIGNED_IN:T_('請先登入。','Please sign in first.','先にログインしてください。','먼저 로그인하세요.')
+  };
+  for(const k in map){ if(m.indexOf(k)>=0)return map[k]; }
+  if(c==='42501'||/row-level security/i.test(m)) return T_('沒有權限：可能你不是編輯者，或團長的方案已到期（團隊唯讀）。','Not allowed — you may not be an editor, or the leader’s plan has ended (team is read-only).','権限がありません。編集者でないか、リーダーのプランが終了しています（読み取り専用）。','권한이 없습니다. 편집자가 아니거나 팀장의 요금제가 끝났습니다 (읽기 전용).');
+  if(c==='23514') return T_('這份譜太大，存不進去。','This chart is too large to save.','この譜面は大きすぎて保存できません。','악보가 너무 커서 저장할 수 없습니다.');
+  return m;
+}
+/* 伺服器回來的資料只留需要的欄位，id／邀請碼格式不對的直接丟掉 */
+function teamClean(a){
+  return (Array.isArray(a)?a:[]).filter(t=>t&&_UUID.test(String(t.id))).map(t=>({
+    id:String(t.id), name:String(t.name||'').slice(0,60), role:['owner','editor','member'].includes(t.role)?t.role:'member',
+    status:t.status==='active'?'active':'pending', is_owner:!!t.is_owner, owner_email:String(t.owner_email||'').slice(0,254),
+    writable:!!t.writable, members:+t.members||0, pending:+t.pending||0,
+    invite_code:_TCODE.test(String(t.invite_code||''))?String(t.invite_code):'', invite_open:!!t.invite_open, require_approval:!!t.require_approval }));
+}
+let _teamsAgain=false;
+async function teamsFetch(force){
+  if(!teamOn())return;
+  if(_teamsBusy){ if(force)_teamsAgain=true; return; }   /* 正在抓：抓完再抓一次，才不會拿到舊資料 */
+  if(!force && _teamsAt && Date.now()-_teamsAt<20000)return;
+  _teamsBusy=true;
+  try{
+    const [a,b]=await Promise.all([_supa.rpc('my_teams'),_supa.rpc('my_team_invites')]);
+    if(a.error) _teamsErr=a.error.message||String(a.error); else { _teamsErr=''; _teams=teamClean(a.data); }
+    if(!b.error) _teamInvites=(Array.isArray(b.data)?b.data:[]).filter(x=>x&&_UUID.test(String(x.id)))
+      .map(x=>({id:String(x.id),team_name:String(x.team_name||'').slice(0,60),from:String(x.from||'').slice(0,254)}));
+  }catch(e){ _teamsErr=e.message||String(e); }
+  finally{ _teamsBusy=false; _teamsAt=Date.now(); }
+  if(_teamsAgain){ _teamsAgain=false; return teamsFetch(true); }
+  if(!_teams.some(t=>t.id===_teamSel)){ const f=_teams.find(t=>t.status==='active')||_teams[0]; _teamSel=f?f.id:''; }
+  teamRefresh();
+}
+async function teamSongsFetch(tid,force){
+  if(!teamOn()||!tid)return;
+  if(!force && _teamSongsAt[tid] && Date.now()-_teamSongsAt[tid]<20000)return;
+  _teamSongsAt[tid]=Date.now();
+  const {data,error}=await _supa.from('team_songs').select('id,title,usage,updated_at,updated_by_email').eq('team_id',tid).order('updated_at',{ascending:false}).limit(200);
+  if(error){ cloudMsg(teamErrText(error)); return; }
+  const old={}; (_teamSongs[tid]||[]).forEach(r=>{ old[r.id]=r; });
+  _teamSongs[tid]=(data||[]).filter(r=>r&&_UUID.test(String(r.id))).map(r=>{ const o=old[r.id];
+    return {id:String(r.id),title:String(r.title||''),usage:String(r.usage||''),updated:r.updated_at,by:String(r.updated_by_email||''),
+            data:(o&&o.updated===r.updated_at)?o.data:null}; });
+  teamRefresh();
+}
+async function teamRosterFetch(tid){
+  if(!teamOn()||!tid)return;
+  const {data,error}=await _supa.rpc('team_roster',{p_team:tid});
+  if(error){ cloudMsg(teamErrText(error)); return; }
+  const d=data||{};
+  _teamRoster[tid]={
+    members:(Array.isArray(d.members)?d.members:[]).filter(m=>m&&_UUID.test(String(m.user_id))).map(m=>({user_id:String(m.user_id),email:String(m.email||'').slice(0,254),
+      role:['owner','editor','member'].includes(m.role)?m.role:'member',status:m.status==='active'?'active':'pending'})),
+    invites:(Array.isArray(d.invites)?d.invites:[]).map(i=>({email:String(i.email||'').slice(0,254)}))
+  };
+  teamRefresh();
+}
+function teamPick(id){ _teamSel=id; _teamManage=false; try{ localStorage.setItem('arranger_team',id); }catch(e){} teamRefresh(); }
+function teamRoleName(r){ return r==='owner'?T_('團長','Leader','リーダー','팀장'):r==='editor'?T_('編輯者','Editor','編集者','편집자'):T_('成員','Member','メンバー','멤버'); }
+function teamLink(code){ return location.origin+location.pathname+'?join='+encodeURIComponent(code); }
+
+/* ── 畫面 ── */
+function teamHtml(){
+  if(!teamOn()) return '<div class="cl-empty">'+esc(T_('登入後才能使用團隊。','Sign in to use teams.','チームを使うにはログインしてください。','팀을 사용하려면 로그인하세요.'))+'</div>';
+  setTimeout(()=>teamsFetch(),0);
+  const e=ent(); let h='';
+  if(_teamsErr) h+='<div class="my-sync bad">⚠ '+esc(T_('團隊資料讀取失敗：','Could not load teams: ','チーム情報を読み込めません：','팀 정보를 불러오지 못했습니다: '))+esc(_teamsErr)
+    +' <button class="btn" onclick="teamsFetch(true)">'+esc(T_('重試','Retry','再試行','다시 시도'))+'</button></div>';
+  /* 寄給我的 email 邀請 */
+  _teamInvites.forEach(iv=>{
+    h+='<div class="team-invite">✉ '+esc(T_('「'+iv.team_name+'」邀請你加入','“'+iv.team_name+'” invited you to join','「'+iv.team_name+'」から招待が届いています','「'+iv.team_name+'」에서 초대했습니다'))
+      +(iv.from?'<span class="team-sub">（'+esc(iv.from)+'）</span>':'')
+      +'<span class="team-acts"><button class="btn btna" onclick="teamAcceptInvite(\''+iv.id+'\')">'+esc(T_('接受','Accept','承認','수락'))+'</button>'
+      +'<button class="btn" onclick="teamDeclineInvite(\''+iv.id+'\')">'+esc(T_('婉拒','Decline','辞退','거절'))+'</button></span></div>';
+  });
+  const joinForm='<div class="team-join"><input id="team-code" class="team-input" maxlength="12" placeholder="'+esc(T_('邀請碼（8 碼）','Invite code (8 characters)','招待コード（8 文字）','초대 코드 (8자리)'))+'" onkeydown="if(event.key===\'Enter\')teamJoinFromInput()">'
+    +'<button class="btn" onclick="teamJoinFromInput()">'+esc(T_('用邀請碼加入','Join with code','コードで参加','코드로 참여'))+'</button></div>';
+  const createForm=e.team?'<div class="team-join"><input id="team-new-name" class="team-input" maxlength="60" placeholder="'+esc(T_('新團隊名稱','New team name','新しいチーム名','새 팀 이름'))+'" onkeydown="if(event.key===\'Enter\')teamCreate()">'
+    +'<button class="btn btna" onclick="teamCreate()">＋ '+esc(T_('建立團隊','Create team','チームを作成','팀 만들기'))+'</button></div>':'';
+  if(!_teams.length){
+    h+='<div class="team-empty"><b>👥 '+esc(T_('還沒有加入任何團隊','You’re not in a team yet','まだチームに参加していません','아직 팀에 참여하지 않았습니다'))+'</b><br>'
+      +esc(e.team?T_('建立一個團隊，再用邀請碼、邀請連結或 email 邀請團員。','Create a team, then invite members with a code, a link or email.','チームを作成し、招待コード・リンク・メールでメンバーを招待しましょう。','팀을 만들고 초대 코드, 링크 또는 이메일로 멤버를 초대하세요.')
+                :T_('有團長給你的邀請碼，就可以加入團隊；要自己建立團隊，需要「團隊方案」。','Have an invite code from your team leader? Join below. Creating your own team needs the Team plan.','リーダーから招待コードをもらったら参加できます。自分でチームを作るには「チームプラン」が必要です。','팀장에게 받은 초대 코드로 참여할 수 있습니다. 직접 팀을 만들려면 「팀 요금제」가 필요합니다.'))+'</div>'
+      +createForm+joinForm;
+    return h;
+  }
+  /* 團隊選單 */
+  if(_teams.length>1){
+    h+='<div class="team-pick"><select class="cl-keysel" onchange="teamPick(this.value)">'
+      +_teams.map(t=>'<option value="'+t.id+'"'+(t.id===_teamSel?' selected':'')+'>'+esc(t.name)+(t.status==='pending'?' '+T_('（審核中）','(pending)','（承認待ち）','(승인 대기)'):'')+'</option>').join('')+'</select></div>';
+  }
+  const t=teamCur(); if(!t) return h+joinForm;
+  h+='<div class="team-head"><span class="team-name">👥 '+esc(t.name)+'</span><span class="cl-role">'+esc(teamRoleName(t.role))+'</span>'
+    +(t.status==='active'?'<span class="team-sub">'+esc(T_(t.members+' 位成員',t.members+' member(s)','メンバー '+t.members+' 人','멤버 '+t.members+'명'))+'</span>':'')
+    +(t.is_owner&&t.pending?'<span class="team-badge">'+esc(T_(t.pending+' 人等你同意',t.pending+' waiting for you','承認待ち '+t.pending+' 人','승인 대기 '+t.pending+'명'))+'</span>':'')
+    +'</div>';
+  if(t.status==='pending'){
+    return h+'<div class="team-empty">⏳ '+esc(T_('已送出加入申請，等團長同意後就能看到團隊的譜。','Your request has been sent. You’ll see the team’s charts once the leader approves.','参加申請を送りました。リーダーの承認後にチームの譜面が見られます。','참여 신청을 보냈습니다. 팀장이 승인하면 팀 악보를 볼 수 있습니다.'))+'</div>'
+      +'<div class="cl-actions"><button class="btn" onclick="teamLeave(\''+t.id+'\',true)">'+esc(T_('取消申請','Cancel request','申請を取り消す','신청 취소'))+'</button></div>'+createForm+joinForm;
+  }
+  if(!t.writable) h+='<div class="my-sync bad">🔒 '+esc(T_('團長的方案已到期，團隊目前唯讀：大家還看得到，但不能新增或修改。','The leader’s plan has ended, so the team is read-only: everyone can still view, but no one can add or edit.','リーダーのプランが終了したため、チームは読み取り専用です（閲覧のみ可能）。','팀장의 요금제가 끝나 팀이 읽기 전용입니다 (보기만 가능).'))+'</div>';
+  const can=teamCanEdit(t);
+  h+='<div class="cl-actions">'
+    +(can?'<button class="btn btna" onclick="teamSaveCurrent()">＋ '+esc(T_('把目前這份存到團隊','Save current chart to team','今の譜面をチームに保存','현재 악보를 팀에 저장'))+'</button>':'')
+    +(t.is_owner?'<button class="btn'+(_teamManage?' on':'')+'" onclick="teamToggleManage()">⚙ '+esc(T_('管理團隊','Manage team','チーム管理','팀 관리'))+'</button>'
+               :'<button class="btn" onclick="teamLeave(\''+t.id+'\')">'+esc(T_('退出團隊','Leave team','チームを抜ける','팀 나가기'))+'</button>')
+    +'<button class="btn" onclick="teamSongsFetch(_teamSel,true);teamsFetch(true)" title="'+esc(T_('重新整理','Refresh','更新','새로고침'))+'">↻</button>'
+    +'</div>';
+  if(!can && t.writable) h+='<div class="cl-hint">'+esc(T_('你是成員：可以看、載入團隊的譜。想自己改，可以載入後存到「我的歌庫」（需要個人方案）。','You’re a member: you can view and load the team’s charts. To make your own changes, load one and save it to My Library (needs the Personal plan).','メンバーは閲覧と読み込みができます。自分で編集したい場合は、読み込んでから「マイライブラリ」に保存してください（個人プランが必要）。','멤버는 팀 악보를 보고 불러올 수 있습니다. 직접 수정하려면 불러온 뒤 「내 라이브러리」에 저장하세요 (개인 요금제 필요).'))+'</div>';
+  if(t.is_owner && _teamManage) h+=teamManageHtml(t);
+  /* 團隊的譜 */
+  if(!_teamSongs[t.id]) setTimeout(()=>teamSongsFetch(t.id),0); else setTimeout(()=>teamSongsFetch(t.id),0);
+  const songs=_teamSongs[t.id];
+  h+='<div class="cl-libhd" style="margin-top:0.8em">'+esc(T_('團隊的譜','Team charts','チームの譜面','팀 악보'))+(songs?' · '+songs.length:'')+'</div>';
+  if(!songs) h+='<div class="cl-empty">'+esc(T_('讀取中…','Loading…','読み込み中…','불러오는 중…'))+'</div>';
+  else if(!songs.length) h+='<div class="cl-empty">'+esc(can?T_('還沒有譜。打開一首歌，按「＋ 把目前這份存到團隊」。','No charts yet. Open a song and tap “＋ Save current chart to team”.','まだ譜面がありません。曲を開いて「＋ 今の譜面をチームに保存」を押してください。','아직 악보가 없습니다. 곡을 열고 「＋ 현재 악보를 팀에 저장」을 누르세요.')
+                                                  :T_('團隊還沒有譜。','The team has no charts yet.','チームにはまだ譜面がありません。','팀에 아직 악보가 없습니다.'))+'</div>';
+  else h+='<div class="cl-list">'+songs.map(r=>'<div class="cl-row"><span class="cl-rowmain"><span class="cl-title">'+esc(r.title||L('未命名'))+'</span>'
+      +'<span class="cl-sub"><span class="cl-usage">'+esc(r.usage||'')+'</span>'+clTimeHtml(r.updated)+(r.by?'<span class="team-by">'+esc(r.by)+'</span>':'')+'</span></span>'
+      +'<span class="cl-rowacts">'+favBtnHtml('team',r.id)+'<button class="btn" onclick="teamLoad(\''+r.id+'\')">'+esc(L('載入'))+'</button>'
+      +(can?'<button class="btn" onclick="teamDelSong(\''+r.id+'\')">'+esc(L('刪除'))+'</button>':'')+'</span></div>').join('')+'</div>';
+  /* 其他團隊：建立／加入 */
+  h+='<details class="team-more"><summary>'+esc(T_('建立或加入其他團隊','Create or join another team','ほかのチームを作成・参加','다른 팀 만들기·참여'))+'</summary>'+createForm+joinForm+'</details>';
+  return h;
+}
+function teamManageHtml(t){
+  if(!_teamRoster[t.id]) setTimeout(()=>teamRosterFetch(t.id),0);
+  const r=_teamRoster[t.id]||{members:[],invites:[]};
+  const link=t.invite_code?teamLink(t.invite_code):'';
+  let h='<div class="team-manage">';
+  h+='<div class="team-row"><input id="team-name" class="team-input" maxlength="60" value="'+esc(t.name)+'"><button class="btn" onclick="teamRename()">'+esc(T_('改名','Rename','名前を変更','이름 변경'))+'</button></div>';
+  h+='<div class="team-sec">'+esc(T_('邀請碼／邀請連結','Invite code / link','招待コード・リンク','초대 코드 / 링크'))+'</div>'
+    +'<div class="team-row"><code class="team-code">'+esc(t.invite_code||'—')+'</code>'
+    +'<button class="btn" onclick="teamCopy(\'code\')">'+esc(T_('複製邀請碼','Copy code','コードをコピー','코드 복사'))+'</button>'
+    +'<button class="btn" onclick="teamCopy(\'link\')">'+esc(T_('複製邀請連結','Copy link','リンクをコピー','링크 복사'))+'</button>'
+    +'<button class="btn" onclick="teamRegen()">'+esc(T_('換新邀請碼','New code','コードを再発行','새 코드'))+'</button></div>'
+    +'<label class="team-chk"><input type="checkbox"'+(t.invite_open?' checked':'')+' onchange="teamSetOpts(this.checked,null)"> '+esc(T_('開放用邀請碼／連結加入','Allow joining with code / link','コード・リンクでの参加を許可','코드/링크로 참여 허용'))+'</label>'
+    +'<label class="team-chk"><input type="checkbox"'+(t.require_approval?' checked':'')+' onchange="teamSetOpts(null,this.checked)"> '+esc(T_('用邀請碼加入的人，要我同意才生效','People joining by code need my approval','コードで参加した人は承認が必要','코드로 참여하면 내 승인 필요'))+'</label>';
+  h+='<div class="team-sec">'+esc(T_('email 邀請','Invite by email','メールで招待','이메일로 초대'))+'</div>'
+    +'<div class="team-row"><input id="team-invite-email" class="team-input" type="email" placeholder="email" onkeydown="if(event.key===\'Enter\')teamInviteEmail()"><button class="btn" onclick="teamInviteEmail()">'+esc(T_('邀請','Invite','招待','초대'))+'</button></div>'
+    +'<div class="cl-hint">'+esc(T_('對方用這個 email 登入後，在「團隊」分頁按接受就加入；也會幫你開好一封邀請信草稿。','When they sign in with this email, they accept in the Team tab. An invitation email draft also opens for you to send.','相手がこのメールでログインし、「チーム」タブで承認すると参加します。招待メールの下書きも開きます。','상대가 이 이메일로 로그인해 「팀」 탭에서 수락하면 참여합니다. 초대 메일 초안도 열립니다.'))+'</div>';
+  const pend=r.members.filter(m=>m.status==='pending');
+  if(pend.length){
+    h+='<div class="team-sec">'+esc(T_('等你同意','Waiting for approval','承認待ち','승인 대기'))+'</div>'
+      +pend.map(m=>'<div class="team-row team-mem"><span class="team-mail">'+esc(m.email||'—')+'</span><span class="team-acts">'
+        +'<button class="btn btna" onclick="teamApprove(\''+m.user_id+'\')">'+esc(T_('同意','Approve','承認','승인'))+'</button>'
+        +'<button class="btn" onclick="teamRemove(\''+m.user_id+'\',true)">'+esc(T_('拒絕','Reject','拒否','거절'))+'</button></span></div>').join('');
+  }
+  h+='<div class="team-sec">'+esc(T_('成員','Members','メンバー','멤버'))+'</div>'
+    +r.members.filter(m=>m.status==='active').map(m=>'<div class="team-row team-mem"><span class="team-mail">'+esc(m.email||'—')+'</span><span class="team-acts">'
+      +(m.role==='owner'?'<span class="cl-role">'+esc(teamRoleName('owner'))+'</span>'
+        :'<select class="cl-keysel" onchange="teamSetRole(\''+m.user_id+'\',this.value)"><option value="member"'+(m.role==='member'?' selected':'')+'>'+esc(teamRoleName('member'))+'</option><option value="editor"'+(m.role==='editor'?' selected':'')+'>'+esc(teamRoleName('editor'))+'</option></select>'
+         +'<button class="btn" onclick="teamRemove(\''+m.user_id+'\')">'+esc(T_('移除','Remove','削除','제거'))+'</button>')
+      +'</span></div>').join('');
+  if(r.invites.length){
+    h+='<div class="team-sec">'+esc(T_('已用 email 邀請、還沒接受','Invited by email, not yet accepted','メール招待済み・未承認','이메일 초대됨, 아직 수락 안 함'))+'</div>'
+      +r.invites.map((i,k)=>'<div class="team-row team-mem"><span class="team-mail">'+esc(i.email)+'</span><span class="team-acts"><button class="btn" onclick="teamCancelInvite('+k+')">'+esc(T_('取消邀請','Cancel','取り消す','취소'))+'</button></span></div>').join('');
+  }
+  h+='<div class="team-row" style="margin-top:1em"><button class="btn team-danger" onclick="teamDelete()">'+esc(T_('刪除團隊','Delete team','チームを削除','팀 삭제'))+'</button></div>';
+  return h+'</div>';
+}
+function teamToggleManage(){ _teamManage=!_teamManage; if(_teamManage)teamRosterFetch(_teamSel); teamRefresh(); }
+
+/* ── 動作 ── */
+async function teamRpc(fn,args,okMsg){
+  if(!teamOn()){ alert(T_('請先登入。','Please sign in first.','先にログインしてください。','먼저 로그인하세요.')); return {error:true}; }
+  if(_teamBusy)return {error:true}; _teamBusy=true;
+  try{
+    const r=await _supa.rpc(fn,args||{});
+    if(r.error){ alert(teamErrText(r.error)); return r; }
+    if(okMsg)cloudMsg(okMsg);
+    return r;
+  }catch(e){ alert(teamErrText(e)); return {error:e}; }
+  finally{ _teamBusy=false; }
+}
+async function teamCreate(){
+  const el=document.getElementById('team-new-name'); const name=(el&&el.value||'').trim();
+  if(!name){ alert(T_('請輸入團隊名稱。','Please enter a team name.','チーム名を入力してください。','팀 이름을 입력하세요.')); return; }
+  const r=await teamRpc('team_create',{p_name:name}); if(r.error)return;
+  if(_UUID.test(String(r.data)))_teamSel=String(r.data);
+  _teamManage=true; await teamsFetch(true); if(_teamSel)teamRosterFetch(_teamSel);
+}
+function teamJoinFromInput(){ const el=document.getElementById('team-code'); teamJoin(el?el.value:''); }
+async function teamJoin(code){
+  code=String(code||'').trim().toUpperCase();
+  if(!_TCODE.test(code)){ alert(T_('邀請碼是 8 個英文或數字。','The invite code is 8 letters or digits.','招待コードは英数字 8 文字です。','초대 코드는 영문·숫자 8자리입니다.')); return; }
+  const r=await teamRpc('team_join',{p_code:code}); if(r.error)return;
+  if(r.data==='invalid'){ alert(T_('邀請碼不對，或團長已關閉邀請碼加入。','That code isn’t valid, or the leader has turned off joining by code.','招待コードが正しくないか、リーダーがコードでの参加を停止しています。','초대 코드가 올바르지 않거나 팀장이 코드 참여를 꺼 두었습니다.')); return; }
+  alert(r.data==='pending'?T_('已送出加入申請，等團長同意。','Request sent — waiting for the leader’s approval.','参加申請を送りました。リーダーの承認を待っています。','참여 신청을 보냈습니다. 팀장의 승인을 기다리는 중입니다.')
+                          :T_('已加入團隊！','You’ve joined the team!','チームに参加しました！','팀에 참여했습니다!'));
+  _teamsAt=0; await teamsFetch(true);
+  const j=_teams.find(t=>t.status===(r.data==='pending'?'pending':'active')&&!t.is_owner); if(j)teamPick(j.id);
+}
+async function teamAcceptInvite(id){ if(!_UUID.test(id))return; const r=await teamRpc('team_accept_invite',{p_invite:id}); if(r.error)return; await teamsFetch(true); }
+async function teamDeclineInvite(id){ if(!_UUID.test(id))return; if(!confirm(T_('婉拒這個邀請？','Decline this invitation?','この招待を辞退しますか？','이 초대를 거절할까요?')))return; const r=await teamRpc('team_decline_invite',{p_invite:id}); if(r.error)return; await teamsFetch(true); }
+async function teamLeave(id,cancel){
+  const t=_teams.find(x=>x.id===id); if(!t)return;
+  if(!confirm(cancel?T_('取消加入「'+t.name+'」的申請？','Cancel your request to join “'+t.name+'”?','「'+t.name+'」への参加申請を取り消しますか？','「'+t.name+'」 참여 신청을 취소할까요?')
+                    :T_('退出「'+t.name+'」？退出後就看不到團隊的譜。','Leave “'+t.name+'”? You won’t be able to see the team’s charts.','「'+t.name+'」から抜けますか？チームの譜面が見られなくなります。','「'+t.name+'」에서 나갈까요? 팀 악보를 볼 수 없게 됩니다.')))return;
+  const r=await teamRpc('team_leave',{p_team:id}); if(r.error)return; _teamSel=''; await teamsFetch(true);
+}
+async function teamRename(){ const t=teamCur(); const el=document.getElementById('team-name'); if(!t||!el)return;
+  const r=await teamRpc('team_update',{p_team:t.id,p_name:el.value,p_open:null,p_approval:null}); if(r.error)return; await teamsFetch(true); }
+async function teamSetOpts(open,approval){ const t=teamCur(); if(!t)return;
+  const r=await teamRpc('team_update',{p_team:t.id,p_name:t.name,p_open:open,p_approval:approval}); await teamsFetch(true); }
+async function teamRegen(){ const t=teamCur(); if(!t)return;
+  if(!confirm(T_('換新邀請碼後，舊的邀請碼和連結就不能用了。確定？','After getting a new code, the old code and link stop working. Continue?','再発行すると古いコードとリンクは使えなくなります。よろしいですか？','새 코드를 만들면 이전 코드와 링크는 사용할 수 없습니다. 계속할까요?')))return;
+  const r=await teamRpc('team_regen_code',{p_team:t.id}); if(r.error)return; await teamsFetch(true); }
+async function teamCopy(kind){ const t=teamCur(); if(!t||!t.invite_code)return;
+  const txt=kind==='link'?teamLink(t.invite_code):t.invite_code;
+  try{ await navigator.clipboard.writeText(txt); cloudMsg(T_('已複製：','Copied: ','コピーしました：','복사했습니다: ')+txt); }
+  catch(e){ prompt(T_('複製這段文字：','Copy this:','これをコピーしてください：','이 텍스트를 복사하세요:'),txt); } }
+async function teamInviteEmail(){
+  const t=teamCur(); const el=document.getElementById('team-invite-email'); if(!t||!el)return;
+  const em=el.value.trim().toLowerCase();
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)){ alert(teamErrText({message:'EMAIL_INVALID'})); return; }
+  const r=await teamRpc('team_invite',{p_team:t.id,p_email:em}); if(r.error)return;
+  const code=_TCODE.test(String(r.data||''))?String(r.data):t.invite_code;
+  cloudMsg(T_('已邀請 '+em+'。對方用這個 email 登入後，在「團隊」分頁按接受就加入。','Invited '+em+'. When they sign in with this email, they accept in the Team tab.',em+' を招待しました。このメールでログインし「チーム」タブで承認すると参加します。',em+'님을 초대했습니다. 이 이메일로 로그인해 「팀」 탭에서 수락하면 참여합니다.'));
+  /* 用使用者自己的信箱寄：開一封草稿（我們的網站不代寄信） */
+  const subj=T_('邀請你加入 Arranger 理譜人的團隊「'+t.name+'」','Join my team “'+t.name+'” on Arranger','Arranger のチーム「'+t.name+'」への招待','Arranger 팀 「'+t.name+'」에 초대합니다');
+  const body=T_('我在 Arranger 理譜人建立了團隊「'+t.name+'」，邀請你一起看譜、排歌。\n\n1. 打開這個連結：'+teamLink(code)+'\n2. 用這個 email（'+em+'）登入或註冊（免費）\n3. 在「🎵 歌曲庫 → 👥 團隊」按接受\n\n邀請碼：'+code,
+               'I created the team “'+t.name+'” on Arranger and would like you to join.\n\n1. Open this link: '+teamLink(code)+'\n2. Sign in or sign up (free) with this email ('+em+')\n3. Accept in “🎵 Song Library → 👥 Team”\n\nInvite code: '+code,
+               'Arranger でチーム「'+t.name+'」を作りました。ぜひ参加してください。\n\n1. このリンクを開く：'+teamLink(code)+'\n2. このメール（'+em+'）でログインまたは登録（無料）\n3. 「🎵 曲ライブラリ → 👥 チーム」で承認\n\n招待コード：'+code,
+               'Arranger에서 팀 「'+t.name+'」을(를) 만들었습니다. 함께해 주세요.\n\n1. 이 링크를 여세요: '+teamLink(code)+'\n2. 이 이메일('+em+')로 로그인하거나 가입(무료)\n3. 「🎵 곡 라이브러리 → 👥 팀」에서 수락\n\n초대 코드: '+code);
+  el.value='';
+  teamRosterFetch(t.id);
+  const a=document.createElement('a'); a.href='mailto:'+encodeURIComponent(em)+'?subject='+encodeURIComponent(subj)+'&body='+encodeURIComponent(body); a.style.display='none';
+  document.body.appendChild(a); try{ a.click(); }catch(e){} a.remove();
+}
+async function teamCancelInvite(k){ const t=teamCur(); const r=t&&_teamRoster[t.id]; const i=r&&r.invites[k]; if(!i)return;
+  const x=await teamRpc('team_cancel_invite',{p_team:t.id,p_email:i.email}); if(x.error)return; teamRosterFetch(t.id); }
+async function teamApprove(uid){ const t=teamCur(); if(!t||!_UUID.test(uid))return;
+  const r=await teamRpc('team_approve',{p_team:t.id,p_user:uid}); if(r.error)return; await Promise.all([teamRosterFetch(t.id),teamsFetch(true)]); }
+async function teamSetRole(uid,role){ const t=teamCur(); if(!t||!_UUID.test(uid))return;
+  const r=await teamRpc('team_set_role',{p_team:t.id,p_user:uid,p_role:role==='editor'?'editor':'member'}); if(r.error)return; teamRosterFetch(t.id); }
+async function teamRemove(uid,reject){ const t=teamCur(); if(!t||!_UUID.test(uid))return;
+  const m=((_teamRoster[t.id]||{}).members||[]).find(x=>x.user_id===uid);
+  if(!confirm(reject?T_('拒絕 '+((m&&m.email)||'')+' 加入？','Reject '+((m&&m.email)||'')+'?',((m&&m.email)||'')+' の参加を拒否しますか？',((m&&m.email)||'')+'님의 참여를 거절할까요?')
+                    :T_('把 '+((m&&m.email)||'')+' 移出團隊？移除後他就看不到團隊的譜。','Remove '+((m&&m.email)||'')+' from the team? They will no longer see the team’s charts.',((m&&m.email)||'')+' をチームから外しますか？チームの譜面が見られなくなります。',((m&&m.email)||'')+'님을 팀에서 제거할까요? 팀 악보를 볼 수 없게 됩니다.')))return;
+  const r=await teamRpc('team_remove',{p_team:t.id,p_user:uid}); if(r.error)return; await Promise.all([teamRosterFetch(t.id),teamsFetch(true)]); }
+async function teamDelete(){ const t=teamCur(); if(!t)return;
+  const typed=prompt(T_('刪除團隊會一起刪掉團隊所有的譜和成員名單，無法復原。\n確定要刪除，請輸入團隊名稱：','Deleting the team also deletes all its charts and members. This can’t be undone.\nTo confirm, type the team name:','チームを削除すると譜面とメンバーもすべて削除され、元に戻せません。\n確認のためチーム名を入力してください：','팀을 삭제하면 모든 악보와 멤버도 삭제되며 되돌릴 수 없습니다.\n확인하려면 팀 이름을 입력하세요:'),'');
+  if(typed==null)return;
+  if(typed.trim()!==t.name){ alert(T_('名稱不符，沒有刪除。','The name didn’t match — nothing was deleted.','名前が一致しないため削除しませんでした。','이름이 일치하지 않아 삭제하지 않았습니다.')); return; }
+  const r=await teamRpc('team_delete',{p_team:t.id}); if(r.error)return; _teamSel=''; _teamManage=false; delete _teamSongs[t.id]; await teamsFetch(true); }
+
+/* ── 團隊的譜：載入、存、刪 ── */
+async function teamEnsureData(r){
+  if(!r)return null; if(r.data)return r.data;
+  const {data,error}=await _supa.from('team_songs').select('data,updated_at').eq('id',r.id).maybeSingle();
+  if(error)throw new Error(teamErrText(error)); if(!data)return null;
+  r.data=data.data; r.updated=data.updated_at; return r.data;
+}
+async function teamLoad(id){
+  const t=teamCur(); const list=t?(_teamSongs[t.id]||[]):[]; const r=list.find(x=>x.id===id); if(!r)return;
+  let d=null; try{ d=await teamEnsureData(r); }catch(e){ alert(T_('載入失敗：','Load failed: ','読み込みに失敗しました：','불러오기 실패: ')+e.message); return; }
+  if(!d||!Array.isArray(d.sects)){ alert(T_('找不到這首歌（可能已被刪除）。','Song not found (it may have been deleted).','曲が見つかりません（削除された可能性があります）。','곡을 찾을 수 없습니다 (삭제되었을 수 있음).')); teamSongsFetch(t.id,true); return; }
+  if(applyProjectData(JSON.parse(JSON.stringify(d)))){ _teamBase={team:t.id,id:r.id,updated:r.updated}; _cloudId=null; renderSB(); renderAll(); closeCloud(); }
+}
+async function teamSaveCurrent(){
+  const t=teamCur(); if(!teamCanEdit(t)){ alert(teamErrText({code:'42501'})); return; }
+  commitEdits();
+  const title=(gv('s-title')||L('未命名')).trim()||L('未命名'), usage=gv('s-usage')||'', data=getProjectData();
+  await teamSongsFetch(t.id,true);
+  const list=_teamSongs[t.id]||[]; const r=list.find(x=>x.title===title);
+  if(r){
+    const base=(_teamBase&&_teamBase.id===r.id)?_teamBase.updated:null;
+    if(base && base!==r.updated){
+      if(!confirm(T_('「'+title+'」在你打開之後，又被 '+(r.by||'別人')+' 改過（'+clTime(r.updated)+'）。\n\n按「確定」用目前這份覆蓋；按「取消」另存成一首新的。',
+                     '“'+title+'” was changed by '+(r.by||'someone else')+' after you opened it ('+clTime(r.updated)+').\n\nOK = overwrite with this version; Cancel = save as a new song.',
+                     '「'+title+'」は開いた後に '+(r.by||'他の人')+' が更新しました（'+clTime(r.updated)+'）。\n\nOK＝今の内容で上書き／キャンセル＝新しい曲として保存',
+                     '「'+title+'」을(를) 연 뒤 '+(r.by||'다른 사람')+'이(가) 수정했습니다 ('+clTime(r.updated)+').\n\n확인 = 지금 내용으로 덮어쓰기 / 취소 = 새 곡으로 저장'))){
+        return teamInsert(t,{title:title+Lf('（副本）',' (copy)','（コピー）',' (사본)'),usage,data});
+      }
+    } else if(!confirm(T_('團隊裡已經有「'+title+'」，要覆蓋嗎？','The team already has “'+title+'”. Overwrite?','チームに「'+title+'」がすでにあります。上書きしますか？','팀에 「'+title+'」이(가) 이미 있습니다. 덮어쓸까요?')))return;
+    const {data:rows,error}=await _supa.from('team_songs').update({title,usage,data}).eq('id',r.id).eq('updated_at',r.updated).select('id,updated_at');
+    if(error){ alert(T_('存到團隊失敗：','Could not save to the team: ','チームへの保存に失敗しました：','팀 저장 실패: ')+teamErrText(error)); return; }
+    if(!rows||!rows.length){
+      alert(T_('剛好有人同時在改這首，請按 ↻ 重新整理後再存一次。','Someone changed this song at the same moment — tap ↻ to refresh and save again.','ちょうど他の人がこの曲を更新しました。↻ で更新してからもう一度保存してください。','방금 다른 사람이 이 곡을 수정했습니다. ↻ 로 새로고침한 뒤 다시 저장하세요.'));
+      teamSongsFetch(t.id,true); return;
+    }
+    r.title=title; r.usage=usage; r.data=data; r.updated=rows[0].updated_at; _teamBase={team:t.id,id:r.id,updated:r.updated};
+    cloudMsg(T_('已存到團隊','Saved to the team','チームに保存しました','팀에 저장했습니다')); teamSongsFetch(t.id,true); return;
+  }
+  return teamInsert(t,{title,usage,data});
+}
+async function teamInsert(t,row){
+  const {data,error}=await _supa.from('team_songs').insert({team_id:t.id,title:row.title,usage:row.usage||'',data:row.data}).select('id,updated_at').single();
+  if(error){ alert(T_('存到團隊失敗：','Could not save to the team: ','チームへの保存に失敗しました：','팀 저장 실패: ')+teamErrText(error)); return; }
+  _teamBase={team:t.id,id:String(data.id),updated:data.updated_at};
+  cloudMsg(T_('已存到團隊','Saved to the team','チームに保存しました','팀에 저장했습니다')); teamSongsFetch(t.id,true);
+}
+async function teamDelSong(id){
+  const t=teamCur(); const r=t&&(_teamSongs[t.id]||[]).find(x=>x.id===id); if(!r)return;
+  if(!confirm(T_('從團隊刪除「'+r.title+'」？所有團員都會看不到。','Delete “'+r.title+'” from the team? No one in the team will see it anymore.','チームから「'+r.title+'」を削除しますか？全メンバーから見えなくなります。','팀에서 「'+r.title+'」을(를) 삭제할까요? 모든 멤버가 볼 수 없게 됩니다.')))return;
+  const {error}=await _supa.from('team_songs').delete().eq('id',id);
+  if(error){ alert(teamErrText(error)); return; }
+  _teamSongs[t.id]=(_teamSongs[t.id]||[]).filter(x=>x.id!==id); teamRefresh();
+}
+
+/* ── 邀請連結 ?join=XXXXXXXX：先記起來，登入後問要不要加入 ── */
+(function teamJoinLinkInit(){
+  try{ const u=new URL(location.href); const c=(u.searchParams.get('join')||'').trim().toUpperCase();
+    if(c && _TCODE.test(c)){ sessionStorage.setItem('arranger_join',c); u.searchParams.delete('join'); history.replaceState(null,'',u.pathname+(u.search?u.search:'')+u.hash); }
+  }catch(e){}
+})();
+function teamPendingCode(){ try{ return sessionStorage.getItem('arranger_join')||''; }catch(e){ return ''; } }
+async function teamPendingJoin(){
+  const c=teamPendingCode(); if(!c||!teamOn())return;
+  try{ sessionStorage.removeItem('arranger_join'); }catch(e){}
+  if(!confirm(T_('要用邀請連結加入團隊嗎？（邀請碼 '+c+'）','Join the team from your invite link? (code '+c+')','招待リンクからチームに参加しますか？（コード '+c+'）','초대 링크로 팀에 참여할까요? (코드 '+c+')')))return;
+  await teamJoin(c);
+  _libTab='team'; openLibrary();
+}
+
 /* 曲目設定、和弦工具：按一下展開、再按一下收起來（記住上次狀態） */
 function toggleSong(e){ if(e&&e.stopPropagation)e.stopPropagation();
   const on=document.body.classList.toggle('song-open');
