@@ -331,10 +331,23 @@ body.mode-phone.nav-open .sidenav{transform:none;}
 body.mode-phone.nav-mini .sidenav{width:15em;padding:0.6em 0.55em 1.2em;}
 body.mode-phone.nav-mini .page .sidenav .vtab{flex-direction:row;gap:0.9em;padding:0.62em 0.8em;font-size:0.95em;text-align:left;}
 body.mode-phone.nav-mini .nav-ic svg{width:1.5em;height:1.5em;}
+body.mode-phone .sidenav .nav-top{align-self:flex-start;margin:0 0 0.4em 0;}
 body.mode-phone .nav-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:290;}
 body.mode-phone.nav-open .nav-backdrop{display:block;}
 body.mode-phone .nav-mbar{display:flex;align-items:center;gap:0.5em;margin:-0.4em 0 0.9em;padding-bottom:0.5em;border-bottom:1px solid var(--border);}
 body.mode-phone .nav-cur{font-weight:700;color:var(--accent);font-size:1.05em;}
+/* 電腦／平板：側欄「蓋在頁面上」，不再佔一欄。
+   譜（和弦譜／音符譜／鍵盤譜／混合譜的小節）用滿整個寬度，側欄打開時蓋在譜的左邊；按 ☰ 收起就整片讓給譜。
+   上方的摘要、工具列、段落流程圖、匯出頁等操作區，會自動往右讓開側欄（--navc 由 JS 依側欄實際寬度算） */
+body:not(.mode-phone) .page{grid-template-columns:minmax(0,1fr)!important;}
+body:not(.mode-phone) .page>.sidenav{grid-area:1/1;justify-self:start;box-shadow:4px 0 14px rgba(0,0,0,0.10);}
+body:not(.mode-phone) .page>.right{grid-area:1/1;min-width:0;}
+body.nav-hide:not(.mode-phone) .page>.sidenav{box-shadow:none;height:auto;}
+body.nav-hide:not(.mode-phone) .sidenav .nav-top{background:var(--bg2);border:1px solid var(--border);box-shadow:0 2px 8px rgba(0,0,0,0.12);opacity:0.9;}
+body:not(.mode-phone) .right>.summary,
+body:not(.mode-phone) .right>[id^="vp-"]>:not(.chord-content):not(.icpages):not(.icon-toolbar){margin-left:var(--navc,0px);}
+body:not(.mode-phone) .right>[id^="vp-"]>.icon-toolbar{padding-left:var(--navc,0px);}
+@media print{ body .right>.summary, body .right>[id^="vp-"]>*{margin-left:0!important;} body .right>[id^="vp-"]>.icon-toolbar{padding-left:0!important;} }
 .vtabs{display:flex;gap:0.15em;margin-bottom:1.3em;border-bottom:1px solid var(--border);padding-bottom:0;overflow-x:auto;}
 .vtab{padding:0.6em 1em;font-size:0.85em;cursor:pointer;color:var(--text3);border-bottom:2px solid transparent;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit;transition:all .13s;white-space:nowrap;}
 .vtab.a{color:var(--accent);border-bottom-color:var(--accent);font-weight:500;}
@@ -1932,6 +1945,10 @@ body.gated>*:not(#gate){filter:grayscale(.9) opacity(.32)!important;pointer-even
     <div class="cl-head"><span>📝 更新日誌 · Arranger 理譜人</span><button class="btn" onclick="hideChangelog()">✕</button></div>
     <div class="cl-body">
       <p class="cl-ver">目前版本 <b class="app-ver-txt">—</b>　·　開發時間軸：2026-06-17 起（依使用回饋持續優化）</p>
+
+      <h4>側欄蓋在頁面上，譜用滿整個寬度 <span class="cl-date">2026-10-07</span></h4>
+      <ul><li>電腦／平板：左側欄改成蓋在頁面最前面，不再佔一欄；按 ☰ 收起後空間整片讓給譜</li>
+      <li>和弦譜、音符譜、鍵盤譜、混合譜的小節延伸到側欄底下；上方工具列和按鈕會自動讓開側欄</li></ul>
 
       <h4>👥 團隊模式 <span class="cl-date">2026-10-06</span></h4>
       <ul><li>歌曲庫「👥 團隊」分頁：有團隊方案的人可以建立團隊（每人最多 3 個、每隊最多 12 人、200 首譜）</li>
@@ -3812,7 +3829,7 @@ function refreshSvcMode(){
 
 /* ── SAVE / LOAD ── */
 /* ── 版本：每次更新改這裡（格式 年.月.日，同一天第二版加 -2）；顯示在標題旁與更新日誌，存檔／匯出也會記錄 ── */
-const APP_VERSION='2026.10.06-2';
+const APP_VERSION='2026.10.07-2';
 function showAppVersion(){ try{ const t='v'+APP_VERSION; const a=document.getElementById('app-ver'); if(a)a.textContent=t; document.querySelectorAll('.app-ver-txt').forEach(e=>e.textContent=t); }catch(e){} }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',showAppVersion); else setTimeout(showAppVersion,0);
 function getProjectData(){
@@ -10041,13 +10058,44 @@ function sw(name,btn){
 /* ── 左側欄：電腦／平板＝固定精簡（圖示＋小字）↔ 隱藏（只剩小 ☰）；手機＝滑出式，選好自動收 ── */
 function navIsPhone(){ return document.body.classList.contains('mode-phone'); }
 function navToggle(force){
-  if(navIsPhone()){ const on=(force===undefined)?!document.body.classList.contains('nav-open'):!!force; document.body.classList.toggle('nav-open',on); return; }
+  if(navIsPhone()){ const on=(force===undefined)?!document.body.classList.contains('nav-open'):!!force; if(on)navAlignPhone(); document.body.classList.toggle('nav-open',on); return; }
   if(force===false)return;
   const hide=!document.body.classList.contains('nav-hide');
   document.body.classList.toggle('nav-hide',hide);
   try{ localStorage.setItem('arranger_nav',hide?'hide':'show'); }catch(e){}
   try{ redrawMeasured(); }catch(e){}
 }
+/* 手機：滑出的側欄裡的 ☰ 對齊頁面上原本那顆 ☰（同位置、同大小），選單接在它下面 */
+function navAlignPhone(){
+  const nav=document.getElementById('sidenav'), top=nav&&nav.querySelector('.nav-top'), mb=document.querySelector('.nav-mbar .nav-burger');
+  if(!nav||!top)return;
+  const reset=()=>{ nav.style.paddingTop=''; top.style.marginLeft=''; top.style.fontSize=''; top.style.padding=''; };
+  if(!navIsPhone()||!mb){ reset(); return; }
+  const r=mb.getBoundingClientRect();
+  if(!r.height||r.bottom<0||r.top>window.innerHeight){ reset(); return; }
+  const cs=getComputedStyle(mb);
+  top.style.fontSize=cs.fontSize; top.style.padding=cs.padding;
+  nav.style.paddingTop='0px'; top.style.marginLeft='0px';
+  nav.scrollTop=0;
+  nav.style.paddingTop=Math.max(0,Math.round(r.top-top.offsetTop))+'px';
+  top.style.marginLeft=Math.max(0,Math.round(r.left-top.offsetLeft))+'px';
+}
+/* 側欄蓋在頁面上：算出操作區要讓開多少（側欄右緣＋一點間距－.right 原本的左內距） */
+function navSyncPad(){
+  const nav=document.getElementById('sidenav'), right=document.querySelector('.page>.right');
+  if(!nav||!right)return;
+  let v=0;
+  if(!navIsPhone()&&getComputedStyle(nav).display!=='none'){
+    const w=nav.getBoundingClientRect().width;
+    const pad=parseFloat(getComputedStyle(right).paddingLeft)||0;
+    v=Math.max(0,Math.round(w+10-pad));
+  }
+  document.body.style.setProperty('--navc',v+'px');
+  if(!navIsPhone())navAlignPhone();
+}
+(function(){ const go=()=>{ try{ const n=document.getElementById('sidenav'); if(n&&window.ResizeObserver)new ResizeObserver(()=>navSyncPad()).observe(n); }catch(e){} navSyncPad(); };
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',go); else go(); })();
+window.addEventListener('resize',()=>navSyncPad());
 (function navInit(){ let v=''; try{ v=localStorage.getItem('arranger_nav')||''; }catch(e){}
   document.body.classList.add('nav-mini');                       // 一律精簡樣式
   document.body.classList.toggle('nav-hide', v==='hide'); })();
