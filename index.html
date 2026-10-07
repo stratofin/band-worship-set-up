@@ -123,6 +123,18 @@ body.barpick .barpick-bar{display:inline-flex;}
 body.barpick .cbar2,body.barpick .cbeatcol{cursor:pointer!important;}
 body.barpick .cbar2{touch-action:none;overflow:visible;}   /* 拖曳選取不捲動；讓插入豎線可顯示在小節外緣 */
 body.toolbar-collapsed .icon-toolbar{display:none!important;}   /* 收合上方設定工具列 */
+/* 檢視大小：段落內容整體等比縮放（字、小節高度、間距都用 em） */
+#chord-content,#staff-content,#mixp-content{font-size:calc(var(--vz,1) * 1em);}
+.vzoom{display:inline-flex;align-items:center;gap:0.2em;}
+body .view-print .vzoom .vz-btn{min-width:0!important;width:2em;padding:0!important;}
+body:not(.mode-phone) .view-print .vzoom .vz-reset{min-width:0!important;}
+.vzoom .vz-val{margin-left:0.3em;}
+body.mode-phone .view-print .vzoom .vz-btn{width:1.7rem;}
+.vzoom .vz-btn:disabled{opacity:0.35;cursor:default;}
+.vzoom.on .vz-reset{border-color:var(--accent);color:var(--accent);}
+.vzoom .vz-val{font-family:'Space Mono',monospace;font-weight:700;}
+body.mode-phone .view-print .vzoom .btn{padding:0 0.35rem!important;}
+
 body.toolbar-collapsed .view-print>*:not(.tbcollapse-btn){display:none!important;}   /* 「輸出大小」那一排也一起收（只留 ▸ 工具列 鈕） */
 /* ── 極大化輸出：移除每個小節的外框，把空間讓給更大的文字（小節起訖仍有粗線可辨識） ── */
 body.print-maxi .cbar2{border-top-color:transparent!important;border-bottom-color:transparent!important;background:transparent!important;border-radius:0!important;min-height:0!important;}
@@ -1613,6 +1625,7 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   body.print-fit .chord-content>.ccard{margin-bottom:0.45em!important;}
   body.print-fit .mixpage-stack>.ccard{margin-bottom:0.45em!important;}
   body.print-fit .ccard-note{display:none!important;}
+  body.print-fit #chord-content,body.print-fit #staff-content,body.print-fit #mixp-content{font-size:1em!important;}   /* 經典A4 不受「檢視」大小影響 */
   body.print-fit .ccard-head{padding-left:0.1em!important;padding-right:0.1em!important;}
   body.print-fit .cbar-grid{padding-left:0!important;padding-right:0!important;}
   /* 每個段落內部的每一排也不要被切開 */
@@ -1793,7 +1806,7 @@ body.gated>*:not(#gate){filter:grayscale(.9) opacity(.32)!important;pointer-even
 
     <div id="vp-chord" style="display:none">
       <div class="print-head"></div>
-      <div class="view-print"><button class="btn tbcollapse-btn" onclick="toggleToolbar()" title="收合/展開上方設定工具列">▾ 工具列</button><button class="btn lock-btn" onclick="toggleLock()" title="鎖定：開＝只能看譜與左右滑頁、禁止任何編輯；關＝可編輯">🔓 鎖定 關</button><button class="btn svc-only svc-pb-btn" onclick="toggleSvcPB(this)" title="聚會服事列印：開＝每首歌各自從新頁開始；關＝段落連續接著印">📄 聚會分頁 關</button><button class="btn" onclick="openOcr()">🔍 辨識匯入</button><span class="vp-break"></span><label class="ic-hint" style="display:inline-flex;align-items:center;gap:0.25em">輸出大小<select class="ic-sel psize-sel" onchange="setPrintSize(this.value)" title="輸出時的小節大小：緊湊或最小可讓一頁容納更多小節"><option value="std">標準</option><option value="cmp">緊湊</option><option value="min">最小</option></select></label><button class="btn" onclick="printFit('chord')" title="自動縮放，盡量塞進一張 A4">📄 經典A4</button><button class="btn btna" onclick="printView('chord')">🖨 列印 / 存 PDF</button><button class="btn help-btn" onclick="showHelp(this,event)" title="說明：這一頁的操作方式（點其他地方就收起來）">❓ 說明</button></div>
+      <div class="view-print"><button class="btn tbcollapse-btn" onclick="toggleToolbar()" title="收合/展開上方設定工具列">▾ 工具列</button><button class="btn lock-btn" onclick="toggleLock()" title="鎖定：開＝只能看譜與左右滑頁、禁止任何編輯；關＝可編輯">🔓 鎖定 關</button><button class="btn svc-only svc-pb-btn" onclick="toggleSvcPB(this)" title="聚會服事列印：開＝每首歌各自從新頁開始；關＝段落連續接著印">📄 聚會分頁 關</button><button class="btn" onclick="openOcr()">🔍 辨識匯入</button><span class="vp-break"></span><span class="vzoom" data-v="chord"><button class="btn vz-reset" onclick="vzSet('chord',1)" title="檢視大小：段落與字一起等比放大縮小（也會套用到「🖨 列印」，不影響「📄 經典A4」）。點這裡回到 100%">檢視 <b class="vz-val">100%</b></button><button class="btn vz-btn" onclick="vzStep('chord',1)" title="放大">▲</button><button class="btn vz-btn" onclick="vzStep('chord',-1)" title="縮小">▼</button></span><button class="btn btna" onclick="printView('chord')">🖨 列印 / 存 PDF</button><button class="btn" onclick="printFit('chord')" title="自動縮放，盡量塞進一張 A4（不受「檢視」大小影響）">📄 經典A4</button><button class="btn help-btn" onclick="showHelp(this,event)" title="說明：這一頁的操作方式（點其他地方就收起來）">❓ 說明</button></div>
       <div class="icon-toolbar">
         <label class="ic-hint">拍號 <select class="ic-sel" id="chord-timesig" onchange="setTimeSig(this.value)"></select></label>
         <label class="ic-hint">顯示 <select class="ic-sel" id="chord-disp" onchange="setChordDisp(this.value)"><option value="num">級數</option><option value="male">和弦名(男Key)</option><option value="female">和弦名(女Key)</option></select></label>
@@ -1830,7 +1843,7 @@ body.gated>*:not(#gate){filter:grayscale(.9) opacity(.32)!important;pointer-even
     <!-- MIX+ VIEW (大格 + 樂器指令在控制區) -->
     <div id="vp-mixp" style="display:none">
       <div class="print-head"></div>
-      <div class="view-print"><button class="btn tbcollapse-btn" onclick="toggleToolbar()" title="收合/展開上方設定工具列">▾ 工具列</button><button class="btn lock-btn" onclick="toggleLock()" title="鎖定：開＝只能看譜與左右滑頁、禁止任何編輯；關＝可編輯">🔓 鎖定 關</button><button class="btn svc-only svc-pb-btn" onclick="toggleSvcPB(this)" title="聚會服事列印：開＝每首歌各自從新頁開始；關＝段落連續接著印">📄 聚會分頁 關</button><button class="btn" onclick="openOcr()">🔍 辨識匯入</button><span class="vp-break"></span><label class="ic-hint" style="display:inline-flex;align-items:center;gap:0.25em">輸出大小<select class="ic-sel psize-sel" onchange="setPrintSize(this.value)" title="輸出時的小節大小：緊湊或最小可讓一頁容納更多小節"><option value="std">標準</option><option value="cmp">緊湊</option><option value="min">最小</option></select></label><button class="btn" onclick="printFit('mixp')" title="自動縮放，盡量塞進一張 A4">📄 經典A4</button><button class="btn btna" onclick="printView('mixp')">🖨 列印 / 存 PDF</button><button class="btn help-btn" onclick="showHelp(this,event)" title="說明：這一頁的操作方式（點其他地方就收起來）">❓ 說明</button></div>
+      <div class="view-print"><button class="btn tbcollapse-btn" onclick="toggleToolbar()" title="收合/展開上方設定工具列">▾ 工具列</button><button class="btn lock-btn" onclick="toggleLock()" title="鎖定：開＝只能看譜與左右滑頁、禁止任何編輯；關＝可編輯">🔓 鎖定 關</button><button class="btn svc-only svc-pb-btn" onclick="toggleSvcPB(this)" title="聚會服事列印：開＝每首歌各自從新頁開始；關＝段落連續接著印">📄 聚會分頁 關</button><button class="btn" onclick="openOcr()">🔍 辨識匯入</button><span class="vp-break"></span><span class="vzoom" data-v="mixp"><button class="btn vz-reset" onclick="vzSet('mixp',1)" title="檢視大小：段落與字一起等比放大縮小（也會套用到「🖨 列印」，不影響「📄 經典A4」）。點這裡回到 100%">檢視 <b class="vz-val">100%</b></button><button class="btn vz-btn" onclick="vzStep('mixp',1)" title="放大">▲</button><button class="btn vz-btn" onclick="vzStep('mixp',-1)" title="縮小">▼</button></span><button class="btn btna" onclick="printView('mixp')">🖨 列印 / 存 PDF</button><button class="btn" onclick="printFit('mixp')" title="自動縮放，盡量塞進一張 A4（不受「檢視」大小影響）">📄 經典A4</button><button class="btn help-btn" onclick="showHelp(this,event)" title="說明：這一頁的操作方式（點其他地方就收起來）">❓ 說明</button></div>
       <div class="icon-toolbar">
         <button class="ic-navbtn" id="mixp-prev" onclick="mixpNav(-1)" title="上一頁">‹</button>
         <span class="ic-pageind" id="mixp-pageind">1 / 1</span>
@@ -1856,7 +1869,7 @@ body.gated>*:not(#gate){filter:grayscale(.9) opacity(.32)!important;pointer-even
     <!-- STAFF (五線譜) VIEW -->
     <div id="vp-staff" style="display:none">
       <div class="print-head"></div>
-      <div class="view-print"><button class="btn tbcollapse-btn" onclick="toggleToolbar()" title="收合/展開上方設定工具列">▾ 工具列</button><button class="btn lock-btn" onclick="toggleLock()" title="鎖定：開＝只能看譜與左右滑頁、禁止任何編輯；關＝可編輯">🔓 鎖定 關</button><button class="btn svc-only svc-pb-btn" onclick="toggleSvcPB(this)" title="聚會服事列印：開＝每首歌各自從新頁開始；關＝段落連續接著印">📄 聚會分頁 關</button><span class="vp-break"></span><label class="ic-hint" style="display:inline-flex;align-items:center;gap:0.25em">輸出大小<select class="ic-sel psize-sel" onchange="setPrintSize(this.value)" title="輸出時的小節大小：緊湊或最小可讓一頁容納更多小節"><option value="std">標準</option><option value="cmp">緊湊</option><option value="min">最小</option></select></label><button class="btn" onclick="printFit('staff')" title="自動縮放，盡量塞進一張 A4">📄 經典A4</button><button class="btn btna" onclick="printView('staff')">🖨 列印 / 存 PDF</button><button class="btn help-btn" onclick="showHelp(this,event)" title="說明：這一頁的操作方式（點其他地方就收起來）">❓ 說明</button></div>
+      <div class="view-print"><button class="btn tbcollapse-btn" onclick="toggleToolbar()" title="收合/展開上方設定工具列">▾ 工具列</button><button class="btn lock-btn" onclick="toggleLock()" title="鎖定：開＝只能看譜與左右滑頁、禁止任何編輯；關＝可編輯">🔓 鎖定 關</button><button class="btn svc-only svc-pb-btn" onclick="toggleSvcPB(this)" title="聚會服事列印：開＝每首歌各自從新頁開始；關＝段落連續接著印">📄 聚會分頁 關</button><span class="vp-break"></span><span class="vzoom" data-v="staff"><button class="btn vz-reset" onclick="vzSet('staff',1)" title="檢視大小：段落與字一起等比放大縮小（也會套用到「🖨 列印」，不影響「📄 經典A4」）。點這裡回到 100%">檢視 <b class="vz-val">100%</b></button><button class="btn vz-btn" onclick="vzStep('staff',1)" title="放大">▲</button><button class="btn vz-btn" onclick="vzStep('staff',-1)" title="縮小">▼</button></span><button class="btn btna" onclick="printView('staff')">🖨 列印 / 存 PDF</button><button class="btn" onclick="printFit('staff')" title="自動縮放，盡量塞進一張 A4（不受「檢視」大小影響）">📄 經典A4</button><button class="btn help-btn" onclick="showHelp(this,event)" title="說明：這一頁的操作方式（點其他地方就收起來）">❓ 說明</button></div>
       <div class="icon-toolbar">
         <label class="ic-hint">顯示 <select class="ic-sel" id="staff-disp" onchange="setChordDisp(this.value)"><option value="num">級數</option><option value="male">和弦名(男Key)</option><option value="female">和弦名(女Key)</option></select></label>
         <span class="key-step" title="半音微調 Key"><label>微調Key</label><button onclick="transposeKey(1)" title="升半音">▲</button><b class="keystep-lbl">—</b><button onclick="transposeKey(-1)" title="降半音">▼</button></span>
@@ -1960,6 +1973,11 @@ body.gated>*:not(#gate){filter:grayscale(.9) opacity(.32)!important;pointer-even
     <div class="cl-head"><span>📝 更新日誌 · Arranger 理譜人</span><button class="btn" onclick="hideChangelog()">✕</button></div>
     <div class="cl-body">
       <p class="cl-ver">目前版本 <b class="app-ver-txt">—</b>　·　開發時間軸：2026-06-17 起（依使用回饋持續優化）</p>
+
+      <h4>「輸出大小」改成「檢視」大小 <span class="cl-date">2026-10-08</span></h4>
+      <ul><li>和弦譜、鍵盤譜、混合譜：工具列的「輸出大小」改成「檢視 100%」＋ ▲ ▼，段落和字一起等比放大縮小（50%～200%），每頁各自記住；點「檢視」回到 100%</li>
+      <li>「檢視」大小也會套用到「🖨 列印 / 存 PDF」；「📄 經典A4」不受影響，照樣自動塞頁</li>
+      <li>「🖨 列印」和「📄 經典A4」兩個按鈕左右互換</li></ul>
 
       <h4>修正 Safari 印出來沒套用經典A4 版面 <span class="cl-date">2026-10-07</span></h4>
       <ul><li>Safari（Mac／iPhone／iPad）在列印視窗還開著時就送出「列印結束」，畫面提早還原，印出來變回一般樣式；現在改成回到頁面點一下才還原</li></ul>
@@ -3853,7 +3871,7 @@ function refreshSvcMode(){
 
 /* ── SAVE / LOAD ── */
 /* ── 版本：每次更新改這裡（格式 年.月.日，同一天第二版加 -2）；顯示在標題旁與更新日誌，存檔／匯出也會記錄 ── */
-const APP_VERSION='2026.10.07-4';
+const APP_VERSION='2026.10.08';
 function showAppVersion(){ try{ const t='v'+APP_VERSION; const a=document.getElementById('app-ver'); if(a)a.textContent=t; document.querySelectorAll('.app-ver-txt').forEach(e=>e.textContent=t); }catch(e){} }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',showAppVersion); else setTimeout(showAppVersion,0);
 function getProjectData(){
@@ -5800,7 +5818,7 @@ async function printView(name){
     // 一般列印可跨頁 → 直接放大字級（不必塞一頁），維持各段原本的每排設定
     const r=printFsRange();      // 依「輸出大小」取上限（固定值，確保各平台一致）
     document.documentElement.style.setProperty('--print-fs',r.max+'px');
-    showPrintFsTip(r.max,r.min,r.max,1,true,name);   // 原本傳 view（未定義）會讓 🖨 列印直接中斷
+    if(typeof _vz!=='undefined'&&_vz[name]&&_vz[name]!==1) showPrintVzTip(name);   // 一般列印：照「檢視」大小輸出，可跨頁
   }
   document.body.classList.add(cls);
   window._printCls=cls;
@@ -5871,12 +5889,36 @@ function setPrintSize(v){
 renderUsageSelect();
 }
 function syncPrintSizeSel(){ document.querySelectorAll('.psize-sel').forEach(s=>s.value=_printSize); }
+/* ── 檢視大小（和弦譜／鍵盤譜／混合譜各自一個）：段落和字一起等比放大縮小；
+   螢幕與「🖨 列印」都套用，「📄 經典A4」不受影響（經典A4 自己算塞一頁的字級） ── */
+const VZ_STEPS=[0.5,0.6,0.7,0.8,0.9,1,1.1,1.25,1.4,1.6,1.8,2];
+const VZ_EL={chord:'chord-content',staff:'staff-content',mixp:'mixp-content'};
+let _vz={chord:1,staff:1,mixp:1};
+try{ const o=JSON.parse(localStorage.getItem('arranger_viewzoom')||'{}'); Object.keys(_vz).forEach(k=>{ const v=+o[k]; if(VZ_STEPS.includes(v))_vz[k]=v; }); }catch(e){}
+function vzApply(v){
+  const el=document.getElementById(VZ_EL[v]); const z=_vz[v]||1;
+  if(el)el.style.setProperty('--vz',z);
+  document.querySelectorAll('.vzoom[data-v="'+v+'"]').forEach(w=>{
+    const t=w.querySelector('.vz-val'); if(t)t.textContent=Math.round(z*100)+'%';
+    const bs=w.querySelectorAll('.vz-btn'); if(bs[0])bs[0].disabled=(z>=VZ_STEPS[VZ_STEPS.length-1]); if(bs[1])bs[1].disabled=(z<=VZ_STEPS[0]);
+    w.classList.toggle('on',z!==1); });
+}
+function vzSet(v,z){
+  if(!VZ_EL[v])return; _vz[v]=VZ_STEPS.includes(z)?z:1;
+  try{ localStorage.setItem('arranger_viewzoom',JSON.stringify(_vz)); }catch(e){}
+  vzApply(v);
+  try{ redrawMeasured(); }catch(e){}
+}
+function vzStep(v,d){
+  let i=VZ_STEPS.indexOf(_vz[v]||1); if(i<0)i=VZ_STEPS.indexOf(1);
+  vzSet(v,VZ_STEPS[Math.max(0,Math.min(VZ_STEPS.length-1,i+d))]);
+}
+function vzApplyAll(){ Object.keys(VZ_EL).forEach(vzApply); }
+
 /* 經典A4 自動字級的搜尋範圍（由大到小逐 px 找「還塞得下」的最大字級）。
    下限是實際印出來仍看得清楚的大小，不會為了塞一頁把字縮到不能讀。 */
 function printFsRange(){
-  return _printSize==='min' ? {max:15, min:7}
-       : _printSize==='cmp' ? {max:19, min:8}
-       : {max:26, min:10};
+  return {max:26, min:10};   // 經典A4／列印基準一律用標準範圍（原「輸出大小」已改成各頁的「檢視」大小）
 }
 function printFsList(){
   const r=printFsRange(), out=[];
@@ -5894,6 +5936,13 @@ function restoreModeAfterPrint(){
   _savedModeCls.forEach(c=>b.classList.add(c)); _savedModeCls=null;
 }
 /* 經典A4：告知這次輸出用的字級與合理範圍（螢幕上短暫顯示，不影響列印內容） */
+function showPrintVzTip(v){
+  let el=document.getElementById('printfs-tip');
+  if(!el){ el=document.createElement('div'); el.id='printfs-tip'; el.className='printfs-tip'; document.body.appendChild(el); }
+  el.textContent=Lf('列印照「檢視」大小 ','Printing at view size ','「表示」サイズで印刷 ','「보기」 크기로 인쇄 ')+Math.round(_vz[v]*100)+'%';
+  el.classList.remove('warn'); el.classList.add('show');
+  clearTimeout(showPrintFsTip._t); showPrintFsTip._t=setTimeout(()=>el.classList.remove('show'),3500);
+}
 function showPrintFsTip(fs,min,max,scale,fitOnePage,view,pages){
   let el=document.getElementById('printfs-tip');
   if(!el){ el=document.createElement('div'); el.id='printfs-tip'; el.className='printfs-tip'; document.body.appendChild(el); }
@@ -5902,9 +5951,9 @@ function showPrintFsTip(fs,min,max,scale,fitOnePage,view,pages){
     +Lf('）',')','）',')');
   const okTxt=Lf('　·　已塞進 1 頁','  ·  fits on 1 page','　·　1ページに収まりました','  ·  1페이지에 들어갔습니다');
   const pn=Math.max(2,pages||2);
-  const noTxt=Lf('　·　一頁放不下，分成 '+pn+' 頁（每頁用滿、字盡量放大）；想壓成一頁可用段落勾選少印幾段，或把「輸出大小」改成緊湊／最小',
-                 '  ·  doesn\'t fit on one page — split into '+pn+' pages, each filled with the largest text that fits. To get one page, print fewer sections or set Output size to Compact / Smallest',
-                 '　·　1ページに収まらないため '+pn+' ページに分けました（各ページを使い切る最大の文字サイズ）。1ページにするにはセクションを絞るか「出力サイズ」をコンパクト／最小に','  ·  한 페이지에 들어가지 않아 '+pn+'페이지로 나눴습니다(각 페이지를 채우는 가장 큰 글자). 한 페이지로 하려면 섹션을 줄이거나 「출력 크기」를 조밀하게／최소로');
+  const noTxt=Lf('　·　一頁放不下，分成 '+pn+' 頁（每頁用滿、字盡量放大）；想壓成一頁可以在段落勾選時少印幾段',
+                 '  ·  doesn\'t fit on one page — split into '+pn+' pages, each filled with the largest text that fits. To get one page, print fewer sections',
+                 '　·　1ページに収まらないため '+pn+' ページに分けました（各ページを使い切る最大の文字サイズ）。1ページにするにはセクションを絞ってください','  ·  한 페이지에 들어가지 않아 '+pn+'페이지로 나눴습니다(각 페이지를 채우는 가장 큰 글자). 한 페이지로 하려면 섹션을 줄이세요');
   el.textContent=base+(fitOnePage?okTxt:noTxt);
   el.classList.toggle('warn',!fitOnePage);
   el.classList.add('show');
@@ -10241,7 +10290,7 @@ syncDispSelects();
 initTopbar();
 applySvcPB();
 syncMaxiBtns();
-syncPrintSizeSel();
+syncPrintSizeSel(); vzApplyAll();
 try{ syncKbOrderBtn(); }catch(e){}
 try{ syncKbLRootBtn(); }catch(e){}
 applyLang();
