@@ -1961,6 +1961,9 @@ body.gated>*:not(#gate){filter:grayscale(.9) opacity(.32)!important;pointer-even
     <div class="cl-body">
       <p class="cl-ver">目前版本 <b class="app-ver-txt">—</b>　·　開發時間軸：2026-06-17 起（依使用回饋持續優化）</p>
 
+      <h4>修正 Safari 印出來沒套用經典A4 版面 <span class="cl-date">2026-10-07</span></h4>
+      <ul><li>Safari（Mac／iPhone／iPad）在列印視窗還開著時就送出「列印結束」，畫面提早還原，印出來變回一般樣式；現在改成回到頁面點一下才還原</li></ul>
+
       <h4>經典A4 更省空間、工具列整排收合 <span class="cl-date">2026-10-07</span></h4>
       <ul><li>經典A4：拿掉段落外框和段落下方的備註，只留小節框；字級細調到 ¼px，把一頁的空白盡量用完</li>
       <li>經典A4 需要分頁時，不再直接用最小字：在頁數不變的前提下挑最大的字，每一頁都用滿</li>
@@ -3850,7 +3853,7 @@ function refreshSvcMode(){
 
 /* ── SAVE / LOAD ── */
 /* ── 版本：每次更新改這裡（格式 年.月.日，同一天第二版加 -2）；顯示在標題旁與更新日誌，存檔／匯出也會記錄 ── */
-const APP_VERSION='2026.10.07-3';
+const APP_VERSION='2026.10.07-4';
 function showAppVersion(){ try{ const t='v'+APP_VERSION; const a=document.getElementById('app-ver'); if(a)a.textContent=t; document.querySelectorAll('.app-ver-txt').forEach(e=>e.textContent=t); }catch(e){} }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',showAppVersion); else setTimeout(showAppVersion,0);
 function getProjectData(){
@@ -5801,7 +5804,7 @@ async function printView(name){
   }
   document.body.classList.add(cls);
   window._printCls=cls;
-  setTimeout(()=>window.print(),60);
+  setTimeout(()=>doPrint(),60);
 }
 function printIcon(){ return printView('icon'); }   // 相容舊呼叫
 /* 經典 A4：自動縮放，盡量塞進一張 A4 */
@@ -6020,12 +6023,25 @@ async function printFit(view){
   document.documentElement.style.setProperty('--fit-scale', scale.toFixed(3));
   document.body.classList.add(cls,'print-fit');
   window._printCls=cls;
-  setTimeout(()=>window.print(),60);
+  setTimeout(()=>doPrint(),60);
 }
-/* iPhone／iPad 的 Safari 有時不送 afterprint：列印樣式一離開就自己補做收尾，避免畫面一直停在「列印收合」狀態 */
-try{ const _mqp=window.matchMedia&&window.matchMedia('print');
-  if(_mqp&&_mqp.addEventListener) _mqp.addEventListener('change',e=>{ if(!e.matches) setTimeout(()=>{ if(window._printCls||window._printMode) window.dispatchEvent(new Event('afterprint')); },400); }); }catch(e){}
-window.addEventListener('afterprint',()=>{ restorePrintPick(); restoreModeAfterPrint(); document.body.classList.remove('print-tight','print-xtight'); if(window._printCls){ document.body.classList.remove(window._printCls); } document.body.classList.remove('print-fit','print-maxi'); window._printCls=null; const was=window._printMode||window._printRepeat||window._printBPR||window._printSongTitle; window._printMode=false; window._printRepeat=false; window._printBPR=null; window._printSongTitle=''; if(was){ try{renderCharts();}catch(e){} } });
+/* 列印收尾的時機：
+   Chrome 的 window.print() 會等列印視窗關掉才回來 → 回來就收尾。
+   Safari（Mac／iPhone／iPad）的 window.print() 不等、afterprint 也會在列印視窗還開著時就送出；
+   如果那時就拿掉列印樣式，Safari 最後產生的 PDF／列印會變回一般樣式（有段落外框、備註、字級沒調）。
+   所以這種情況改成「等使用者回到頁面點一下或按鍵」才收尾。 */
+window._printBusy=false;
+function doPrint(){
+  window._printBusy=true;
+  const t=performance.now();
+  try{ window.print(); }catch(e){}
+  if(performance.now()-t>250){ window._printBusy=false; printCleanup(); return; }
+  const evs=['pointerdown','keydown','touchstart'];
+  const fin=()=>{ evs.forEach(n=>window.removeEventListener(n,fin,true)); window._printBusy=false; printCleanup(); };
+  setTimeout(()=>evs.forEach(n=>window.addEventListener(n,fin,true)),600);
+}
+window.addEventListener('afterprint',()=>{ if(!window._printBusy)printCleanup(); });
+function printCleanup(){ restorePrintPick(); restoreModeAfterPrint(); document.body.classList.remove('print-tight','print-xtight'); if(window._printCls){ document.body.classList.remove(window._printCls); } document.body.classList.remove('print-fit','print-maxi'); window._printCls=null; const was=window._printMode||window._printRepeat||window._printBPR||window._printSongTitle; window._printMode=false; window._printRepeat=false; window._printBPR=null; window._printSongTitle=''; if(was){ try{renderCharts();}catch(e){} } }
 
 /* ── OCR 圖片/PDF 辨識匯入 ── */
 function openOcr(){ document.getElementById('ocr-modal').style.display='flex'; }
