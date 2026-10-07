@@ -123,6 +123,7 @@ body.barpick .barpick-bar{display:inline-flex;}
 body.barpick .cbar2,body.barpick .cbeatcol{cursor:pointer!important;}
 body.barpick .cbar2{touch-action:none;overflow:visible;}   /* 拖曳選取不捲動；讓插入豎線可顯示在小節外緣 */
 body.toolbar-collapsed .icon-toolbar{display:none!important;}   /* 收合上方設定工具列 */
+body.toolbar-collapsed .view-print>*:not(.tbcollapse-btn){display:none!important;}   /* 「輸出大小」那一排也一起收（只留 ▸ 工具列 鈕） */
 /* ── 極大化輸出：移除每個小節的外框，把空間讓給更大的文字（小節起訖仍有粗線可辨識） ── */
 body.print-maxi .cbar2{border-top-color:transparent!important;border-bottom-color:transparent!important;background:transparent!important;border-radius:0!important;min-height:0!important;}
 /* 只縮外圍留白（卡片內距、小節間距），格子內距保留 → 空間讓給更大的文字 */
@@ -333,6 +334,13 @@ body.mode-phone.nav-mini .page .sidenav .vtab{flex-direction:row;gap:0.9em;paddi
 body.mode-phone.nav-mini .nav-ic svg{width:1.5em;height:1.5em;}
 body.mode-phone .sidenav .nav-top{align-self:flex-start;margin:0 0 0.4em 0;}
 body.mode-phone .nav-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:290;}
+/* 手機側欄：底色半透明，看得到後面的頁面；按鈕本身維持實色，字一樣清楚 */
+body.mode-phone .sidenav{background:color-mix(in srgb,var(--bg2) 45%,transparent);border-right-color:transparent;}
+body.mode-phone .nav-backdrop{background:rgba(0,0,0,0.18);}
+body.mode-phone .page .sidenav .vtab,body.mode-phone .sidenav .nav-top{background:var(--bg2);box-shadow:0 1px 4px rgba(0,0,0,0.10);}
+body.mode-phone .page .sidenav .vtab:hover{background:var(--bg3);}
+body.mode-phone .page .sidenav .vtab.a{background:var(--bg4);}
+body.mode-phone .page .sidenav .vtab{margin-bottom:0.2em;}
 body.mode-phone.nav-open .nav-backdrop{display:block;}
 body.mode-phone .nav-mbar{display:flex;align-items:center;gap:0.5em;margin:-0.4em 0 0.9em;padding-bottom:0.5em;border-bottom:1px solid var(--border);}
 body.mode-phone .nav-cur{font-weight:700;color:var(--accent);font-size:1.05em;}
@@ -1600,6 +1608,13 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   body[class*="print-"] .cbeatcols.cfit{--bm:1.3;}
   body.print-mixp .mixpage-stack.mixp .cbeatcols.cfit .beat-r.fit{font-size:min(calc(min(var(--bfs,1.2em),1.45em) * var(--cr,1)), calc(100cqw / (var(--tw,1) * var(--tk) * var(--bm))))!important;}
   body.print-fit .ccard{page-break-inside:avoid!important;break-inside:avoid!important;-webkit-column-break-inside:avoid!important;}
+  /* 經典A4：拿掉段落外框與段落下方備註，只留小節框，空間都給譜 */
+  body.print-fit .ccard{border:none!important;border-radius:0!important;box-shadow:none!important;margin-bottom:0.45em!important;}
+  body.print-fit .chord-content>.ccard{margin-bottom:0.45em!important;}
+  body.print-fit .mixpage-stack>.ccard{margin-bottom:0.45em!important;}
+  body.print-fit .ccard-note{display:none!important;}
+  body.print-fit .ccard-head{padding-left:0.1em!important;padding-right:0.1em!important;}
+  body.print-fit .cbar-grid{padding-left:0!important;padding-right:0!important;}
   /* 每個段落內部的每一排也不要被切開 */
   body[class*="print-"] .arr-rowblock{break-inside:avoid!important;page-break-inside:avoid!important;}
   /* ── 分頁不切到小節：段落太長被迫拆頁時，單一小節仍保持完整（寧可留白換下一頁） ── */
@@ -1945,6 +1960,12 @@ body.gated>*:not(#gate){filter:grayscale(.9) opacity(.32)!important;pointer-even
     <div class="cl-head"><span>📝 更新日誌 · Arranger 理譜人</span><button class="btn" onclick="hideChangelog()">✕</button></div>
     <div class="cl-body">
       <p class="cl-ver">目前版本 <b class="app-ver-txt">—</b>　·　開發時間軸：2026-06-17 起（依使用回饋持續優化）</p>
+
+      <h4>經典A4 更省空間、工具列整排收合 <span class="cl-date">2026-10-07</span></h4>
+      <ul><li>經典A4：拿掉段落外框和段落下方的備註，只留小節框；字級細調到 ¼px，把一頁的空白盡量用完</li>
+      <li>經典A4 需要分頁時，不再直接用最小字：在頁數不變的前提下挑最大的字，每一頁都用滿</li>
+      <li>「▾ 工具列」收起時，「輸出大小」那一排也一起收，只留 ▸ 工具列 鈕</li>
+      <li>手機側欄：底色半透明看得到後面的頁面，按鈕維持實色；側欄裡的 ☰ 對齊頁面上的 ☰</li></ul>
 
       <h4>側欄蓋在頁面上，譜用滿整個寬度 <span class="cl-date">2026-10-07</span></h4>
       <ul><li>電腦／平板：左側欄改成蓋在頁面最前面，不再佔一欄；按 ☰ 收起後空間整片讓給譜</li>
@@ -3829,7 +3850,7 @@ function refreshSvcMode(){
 
 /* ── SAVE / LOAD ── */
 /* ── 版本：每次更新改這裡（格式 年.月.日，同一天第二版加 -2）；顯示在標題旁與更新日誌，存檔／匯出也會記錄 ── */
-const APP_VERSION='2026.10.07-2';
+const APP_VERSION='2026.10.07-3';
 function showAppVersion(){ try{ const t='v'+APP_VERSION; const a=document.getElementById('app-ver'); if(a)a.textContent=t; document.querySelectorAll('.app-ver-txt').forEach(e=>e.textContent=t); }catch(e){} }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',showAppVersion); else setTimeout(showAppVersion,0);
 function getProjectData(){
@@ -5870,16 +5891,17 @@ function restoreModeAfterPrint(){
   _savedModeCls.forEach(c=>b.classList.add(c)); _savedModeCls=null;
 }
 /* 經典A4：告知這次輸出用的字級與合理範圍（螢幕上短暫顯示，不影響列印內容） */
-function showPrintFsTip(fs,min,max,scale,fitOnePage,view){
+function showPrintFsTip(fs,min,max,scale,fitOnePage,view,pages){
   let el=document.getElementById('printfs-tip');
   if(!el){ el=document.createElement('div'); el.id='printfs-tip'; el.className='printfs-tip'; document.body.appendChild(el); }
   const base=Lf('經典A4 輸出字級：','Fit-A4 font size: ','A4出力の文字サイズ：','A4 출력 글자 크기: ')+fs+'px'
     +Lf('（自動挑選，範圍 ','  (auto, range ','（自動選択・範囲 ','  (자동 선택, 범위 ')+min+'–'+max
     +Lf('）',')','）',')');
   const okTxt=Lf('　·　已塞進 1 頁','  ·  fits on 1 page','　·　1ページに収まりました','  ·  1페이지에 들어갔습니다');
-  const noTxt=Lf('　·　字級已到最小仍需分頁，可用「📄 經典A4」的段落勾選只輸出需要的段落，或把「輸出大小」改成緊湊／最小',
-                 '  ·  still needs more than one page at the smallest size — pick fewer sections in the Fit-A4 dialog, or set Output size to Compact / Smallest',
-                 '　·　最小サイズでも1ページに収まりません。「📄 A4に収める」でセクションを絞るか、「出力サイズ」をコンパクト／最小にしてください','  ·  최소 크기로도 1페이지에 들어가지 않습니다. 「📄 A4에 맞추기」에서 섹션을 줄이거나 「출력 크기」를 조밀하게／최소로 바꿔 보세요');
+  const pn=Math.max(2,pages||2);
+  const noTxt=Lf('　·　一頁放不下，分成 '+pn+' 頁（每頁用滿、字盡量放大）；想壓成一頁可用段落勾選少印幾段，或把「輸出大小」改成緊湊／最小',
+                 '  ·  doesn\'t fit on one page — split into '+pn+' pages, each filled with the largest text that fits. To get one page, print fewer sections or set Output size to Compact / Smallest',
+                 '　·　1ページに収まらないため '+pn+' ページに分けました（各ページを使い切る最大の文字サイズ）。1ページにするにはセクションを絞るか「出力サイズ」をコンパクト／最小に','  ·  한 페이지에 들어가지 않아 '+pn+'페이지로 나눴습니다(각 페이지를 채우는 가장 큰 글자). 한 페이지로 하려면 섹션을 줄이거나 「출력 크기」를 조밀하게／최소로');
   el.textContent=base+(fitOnePage?okTxt:noTxt);
   el.classList.toggle('warn',!fitOnePage);
   el.classList.add('show');
@@ -5902,20 +5924,56 @@ async function printFit(view){
   const PH=1040;   // A4 直式可列印高度（約 px @96dpi，已扣邊界）
   const srcId=view==='chord'?'chord-content':view==='note'?'note-content':view==='mixp'?'mixp-content':view==='staff'?'staff-content':'mix-content';
   const renderView=()=>{ if(view==='chord')renderChord(); else if(view==='note')renderNote(); else if(view==='mix')renderMix(); else if(view==='mixp')renderMixP(); else if(view==='staff')renderStaff(); };
-  const measureH=(fs)=>{ const src=document.getElementById(srcId); if(!src)return PH;
-    const clone=src.cloneNode(true);
+  /* 量測：在看不見的 iframe 裡用「列印樣式」排一次版（@media print 的規則改成直接生效），
+     寬度＝A4 扣掉左右邊界（188mm≈710px），跟真的印出來幾乎一樣。
+     回傳總高度，以及「段落不跨頁」時實際會用掉幾頁（照順序一段段放進頁面，放不下就換頁） */
+  const PG_CAP=PH*0.98;   // 保留一點餘量
+  const src0=document.getElementById(srcId), vpId=src0&&src0.parentElement?src0.parentElement.id:'';
+  const mf=document.createElement('iframe');
+  mf.setAttribute('aria-hidden','true'); mf.tabIndex=-1;
+  mf.style.cssText='position:fixed;left:-99999px;top:0;width:710px;height:3000px;border:0;visibility:hidden;pointer-events:none;';
+  document.body.appendChild(mf);
+  const md=mf.contentDocument;
+  const css=[...document.querySelectorAll('style')].map(st=>st.textContent).join('\n')
+    .replace(/@media\s+print/g,'@media all').replace(/@media\s+(only\s+)?screen/g,'@media not all');
+  md.open(); md.write('<!doctype html><html><head><meta charset="utf-8"><style>'+css+'</style></head><body><div class="page"><section class="right"></section></div></body></html>'); md.close();
+  md.documentElement.className=document.documentElement.className;
+  md.documentElement.style.cssText=document.documentElement.style.cssText;
+  md.body.className=document.body.className;
+  ['mode-phone','mode-tablet','nav-open','toolbar-collapsed'].forEach(c=>md.body.classList.remove(c));
+  md.body.classList.add(cls,'print-fit','print-maxi');
+  if(md.fonts&&md.fonts.ready){ try{ await Promise.race([md.fonts.ready,new Promise(r=>setTimeout(r,1500))]); }catch(e){} }
+  const flatBlocks=(el)=>{ const out=[];
+    [...el.children].forEach(c=>{ if(!c.offsetHeight)return;
+      if(c.matches('.ccard')||!c.querySelector('.ccard'))out.push(c); else out.push(...flatBlocks(c)); });
+    return out; };
+  const layoutAt=(fs)=>{ const vp=document.getElementById(vpId); if(!vp)return {h:PH,pages:1};
+    const right=md.querySelector('.right'); right.innerHTML='';
+    const clone=vp.cloneNode(true); clone.style.display='block';
     clone.querySelectorAll('.beat-i').forEach(n=>n.remove());
-    clone.querySelectorAll('.icpage').forEach(p=>{p.style.minWidth='0';p.style.width='100%';});
-    clone.style.cssText='position:fixed;left:-99999px;top:0;width:720px;display:block;font-size:'+(fs||curFont)+'px;font-family:\'Noto Sans TC\',sans-serif;';
-    /* 極大化：和弦放大規則只在列印生效，量測時手動套上，才不會低估高度 */
-    if(_printMaxi){ clone.querySelectorAll('.bt-note').forEach(n=>{ n.style.fontSize=n.classList.contains('bt-xlong')?'0.86em':n.classList.contains('bt-long')?'1.05em':'1.45em'; }); }
-    document.body.appendChild(clone); const h=clone.scrollHeight||PH; document.body.removeChild(clone); return h; };
+    right.appendChild(clone);
+    md.documentElement.style.setProperty('--print-fs',fs+'px');
+    md.body.classList.toggle('print-tight',fs<=12); md.body.classList.toggle('print-xtight',fs<=9);
+    const h=right.scrollHeight||PH;
+    const top0=right.getBoundingClientRect().top;
+    const kids=flatBlocks(clone);
+    const ext=kids.map((k,i)=>{ const r=k.getBoundingClientRect();
+      const nxt=(i+1<kids.length)?kids[i+1].getBoundingClientRect().top:(top0+h);
+      return Math.max(r.height,nxt-r.top); });
+    let pages=1, used=0;
+    for(const e of ext){
+      if(e>PG_CAP){ if(used>0){pages++;used=0;} const n=Math.ceil(e/PG_CAP); pages+=n-1; used=e-(n-1)*PG_CAP; continue; }   // 一段比一頁還長：照排拆頁
+      if(used>0&&used+e>PG_CAP){ pages++; used=0; }
+      used+=e;
+    }
+    return {h,pages}; };
+  const pagesAt=(fs)=>layoutAt(fs).pages;
   renderView();
   if(document.fonts&&document.fonts.ready){ try{ await document.fonts.ready; }catch(e){} }
   let scale=1;
   const FS_R=printFsRange();
   const FS_MAX=FS_R.max, FS_MIN=FS_R.min;
-  let usedFS=FS_MIN, fitOnePage=false;
+  let usedFS=FS_MIN, fitOnePage=false, usedPages=1;
   /* 二分搜尋：高度隨字級遞增，找出「還塞得進一頁」的最大字級（精度 1px） */
   const bestFS=(fits)=>{
     let lo=FS_MIN, hi=FS_MAX, best=null;
@@ -5932,26 +5990,33 @@ async function printFit(view){
       let chosen=null, chosenFS=null;
       for(const bv of cands){
         window._printBPR=bv; renderView();
-        const f=bestFS(fs=>measureH(fs)<=PH);
+        const f=bestFS(fs=>pagesAt(fs)<=1);
         if(f!=null && (chosenFS==null || f>chosenFS)){ chosen=bv; chosenFS=f; }
         if(chosenFS===FS_MAX)break;                       // 已經是最大字級，不用再試
       }
-      if(chosenFS!=null){ window._printBPR=chosen; usedFS=chosenFS; fitOnePage=true; }
-      else { window._printBPR=_printMaxi?null:null; usedFS=FS_MIN; }   // 最小字級仍塞不下→分頁（不縮放，避免 iOS Safari 切開小節）
+      if(chosenFS!=null){ window._printBPR=chosen; usedFS=chosenFS; fitOnePage=true; usedPages=1; }
+      else {   // 最小字級仍塞不下→分頁：頁數不變的前提下，挑最大的字，把每一頁都用滿（不縮放，避免 iOS Safari 切開小節）
+        window._printBPR=null; renderView();
+        usedPages=pagesAt(FS_MIN);
+        usedFS=bestFS(fs=>pagesAt(fs)<=usedPages)||FS_MIN;
+      }
       renderView();
     } else {
       // 聚會 / 混合 / KB：同樣二分找塞得下的最大字級
-      const f=bestFS(fs=>measureH(fs)<=PH);
-      if(f!=null){ usedFS=f; fitOnePage=true; }
-      else usedFS=FS_MIN;
+      const f=bestFS(fs=>pagesAt(fs)<=1);
+      if(f!=null){ usedFS=f; fitOnePage=true; usedPages=1; }
+      else { usedPages=pagesAt(FS_MIN); usedFS=bestFS(fs=>pagesAt(fs)<=usedPages)||FS_MIN; }
     }
   }catch(e){}
+  /* 再細調 ¼px：整數字級的下一級塞不下時，試 +¾、+½、+¼，把剩下的空白也用掉 */
+  try{ for(const d of [0.75,0.5,0.25]){ const f=usedFS+d; if(f>FS_MAX)continue; if(pagesAt(f)<=usedPages){ usedFS=f; break; } } }catch(e){}
+  try{ mf.remove(); }catch(e){}
   usedFS=Math.max(FS_MIN,Math.min(FS_MAX,usedFS));
   document.documentElement.style.setProperty('--print-fs', usedFS+'px');
   /* 字級壓得很小時，段落標題與小節間距也一起收緊，空間才不會白白浪費 */
   document.body.classList.toggle('print-tight', usedFS<=12);
   document.body.classList.toggle('print-xtight', usedFS<=9);
-  showPrintFsTip(usedFS,FS_MIN,FS_MAX,scale,fitOnePage,view);
+  showPrintFsTip(usedFS,FS_MIN,FS_MAX,scale,fitOnePage,view,usedPages);
   document.documentElement.style.setProperty('--fit-scale', scale.toFixed(3));
   document.body.classList.add(cls,'print-fit');
   window._printCls=cls;
