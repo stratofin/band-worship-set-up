@@ -1625,7 +1625,14 @@ body.mode-phone .ic-val{flex-basis:100%;width:100%;font-size:0.92em;line-height:
   body.print-fit .chord-content>.ccard{margin-bottom:0.45em!important;}
   body.print-fit .mixpage-stack>.ccard{margin-bottom:0.45em!important;}
   body.print-fit .ccard-note{display:none!important;}
-  body.print-fit #chord-content,body.print-fit #staff-content,body.print-fit #mixp-content{font-size:1em!important;}   /* 經典A4 不受「檢視」大小影響 */
+  body.print-fit #chord-content,body.print-fit #staff-content,body.print-fit #mixp-content{font-size:1em!important;}
+  /* 經典A4：和弦延伸蓋過後面空的細分格（靠左對齊在自己的拍點，往右延伸） */
+  body.print-fit .cbeatcols.cfit .cbeatcol:has(.beat-r.span){overflow:visible!important;z-index:2;}
+  body.print-fit .cbeatcols.cfit .beat-r.fit.span{align-self:flex-start!important;justify-content:flex-start!important;width:calc(100% * var(--sp,1))!important;max-width:none!important;padding-left:0.04em;position:relative;
+    font-size:min(11px, calc(100cqw * var(--sp,1) / (var(--tw,1) * var(--tk) * var(--bm))))!important;}   /* 字跟一般和弦一樣大（列印基準 11px），延伸的空間還不夠才縮 */
+  body.print-mixp.print-fit .mixpage-stack.mixp .cbeatcols.cfit .beat-r.fit.span{font-size:min(var(--bfs,1.2em), 1.45em, calc(100cqw * var(--sp,1) / (var(--tw,1) * var(--tk) * var(--bm))))!important;}
+  body.print-fit .cbeatcol.spanned .beat-r .bt-sus{visibility:hidden;}
+  body.print-fit .beat-r.fit.span .bt-suf.bt-suf-up{left:0!important;transform:none!important;}   /* 上標（maj7 等）跟著靠左，不跑出小節線 */   /* 經典A4 不受「檢視」大小影響 */
   body.print-fit .ccard-head{padding-left:0.1em!important;padding-right:0.1em!important;}
   body.print-fit .cbar-grid{padding-left:0!important;padding-right:0!important;}
   /* 每個段落內部的每一排也不要被切開 */
@@ -1973,6 +1980,11 @@ body.gated>*:not(#gate){filter:grayscale(.9) opacity(.32)!important;pointer-even
     <div class="cl-head"><span>📝 更新日誌 · Arranger 理譜人</span><button class="btn" onclick="hideChangelog()">✕</button></div>
     <div class="cl-body">
       <p class="cl-ver">目前版本 <b class="app-ver-txt">—</b>　·　開發時間軸：2026-06-17 起（依使用回饋持續優化）</p>
+
+      <h4>手機列印空白、經典A4 和弦延伸 <span class="cl-date">2026-10-09</span></h4>
+      <ul><li>在 LINE、Facebook、Instagram、Messenger、微信等 App 裡開網頁時，內建瀏覽器不支援列印（會沒反應或印出空白）：按列印會先跳出說明，可一鍵改用手機瀏覽器開啟（LINE）或複製網址</li>
+      <li>手機列印前多等版面排好再叫出列印視窗，避免印到還沒畫完的空白頁</li>
+      <li>經典A4：和弦落在八分／十六分細格、後面的細格是空的時，和弦字靠左從自己的拍點往右延伸蓋過去，6m、1maj7 這類和弦不會再被切掉或擠成一團</li></ul>
 
       <h4>「輸出大小」改成「檢視」大小 <span class="cl-date">2026-10-08</span></h4>
       <ul><li>和弦譜、鍵盤譜、混合譜：工具列的「輸出大小」改成「檢視 100%」＋ ▲ ▼，段落和字一起等比放大縮小（50%～200%），每頁各自記住；點「檢視」回到 100%</li>
@@ -3871,7 +3883,7 @@ function refreshSvcMode(){
 
 /* ── SAVE / LOAD ── */
 /* ── 版本：每次更新改這裡（格式 年.月.日，同一天第二版加 -2）；顯示在標題旁與更新日誌，存檔／匯出也會記錄 ── */
-const APP_VERSION='2026.10.08';
+const APP_VERSION='2026.10.09';
 function showAppVersion(){ try{ const t='v'+APP_VERSION; const a=document.getElementById('app-ver'); if(a)a.textContent=t; document.querySelectorAll('.app-ver-txt').forEach(e=>e.textContent=t); }catch(e){} }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',showAppVersion); else setTimeout(showAppVersion,0);
 function getProjectData(){
@@ -5803,7 +5815,58 @@ function bindSwipe(){
 }
 
 /* ── PRINT ICON SHEET (A4, 4 segments / page) ── */
+/* ── 列印前檢查：LINE／Facebook／Instagram／Messenger／微信等 App 內建的瀏覽器（WebView）不支援 window.print()，
+   在裡面按列印只會沒反應或印出空白。這種情況先擋下來，請使用者改用 Safari／Chrome 開啟 ── */
+function inAppBrowser(){
+  const ua=navigator.userAgent||'';
+  if(/\bLine\//i.test(ua))return 'LINE';
+  if(/FBAN|FBAV|FB_IAB|FBIOS/i.test(ua))return 'Facebook';
+  if(/Instagram/i.test(ua))return 'Instagram';
+  if(/MicroMessenger/i.test(ua))return 'WeChat';
+  if(/KAKAOTALK/i.test(ua))return 'KakaoTalk';
+  if(/Threads|Barcelona/i.test(ua))return 'Threads';
+  if(/Android/i.test(ua)&&/;\s*wv\)/i.test(ua))return 'App';
+  return '';
+}
+function printGuard(){
+  const app=inAppBrowser(); if(!app)return true;
+  const old=document.getElementById('inapp-modal'); if(old)old.remove();
+  const m=document.createElement('div'); m.id='inapp-modal'; m.className='secpick-modal';
+  const isLine=(app==='LINE');
+  const isIOS=/iPhone|iPad|iPod/i.test(navigator.userAgent||'');
+  const br=isIOS?'Safari':'Chrome';
+  m.innerHTML='<div class="secpick-box"><h3>'+esc(Lf('這裡沒辦法列印／存 PDF','Printing isn\'t available here','ここでは印刷／PDF保存ができません','여기서는 인쇄／PDF 저장을 할 수 없습니다'))+'</h3>'
+    +'<p style="line-height:1.6;margin:0.4em 0 0.8em">'+esc(Lf('你現在是在 '+app+' 裡面開的網頁，App 內建的瀏覽器不支援列印，按了會沒反應或印出空白。請改用 '+br+' 開啟本網站再列印。',
+      'This page is open inside '+app+'. In-app browsers can\'t print, so you\'d get nothing or a blank page. Please open the site in '+br+' and print there.',
+      '今は '+app+' の中でページを開いています。アプリ内ブラウザは印刷できず、空白になります。'+br+' で開いてから印刷してください。',
+      '지금 '+app+' 안에서 페이지를 열었습니다. 앱 내 브라우저는 인쇄할 수 없어 빈 페이지가 됩니다. '+br+'에서 열어 인쇄해 주세요.'))+'</p>'
+    +'<p class="cl-hint" style="margin:0 0 0.9em;font-size:0.85em;opacity:.8">'+esc(Lf('換瀏覽器後，目前的譜不會跟著過去：請先存到雲端歌庫，或用「📁 檔案 → 存檔」下載。',
+      'Your current chart won\'t carry over to the other browser: save it to the cloud library or download it with File → Save first.',
+      '別のブラウザには今の譜面は引き継がれません。先にクラウドに保存するか「ファイル → 保存」でダウンロードしてください。',
+      '다른 브라우저로는 현재 악보가 넘어가지 않습니다. 먼저 클라우드에 저장하거나 「파일 → 저장」으로 내려받으세요.'))+'</p>'
+    +'<div class="secpick-foot">'+(isLine?'<button class="btn btna" data-a="open">'+esc(Lf('用手機的瀏覽器開啟','Open in your browser','ブラウザで開く','브라우저에서 열기'))+'</button>':'')
+    +'<button class="btn" data-a="copy">'+esc(Lf('複製網址','Copy link','URLをコピー','링크 복사'))+'</button>'
+    +'<button class="btn" data-a="close">'+esc(Lf('關閉','Close','閉じる','닫기'))+'</button></div></div>';
+  document.body.appendChild(m);
+  m.addEventListener('click',async e=>{
+    const b=e.target.closest('[data-a]'); if(!b){ if(e.target===m)m.remove(); return; }
+    const a=b.dataset.a;
+    if(a==='close'){ m.remove(); return; }
+    const u=new URL(location.href); u.hash='';
+    if(a==='open'){ u.searchParams.set('openExternalBrowser','1'); location.href=u.toString(); return; }   // LINE 專用：用手機預設瀏覽器開
+    if(a==='copy'){ u.searchParams.delete('openExternalBrowser');
+      try{ await navigator.clipboard.writeText(u.toString()); b.textContent=Lf('已複製','Copied','コピーしました','복사됨'); }
+      catch(err){ window.prompt(Lf('複製這個網址，貼到 Safari／Chrome 打開','Copy this link and open it in Safari / Chrome','このURLをコピーして Safari／Chrome で開いてください','이 링크를 복사해 Safari／Chrome에서 여세요'),u.toString()); } }
+  });
+  return false;
+}
+/* 手機比較慢：等版面真的排好（兩個畫格＋一點時間）再叫出列印，避免印到還沒畫完的空白頁 */
+function schedPrint(){
+  const slow=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent||'')||('ontouchstart' in window);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>setTimeout(()=>doPrint(), slow?350:60)));
+}
 async function printView(name){
+  if(!printGuard())return;
   commitEdits();
   const askable=['chord','note','mixp','staff'].includes(name);
   if(askable)_printMaxi=true;   // 輸出一律採極大化樣式
@@ -5822,7 +5885,7 @@ async function printView(name){
   }
   document.body.classList.add(cls);
   window._printCls=cls;
-  setTimeout(()=>doPrint(),60);
+  schedPrint();
 }
 function printIcon(){ return printView('icon'); }   // 相容舊呼叫
 /* 經典 A4：自動縮放，盡量塞進一張 A4 */
@@ -5961,6 +6024,7 @@ function showPrintFsTip(fs,min,max,scale,fitOnePage,view,pages){
   showPrintFsTip._t=setTimeout(()=>el.classList.remove('show'),fitOnePage?4200:9000);
 }
 async function printFit(view){
+  if(!printGuard())return;
   commitEdits();
   const pick=await askSectionPick();          // 選擇要輸出的段落（取消則不輸出）
   if(pick===null)return;
@@ -5971,6 +6035,7 @@ async function printFit(view){
   window._printMode=!svc;   /* 收合沒用到的八分/十六分空格（聚會模式關閉，維持原貌） */
   window._printRepeat=!svc; /* 連續相同小節收合成 ×N（聚會模式關閉） */
   window._printSongTitle=(gv('s-title')||'').trim();   /* 段落標題標上歌名（比照聚會模式） */
+  window._printSpan=true;   /* 經典A4：和弦可延伸蓋過後面空的細分格 */
   const cls='print-'+view;
   document.body.classList.toggle('print-maxi',_printMaxi);   // 極大化：先套用才量得準
   const PH=1040;   // A4 直式可列印高度（約 px @96dpi，已扣邊界）
@@ -6072,7 +6137,7 @@ async function printFit(view){
   document.documentElement.style.setProperty('--fit-scale', scale.toFixed(3));
   document.body.classList.add(cls,'print-fit');
   window._printCls=cls;
-  setTimeout(()=>doPrint(),60);
+  schedPrint();
 }
 /* 列印收尾的時機：
    Chrome 的 window.print() 會等列印視窗關掉才回來 → 回來就收尾。
@@ -6090,7 +6155,7 @@ function doPrint(){
   setTimeout(()=>evs.forEach(n=>window.addEventListener(n,fin,true)),600);
 }
 window.addEventListener('afterprint',()=>{ if(!window._printBusy)printCleanup(); });
-function printCleanup(){ restorePrintPick(); restoreModeAfterPrint(); document.body.classList.remove('print-tight','print-xtight'); if(window._printCls){ document.body.classList.remove(window._printCls); } document.body.classList.remove('print-fit','print-maxi'); window._printCls=null; const was=window._printMode||window._printRepeat||window._printBPR||window._printSongTitle; window._printMode=false; window._printRepeat=false; window._printBPR=null; window._printSongTitle=''; if(was){ try{renderCharts();}catch(e){} } }
+function printCleanup(){ restorePrintPick(); restoreModeAfterPrint(); document.body.classList.remove('print-tight','print-xtight'); if(window._printCls){ document.body.classList.remove(window._printCls); } document.body.classList.remove('print-fit','print-maxi'); window._printCls=null; const was=window._printMode||window._printRepeat||window._printBPR||window._printSongTitle; window._printMode=false; window._printRepeat=false; window._printSpan=false; window._printBPR=null; window._printSongTitle=''; if(was){ try{renderCharts();}catch(e){} } }
 
 /* ── OCR 圖片/PDF 辨識匯入 ── */
 function openOcr(){ document.getElementById('ocr-modal').style.display='flex'; }
@@ -6948,6 +7013,11 @@ function barOneHtml(s,i,beats,repX,rowStart){
     const cfit=(fs<1&&BEAT_CQ);
     let hasSub=false;
     let cols='';
+    /* 經典A4：和弦後面接著的細分格如果是空的（沒有其他和弦），和弦字可以延伸蓋過去，
+       字就不必為了塞進一小格而縮到看不清楚（例如 6m、4maj7 落在十六分格時） */
+    const _spanOn=!!(window._printSpan&&cfit);
+    const _free=(v)=>{ v=String(v||'').trim(); return v===''||v==='.'; };
+    let _spanTo=-1;   // 被前一個和弦延伸蓋過的格子（到這一格為止）
     for(let b=0;b<cellsN;b++){
       const raw=pb[b]||'';
       const fine=Math.floor(b/fac)*4+(b%fac)*(4/fac);  // 固定十六分格點（與 KB 同一套），切分改變時符號位置不跑掉
@@ -6962,10 +7032,14 @@ function barOneHtml(s,i,beats,repX,rowStart){
       if(tw<0)hasSub=true;
       const _tst=(hasCh&&Array.isArray(s.chTie))?tieInStyle(s.chTie,i,fine):'';
       let rAttr=' class="beat-r'+(_tst==='s'?' tie-s':'')+'"';
-      if(cfit&&tw>0){ tw-=0.3*(renderBeatToken.lastBW||0); if(arpOn)tw+=0.5; rAttr=` class="beat-r fit${_tst==='s'?' tie-s':''}" style="--tw:${tw.toFixed(2)}"`; }
+      let _spCls='';
+      if(_spanOn&&b<=_spanTo&&_free(raw)) _spCls=' spanned';   // 這格被前面的和弦蓋過：不畫延續點
+      if(cfit&&tw>0){ tw-=0.3*(renderBeatToken.lastBW||0); if(arpOn)tw+=0.5;
+        let sp=1; if(_spanOn&&hasCh){ while(b+sp<cellsN&&_free(pb[b+sp]))sp++; if(sp>1)_spanTo=b+sp-1; }
+        rAttr=` class="beat-r fit${sp>1?' span':''}${_tst==='s'?' tie-s':''}" style="--tw:${tw.toFixed(2)}${sp>1?';--sp:'+sp:''}"`; }
       const arp=arpOn?`<span class="kbarp charp" title="琶音">${kbArpSvg(2)}</span>`:'';
       const tsel=(_chTieSel&&_chTieSel.sid===s.id&&_chTieSel.bar===i&&_chTieSel.f===fine)?' tiesel':'';
-      cols+=`<div class="cbeatcol ${bp}${tsel}" data-sid="${s.id}" data-bar="${i}" data-b="${b*bstep}" data-f="${fine}" onclick="beatEdit(this)"><span class="cbnum">${subdivLabel(b,fac)}</span><span${rAttr}>${arp}${tokHtml}</span><input class="beat-i" value="${esc(raw)}" style="display:none" onblur="beatSave(${s.id},${i},${b*bstep},this)" onkeydown="if(event.key==='Enter'){this.blur();}"></div>`;
+      cols+=`<div class="cbeatcol ${bp}${tsel}${_spCls}" data-sid="${s.id}" data-bar="${i}" data-b="${b*bstep}" data-f="${fine}" onclick="beatEdit(this)"><span class="cbnum">${subdivLabel(b,fac)}</span><span${rAttr}>${arp}${tokHtml}</span><input class="beat-i" value="${esc(raw)}" style="display:none" onblur="beatSave(${s.id},${i},${b*bstep},this)" onkeydown="if(event.key==='Enter'){this.blur();}"></div>`;
     }
     if(cfit&&!hasSub) dens='dn-a';   // 字級已由格寬決定，輸出時不必再按格數壓一階（一格多和弦的小節維持原本縮法）
     const m=barMeter(s,i);
