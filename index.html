@@ -913,8 +913,8 @@ body.chsym-on .cbeatcol{cursor:pointer;}
 .pm-item{display:block;width:100%;text-align:left;background:none;border:none;border-radius:0.45em;padding:0.55em 0.8em;
   font-family:inherit;font-size:0.9em;color:var(--text);cursor:pointer;white-space:nowrap;}
 .pm-item:hover,.pm-item:focus-visible{background:var(--bg3);outline:none;}
-.file-btn.on .dd-car,.song-btn.on .dd-car,body.ctool-open .ctool-btn .dd-car{transform:rotate(180deg);}
-.file-btn.on,.song-btn.on,.help-btn.on{background:var(--bg4);border-color:var(--accent);}
+.file-btn.on .dd-car,.song-btn.on .dd-car,.lang-btn.on .dd-car,body.ctool-open .ctool-btn .dd-car{transform:rotate(180deg);}
+.file-btn.on,.song-btn.on,.lang-btn.on,.help-btn.on{background:var(--bg4);border-color:var(--accent);}
 .help-pop{max-width:min(34em,calc(100vw - 16px));max-height:min(60vh,30em);overflow:auto;padding:0.8em 1em;font-size:0.82em;line-height:1.65;color:var(--text2);}
 .help-pop .hp-head{font-weight:700;color:var(--text);margin-bottom:0.35em;}
 .help-pop .hp-p+.hp-p{margin-top:0.5em;}
@@ -1281,13 +1281,12 @@ body.mode-phone #s-time{width:auto!important;}
 body.mode-phone #s-bpm{width:2.4em!important;}
 body.mode-phone .fbtn{width:1.35em;height:1.35em;font-size:0.9em;}
 body.mode-phone #font-size-label{min-width:16px;}
-/* 語言鈕：五種語言（繁／簡／EN／JP／KR）字數不同，固定寬度與字級才不會忽大忽小 */
-/* 寬度與內距用 rem（不受自身字級影響），所以放大漢字時按鈕大小不變 */
-#lang-btn{min-width:2.3rem;padding-left:0.35rem;padding-right:0.35rem;text-align:center;
-  font-size:0.82em;line-height:1.15;display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;}
-#lang-btn.lb-cjk{font-size:0.98em;font-weight:600;letter-spacing:0;}
-body.mode-phone #lang-btn{min-width:2rem;font-size:0.78em;}
-body.mode-phone #lang-btn.lb-cjk{font-size:0.94em;}
+/* 語言鈕：外觀比照「🎼 曲目設定」「📁 檔案」——🌐＋目前語言＋▾，點了跳出五種語言的選單 */
+.lang-btn{flex:0 0 auto;}
+body.mode-phone .lang-btn{font-size:0.72em;padding:0.28em 0.6em;}
+.lang-menu .pm-item .lm-ck{display:inline-block;width:1.2em;color:var(--accent);font-weight:700;}
+.lang-menu .pm-item .lm-sub{margin-left:0.6em;font-size:0.82em;color:var(--text3);}
+.lang-menu .pm-item.cur{color:var(--accent);font-weight:700;}
 /* ① EN／更新日誌：外框比照左邊的「電腦｜平板｜手機」那組 */
 body.mode-phone .segbtn.cl-btn{
   border:1px solid var(--border2);border-radius:0.45em;margin-left:0;
@@ -1738,7 +1737,7 @@ body.gated>*:not(#gate){filter:grayscale(.9) opacity(.32)!important;pointer-even
       <button class="segbtn" id="mode-tablet-btn" onclick="setMode('tablet')" title="平板：編輯區移到上方、檢視全寬、圖示譜3欄">▦ 平板</button>
       <button class="segbtn" id="mode-phone-btn" onclick="setMode('phone')" title="手機：隱藏編輯區、圖示譜2欄">📱 手機</button>
     </span>
-    <button class="segbtn cl-btn" id="lang-btn" onclick="toggleLang()" title="中文 / English">EN</button>
+    <button class="btn lang-btn" id="lang-btn" onclick="langMenuBuild();popToggle('lang-menu',this,event)" title="語言 / Language" aria-haspopup="menu">🌐 <span class="lb-cur">繁中</span><span class="dd-car">▾</span></button>
     <button class="btn song-btn" onclick="toggleSong(event)" title="曲目設定：曲目、演唱者、拍號、BPM、用途、主題、字級、男／女 Key（再按一次收起來）">🎼 曲目設定<span class="dd-car">▾</span></button>
     <div class="pills">
       <div class="pill"><label>曲目</label><input id="s-title" value="King Of Kings" oninput="schedRender()" style="width:100px"></div>
@@ -1973,6 +1972,7 @@ body.gated>*:not(#gate){filter:grayscale(.9) opacity(.32)!important;pointer-even
     <div class="pm-submenu" id="tpl-sub" role="menu"></div>
   </div>
 </div>
+<div class="pop-menu lang-menu" id="lang-menu" role="menu"></div>
 <div class="pop-menu help-pop" id="help-pop" role="dialog"></div>
 <div class="pop-menu fav-pop" id="fav-pop" role="dialog"></div>
 <div id="cl-modal" class="cl-modal" onclick="if(event.target===this)hideChangelog()">
@@ -1980,6 +1980,9 @@ body.gated>*:not(#gate){filter:grayscale(.9) opacity(.32)!important;pointer-even
     <div class="cl-head"><span>📝 更新日誌 · Arranger 理譜人</span><button class="btn" onclick="hideChangelog()">✕</button></div>
     <div class="cl-body">
       <p class="cl-ver">目前版本 <b class="app-ver-txt">—</b>　·　開發時間軸：2026-06-17 起（依使用回饋持續優化）</p>
+
+      <h4>語言按鈕改成選單 <span class="cl-date">2026-10-09</span></h4>
+      <ul><li>語言鈕外觀比照「🎼 曲目設定」「📁 檔案」：🌐＋目前語言＋▾，點了直接選繁體中文／简体中文／English／日本語／한국어，不用一直按到想要的語言</li></ul>
 
       <h4>手機列印空白、經典A4 和弦延伸 <span class="cl-date">2026-10-09</span></h4>
       <ul><li>在 LINE、Facebook、Instagram、Messenger、微信等 App 裡開網頁時，內建瀏覽器不支援列印（會沒反應或印出空白）：按列印會先跳出說明，可一鍵改用手機瀏覽器開啟（LINE）或複製網址</li>
@@ -3774,7 +3777,7 @@ function langRev(l){                                 // 該語言 → 中文
   return _i18nRev[l];
 }
 let _shownLang='zh';                                 // 畫面上目前是哪一種語言
-function _i18nSkip(el){ for(let n=el;n;n=n.parentElement){ if(n.id==='cl-modal'||n.id==='lang-btn'||n.id==='langpick-modal')return true; } return false; }
+function _i18nSkip(el){ for(let n=el;n;n=n.parentElement){ if(n.id==='cl-modal'||n.id==='lang-btn'||n.id==='lang-menu'||n.id==='langpick-modal')return true; } return false; }
 let _i18nBusy=false,_i18nQueued=false;
 /* 兩段式轉換：先把畫面上的字還原成中文，再翻成目標語言。
    重繪產生的內容本來就是中文，還原那段查不到就原樣通過，因此兩種來源都能正確處理。 */
@@ -3815,10 +3818,15 @@ const LANG_TITLE={zh:'切換語言：繁體 → 简体', cn:'切换语言：简�
 function syncFooterLinks(){
   document.querySelectorAll('.sf-link').forEach(a=>{ a.href='./'+a.dataset.page+'.html?lang='+_lang; });
 }
+const LANG_SHORT={zh:'繁中',cn:'简中',en:'EN',ja:'日本語',ko:'한국어'};
+function langMenuBuild(){
+  const m=document.getElementById('lang-menu'); if(!m)return;
+  m.innerHTML=LANG_PICK.map(o=>'<button class="pm-item'+(o.k===_lang?' cur':'')+'" role="menuitemradio" aria-checked="'+(o.k===_lang)+'" onclick="popClose();setLangTo(\''+o.k+'\')"><span class="lm-ck">'+(o.k===_lang?'✓':'')+'</span>'+o.n+'<span class="lm-sub">'+o.s+'</span></button>').join('');
+}
 function applyLang(){ const b=document.getElementById('lang-btn');
-  if(b){ const t=LANG_BTN[_lang]||'EN'; b.textContent=t; b.title=LANG_TITLE[_lang]||'';
-         /* 漢字（繁／簡）在同一字級下字面比 EN/JP/KR 這種拉丁大寫小，視覺上會顯得縮水 → 單獨放大補回來 */
-         b.classList.toggle('lb-cjk',/[\u4e00-\u9fff]/.test(t)); }
+  if(b){ const c=b.querySelector('.lb-cur'); if(c)c.textContent=LANG_SHORT[_lang]||'繁中';
+         b.title={zh:'語言',cn:'语言',en:'Language',ja:'言語',ko:'언어'}[_lang]||'Language'; }
+  try{ langMenuBuild(); }catch(e){}
   document.documentElement.lang={ja:'ja',ko:'ko',en:'en',cn:'zh-Hans'}[_lang]||'zh-Hant';
   syncFooterLinks();
   i18nApply(); }
@@ -3883,7 +3891,7 @@ function refreshSvcMode(){
 
 /* ── SAVE / LOAD ── */
 /* ── 版本：每次更新改這裡（格式 年.月.日，同一天第二版加 -2）；顯示在標題旁與更新日誌，存檔／匯出也會記錄 ── */
-const APP_VERSION='2026.10.09';
+const APP_VERSION='2026.10.09-2';
 function showAppVersion(){ try{ const t='v'+APP_VERSION; const a=document.getElementById('app-ver'); if(a)a.textContent=t; document.querySelectorAll('.app-ver-txt').forEach(e=>e.textContent=t); }catch(e){} }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',showAppVersion); else setTimeout(showAppVersion,0);
 function getProjectData(){
