@@ -1981,6 +1981,9 @@ body.gated>*:not(#gate){filter:grayscale(.9) opacity(.32)!important;pointer-even
     <div class="cl-body">
       <p class="cl-ver">目前版本 <b class="app-ver-txt">—</b>　·　開發時間軸：2026-06-17 起（依使用回饋持續優化）</p>
 
+      <h4>修正平板／手機印出來是舊版面 <span class="cl-date">2026-10-10</span></h4>
+      <ul><li>iPad、iPhone、Android 和 Mac 的 Safari：列印視窗還開著時版面就被還原，印出來變回舊樣式（有外框、備註、自動 ×2）；現在這些裝置都等你印完回到頁面點一下才還原</li></ul>
+
       <h4>經典A4 不再自動加 ×2 <span class="cl-date">2026-10-10</span></h4>
       <ul><li>經典A4 原本會把連續相同的小節自動收成一格 ×2；現在照原譜排，只有你自己設定的 ×2／×4 才會顯示</li></ul>
 
@@ -3894,7 +3897,7 @@ function refreshSvcMode(){
 
 /* ── SAVE / LOAD ── */
 /* ── 版本：每次更新改這裡（格式 年.月.日，同一天第二版加 -2）；顯示在標題旁與更新日誌，存檔／匯出也會記錄 ── */
-const APP_VERSION='2026.10.10';
+const APP_VERSION='2026.10.10-2';
 function showAppVersion(){ try{ const t='v'+APP_VERSION; const a=document.getElementById('app-ver'); if(a)a.textContent=t; document.querySelectorAll('.app-ver-txt').forEach(e=>e.textContent=t); }catch(e){} }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',showAppVersion); else setTimeout(showAppVersion,0);
 function getProjectData(){
@@ -6160,7 +6163,13 @@ function doPrint(){
   window._printBusy=true;
   const t=performance.now();
   try{ window.print(); }catch(e){}
-  if(performance.now()-t>250){ window._printBusy=false; printCleanup(); return; }
+  /* iPhone／iPad（含「要求桌面版網站」時偽裝成 Mac 的 iPad）、Android、Mac Safari：
+     window.print() 可能卡住一下就回來，但列印視窗其實還開著、最後輸出時才重新排版 →
+     這些裝置一律等使用者回到頁面點一下再還原，不看 print() 卡了多久 */
+  const ua=navigator.userAgent||'';
+  const touchDev=/iPhone|iPad|iPod|Android/i.test(ua)||(/Macintosh/i.test(ua)&&(navigator.maxTouchPoints||0)>1);
+  const safari=/Safari/i.test(ua)&&!/Chrome|Chromium|CriOS|Edg|OPR|FxiOS|Firefox/i.test(ua);
+  if(!touchDev&&!safari&&performance.now()-t>250){ window._printBusy=false; printCleanup(); return; }
   const evs=['pointerdown','keydown','touchstart'];
   const fin=()=>{ evs.forEach(n=>window.removeEventListener(n,fin,true)); window._printBusy=false; printCleanup(); };
   setTimeout(()=>evs.forEach(n=>window.addEventListener(n,fin,true)),600);
