@@ -1981,6 +1981,9 @@ body.gated>*:not(#gate){filter:grayscale(.9) opacity(.32)!important;pointer-even
     <div class="cl-body">
       <p class="cl-ver">目前版本 <b class="app-ver-txt">—</b>　·　開發時間軸：2026-06-17 起（依使用回饋持續優化）</p>
 
+      <h4>經典A4 不再自動加 ×2 <span class="cl-date">2026-10-10</span></h4>
+      <ul><li>經典A4 原本會把連續相同的小節自動收成一格 ×2；現在照原譜排，只有你自己設定的 ×2／×4 才會顯示</li></ul>
+
       <h4>語言按鈕改成選單 <span class="cl-date">2026-10-09</span></h4>
       <ul><li>語言鈕外觀比照「🎼 曲目設定」「📁 檔案」：🌐＋目前語言＋▾，點了直接選繁體中文／简体中文／English／日本語／한국어，不用一直按到想要的語言</li></ul>
 
@@ -3891,7 +3894,7 @@ function refreshSvcMode(){
 
 /* ── SAVE / LOAD ── */
 /* ── 版本：每次更新改這裡（格式 年.月.日，同一天第二版加 -2）；顯示在標題旁與更新日誌，存檔／匯出也會記錄 ── */
-const APP_VERSION='2026.10.09-2';
+const APP_VERSION='2026.10.10';
 function showAppVersion(){ try{ const t='v'+APP_VERSION; const a=document.getElementById('app-ver'); if(a)a.textContent=t; document.querySelectorAll('.app-ver-txt').forEach(e=>e.textContent=t); }catch(e){} }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',showAppVersion); else setTimeout(showAppVersion,0);
 function getProjectData(){
@@ -6041,7 +6044,7 @@ async function printFit(view){
   forceDesktopForPrint();   // 跨平台一致：以電腦版規格量測與輸出
   const svc = Array.isArray(sects) && sects.some(s=>s&&s._song);   // 聚會模式：維持資料庫原始段落安排，不重排也不收合
   window._printMode=!svc;   /* 收合沒用到的八分/十六分空格（聚會模式關閉，維持原貌） */
-  window._printRepeat=!svc; /* 連續相同小節收合成 ×N（聚會模式關閉） */
+  window._printRepeat=false; /* 不再自動把連續相同小節收合成 ×N：只顯示使用者自己設定的 ×2／×4…（2026-10-10 使用者回饋） */
   window._printSongTitle=(gv('s-title')||'').trim();   /* 段落標題標上歌名（比照聚會模式） */
   window._printSpan=true;   /* 經典A4：和弦可延伸蓋過後面空的細分格 */
   const cls='print-'+view;
